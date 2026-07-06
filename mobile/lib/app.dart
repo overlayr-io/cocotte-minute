@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/auth/auth_bloc.dart';
-import 'core/config/env.dart';
 import 'core/i18n/generated/app_localizations.dart';
-import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/error_view.dart';
 import 'features/home/presentation/pages/home_page.dart';
@@ -23,17 +21,6 @@ class CocotteApp extends StatelessWidget {
         darkTheme: AppTheme.dark,
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        // Bandeau "DEV" en environnement de développement, pour ne jamais
-        // confondre un build dev avec la prod (cf. docs/RUN_LOCAL.md).
-        builder: (context, child) {
-          if (Env.isProd || child == null) return child ?? const SizedBox();
-          return Banner(
-            message: 'DEV',
-            location: BannerLocation.topStart,
-            color: AppColors.accent,
-            child: child,
-          );
-        },
         home: const _AuthGate(),
       ),
     );
