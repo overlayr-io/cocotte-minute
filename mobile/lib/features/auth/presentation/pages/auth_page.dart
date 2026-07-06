@@ -255,17 +255,6 @@ class _TopBar extends StatelessWidget {
             ),
           ),
         ),
-        TextButton(
-          onPressed: onSkip,
-          child: Text(
-            l10n.authSkip,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textMuted,
-            ),
-          ),
-        ),
       ],
     );
   }

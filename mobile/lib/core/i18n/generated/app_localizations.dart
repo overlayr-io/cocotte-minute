@@ -124,12 +124,6 @@ abstract class AppLocalizations {
   /// **'Créer un compte / Se connecter'**
   String get homeCreateAccountCta;
 
-  /// Action pour ignorer l'écran d'auth et rester invité
-  ///
-  /// In fr, this message translates to:
-  /// **'Passer'**
-  String get authSkip;
-
   /// Titre de l'écran en mode inscription
   ///
   /// In fr, this message translates to:

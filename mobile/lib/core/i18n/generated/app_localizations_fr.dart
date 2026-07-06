@@ -24,9 +24,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeCreateAccountCta => 'Créer un compte / Se connecter';
 
   @override
-  String get authSkip => 'Passer';
-
-  @override
   String get authCreateTitle => 'Crée ton compte';
 
   @override

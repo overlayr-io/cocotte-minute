@@ -20,15 +20,11 @@
   "@homeCreateAccountCta": {
     "description": "Bouton temporaire depuis l'accueil vers l'écran d'auth"
   },
-  "authSkip": "Passer",
-  "@authSkip": {
-    "description": "Action pour ignorer l'écran d'auth et rester invité"
-  },
   "authCreateTitle": "Crée ton compte",
   "@authCreateTitle": {
     "description": "Titre de l'écran en mode inscription"
   },
-  "authCreateSubtitle": "Retrouve tes recettes sur tous tes appareils. C'est optionnel — tu peux continuer sans compte.",
+  "authCreateSubtitle": "Retrouve tes recettes sur tous tes appareils.",
   "@authCreateSubtitle": {
     "description": "Sous-titre en mode inscription"
   },
