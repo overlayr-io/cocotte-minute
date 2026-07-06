@@ -1,6 +1,6 @@
 ---
 feature: auth
-status: planned     # planned | in-progress | done
+status: in-progress     # planned | in-progress | done
 scope: v1           # v1 | v2 | later
 depends_on: []
 order: 1
@@ -122,3 +122,47 @@ utilisateur réel, pour permettre plus tard un passage fluide vers un compte com
   compte) : message d'erreur à définir.
 - Comment faire/afficher le création du compte ? Via l'onglet Compte et se connecter ?
   Puis modal avec les deux questions ? avant ou après l'inscription ?
+
+## État d'implémentation v1 (mobile + server)
+
+### Mobile — `features/auth/`
+- Écran unique Login/Inscription (bascule `Créer un compte` / `Se connecter`
+  sur le même écran), calé sur la maquette handoff (design "1c/2b"). Header en
+  `Scaffold.appBar` avec flèche retour ; tous les écrans de la feature suivent
+  la structure `Scaffold(appBar: ..., body: ...)`.
+- `AuthRepository` : `createAccountWithEmail`/`signInWithEmail` (Supabase
+  direct), conversion anonyme via `updateUser` (garde le même `userId`),
+  `continueWithOAuth` (Google/Apple, via `linkIdentity` si invité),
+  `resetGuestData` (appel NestJS pour "repartir de zéro").
+- **Boutons Google/Apple visibles uniquement en dev (`kDebugMode`)** :
+  le câblage Supabase existe, mais l'activation en production est différée
+  tant que les redirect URLs Supabase + la config native (deep link iOS,
+  Sign in with Apple) ne sont pas faites.
+- Modal "conserver mes données / repartir de zéro" : bottom-sheet système
+  (radio + carte "Conseillé"), affichée uniquement si l'utilisateur était
+  invité au moment de la conversion. N'affiche pas de compteur de recettes
+  (pas de table métier en v1, cf. écart ci-dessous) — wording générique.
+- Point d'entrée actuel : CTA temporaire sur `HomePage` (visible pour un
+  utilisateur anonyme). Sera remplacé par l'onglet Compte quand il existera.
+- Thème global aligné sur la maquette (`AppColors` : vert `#6B8E5A` + corail
+  `#FF6F61` sur fond crème `#F7F6F2`) et polices bundlées (Bricolage
+  Grotesque / Hanken Grotesk) — appliqué à toute l'app, pas seulement à l'auth.
+
+### Server — `modules/account/`
+- `POST /account/reset-guest-data` (protégé par `SupabaseAuthGuard`) déclenche
+  "repartir de zéro" : efface les données de l'utilisateur courant (le compte
+  Supabase, lui, est conservé — la conversion a déjà eu lieu côté mobile).
+- **Écart assumé** : à ce stade aucune table métier n'existe encore dans le
+  schéma Drizzle (l'auth est la toute première feature). Le service est donc
+  un squelette transactionnel (`AccountService.resetGuestData`) avec un `TODO`
+  explicite : chaque future feature métier devra y ajouter la suppression de
+  ses propres tables `WHERE user_id = userId`.
+
+### Écarts assumés vs. le comportement cible
+- Pas de suppression cascade réelle tant que les tables métier n'existent pas.
+- "Repartir de zéro" repose sur un wipe des données du compte existant plutôt
+  qu'un delete + recreate complet du compte — comportement fonctionnellement
+  équivalent, plus simple à implémenter.
+- Pour un flux OAuth (redirection), la modal conserver/repartir n'est pas
+  encore déclenchée (seul le flux email/mot de passe la propose) — à
+  compléter quand OAuth sera activé en production.

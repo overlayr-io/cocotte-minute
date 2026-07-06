@@ -133,7 +133,7 @@ abstract class AppLocalizations {
   /// Sous-titre en mode inscription
   ///
   /// In fr, this message translates to:
-  /// **'Retrouve tes recettes sur tous tes appareils. C\'est optionnel — tu peux continuer sans compte.'**
+  /// **'Retrouve tes recettes sur tous tes appareils.'**
   String get authCreateSubtitle;
 
   /// Titre de l'écran en mode connexion

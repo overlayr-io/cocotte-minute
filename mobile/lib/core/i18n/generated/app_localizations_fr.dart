@@ -28,7 +28,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get authCreateSubtitle =>
-      'Retrouve tes recettes sur tous tes appareils. C\'est optionnel — tu peux continuer sans compte.';
+      'Retrouve tes recettes sur tous tes appareils.';
 
   @override
   String get authSignInTitle => 'Content de te revoir';

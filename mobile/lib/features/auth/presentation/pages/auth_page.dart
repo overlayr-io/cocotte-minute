@@ -99,6 +99,12 @@ class _AuthViewState extends State<_AuthView> {
 
     return Scaffold(
       backgroundColor: AppColors.surface,
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: _close,
+          icon: const Icon(Icons.chevron_left, color: AppColors.textPrimary),
+        ),
+      ),
       body: BlocListener<AuthFormBloc, AuthFormState>(
         listener: (context, state) {
           switch (state) {
@@ -115,13 +121,12 @@ class _AuthViewState extends State<_AuthView> {
           }
         },
         child: SafeArea(
+          top: false,
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(26, 4, 26, 28),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _TopBar(onBack: _close, onSkip: _close),
-                const SizedBox(height: 12),
                 const _AppIconPlaceholder(),
                 const SizedBox(height: 18),
                 Text(
@@ -227,36 +232,6 @@ class _AuthViewState extends State<_AuthView> {
 
   String? _validatePassword(String? value, AppLocalizations l10n) {
     return (value ?? '').length >= 6 ? null : l10n.authPasswordTooShort;
-  }
-}
-
-class _TopBar extends StatelessWidget {
-  const _TopBar({required this.onBack, required this.onSkip});
-
-  final VoidCallback onBack;
-  final VoidCallback onSkip;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Material(
-          color: AppColors.card,
-          shape: const CircleBorder(side: BorderSide(color: AppColors.border)),
-          child: InkWell(
-            customBorder: const CircleBorder(),
-            onTap: onBack,
-            child: const SizedBox(
-              width: 40,
-              height: 40,
-              child: Icon(Icons.chevron_left, color: AppColors.textPrimary),
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }
 
