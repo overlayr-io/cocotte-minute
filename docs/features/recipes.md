@@ -1,0 +1,119 @@
+---
+feature: recette-base
+status: planned     # planned | in-progress | done
+scope: v1           # v1 | v2 | later
+depends_on: [auth, ingredients, tags-personnes, categories]
+order: 5
+---
+
+# Recette (CRUD de base)
+
+## Problème résolu
+Domaine métier central de l'application : permettre la création et la gestion
+complète d'une recette, avec la distinction fondamentale recette normale /
+recette de base dès la création.
+
+## Comportement attendu
+
+### Flow de création
+1. L'utilisateur saisit : nom (obligatoire), photo (optionnelle), toggle
+   "recette de base" (important, décidé dès la création).
+2. Une fois créée, redirection automatique vers la page Détail de la recette.
+3. Depuis la page Détail, toutes les modifications ultérieures sont possibles
+   (description, temps, ingrédients, étapes, etc.).
+
+### Propriétés d'une recette
+- Nom (obligatoire)
+- Photo (optionnelle)
+- Description (optionnelle)
+- Flag "recette de base" (booléen, défini à la création)
+- Temps de préparation (défaut 0)
+- Temps de cuisson (défaut 0)
+- Temps de pause (défaut 0)
+- Nombre de personnes (défaut 0)
+- Auteur / créateur (lié à l'utilisateur, via feature auth)
+- Étapes (traitées dans une feature séparée, `recette-etapes`) (vide par défault)
+- Ingrédients (liste d'ingrédients utilisés, via feature ingredients) (vide par défault)
+- Recettes de base utilisées comme composants (si la recette en intègre) (vide par défault)
+
+### Page Détail — informations affichées
+- Le créateur de la recette
+- Les ingrédients ajoutés
+- Les étapes (traité plus tard dans `recette-etapes`)
+- Les sous-recettes utilisées par cette recette (composants)
+- Si la recette EST elle-même une recette de base : liste des recettes qui
+  l'utilisent comme composant (relation inverse — "où est-elle utilisée")
+
+### Règle de verrouillage recette de base ↔ normale
+- Une recette de base peut intégrer d'autres recettes de base comme composants
+  (imbrication autorisée entre recettes de base).
+- Une recette normale ne peut jamais être utilisée comme composant dans une
+  autre recette (seules les recettes de base le peuvent).
+- Une fois qu'une recette de base a été utilisée comme composant dans au moins
+  une autre recette, elle **ne peut plus être repassée en recette normale** —
+  le flag est verrouillé tant que cette utilisation existe.
+
+## Ajout d'ingrédient à une recette (précision recipe_ingredients)
+
+### Comportement attendu
+- Depuis la recette, l'utilisateur ajoute un ingrédient :
+    - soit en sélectionnant un ingrédient qu'il a déjà créé/importé précédemment,
+    - soit en créant un nouvel ingrédient directement depuis cette interface
+      (puis il est automatiquement sélectionné).
+- Une fois l'ingrédient renseigné, l'utilisateur indique la **quantité**
+  (ex: 20 grammes, 2 cuillères à soupe).
+- L'**unité utilisée est toujours celle définie sur l'ingrédient** — pas de
+  choix d'unité différente ligne par ligne. Si l'utilisateur veut une unité
+  différente pour un usage ponctuel, il doit modifier l'unité de l'ingrédient
+  lui-même (impacte alors toutes ses utilisations).
+- Cette structuration (ingrédient + quantité par recette) sert deux objectifs :
+    1. Affichage clair des ingrédients dans la page Détail de la recette.
+    2. Recherche avancée : retrouver des recettes à partir d'ingrédients demandés
+       (feature `recherche-par-ingredients`, plus tard dans l'ordre).
+
+## Impact technique (mise à jour)
+- Table `recipe_ingredients` (recipe_id, ingredient_id, quantity) — pas de
+  champ unité sur cette table, l'unité est toujours lue depuis `ingredients.unit`.
+
+### Suppression
+- Soft delete uniquement
+
+## Impact technique
+- Server :
+    - Table `recipes` (id, name, photo, description, is_base, prep_time,
+      cook_time, rest_time, servings, author_id).
+    - Table `recipe_ingredients` (recipe_id, ingredient_id, + quantité — à définir
+      dans une feature ultérieure liant ingrédients et recettes précisément).
+    - Table `recipe_components` (parent_recipe_id, base_recipe_id) — lien recette
+      → sous-recette utilisée, uniquement si `base_recipe.is_base = true`.
+    - Validation serveur obligatoire : impossible d'insérer dans
+      `recipe_components` une recette dont `is_base = false`.
+    - Validation serveur obligatoire : impossible de passer `is_base` de true à
+      false si la recette apparaît déjà comme `base_recipe_id` dans
+      `recipe_components`.
+- Mobile : feature `recipes/` (Bloc), écran de création simplifié (étape 1),
+  écran Détail complet avec toutes les sections (étape 2), toggle "recette de
+  base" visible et clair dès la création.
+- DB : `recipes`, `recipe_components`, `recipe_ingredients` (structure
+  précise de cette dernière à affiner avec la feature ingrédients-quantités
+  si elle existe séparément).
+
+## Règles métier spécifiques
+- Le flag `is_base` peut passer de false à true à tout moment sans contrainte.
+- Le flag `is_base` ne peut PAS passer de true à false si la recette est
+  référencée dans `recipe_components` en tant que `base_recipe_id`.
+- Cette règle doit être appliquée côté server (pas seulement UI), cohérent
+  avec ce qui a été acté dans `PROJECT_CONTEXT.md`.
+
+## Hors scope pour cette feature
+- Les étapes détaillées (feature séparée `recette-etapes`).
+- La quantité précise par ingrédient dans une recette (mentionné mais pas
+  détaillé ici — à clarifier : montant + unité par ligne d'ingrédient).
+- Le mode pas-à-pas d'exécution (feature séparée `mode-pas-a-pas`).
+
+## Questions ouvertes / à trancher
+- Nombre de personnes par défaut à 0 semble étrange pour une recette utilisable
+  — confirmer si 0 est vraiment voulu ou si un défaut plus réaliste (ex: 1 ou 4)
+  est préférable.
+- Une recette peut-elle exister sans aucun ingrédient/étape (brouillon), ou
+  y a-t-il un minimum requis pour la considérer "complète" ?

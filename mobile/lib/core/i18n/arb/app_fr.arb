@@ -1,0 +1,19 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Cocotte Minute",
+  "@appTitle": {
+    "description": "Nom de l'application"
+  },
+  "commonRetry": "Réessayer",
+  "@commonRetry": {
+    "description": "Bouton de nouvelle tentative sur une page d'erreur"
+  },
+  "commonError": "Une erreur est survenue",
+  "@commonError": {
+    "description": "Message d'erreur générique"
+  },
+  "homeWelcome": "Bienvenue dans Cocotte Minute",
+  "@homeWelcome": {
+    "description": "Message d'accueil sur la page d'accueil"
+  }
+}

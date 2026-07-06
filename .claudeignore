@@ -1,0 +1,11 @@
+mobile/build/
+mobile/.dart_tool/
+mobile/android/.gradle/
+mobile/ios/Pods/
+server/node_modules/
+server/dist/
+server/drizzle/meta/
+**/*.g.dart
+**/*.freezed.dart
+**/*.lock
+**/coverage/

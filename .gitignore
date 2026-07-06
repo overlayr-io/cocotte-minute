@@ -1,0 +1,12 @@
+# OS
+.DS_Store
+
+# IDE
+.idea/
+
+# Claude Code — config locale/perso, pas partagée
+.claude/settings.local.json
+
+# Env racine (si jamais utilisé)
+.env
+.env.local
