@@ -1,0 +1,171 @@
+import 'package:flutter/material.dart';
+
+import '../../features/account/presentation/pages/account_page.dart';
+import '../i18n/generated/app_localizations.dart';
+import '../theme/app_colors.dart';
+
+/// Coquille de navigation principale : 4 onglets (Accueil, Recettes, Courses,
+/// Compte) sous une barre flottante, façon maquette Cocotte Minute.
+///
+/// Pas de routeur dédié pour l'instant : un simple [IndexedStack] conserve
+/// l'état de chaque onglet. Les sous-écrans (ingrédients, etc.) sont poussés via
+/// [Navigator] par-dessus la coquille.
+class MainShell extends StatefulWidget {
+  const MainShell({super.key});
+
+  @override
+  State<MainShell> createState() => _MainShellState();
+}
+
+class _MainShellState extends State<MainShell> {
+  int _index = 3; // Compte : seul onglet réellement implémenté pour ce lot.
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final tabs = <Widget>[
+      _PlaceholderTab(title: l10n.navHome),
+      _PlaceholderTab(title: l10n.navRecipes),
+      _PlaceholderTab(title: l10n.navShopping),
+      const AccountPage(),
+    ];
+
+    return Scaffold(
+      extendBody: true,
+      backgroundColor: AppColors.surface,
+      body: IndexedStack(index: _index, children: tabs),
+      bottomNavigationBar: _CocotteNavBar(
+        currentIndex: _index,
+        onTap: (i) => setState(() => _index = i),
+      ),
+    );
+  }
+}
+
+/// Onglet provisoire pour les sections pas encore construites.
+class _PlaceholderTab extends StatelessWidget {
+  const _PlaceholderTab({required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return SafeArea(
+      bottom: false,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              title,
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              l10n.comingSoonBody,
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CocotteNavBar extends StatelessWidget {
+  const _CocotteNavBar({required this.currentIndex, required this.onTap});
+
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final items = <_NavItemData>[
+      _NavItemData(Icons.home_outlined, Icons.home_rounded, l10n.navHome),
+      _NavItemData(Icons.menu_book_outlined, Icons.menu_book_rounded, l10n.navRecipes),
+      _NavItemData(
+          Icons.shopping_cart_outlined, Icons.shopping_cart_rounded, l10n.navShopping),
+      _NavItemData(Icons.person_outline_rounded, Icons.person_rounded, l10n.navAccount),
+    ];
+
+    // Barre flottante calée tout en bas comme la maquette : marge fixe de 16px
+    // sous la barre (mesurée depuis le bas de l'écran).
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 0, 14, 16),
+      child: Container(
+        height: 70,
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.92),
+          borderRadius: BorderRadius.circular(26),
+          border: Border.all(color: AppColors.textPrimary.withValues(alpha: 0.06)),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.textPrimary.withValues(alpha: 0.16),
+              blurRadius: 30,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            for (var i = 0; i < items.length; i++)
+              _NavItem(
+                data: items[i],
+                selected: i == currentIndex,
+                onTap: () => onTap(i),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItemData {
+  const _NavItemData(this.icon, this.activeIcon, this.label);
+
+  final IconData icon;
+  final IconData activeIcon;
+  final String label;
+}
+
+class _NavItem extends StatelessWidget {
+  const _NavItem({required this.data, required this.selected, required this.onTap});
+
+  final _NavItemData data;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = selected ? AppColors.primary : const Color(0xFFB0B4B8);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(selected ? data.activeIcon : data.icon, color: color, size: 24),
+            const SizedBox(height: 3),
+            Text(
+              data.label,
+              style: TextStyle(
+                fontSize: 11,
+                color: color,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

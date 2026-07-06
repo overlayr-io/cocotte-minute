@@ -3,9 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/auth/auth_bloc.dart';
 import 'core/i18n/generated/app_localizations.dart';
+import 'core/navigation/main_shell.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/error_view.dart';
-import 'features/home/presentation/pages/home_page.dart';
+import 'features/auth/presentation/pages/auth_page.dart';
 
 class CocotteApp extends StatelessWidget {
   const CocotteApp({super.key});
@@ -36,7 +37,9 @@ class _AuthGate extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         return switch (state) {
-          AuthAuthenticated() => const HomePage(),
+          AuthAuthenticated() => const MainShell(),
+          // Après déconnexion explicite : écran de connexion/inscription.
+          AuthUnauthenticated() => const AuthPage(),
           AuthFailure(:final message) => ErrorView(
               message: message,
               onRetry: () =>

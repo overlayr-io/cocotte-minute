@@ -123,4 +123,231 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get keepDataLater => 'Plus tard';
+
+  @override
+  String get navHome => 'Accueil';
+
+  @override
+  String get navRecipes => 'Recettes';
+
+  @override
+  String get navShopping => 'Courses';
+
+  @override
+  String get navAccount => 'Compte';
+
+  @override
+  String get comingSoonTitle => 'Bientôt disponible';
+
+  @override
+  String get comingSoonBody => 'Cette fonctionnalité arrive prochainement.';
+
+  @override
+  String get accountTitle => 'Compte';
+
+  @override
+  String get accountGuestName => 'Compte invité';
+
+  @override
+  String get accountGuestSubtitle => 'Tes données vivent sur cet appareil';
+
+  @override
+  String get accountGuestBadge => 'Anonyme';
+
+  @override
+  String get accountReminderTitle => 'Ton compte invité a 2 semaines';
+
+  @override
+  String get accountReminderBody =>
+      'Crée un compte gratuit pour sécuriser tes recettes et les retrouver sur tous tes appareils.';
+
+  @override
+  String get accountReminderCta => 'Créer un compte / Se connecter';
+
+  @override
+  String get accountSectionContent => 'Mon contenu';
+
+  @override
+  String get accountSectionFamily => 'Ma famille';
+
+  @override
+  String get accountSectionAccount => 'Compte';
+
+  @override
+  String get accountSectionHelp => 'Aide';
+
+  @override
+  String get accountSectionPrivacy => 'Confidentialité';
+
+  @override
+  String get accountRowIngredients => 'Mes ingrédients';
+
+  @override
+  String get accountRowTags => 'Tags';
+
+  @override
+  String get accountRowFolders => 'Dossiers';
+
+  @override
+  String get accountRowPersons => 'Personnes';
+
+  @override
+  String get accountRowManage => 'Gérer le compte';
+
+  @override
+  String get accountRowLogout => 'Se déconnecter';
+
+  @override
+  String get accountRowDelete => 'Supprimer mon compte';
+
+  @override
+  String get accountRowHelpCenter => 'Centre d\'aide';
+
+  @override
+  String get accountRowContact => 'Nous contacter';
+
+  @override
+  String get accountRowPrivacyPolicy => 'Politique de confidentialité';
+
+  @override
+  String get accountRowTerms => 'Conditions d\'utilisation';
+
+  @override
+  String get accountRowManageData => 'Gérer mes données';
+
+  @override
+  String get ingredientsTitle => 'Mes ingrédients';
+
+  @override
+  String get ingredientsTabMine => 'Mes ingrédients';
+
+  @override
+  String get ingredientsTabCatalog => 'Catalogue';
+
+  @override
+  String get ingredientsSearchHint => 'Rechercher un ingrédient';
+
+  @override
+  String get ingredientsCatalogSearchHint => 'Rechercher dans le catalogue';
+
+  @override
+  String get ingredientsEmptyMine =>
+      'Aucun ingrédient pour l\'instant. Crée-en un ou importe depuis le catalogue.';
+
+  @override
+  String get ingredientsEmptyCatalog => 'Aucun ingrédient dans le catalogue.';
+
+  @override
+  String get ingredientsNoSearchResult => 'Aucun résultat.';
+
+  @override
+  String get ingredientsCreateCta => 'Créer un ingrédient';
+
+  @override
+  String get ingredientsImport => 'Importer';
+
+  @override
+  String get ingredientsAlreadyImported => 'Déjà importé';
+
+  @override
+  String get ingredientsImportInfo =>
+      'Importer crée une copie personnelle, modifiable librement, sans toucher à l\'ingrédient système.';
+
+  @override
+  String get ingredientBadgeSystem => 'système';
+
+  @override
+  String get ingredientImportedToast => 'Ingrédient importé';
+
+  @override
+  String get ingredientDeletedToast => 'Ingrédient supprimé';
+
+  @override
+  String get ingredientCreatedToast => 'Ingrédient créé';
+
+  @override
+  String get ingredientSavedToast => 'Modifications enregistrées';
+
+  @override
+  String get ingredientDetailTitle => 'Ingrédient';
+
+  @override
+  String get ingredientFieldName => 'Nom';
+
+  @override
+  String get ingredientFieldUnit => 'Unité de mesure';
+
+  @override
+  String get ingredientFromSystem =>
+      'Provient du catalogue système · copie personnelle';
+
+  @override
+  String get ingredientSectionAlternatives => 'Alternatives';
+
+  @override
+  String get ingredientAlternativesHint => 'relation symétrique';
+
+  @override
+  String get ingredientNoAlternatives => 'Aucune alternative pour l\'instant.';
+
+  @override
+  String get ingredientAddAlternative => 'Ajouter';
+
+  @override
+  String get ingredientSave => 'Enregistrer';
+
+  @override
+  String get ingredientDelete => 'Supprimer l\'ingrédient';
+
+  @override
+  String get ingredientDeleteConfirmTitle => 'Supprimer cet ingrédient ?';
+
+  @override
+  String get ingredientDeleteConfirmBody =>
+      'Il sera masqué mais conservé pour ne pas casser les recettes qui l\'utilisent.';
+
+  @override
+  String get ingredientCreateTitle => 'Nouvel ingrédient';
+
+  @override
+  String get ingredientEditTitle => 'Modifier l\'ingrédient';
+
+  @override
+  String get ingredientCreateAction => 'Créer l\'ingrédient';
+
+  @override
+  String get ingredientNameHint => 'ex : Levure chimique';
+
+  @override
+  String get ingredientNameRequired => 'Donne un nom à l\'ingrédient.';
+
+  @override
+  String get ingredientPickAlternativeTitle => 'Choisir une alternative';
+
+  @override
+  String get ingredientNoCandidate => 'Aucun autre ingrédient disponible.';
+
+  @override
+  String get unitGramme => 'gramme';
+
+  @override
+  String get unitMilligramme => 'mg';
+
+  @override
+  String get unitPiece => 'pièce';
+
+  @override
+  String get unitCuillereCafe => 'c.à.c';
+
+  @override
+  String get unitCuillereSoupe => 'c.à.s';
+
+  @override
+  String get commonCancel => 'Annuler';
+
+  @override
+  String get commonSave => 'Enregistrer';
+
+  @override
+  String get commonDelete => 'Supprimer';
 }

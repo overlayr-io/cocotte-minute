@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 
 import '../../features/auth/data/auth_repository.dart';
+import '../../features/ingredients/data/ingredients_repository.dart';
 import '../network/api_client.dart';
 
 /// Conteneur d'injection de dépendances global.
@@ -13,5 +14,8 @@ void setupServiceLocator() {
   sl.registerLazySingleton<ApiClient>(() => ApiClient());
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepository(apiClient: sl<ApiClient>()),
+  );
+  sl.registerLazySingleton<IngredientsRepository>(
+    () => IngredientsRepository(apiClient: sl<ApiClient>()),
   );
 }

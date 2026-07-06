@@ -321,6 +321,450 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Plus tard'**
   String get keepDataLater;
+
+  /// Onglet de navigation Accueil
+  ///
+  /// In fr, this message translates to:
+  /// **'Accueil'**
+  String get navHome;
+
+  /// No description provided for @navRecipes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recettes'**
+  String get navRecipes;
+
+  /// No description provided for @navShopping.
+  ///
+  /// In fr, this message translates to:
+  /// **'Courses'**
+  String get navShopping;
+
+  /// No description provided for @navAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get navAccount;
+
+  /// Titre d'un écran placeholder
+  ///
+  /// In fr, this message translates to:
+  /// **'Bientôt disponible'**
+  String get comingSoonTitle;
+
+  /// No description provided for @comingSoonBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette fonctionnalité arrive prochainement.'**
+  String get comingSoonBody;
+
+  /// No description provided for @accountTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get accountTitle;
+
+  /// No description provided for @accountGuestName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte invité'**
+  String get accountGuestName;
+
+  /// No description provided for @accountGuestSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tes données vivent sur cet appareil'**
+  String get accountGuestSubtitle;
+
+  /// No description provided for @accountGuestBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Anonyme'**
+  String get accountGuestBadge;
+
+  /// No description provided for @accountReminderTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ton compte invité a 2 semaines'**
+  String get accountReminderTitle;
+
+  /// No description provided for @accountReminderBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Crée un compte gratuit pour sécuriser tes recettes et les retrouver sur tous tes appareils.'**
+  String get accountReminderBody;
+
+  /// No description provided for @accountReminderCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte / Se connecter'**
+  String get accountReminderCta;
+
+  /// No description provided for @accountSectionContent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mon contenu'**
+  String get accountSectionContent;
+
+  /// No description provided for @accountSectionFamily.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ma famille'**
+  String get accountSectionFamily;
+
+  /// No description provided for @accountSectionAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get accountSectionAccount;
+
+  /// No description provided for @accountSectionHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aide'**
+  String get accountSectionHelp;
+
+  /// No description provided for @accountSectionPrivacy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confidentialité'**
+  String get accountSectionPrivacy;
+
+  /// No description provided for @accountRowIngredients.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes ingrédients'**
+  String get accountRowIngredients;
+
+  /// No description provided for @accountRowTags.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tags'**
+  String get accountRowTags;
+
+  /// No description provided for @accountRowFolders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers'**
+  String get accountRowFolders;
+
+  /// No description provided for @accountRowPersons.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnes'**
+  String get accountRowPersons;
+
+  /// No description provided for @accountRowManage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer le compte'**
+  String get accountRowManage;
+
+  /// No description provided for @accountRowLogout.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se déconnecter'**
+  String get accountRowLogout;
+
+  /// No description provided for @accountRowDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer mon compte'**
+  String get accountRowDelete;
+
+  /// No description provided for @accountRowHelpCenter.
+  ///
+  /// In fr, this message translates to:
+  /// **'Centre d\'aide'**
+  String get accountRowHelpCenter;
+
+  /// No description provided for @accountRowContact.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous contacter'**
+  String get accountRowContact;
+
+  /// No description provided for @accountRowPrivacyPolicy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Politique de confidentialité'**
+  String get accountRowPrivacyPolicy;
+
+  /// No description provided for @accountRowTerms.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions d\'utilisation'**
+  String get accountRowTerms;
+
+  /// No description provided for @accountRowManageData.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer mes données'**
+  String get accountRowManageData;
+
+  /// No description provided for @ingredientsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes ingrédients'**
+  String get ingredientsTitle;
+
+  /// No description provided for @ingredientsTabMine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes ingrédients'**
+  String get ingredientsTabMine;
+
+  /// No description provided for @ingredientsTabCatalog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catalogue'**
+  String get ingredientsTabCatalog;
+
+  /// No description provided for @ingredientsSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher un ingrédient'**
+  String get ingredientsSearchHint;
+
+  /// No description provided for @ingredientsCatalogSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher dans le catalogue'**
+  String get ingredientsCatalogSearchHint;
+
+  /// No description provided for @ingredientsEmptyMine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun ingrédient pour l\'instant. Crée-en un ou importe depuis le catalogue.'**
+  String get ingredientsEmptyMine;
+
+  /// No description provided for @ingredientsEmptyCatalog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun ingrédient dans le catalogue.'**
+  String get ingredientsEmptyCatalog;
+
+  /// No description provided for @ingredientsNoSearchResult.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun résultat.'**
+  String get ingredientsNoSearchResult;
+
+  /// No description provided for @ingredientsCreateCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un ingrédient'**
+  String get ingredientsCreateCta;
+
+  /// No description provided for @ingredientsImport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer'**
+  String get ingredientsImport;
+
+  /// No description provided for @ingredientsAlreadyImported.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déjà importé'**
+  String get ingredientsAlreadyImported;
+
+  /// No description provided for @ingredientsImportInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer crée une copie personnelle, modifiable librement, sans toucher à l\'ingrédient système.'**
+  String get ingredientsImportInfo;
+
+  /// No description provided for @ingredientBadgeSystem.
+  ///
+  /// In fr, this message translates to:
+  /// **'système'**
+  String get ingredientBadgeSystem;
+
+  /// No description provided for @ingredientImportedToast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ingrédient importé'**
+  String get ingredientImportedToast;
+
+  /// No description provided for @ingredientDeletedToast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ingrédient supprimé'**
+  String get ingredientDeletedToast;
+
+  /// No description provided for @ingredientCreatedToast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ingrédient créé'**
+  String get ingredientCreatedToast;
+
+  /// No description provided for @ingredientSavedToast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifications enregistrées'**
+  String get ingredientSavedToast;
+
+  /// No description provided for @ingredientDetailTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ingrédient'**
+  String get ingredientDetailTitle;
+
+  /// No description provided for @ingredientFieldName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get ingredientFieldName;
+
+  /// No description provided for @ingredientFieldUnit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Unité de mesure'**
+  String get ingredientFieldUnit;
+
+  /// No description provided for @ingredientFromSystem.
+  ///
+  /// In fr, this message translates to:
+  /// **'Provient du catalogue système · copie personnelle'**
+  String get ingredientFromSystem;
+
+  /// No description provided for @ingredientSectionAlternatives.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alternatives'**
+  String get ingredientSectionAlternatives;
+
+  /// No description provided for @ingredientAlternativesHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'relation symétrique'**
+  String get ingredientAlternativesHint;
+
+  /// No description provided for @ingredientNoAlternatives.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune alternative pour l\'instant.'**
+  String get ingredientNoAlternatives;
+
+  /// No description provided for @ingredientAddAlternative.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter'**
+  String get ingredientAddAlternative;
+
+  /// No description provided for @ingredientSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get ingredientSave;
+
+  /// No description provided for @ingredientDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer l\'ingrédient'**
+  String get ingredientDelete;
+
+  /// No description provided for @ingredientDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cet ingrédient ?'**
+  String get ingredientDeleteConfirmTitle;
+
+  /// No description provided for @ingredientDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Il sera masqué mais conservé pour ne pas casser les recettes qui l\'utilisent.'**
+  String get ingredientDeleteConfirmBody;
+
+  /// No description provided for @ingredientCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvel ingrédient'**
+  String get ingredientCreateTitle;
+
+  /// No description provided for @ingredientEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier l\'ingrédient'**
+  String get ingredientEditTitle;
+
+  /// No description provided for @ingredientCreateAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer l\'ingrédient'**
+  String get ingredientCreateAction;
+
+  /// No description provided for @ingredientNameHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'ex : Levure chimique'**
+  String get ingredientNameHint;
+
+  /// No description provided for @ingredientNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Donne un nom à l\'ingrédient.'**
+  String get ingredientNameRequired;
+
+  /// No description provided for @ingredientPickAlternativeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir une alternative'**
+  String get ingredientPickAlternativeTitle;
+
+  /// No description provided for @ingredientNoCandidate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun autre ingrédient disponible.'**
+  String get ingredientNoCandidate;
+
+  /// No description provided for @unitGramme.
+  ///
+  /// In fr, this message translates to:
+  /// **'gramme'**
+  String get unitGramme;
+
+  /// No description provided for @unitMilligramme.
+  ///
+  /// In fr, this message translates to:
+  /// **'mg'**
+  String get unitMilligramme;
+
+  /// No description provided for @unitPiece.
+  ///
+  /// In fr, this message translates to:
+  /// **'pièce'**
+  String get unitPiece;
+
+  /// No description provided for @unitCuillereCafe.
+  ///
+  /// In fr, this message translates to:
+  /// **'c.à.c'**
+  String get unitCuillereCafe;
+
+  /// No description provided for @unitCuillereSoupe.
+  ///
+  /// In fr, this message translates to:
+  /// **'c.à.s'**
+  String get unitCuillereSoupe;
+
+  /// No description provided for @commonCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get commonCancel;
+
+  /// No description provided for @commonSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get commonSave;
+
+  /// No description provided for @commonDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer'**
+  String get commonDelete;
 }
 
 class _AppLocalizationsDelegate

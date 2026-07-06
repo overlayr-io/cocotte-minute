@@ -1,14 +1,24 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
-import { jwtVerify } from 'jose';
+import {
+  createRemoteJWKSet,
+  decodeProtectedHeader,
+  type JWTPayload,
+  jwtVerify,
+} from 'jose';
 
 import { AuthenticatedUser } from '../auth/authenticated-user';
 
 /**
  * Guard unique de vérification d'authentification. Seul endroit du serveur qui
- * connaît le format du JWT Supabase : il vérifie la signature HS256 avec
- * SUPABASE_JWT_SECRET puis attache un AuthenticatedUser normalisé à la requête.
+ * connaît le format du JWT Supabase : il vérifie la signature puis attache un
+ * AuthenticatedUser normalisé à la requête.
+ *
+ * Supabase émet aujourd'hui des tokens signés en **asymétrique (ES256/RS256)**
+ * via ses "JWT signing keys" : on les vérifie contre le JWKS public du projet.
+ * On garde le chemin **HS256** (secret partagé legacy) en repli pour les projets
+ * ou tokens encore basés sur l'ancien `SUPABASE_JWT_SECRET`.
  *
  * NB : NestJS ne fait QUE vérifier le token — aucune logique d'auth custom, pas de
  * Passport. L'émission des tokens reste 100% côté Supabase.
@@ -16,9 +26,13 @@ import { AuthenticatedUser } from '../auth/authenticated-user';
 @Injectable()
 export class SupabaseAuthGuard implements CanActivate {
   private readonly secret: Uint8Array;
+  private readonly jwks: ReturnType<typeof createRemoteJWKSet>;
 
   constructor(config: ConfigService) {
     this.secret = new TextEncoder().encode(config.getOrThrow<string>('SUPABASE_JWT_SECRET'));
+    const baseUrl = config.getOrThrow<string>('SUPABASE_URL').replace(/\/+$/, '');
+    // JWKS public du projet ; jose met en cache les clés et gère leur rotation.
+    this.jwks = createRemoteJWKSet(new URL(`${baseUrl}/auth/v1/.well-known/jwks.json`));
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -29,9 +43,7 @@ export class SupabaseAuthGuard implements CanActivate {
     }
 
     try {
-      const { payload } = await jwtVerify(token, this.secret, {
-        algorithms: ['HS256'],
-      });
+      const payload = await this.verifyToken(token);
 
       if (!payload.sub) {
         throw new UnauthorizedException('Token sans identifiant utilisateur');
@@ -51,6 +63,20 @@ export class SupabaseAuthGuard implements CanActivate {
       }
       throw new UnauthorizedException('Token invalide ou expiré');
     }
+  }
+
+  /**
+   * Vérifie la signature selon l'algo annoncé dans l'en-tête du token :
+   * HS256 → secret partagé legacy ; sinon (ES256/RS256) → JWKS asymétrique.
+   */
+  private async verifyToken(token: string): Promise<JWTPayload> {
+    const { alg } = decodeProtectedHeader(token);
+    if (alg === 'HS256') {
+      const { payload } = await jwtVerify(token, this.secret, { algorithms: ['HS256'] });
+      return payload;
+    }
+    const { payload } = await jwtVerify(token, this.jwks, { algorithms: ['ES256', 'RS256'] });
+    return payload;
   }
 
   private extractBearerToken(request: Request): string | null {

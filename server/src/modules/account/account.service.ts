@@ -1,12 +1,12 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
+import { IngredientsService } from '../ingredients/ingredients.service';
 
 @Injectable()
 export class AccountService {
   private readonly logger = new Logger(AccountService.name);
 
-  constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
+  constructor(private readonly ingredientsService: IngredientsService) {}
 
   /**
    * "Repartir de zéro" : supprime en cascade toutes les données métier liées à
@@ -20,14 +20,10 @@ export class AccountService {
    * dans une transaction unique pour garantir l'atomicité de la remise à zéro.
    */
   async resetGuestData(userId: string): Promise<void> {
-    await this.db.transaction(async (tx) => {
-      // TODO(features): à mesure que les tables métier arrivent, supprimer ici
-      // les lignes appartenant à `userId` (ordre respectant les FK), ex :
-      //   await tx.delete(shoppingLists).where(eq(shoppingLists.userId, userId));
-      //   await tx.delete(recipes).where(eq(recipes.userId, userId));
-      void tx;
-      void userId;
-    });
+    // Purge déléguée à chaque domaine via son service (isolation des modules).
+    // TODO(features): brancher ici les autres domaines à mesure qu'ils arrivent
+    //   (recettes, sous-recettes, tags, listes de courses...).
+    await this.ingredientsService.deleteAllForUser(userId);
     this.logger.log(`Données invité réinitialisées pour l'utilisateur ${userId}`);
   }
 }

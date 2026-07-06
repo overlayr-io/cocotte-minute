@@ -1,4 +1,7 @@
+import 'dart:io' show Platform;
+
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../config/env.dart';
 import '../supabase/supabase_client.dart';
@@ -11,7 +14,7 @@ import '../supabase/supabase_client.dart';
 class ApiClient {
   ApiClient({Dio? dio}) : _dio = dio ?? Dio() {
     _dio.options
-      ..baseUrl = Env.apiBaseUrl
+      ..baseUrl = _resolveBaseUrl(Env.apiBaseUrl)
       ..connectTimeout = const Duration(seconds: 10)
       ..receiveTimeout = const Duration(seconds: 15)
       ..contentType = Headers.jsonContentType;
@@ -33,4 +36,18 @@ class ApiClient {
   final Dio _dio;
 
   Dio get raw => _dio;
+
+  /// Réécrit `localhost` pour l'émulateur Android, où la machine hôte (qui
+  /// héberge le serveur NestJS) est joignable via `10.0.2.2` et non `localhost`
+  /// (qui pointe vers l'émulateur lui-même). Confort de dev ; sans effet si une
+  /// URL explicite est fournie via `--dart-define=API_BASE_URL=...`.
+  static String _resolveBaseUrl(String raw) {
+    if (kIsWeb) return raw;
+    if (Platform.isAndroid) {
+      return raw
+          .replaceFirst('localhost', '10.0.2.2')
+          .replaceFirst('127.0.0.1', '10.0.2.2');
+    }
+    return raw;
+  }
 }
