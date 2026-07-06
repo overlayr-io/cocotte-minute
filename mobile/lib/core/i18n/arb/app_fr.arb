@@ -15,5 +15,99 @@
   "homeWelcome": "Bienvenue dans Cocotte Minute",
   "@homeWelcome": {
     "description": "Message d'accueil sur la page d'accueil"
-  }
+  },
+  "homeCreateAccountCta": "Créer un compte / Se connecter",
+  "@homeCreateAccountCta": {
+    "description": "Bouton temporaire depuis l'accueil vers l'écran d'auth"
+  },
+  "authSkip": "Passer",
+  "@authSkip": {
+    "description": "Action pour ignorer l'écran d'auth et rester invité"
+  },
+  "authCreateTitle": "Crée ton compte",
+  "@authCreateTitle": {
+    "description": "Titre de l'écran en mode inscription"
+  },
+  "authCreateSubtitle": "Retrouve tes recettes sur tous tes appareils. C'est optionnel — tu peux continuer sans compte.",
+  "@authCreateSubtitle": {
+    "description": "Sous-titre en mode inscription"
+  },
+  "authSignInTitle": "Content de te revoir",
+  "@authSignInTitle": {
+    "description": "Titre de l'écran en mode connexion"
+  },
+  "authSignInSubtitle": "Connecte-toi pour retrouver tes recettes.",
+  "@authSignInSubtitle": {
+    "description": "Sous-titre en mode connexion"
+  },
+  "authEmailLabel": "Email",
+  "@authEmailLabel": {},
+  "authEmailHint": "ton@email.com",
+  "@authEmailHint": {},
+  "authPasswordLabel": "Mot de passe",
+  "@authPasswordLabel": {},
+  "authPasswordHint": "Ton mot de passe",
+  "@authPasswordHint": {},
+  "authCreateAction": "Créer mon compte",
+  "@authCreateAction": {
+    "description": "Bouton principal en mode inscription"
+  },
+  "authSignInAction": "Se connecter",
+  "@authSignInAction": {
+    "description": "Bouton principal en mode connexion"
+  },
+  "authDividerOr": "ou",
+  "@authDividerOr": {},
+  "authContinueGoogle": "Continuer avec Google",
+  "@authContinueGoogle": {},
+  "authContinueApple": "Continuer avec Apple",
+  "@authContinueApple": {},
+  "authAlreadyHaveAccount": "Déjà un compte ?",
+  "@authAlreadyHaveAccount": {},
+  "authNoAccountYet": "Pas encore de compte ?",
+  "@authNoAccountYet": {},
+  "authSwitchToSignIn": "Se connecter",
+  "@authSwitchToSignIn": {
+    "description": "Lien pour basculer vers le mode connexion"
+  },
+  "authSwitchToCreate": "Créer un compte",
+  "@authSwitchToCreate": {
+    "description": "Lien pour basculer vers le mode inscription"
+  },
+  "authEmailInvalid": "Entre une adresse email valide.",
+  "@authEmailInvalid": {},
+  "authPasswordTooShort": "6 caractères minimum.",
+  "@authPasswordTooShort": {},
+  "authLegalPrefix": "En continuant, tu acceptes nos ",
+  "@authLegalPrefix": {
+    "description": "Texte des mentions légales avant le lien CGU"
+  },
+  "authLegalTerms": "Conditions d'utilisation",
+  "@authLegalTerms": {},
+  "authLegalAnd": " et notre ",
+  "@authLegalAnd": {},
+  "authLegalPrivacy": "Politique de confidentialité",
+  "@authLegalPrivacy": {},
+  "authLegalSuffix": ".",
+  "@authLegalSuffix": {},
+  "keepDataTitle": "Compte créé !",
+  "@keepDataTitle": {
+    "description": "Titre de la modal post-création"
+  },
+  "keepDataDescription": "Tes recettes créées en tant qu'invité sont prêtes. Que veux-tu en faire ?",
+  "@keepDataDescription": {},
+  "keepDataKeepTitle": "Conserver mes recettes",
+  "@keepDataKeepTitle": {},
+  "keepDataKeepSubtitle": "Tout reste lié à ce compte",
+  "@keepDataKeepSubtitle": {},
+  "keepDataRecommended": "Conseillé",
+  "@keepDataRecommended": {},
+  "keepDataResetTitle": "Repartir de zéro",
+  "@keepDataResetTitle": {},
+  "keepDataResetSubtitle": "Efface les données invité",
+  "@keepDataResetSubtitle": {},
+  "keepDataConfirm": "Continuer",
+  "@keepDataConfirm": {},
+  "keepDataLater": "Plus tard",
+  "@keepDataLater": {}
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/auth/auth_bloc.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
+import '../../../auth/presentation/pages/auth_page.dart';
 
 /// Page d'accueil provisoire — sert de point d'ancrage au bootstrap.
 /// Les vraies pages de features viendront après validation du design.
@@ -29,6 +30,15 @@ class HomePage extends StatelessWidget {
                 'Session anonyme active',
                 style: TextStyle(fontStyle: FontStyle.italic),
               ),
+            // CTA temporaire vers l'écran d'auth, en attendant l'écran Compte.
+            if (isAnonymous) ...[
+              const SizedBox(height: 24),
+              FilledButton(
+                onPressed: () =>
+                    Navigator.of(context).push(AuthPage.route()),
+                child: Text(l10n.homeCreateAccountCta),
+              ),
+            ],
           ],
         ),
       ),

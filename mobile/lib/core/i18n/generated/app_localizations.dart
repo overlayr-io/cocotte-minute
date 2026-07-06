@@ -117,6 +117,216 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Bienvenue dans Cocotte Minute'**
   String get homeWelcome;
+
+  /// Bouton temporaire depuis l'accueil vers l'écran d'auth
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte / Se connecter'**
+  String get homeCreateAccountCta;
+
+  /// Action pour ignorer l'écran d'auth et rester invité
+  ///
+  /// In fr, this message translates to:
+  /// **'Passer'**
+  String get authSkip;
+
+  /// Titre de l'écran en mode inscription
+  ///
+  /// In fr, this message translates to:
+  /// **'Crée ton compte'**
+  String get authCreateTitle;
+
+  /// Sous-titre en mode inscription
+  ///
+  /// In fr, this message translates to:
+  /// **'Retrouve tes recettes sur tous tes appareils. C\'est optionnel — tu peux continuer sans compte.'**
+  String get authCreateSubtitle;
+
+  /// Titre de l'écran en mode connexion
+  ///
+  /// In fr, this message translates to:
+  /// **'Content de te revoir'**
+  String get authSignInTitle;
+
+  /// Sous-titre en mode connexion
+  ///
+  /// In fr, this message translates to:
+  /// **'Connecte-toi pour retrouver tes recettes.'**
+  String get authSignInSubtitle;
+
+  /// No description provided for @authEmailLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Email'**
+  String get authEmailLabel;
+
+  /// No description provided for @authEmailHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'ton@email.com'**
+  String get authEmailHint;
+
+  /// No description provided for @authPasswordLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get authPasswordLabel;
+
+  /// No description provided for @authPasswordHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ton mot de passe'**
+  String get authPasswordHint;
+
+  /// Bouton principal en mode inscription
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer mon compte'**
+  String get authCreateAction;
+
+  /// Bouton principal en mode connexion
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get authSignInAction;
+
+  /// No description provided for @authDividerOr.
+  ///
+  /// In fr, this message translates to:
+  /// **'ou'**
+  String get authDividerOr;
+
+  /// No description provided for @authContinueGoogle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer avec Google'**
+  String get authContinueGoogle;
+
+  /// No description provided for @authContinueApple.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer avec Apple'**
+  String get authContinueApple;
+
+  /// No description provided for @authAlreadyHaveAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déjà un compte ?'**
+  String get authAlreadyHaveAccount;
+
+  /// No description provided for @authNoAccountYet.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas encore de compte ?'**
+  String get authNoAccountYet;
+
+  /// Lien pour basculer vers le mode connexion
+  ///
+  /// In fr, this message translates to:
+  /// **'Se connecter'**
+  String get authSwitchToSignIn;
+
+  /// Lien pour basculer vers le mode inscription
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un compte'**
+  String get authSwitchToCreate;
+
+  /// No description provided for @authEmailInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Entre une adresse email valide.'**
+  String get authEmailInvalid;
+
+  /// No description provided for @authPasswordTooShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'6 caractères minimum.'**
+  String get authPasswordTooShort;
+
+  /// Texte des mentions légales avant le lien CGU
+  ///
+  /// In fr, this message translates to:
+  /// **'En continuant, tu acceptes nos '**
+  String get authLegalPrefix;
+
+  /// No description provided for @authLegalTerms.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions d\'utilisation'**
+  String get authLegalTerms;
+
+  /// No description provided for @authLegalAnd.
+  ///
+  /// In fr, this message translates to:
+  /// **' et notre '**
+  String get authLegalAnd;
+
+  /// No description provided for @authLegalPrivacy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Politique de confidentialité'**
+  String get authLegalPrivacy;
+
+  /// No description provided for @authLegalSuffix.
+  ///
+  /// In fr, this message translates to:
+  /// **'.'**
+  String get authLegalSuffix;
+
+  /// Titre de la modal post-création
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte créé !'**
+  String get keepDataTitle;
+
+  /// No description provided for @keepDataDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tes recettes créées en tant qu\'invité sont prêtes. Que veux-tu en faire ?'**
+  String get keepDataDescription;
+
+  /// No description provided for @keepDataKeepTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conserver mes recettes'**
+  String get keepDataKeepTitle;
+
+  /// No description provided for @keepDataKeepSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout reste lié à ce compte'**
+  String get keepDataKeepSubtitle;
+
+  /// No description provided for @keepDataRecommended.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conseillé'**
+  String get keepDataRecommended;
+
+  /// No description provided for @keepDataResetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repartir de zéro'**
+  String get keepDataResetTitle;
+
+  /// No description provided for @keepDataResetSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Efface les données invité'**
+  String get keepDataResetSubtitle;
+
+  /// No description provided for @keepDataConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer'**
+  String get keepDataConfirm;
+
+  /// No description provided for @keepDataLater.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus tard'**
+  String get keepDataLater;
 }
 
 class _AppLocalizationsDelegate
