@@ -5,7 +5,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { and, eq, isNull, ne, sql } from 'drizzle-orm';
+import { and, eq, inArray, isNull, ne, sql } from 'drizzle-orm';
 
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import { tags, type TagRow } from '../../db/schema/tags.schema';
@@ -40,6 +40,27 @@ export class TagsService {
   private readonly logger = new Logger(TagsService.name);
 
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
+
+  /**
+   * Tags possédés par l'utilisateur parmi une liste d'ids (hors supprimés).
+   * Exposé pour PeopleService : hydratation des tags associés à une personne et
+   * validation d'appartenance, sans que People accède au schéma Tags.
+   */
+  async listByIds(userId: string, ids: string[]): Promise<TagDto[]> {
+    if (ids.length === 0) return [];
+    const rows = await this.db
+      .select()
+      .from(tags)
+      .where(
+        and(
+          eq(tags.ownerId, userId),
+          inArray(tags.id, ids),
+          isNull(tags.deletedAt),
+        ),
+      )
+      .orderBy(tags.name);
+    return rows.map((row) => toDto(row));
+  }
 
   /** Tags de l'utilisateur, hors supprimés, triés par nom. */
   async listMine(userId: string): Promise<TagDto[]> {
