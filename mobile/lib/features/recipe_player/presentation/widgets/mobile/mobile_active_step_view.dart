@@ -40,137 +40,139 @@ class MobileActiveStepView extends StatelessWidget {
     final showChipInTopBar =
         runningTimer != null && runningTimer.stepId != step.sourceStepId;
 
-    return Column(
-      children: [
-        if (step.subRecipe != null) SubRecipeStrip(subRecipe: step.subRecipe!),
-        _TopBar(
-          cubit: cubit,
-          state: state,
-          chipTimer: showChipInTopBar ? runningTimer : null,
-        ),
-        Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(
-                flex: 3,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 22, 18, 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 46,
-                        height: 46,
-                        decoration: BoxDecoration(
-                          color: AppColors.textPrimary,
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '${step.index + 1}',
-                          style: const TextStyle(
-                            fontFamily: AppFonts.display,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 21,
-                            color: Colors.white,
+    return SafeArea(
+      child: Column(
+        children: [
+          if (step.subRecipe != null) SubRecipeStrip(subRecipe: step.subRecipe!),
+          _TopBar(
+            cubit: cubit,
+            state: state,
+            chipTimer: showChipInTopBar ? runningTimer : null,
+          ),
+          Expanded(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(28, 22, 18, 20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 46,
+                          height: 46,
+                          decoration: BoxDecoration(
+                            color: AppColors.textPrimary,
+                            borderRadius: BorderRadius.circular(15),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Expanded(
-                        child: SingleChildScrollView(
+                          alignment: Alignment.center,
                           child: Text(
-                            step.description,
+                            '${step.index + 1}',
                             style: const TextStyle(
                               fontFamily: AppFonts.display,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 24,
-                              height: 1.25,
-                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 21,
+                              color: Colors.white,
                             ),
                           ),
                         ),
-                      ),
-                      if (step.banner != null) ...[
-                        const SizedBox(height: 12),
-                        StepBannerBox(banner: step.banner!),
-                      ],
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          RoundNavButton(
-                            icon: Icons.chevron_left_rounded,
-                            onTap: state.isFirstStep ? null : cubit.previousStep,
+                        const SizedBox(height: 16),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Text(
+                              step.description,
+                              style: const TextStyle(
+                                fontFamily: AppFonts.display,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 24,
+                                height: 1.25,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              onPressed: cubit.nextStep,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 15),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                        ),
+                        if (step.banner != null) ...[
+                          const SizedBox(height: 12),
+                          StepBannerBox(banner: step.banner!),
+                        ],
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            RoundNavButton(
+                              icon: Icons.chevron_left_rounded,
+                              onTap: state.isFirstStep ? null : cubit.previousStep,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: cubit.nextStep,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primary,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                ),
+                                icon: const Icon(Icons.chevron_right_rounded),
+                                label: Text(
+                                  state.isLastStep
+                                      ? l10n.playerNext
+                                      : l10n.playerNextStep,
+                                  style: const TextStyle(fontWeight: FontWeight.w700),
                                 ),
                               ),
-                              icon: const Icon(Icons.chevron_right_rounded),
-                              label: Text(
-                                state.isLastStep
-                                    ? l10n.playerNext
-                                    : l10n.playerNextStep,
-                                style: const TextStyle(fontWeight: FontWeight.w700),
-                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Container(
-                  color: AppColors.panelBackground,
-                  padding: const EdgeInsets.all(18),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        if (state.detail.summary.photoUrl != null)
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(18),
-                            child: Image.network(
-                              state.detail.summary.photoUrl!,
-                              height: 140,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        const SizedBox(height: 14),
-                        if (stepTimer != null)
-                          StepTimerCard(cubit: cubit, timer: stepTimer)
-                        else
-                          AddTimerButton(
-                            stepId: step.sourceStepId,
-                            description: step.description,
-                            cubit: cubit,
-                          ),
-                        const SizedBox(height: 14),
-                        StepIngredientsPanel(
-                          ingredients: step.ingredients,
-                          scale: scale,
+                          ],
                         ),
                       ],
                     ),
                   ),
                 ),
-              ),
-            ],
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    color: AppColors.panelBackground,
+                    padding: const EdgeInsets.all(18),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (state.detail.summary.photoUrl != null)
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(18),
+                              child: Image.network(
+                                state.detail.summary.photoUrl!,
+                                height: 140,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          const SizedBox(height: 14),
+                          if (stepTimer != null)
+                            StepTimerCard(cubit: cubit, timer: stepTimer)
+                          else
+                            AddTimerButton(
+                              stepId: step.sourceStepId,
+                              description: step.description,
+                              cubit: cubit,
+                            ),
+                          const SizedBox(height: 14),
+                          StepIngredientsPanel(
+                            ingredients: step.ingredients,
+                            scale: scale,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
