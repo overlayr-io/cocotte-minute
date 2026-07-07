@@ -6,7 +6,7 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { and, asc, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, ilike, inArray, isNull, sql } from 'drizzle-orm';
 
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import {
@@ -28,6 +28,23 @@ import {
   UpdateRecipeStepDto,
 } from './dto/recipe-relations.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
+
+/**
+ * Filtres de recherche déjà résolus (dossiers dépliés en descendants, personnes
+ * traduites en tags) par la couche d'orchestration (SearchService). RecipesService
+ * ne connaît que ses propres pivots : il n'interroge jamais catégories/personnes.
+ * Toutes les dimensions renseignées se combinent en ET.
+ */
+export interface RecipeSearchFilters {
+  /** Recherche texte sur le nom (insensible à la casse). */
+  q?: string;
+  /** Dossiers (déjà dépliés) : la recette est rangée dans au moins un (OU). */
+  categoryIds?: string[];
+  /** Tags explicites : la recette porte TOUS ces tags (ET intra-dimension). */
+  allTagIds?: string[];
+  /** Tags dérivés des personnes : la recette porte AU MOINS UN de ces tags (OU). */
+  anyTagIds?: string[];
+}
 
 /** Ligne de liste / carte (sans les relations lourdes). */
 export interface RecipeSummaryDto {
@@ -118,6 +135,11 @@ export interface RecipeDetailDto extends RecipeSummaryDto {
   tagIds: string[];
 }
 
+/** Échappe les métacaractères LIKE (`%`, `_`, `\`) d'une saisie utilisateur. */
+function escapeLike(value: string): string {
+  return value.replace(/[\\%_]/g, (c) => `\\${c}`);
+}
+
 function toSummary(row: RecipeRow): RecipeSummaryDto {
   return {
     id: row.id,
@@ -177,6 +199,77 @@ export class RecipesService {
       )
       .orderBy(desc(recipes.createdAt));
     return rows.map((r) => toSummary(r.recipe));
+  }
+
+  /**
+   * Recherche avancée sur mes recettes (non supprimées), plus récentes d'abord.
+   * Chaque dimension renseignée est un sous-critère combiné en ET via des
+   * sous-requêtes sur les pivots `recipe_categories` / `recipe_tags` (le domaine
+   * de Recipes). Sans aucun filtre, se comporte comme `listMine`. Les filtres
+   * transverses (descendants de dossier, tags d'une personne) sont résolus en
+   * amont par SearchService — ici on ne touche qu'aux tables de Recipes.
+   */
+  async search(
+    userId: string,
+    filters: RecipeSearchFilters,
+  ): Promise<RecipeSummaryDto[]> {
+    const conditions = [eq(recipes.authorId, userId), isNull(recipes.deletedAt)];
+
+    const q = filters.q?.trim();
+    if (q) {
+      conditions.push(ilike(recipes.name, `%${escapeLike(q)}%`));
+    }
+
+    if (filters.categoryIds && filters.categoryIds.length > 0) {
+      conditions.push(
+        inArray(
+          recipes.id,
+          this.db
+            .select({ id: recipeCategories.recipeId })
+            .from(recipeCategories)
+            .where(inArray(recipeCategories.categoryId, filters.categoryIds)),
+        ),
+      );
+    }
+
+    if (filters.anyTagIds && filters.anyTagIds.length > 0) {
+      conditions.push(
+        inArray(
+          recipes.id,
+          this.db
+            .select({ id: recipeTags.recipeId })
+            .from(recipeTags)
+            .where(inArray(recipeTags.tagId, filters.anyTagIds)),
+        ),
+      );
+    }
+
+    if (filters.allTagIds && filters.allTagIds.length > 0) {
+      // ET intra-dimension : la recette doit porter chacun des tags → on ne garde
+      // que les recette_id ayant autant de tags distincts (parmi la sélection)
+      // que de tags demandés.
+      const uniqueTagIds = [...new Set(filters.allTagIds)];
+      conditions.push(
+        inArray(
+          recipes.id,
+          this.db
+            .select({ id: recipeTags.recipeId })
+            .from(recipeTags)
+            .where(inArray(recipeTags.tagId, uniqueTagIds))
+            .groupBy(recipeTags.recipeId)
+            .having(
+              sql`count(distinct ${recipeTags.tagId}) = ${uniqueTagIds.length}`,
+            ),
+        ),
+      );
+    }
+
+    const rows = await this.db
+      .select()
+      .from(recipes)
+      .where(and(...conditions))
+      .orderBy(desc(recipes.createdAt));
+    return rows.map(toSummary);
   }
 
   async create(userId: string, dto: CreateRecipeDto): Promise<RecipeSummaryDto> {

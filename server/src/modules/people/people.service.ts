@@ -69,6 +69,37 @@ export class PeopleService {
     );
   }
 
+  /**
+   * Union des tags portés par un ensemble de personnes possédées, pour la
+   * recherche avancée (« pour qui on cuisine » → recettes compatibles avec au
+   * moins un tag de la/des personne(s) sélectionnée(s)). Lève si un id fourni
+   * n'appartient pas à l'utilisateur. Peut renvoyer un tableau vide si les
+   * personnes sélectionnées ne portent aucun tag (l'appelant en déduit alors
+   * qu'aucune recette ne peut correspondre à ce critère).
+   */
+  async tagIdsForPeople(userId: string, personIds: string[]): Promise<string[]> {
+    if (personIds.length === 0) return [];
+    const uniqueIds = [...new Set(personIds)];
+    const owned = await this.db
+      .select({ id: people.id })
+      .from(people)
+      .where(
+        and(
+          eq(people.ownerId, userId),
+          isNull(people.deletedAt),
+          inArray(people.id, uniqueIds),
+        ),
+      );
+    if (owned.length !== uniqueIds.length) {
+      throw new NotFoundException('Personne introuvable');
+    }
+    const links = await this.db
+      .select({ tagId: personTags.tagId })
+      .from(personTags)
+      .where(inArray(personTags.personId, uniqueIds));
+    return [...new Set(links.map((l) => l.tagId))];
+  }
+
   async create(userId: string, dto: CreatePersonDto): Promise<PersonDto> {
     const [row] = await this.db
       .insert(people)

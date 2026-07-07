@@ -94,6 +94,50 @@ export class CategoriesService {
     return this.recipesService.listByCategory(userId, categoryId);
   }
 
+  /**
+   * Déplie une sélection de dossiers en y ajoutant tous leurs descendants (récursif,
+   * sous-dossiers de sous-dossiers inclus). Utilisé par la recherche avancée pour
+   * qu'un filtre « /Plats » remonte aussi les recettes de « Plats / Pâtes », etc.
+   * Charge l'arborescence du compte en une passe (pas de requête récursive, cohérent
+   * avec `depth`) et lève si un id fourni n'appartient pas à l'utilisateur.
+   */
+  async expandWithDescendants(
+    userId: string,
+    categoryIds: string[],
+  ): Promise<string[]> {
+    if (categoryIds.length === 0) return [];
+    const rows = await this.db
+      .select({ id: categories.id, parentId: categories.parentCategoryId })
+      .from(categories)
+      .where(and(eq(categories.ownerId, userId), isNull(categories.deletedAt)));
+
+    const owned = new Set(rows.map((r) => r.id));
+    for (const id of categoryIds) {
+      if (!owned.has(id)) {
+        throw new NotFoundException('Dossier introuvable');
+      }
+    }
+
+    const childrenOf = new Map<string, string[]>();
+    for (const r of rows) {
+      if (r.parentId) {
+        const arr = childrenOf.get(r.parentId) ?? [];
+        arr.push(r.id);
+        childrenOf.set(r.parentId, arr);
+      }
+    }
+
+    const out = new Set<string>();
+    const stack = [...categoryIds];
+    while (stack.length > 0) {
+      const id = stack.pop()!;
+      if (out.has(id)) continue;
+      out.add(id);
+      for (const child of childrenOf.get(id) ?? []) stack.push(child);
+    }
+    return [...out];
+  }
+
   async create(userId: string, dto: CreateCategoryDto): Promise<CategoryDto> {
     let depth = 1;
     if (dto.parentCategoryId) {
