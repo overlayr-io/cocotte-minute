@@ -133,6 +133,36 @@ describe('CategoriesService', () => {
     });
   });
 
+  describe('listRecipes', () => {
+    it("délègue au service Recipes quand le dossier m'appartient", async () => {
+      const { db } = makeDb([[catRow()]]); // findOwnedOrFail → trouvé
+      const summaries = [{ id: 'r1' }];
+      const recipes = {
+        countByCategoryIds: async () => new Map<string, number>(),
+        countByTagIds: async () => new Map<string, number>(),
+        listByCategory: jest.fn(async () => summaries),
+      } as unknown as import('../recipes/recipes.service').RecipesService;
+      const service = new CategoriesService(db, recipes);
+
+      const result = await service.listRecipes(USER, 'cat-1');
+
+      expect(result).toBe(summaries);
+      expect(recipes.listByCategory as jest.Mock).toHaveBeenCalledWith(
+        USER,
+        'cat-1',
+      );
+    });
+
+    it("lève NotFound si le dossier ne m'appartient pas", async () => {
+      const { db } = makeDb([[catRow({ ownerId: 'other' })]]);
+      const service = new CategoriesService(db, recipesStub);
+
+      await expect(service.listRecipes(USER, 'cat-1')).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+    });
+  });
+
   describe('update', () => {
     it('refuse de modifier un dossier par défaut', async () => {
       const { db } = makeDb([[catRow({ isDefault: true })]]);

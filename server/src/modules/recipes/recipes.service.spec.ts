@@ -89,6 +89,19 @@ describe('RecipesService', () => {
     });
   });
 
+  describe('listByCategory', () => {
+    it('mappe les lignes jointes du pivot en résumés', async () => {
+      // select().from(recipeCategories).innerJoin(recipes) → [{ recipe }]
+      const { db } = makeDb([[{ recipe: recipeRow() }]]);
+      const service = new RecipesService(db, ingredientsStub);
+
+      const result = await service.listByCategory(USER, 'cat-1');
+
+      expect(result).toHaveLength(1);
+      expect(result[0].id).toBe('rec-1');
+    });
+  });
+
   describe('softDelete', () => {
     it('lève NotFound si la recette n’appartient pas à l’utilisateur', async () => {
       const { db } = makeDb([[recipeRow({ authorId: 'someone-else' })]]);
