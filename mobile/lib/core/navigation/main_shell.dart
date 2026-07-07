@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../features/account/presentation/pages/account_page.dart';
+import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/recipes/presentation/pages/recipes_page.dart';
 import '../i18n/generated/app_localizations.dart';
 import '../theme/app_colors.dart';
@@ -19,13 +20,13 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> {
-  int _index = 3; // Compte : seul onglet réellement implémenté pour ce lot.
+  int _index = 0; // Accueil par défaut.
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final tabs = <Widget>[
-      _PlaceholderTab(title: l10n.navHome),
+      const HomePage(),
       const RecipesPage(),
       _PlaceholderTab(title: l10n.navShopping),
       const AccountPage(),

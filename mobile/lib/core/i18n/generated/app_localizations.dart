@@ -1276,6 +1276,66 @@ abstract class AppLocalizations {
   /// **'Cuisson {min} min'**
   String recipeCookShort(int min);
 
+  /// No description provided for @homeGreetingQuestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Que veux-tu préparer aujourd\'hui ?'**
+  String get homeGreetingQuestion;
+
+  /// No description provided for @homeSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une recette'**
+  String get homeSearchHint;
+
+  /// No description provided for @homeSearchComingSoon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche bientôt disponible'**
+  String get homeSearchComingSoon;
+
+  /// No description provided for @homeCategoryAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout'**
+  String get homeCategoryAll;
+
+  /// No description provided for @homeSuggestionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suggestion du jour'**
+  String get homeSuggestionTitle;
+
+  /// No description provided for @homeSuggestionBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suggestion'**
+  String get homeSuggestionBadge;
+
+  /// No description provided for @homeFeaturedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mises en avant'**
+  String get homeFeaturedTitle;
+
+  /// No description provided for @homeFeaturedHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glisse'**
+  String get homeFeaturedHint;
+
+  /// No description provided for @homeEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rien à cuisiner… pour l\'instant'**
+  String get homeEmptyTitle;
+
+  /// No description provided for @homeEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Crée ta première recette avec le bouton +.'**
+  String get homeEmptyBody;
+
   /// No description provided for @commonCancel.
   ///
   /// In fr, this message translates to:

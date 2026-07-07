@@ -656,6 +656,36 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get homeGreetingQuestion => 'Que veux-tu préparer aujourd\'hui ?';
+
+  @override
+  String get homeSearchHint => 'Rechercher une recette';
+
+  @override
+  String get homeSearchComingSoon => 'Recherche bientôt disponible';
+
+  @override
+  String get homeCategoryAll => 'Tout';
+
+  @override
+  String get homeSuggestionTitle => 'Suggestion du jour';
+
+  @override
+  String get homeSuggestionBadge => 'Suggestion';
+
+  @override
+  String get homeFeaturedTitle => 'Mises en avant';
+
+  @override
+  String get homeFeaturedHint => 'Glisse';
+
+  @override
+  String get homeEmptyTitle => 'Rien à cuisiner… pour l\'instant';
+
+  @override
+  String get homeEmptyBody => 'Crée ta première recette avec le bouton +.';
+
+  @override
   String get commonCancel => 'Annuler';
 
   @override
