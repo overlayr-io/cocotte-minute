@@ -4,6 +4,7 @@ import { CategoriesService } from '../categories/categories.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { PeopleService } from '../people/people.service';
 import { RecipesService } from '../recipes/recipes.service';
+import { ShoppingListsService } from '../shopping-lists/shopping-lists.service';
 import { TagsService } from '../tags/tags.service';
 
 @Injectable()
@@ -16,6 +17,7 @@ export class AccountService {
     private readonly peopleService: PeopleService,
     private readonly categoriesService: CategoriesService,
     private readonly recipesService: RecipesService,
+    private readonly shoppingListsService: ShoppingListsService,
   ) {}
 
   /**
@@ -33,7 +35,10 @@ export class AccountService {
     // Purge déléguée à chaque domaine via son service (isolation des modules).
     // TODO(features): brancher ici les autres domaines à mesure qu'ils arrivent
     //   (listes de courses...).
-    // Recettes d'abord : leurs pivots (recipe_ingredients/categories/tags) partent
+    // Listes de courses d'abord (leurs articles/recettes partent en cascade) :
+    // elles snapshotent des ingrédients/recettes, on les purge avant ces domaines.
+    await this.shoppingListsService.deleteAllForUser(userId);
+    // Recettes ensuite : leurs pivots (recipe_ingredients/categories/tags) partent
     // en cascade avant la purge des ingrédients, tags et catégories référencés.
     // Personnes ensuite : leurs liaisons person_tags partent avant la purge des tags.
     await this.recipesService.deleteAllForUser(userId);

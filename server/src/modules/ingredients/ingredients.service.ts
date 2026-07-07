@@ -243,6 +243,21 @@ export class IngredientsService {
     this.logger.log(`Ingrédients supprimés pour l'utilisateur ${userId}`);
   }
 
+  /**
+   * Résout une alternative **déclarée** d'un ingrédient (pour le remplacement
+   * « introuvable en magasin » d'une liste de courses). Renvoie l'alternative si
+   * le lien existe et qu'elle appartient à l'utilisateur, sinon null. Exposé à
+   * ShoppingListsService (isolation des domaines).
+   */
+  async resolveAlternative(
+    userId: string,
+    ingredientId: string,
+    alternativeId: string,
+  ): Promise<IngredientDto | null> {
+    const alternatives = await this.listAlternatives(userId, ingredientId);
+    return alternatives.find((a) => a.id === alternativeId) ?? null;
+  }
+
   // --- privé -------------------------------------------------------------
 
   /** Alternatives (non supprimées) d'un ingrédient de l'utilisateur. */

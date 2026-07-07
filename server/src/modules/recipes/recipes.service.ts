@@ -92,6 +92,15 @@ export interface RecipeBaseRefStepDto {
 
 export type RecipeStepDto = RecipeTextStepDto | RecipeBaseRefStepDto;
 
+/** Recette possédée + ses ingrédients directs, pour générer une liste de courses. */
+export interface RecipeForShoppingListDto {
+  id: string;
+  name: string;
+  photoUrl: string | null;
+  servings: number;
+  ingredients: RecipeIngredientLineDto[];
+}
+
 /** Fiche détail complète. */
 export interface RecipeDetailDto extends RecipeSummaryDto {
   authorId: string;
@@ -222,6 +231,72 @@ export class RecipesService {
       categoryIds: categoryRows.map((r) => r.categoryId),
       tagIds: tagRows.map((r) => r.tagId),
     };
+  }
+
+  /**
+   * Recettes possédées (non supprimées) + leurs ingrédients directs, pour générer
+   * une liste de courses (feature liste-courses-auto). N'inclut PAS les ingrédients
+   * des sous-recettes (`recipe_components`) — cohérent avec `getDetail` aujourd'hui ;
+   * le dépliage récursif des composants relèvera d'une itération dédiée. Lève si un
+   * id demandé n'appartient pas à l'utilisateur (ou est supprimé). Exposé à
+   * ShoppingListsService (isolation des domaines : jamais d'accès direct au schéma).
+   */
+  async listForShoppingList(
+    userId: string,
+    recipeIds: string[],
+  ): Promise<RecipeForShoppingListDto[]> {
+    if (recipeIds.length === 0) return [];
+    const uniqueIds = [...new Set(recipeIds)];
+    const rows = await this.db
+      .select()
+      .from(recipes)
+      .where(
+        and(
+          eq(recipes.authorId, userId),
+          isNull(recipes.deletedAt),
+          inArray(recipes.id, uniqueIds),
+        ),
+      );
+    if (rows.length !== uniqueIds.length) {
+      throw new NotFoundException('Recette introuvable');
+    }
+
+    const ingRows = await this.db
+      .select({
+        recipeId: recipeIngredients.recipeId,
+        ingredientId: recipeIngredients.ingredientId,
+        quantity: recipeIngredients.quantity,
+      })
+      .from(recipeIngredients)
+      .where(inArray(recipeIngredients.recipeId, uniqueIds));
+
+    // Hydratation en une passe (nom/unité/image via le service Ingredients).
+    const allIngredientIds = [...new Set(ingRows.map((r) => r.ingredientId))];
+    const owned = await this.ingredientsService.listByIds(userId, allIngredientIds);
+    const ingredientMap = new Map(owned.map((i) => [i.id, i]));
+
+    const linesByRecipe = new Map<string, RecipeIngredientLineDto[]>();
+    for (const r of ingRows) {
+      const info = ingredientMap.get(r.ingredientId);
+      if (!info) continue; // ingrédient supprimé entre-temps → ignoré
+      const arr = linesByRecipe.get(r.recipeId) ?? [];
+      arr.push({
+        id: info.id,
+        name: info.name,
+        unit: info.unit,
+        imageUrl: info.imageUrl,
+        quantity: r.quantity,
+      });
+      linesByRecipe.set(r.recipeId, arr);
+    }
+
+    return rows.map((row) => ({
+      id: row.id,
+      name: row.name,
+      photoUrl: row.photoUrl,
+      servings: row.servings,
+      ingredients: linesByRecipe.get(row.id) ?? [],
+    }));
   }
 
   async update(

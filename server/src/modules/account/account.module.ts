@@ -4,6 +4,7 @@ import { CategoriesModule } from '../categories/categories.module';
 import { IngredientsModule } from '../ingredients/ingredients.module';
 import { PeopleModule } from '../people/people.module';
 import { RecipesModule } from '../recipes/recipes.module';
+import { ShoppingListsModule } from '../shopping-lists/shopping-lists.module';
 import { TagsModule } from '../tags/tags.module';
 import { AccountController } from './account.controller';
 import { AccountService } from './account.service';
@@ -17,6 +18,7 @@ import { AccountService } from './account.service';
     PeopleModule,
     CategoriesModule,
     RecipesModule,
+    ShoppingListsModule,
   ],
   controllers: [AccountController],
   providers: [AccountService],

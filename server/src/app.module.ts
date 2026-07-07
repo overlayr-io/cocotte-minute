@@ -12,6 +12,7 @@ import { HealthModule } from './modules/health/health.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
 import { PeopleModule } from './modules/people/people.module';
 import { RecipesModule } from './modules/recipes/recipes.module';
+import { ShoppingListsModule } from './modules/shopping-lists/shopping-lists.module';
 import { TagsModule } from './modules/tags/tags.module';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -69,6 +70,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     PeopleModule,
     CategoriesModule,
     RecipesModule,
+    ShoppingListsModule,
     AccountModule,
   ],
   providers: [
