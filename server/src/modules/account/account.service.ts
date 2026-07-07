@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CategoriesService } from '../categories/categories.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { PeopleService } from '../people/people.service';
+import { RecipesService } from '../recipes/recipes.service';
 import { TagsService } from '../tags/tags.service';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class AccountService {
     private readonly tagsService: TagsService,
     private readonly peopleService: PeopleService,
     private readonly categoriesService: CategoriesService,
+    private readonly recipesService: RecipesService,
   ) {}
 
   /**
@@ -30,9 +32,11 @@ export class AccountService {
   async resetGuestData(userId: string): Promise<void> {
     // Purge déléguée à chaque domaine via son service (isolation des modules).
     // TODO(features): brancher ici les autres domaines à mesure qu'ils arrivent
-    //   (recettes, sous-recettes, listes de courses...).
-    // Personnes d'abord : leurs liaisons person_tags partent en cascade avant la
-    // purge des tags eux-mêmes.
+    //   (listes de courses...).
+    // Recettes d'abord : leurs pivots (recipe_ingredients/categories/tags) partent
+    // en cascade avant la purge des ingrédients, tags et catégories référencés.
+    // Personnes ensuite : leurs liaisons person_tags partent avant la purge des tags.
+    await this.recipesService.deleteAllForUser(userId);
     await this.peopleService.deleteAllForUser(userId);
     await this.ingredientsService.deleteAllForUser(userId);
     await this.tagsService.deleteAllForUser(userId);

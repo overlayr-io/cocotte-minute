@@ -71,6 +71,27 @@ export class IngredientsService {
     return rows.map(toDto);
   }
 
+  /**
+   * Ingrédients possédés par l'utilisateur parmi une liste d'ids (hors supprimés).
+   * Exposé pour RecipesService : hydratation des ingrédients d'une recette et
+   * validation d'appartenance, sans que Recipes accède au schéma Ingredients.
+   */
+  async listByIds(userId: string, ids: string[]): Promise<IngredientDto[]> {
+    if (ids.length === 0) return [];
+    const rows = await this.db
+      .select()
+      .from(ingredients)
+      .where(
+        and(
+          eq(ingredients.ownerId, userId),
+          inArray(ingredients.id, ids),
+          isNull(ingredients.deletedAt),
+        ),
+      )
+      .orderBy(ingredients.name);
+    return rows.map(toDto);
+  }
+
   /** Catalogue système, annoté du statut "déjà importé" pour l'utilisateur courant. */
   async listSystem(userId: string): Promise<SystemIngredientDto[]> {
     const [rows, mine] = await Promise.all([
