@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 
 import '../../features/auth/data/auth_repository.dart';
 import '../../features/ingredients/data/ingredients_repository.dart';
+import '../../features/tags/data/tags_repository.dart';
 import '../network/api_client.dart';
 
 /// Conteneur d'injection de dépendances global.
@@ -17,5 +18,8 @@ void setupServiceLocator() {
   );
   sl.registerLazySingleton<IngredientsRepository>(
     () => IngredientsRepository(apiClient: sl<ApiClient>()),
+  );
+  sl.registerLazySingleton<TagsRepository>(
+    () => TagsRepository(apiClient: sl<ApiClient>()),
   );
 }
