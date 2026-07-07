@@ -1,6 +1,6 @@
 ---
 feature: liste-courses-auto
-status: planned     # planned | in-progress | done
+status: done        # planned | in-progress | done
 scope: v1           # v1 | v2 | later
 depends_on: [auth, ingredients, recette-base]
 order: 8
