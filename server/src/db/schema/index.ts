@@ -9,3 +9,4 @@ export * from './people.schema';
 export * from './person-tags.schema';
 export * from './categories.schema';
 export * from './recipes.schema';
+export * from './shopping-lists.schema';
