@@ -30,6 +30,14 @@ export interface CancelDeletionResult {
   status: Extract<AccountStatus, 'active'>;
 }
 
+/** Réponse de `GET /account/status` (lecture du statut RGPD courant). */
+export interface AccountStatusResult {
+  /** Statut du compte, `active` par défaut si aucune ligne n'existe encore. */
+  status: AccountStatus;
+  /** Échéance ISO de la suppression définitive si `pending_deletion`, sinon null. */
+  deletionScheduledAt: string | null;
+}
+
 @Injectable()
 export class AccountService {
   private readonly logger = new Logger(AccountService.name);
@@ -93,6 +101,27 @@ export class AccountService {
       anonymous: false,
       deletionScheduledAt: this.deadlineFrom(requestedAt).toISOString(),
     };
+  }
+
+  /**
+   * Lecture du statut RGPD du compte courant (pour la bannière d'annulation).
+   *
+   * Lecture pure : ne crée PAS de ligne `accounts` si elle n'existe pas encore
+   * (contrairement à `ensureAccount`) — un simple check de statut ne doit pas
+   * provisionner de compte. Absence de ligne ⇒ `active`. L'échéance n'est
+   * calculée que pour `pending_deletion`, avec la même logique que
+   * `requestDeletion` (`deadlineFrom`, DRY).
+   */
+  async getStatus(userId: string): Promise<AccountStatusResult> {
+    const [row] = await this.db.select().from(accounts).where(eq(accounts.userId, userId));
+    if (!row) {
+      return { status: 'active', deletionScheduledAt: null };
+    }
+    const deletionScheduledAt =
+      row.status === 'pending_deletion' && row.deletionRequestedAt
+        ? this.deadlineFrom(row.deletionRequestedAt).toISOString()
+        : null;
+    return { status: row.status, deletionScheduledAt };
   }
 
   /**

@@ -138,6 +138,42 @@ describe('AccountService', () => {
     });
   });
 
+  describe('getStatus', () => {
+    it('renvoie `active` sans échéance quand aucune ligne compte n\'existe', async () => {
+      const { db } = makeDb([[]]); // select → aucune ligne
+      const { service } = build(db, adminMock());
+      await expect(service.getStatus(USER)).resolves.toEqual({
+        status: 'active',
+        deletionScheduledAt: null,
+      });
+    });
+
+    it('renvoie `active` sans échéance pour un compte actif', async () => {
+      const { db } = makeDb([[accountRow({ status: 'active' })]]);
+      const { service } = build(db, adminMock());
+      await expect(service.getStatus(USER)).resolves.toEqual({
+        status: 'active',
+        deletionScheduledAt: null,
+      });
+    });
+
+    it('renvoie `pending_deletion` avec l\'échéance J+30 calculée', async () => {
+      const requestedAt = new Date('2026-06-01T00:00:00.000Z');
+      const { db } = makeDb([
+        [accountRow({ status: 'pending_deletion', deletionRequestedAt: requestedAt })],
+      ]);
+      const { service } = build(db, adminMock());
+
+      const res = await service.getStatus(USER);
+
+      expect(res.status).toBe('pending_deletion');
+      const expected = new Date(
+        requestedAt.getTime() + DELETION_DELAY_DAYS * 24 * 60 * 60 * 1000,
+      ).toISOString();
+      expect(res.deletionScheduledAt).toBe(expected);
+    });
+  });
+
   describe('cancelDeletion', () => {
     it('repasse `active` si dans le délai', async () => {
       const requestedAt = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000); // J+5

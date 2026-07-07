@@ -1,10 +1,11 @@
-import { Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
 
 import { AuthenticatedUser } from '../../common/auth/authenticated-user';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { SupabaseAuthGuard } from '../../common/guards/supabase-auth.guard';
 import {
   AccountService,
+  type AccountStatusResult,
   type CancelDeletionResult,
   type RequestDeletionResult,
 } from './account.service';
@@ -22,6 +23,16 @@ export class AccountController {
   @HttpCode(HttpStatus.NO_CONTENT)
   async resetGuestData(@CurrentUser() user: AuthenticatedUser): Promise<void> {
     await this.accountService.resetGuestData(user.id);
+  }
+
+  /**
+   * Statut RGPD du compte courant, pour piloter la bannière d'annulation côté
+   * mobile : `active` par défaut, ou `pending_deletion` avec l'échéance J+30.
+   */
+  @Get('status')
+  @HttpCode(HttpStatus.OK)
+  async getStatus(@CurrentUser() user: AuthenticatedUser): Promise<AccountStatusResult> {
+    return this.accountService.getStatus(user.id);
   }
 
   /**
