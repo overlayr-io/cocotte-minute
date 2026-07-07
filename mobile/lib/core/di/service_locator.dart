@@ -5,6 +5,10 @@ import '../../features/categories/data/categories_repository.dart';
 import '../../features/ingredients/data/ingredients_repository.dart';
 import '../../features/people/data/people_repository.dart';
 import '../../features/recipes/data/recipes_repository.dart';
+import '../../features/shopping_list/data/local/shopping_database.dart';
+import '../../features/shopping_list/data/shopping_list_api.dart';
+import '../../features/shopping_list/data/shopping_list_repository.dart';
+import '../../features/shopping_list/data/shopping_sync_service.dart';
 import '../../features/tags/data/tags_repository.dart';
 import '../network/api_client.dart';
 
@@ -33,5 +37,20 @@ void setupServiceLocator() {
   );
   sl.registerLazySingleton<RecipesRepository>(
     () => RecipesRepository(apiClient: sl<ApiClient>()),
+  );
+
+  // Liste de courses (offline-first) : base SQLite locale + API + sync réseau.
+  sl.registerLazySingleton<ShoppingDatabase>(() => ShoppingDatabase());
+  sl.registerLazySingleton<ShoppingListApi>(
+    () => ShoppingListApi(apiClient: sl<ApiClient>()),
+  );
+  sl.registerLazySingleton<ShoppingListRepository>(
+    () => ShoppingListRepository(
+      database: sl<ShoppingDatabase>(),
+      api: sl<ShoppingListApi>(),
+    ),
+  );
+  sl.registerLazySingleton<ShoppingSyncService>(
+    () => ShoppingSyncService(repository: sl<ShoppingListRepository>()),
   );
 }
