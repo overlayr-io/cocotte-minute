@@ -1,17 +1,19 @@
 import { Module } from '@nestjs/common';
 
+import { SupabaseAdminService } from '../../common/supabase/supabase-admin.service';
 import { CategoriesModule } from '../categories/categories.module';
 import { IngredientsModule } from '../ingredients/ingredients.module';
 import { PeopleModule } from '../people/people.module';
 import { RecipesModule } from '../recipes/recipes.module';
 import { ShoppingListsModule } from '../shopping-lists/shopping-lists.module';
 import { TagsModule } from '../tags/tags.module';
+import { AccountDeletionCron } from './account-deletion.cron';
 import { AccountController } from './account.controller';
 import { AccountService } from './account.service';
 
 @Module({
   // Importe les modules métier pour purger chaque domaine via leur service
-  // exporté (jamais leur schéma) lors du "repartir de zéro".
+  // exporté (jamais leur schéma) lors du "repartir de zéro" et de la suppression RGPD.
   imports: [
     IngredientsModule,
     TagsModule,
@@ -21,6 +23,6 @@ import { AccountService } from './account.service';
     ShoppingListsModule,
   ],
   controllers: [AccountController],
-  providers: [AccountService],
+  providers: [AccountService, AccountDeletionCron, SupabaseAdminService],
 })
 export class AccountModule {}

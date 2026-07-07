@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER } from '@nestjs/core';
+import { ScheduleModule } from '@nestjs/schedule';
 import { LoggerModule } from 'nestjs-pino';
 
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
@@ -63,6 +64,8 @@ const isProduction = process.env.NODE_ENV === 'production';
       },
     }),
     DbModule,
+    // Planificateur CRON (suppression RGPD différée à J+30, cf. account module).
+    ScheduleModule.forRoot(),
     // Modules métier (un module = une feature) :
     HealthModule,
     IngredientsModule,
