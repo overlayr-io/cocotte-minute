@@ -844,6 +844,108 @@ abstract class AppLocalizations {
   /// **'« {name} » sera retiré des recettes et des personnes associées.'**
   String tagDeleteConfirmBody(String name);
 
+  /// No description provided for @familleTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Famille'**
+  String get familleTitle;
+
+  /// No description provided for @familleIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associe des tags à chaque personne pour mettre en avant les recettes qui lui conviennent.'**
+  String get familleIntro;
+
+  /// No description provided for @familleEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune personne pour l\'instant. Ajoute les membres de ta famille pour leur associer des tags.'**
+  String get familleEmpty;
+
+  /// No description provided for @personCreateCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une personne'**
+  String get personCreateCta;
+
+  /// No description provided for @personCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle personne'**
+  String get personCreateTitle;
+
+  /// No description provided for @personEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get personEditTitle;
+
+  /// No description provided for @personFieldFirstName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prénom'**
+  String get personFieldFirstName;
+
+  /// No description provided for @personFieldLastName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get personFieldLastName;
+
+  /// No description provided for @personFirstNameHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'ex : Emma'**
+  String get personFirstNameHint;
+
+  /// No description provided for @personLastNameHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'ex : Martin'**
+  String get personLastNameHint;
+
+  /// No description provided for @personFirstNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Donne un prénom à la personne.'**
+  String get personFirstNameRequired;
+
+  /// No description provided for @personTagsLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tags associés'**
+  String get personTagsLabel;
+
+  /// No description provided for @personTagsEmptyHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Crée d\'abord des tags pour pouvoir les associer à cette personne.'**
+  String get personTagsEmptyHint;
+
+  /// No description provided for @personNoTags.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun tag associé'**
+  String get personNoTags;
+
+  /// No description provided for @personDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la personne'**
+  String get personDelete;
+
+  /// No description provided for @personDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cette personne ?'**
+  String get personDeleteConfirmTitle;
+
+  /// No description provided for @personDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} et ses associations de tags seront supprimés.'**
+  String personDeleteConfirmBody(String name);
+
   /// No description provided for @commonCancel.
   ///
   /// In fr, this message translates to:

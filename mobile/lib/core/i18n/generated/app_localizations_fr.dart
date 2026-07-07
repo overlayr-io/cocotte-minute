@@ -404,6 +404,62 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get familleTitle => 'Famille';
+
+  @override
+  String get familleIntro =>
+      'Associe des tags à chaque personne pour mettre en avant les recettes qui lui conviennent.';
+
+  @override
+  String get familleEmpty =>
+      'Aucune personne pour l\'instant. Ajoute les membres de ta famille pour leur associer des tags.';
+
+  @override
+  String get personCreateCta => 'Ajouter une personne';
+
+  @override
+  String get personCreateTitle => 'Nouvelle personne';
+
+  @override
+  String get personEditTitle => 'Modifier';
+
+  @override
+  String get personFieldFirstName => 'Prénom';
+
+  @override
+  String get personFieldLastName => 'Nom';
+
+  @override
+  String get personFirstNameHint => 'ex : Emma';
+
+  @override
+  String get personLastNameHint => 'ex : Martin';
+
+  @override
+  String get personFirstNameRequired => 'Donne un prénom à la personne.';
+
+  @override
+  String get personTagsLabel => 'Tags associés';
+
+  @override
+  String get personTagsEmptyHint =>
+      'Crée d\'abord des tags pour pouvoir les associer à cette personne.';
+
+  @override
+  String get personNoTags => 'Aucun tag associé';
+
+  @override
+  String get personDelete => 'Supprimer la personne';
+
+  @override
+  String get personDeleteConfirmTitle => 'Supprimer cette personne ?';
+
+  @override
+  String personDeleteConfirmBody(String name) {
+    return '$name et ses associations de tags seront supprimés.';
+  }
+
+  @override
   String get commonCancel => 'Annuler';
 
   @override
