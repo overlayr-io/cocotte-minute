@@ -79,7 +79,22 @@ class _TagsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.tagsTitle)),
+      appBar: AppBar(
+        title: Text(l10n.tagsTitle),
+        actions: [
+          BlocBuilder<TagsListBloc, TagsListState>(
+            builder: (context, state) {
+              if (state is! TagsListLoaded) return const SizedBox.shrink();
+              return IconButton(
+                onPressed: () => _create(context),
+                icon: const Icon(Icons.add_rounded),
+                tooltip: l10n.tagsCreateCta,
+              );
+            },
+          ),
+          const SizedBox(width: 4),
+        ],
+      ),
       body: BlocConsumer<TagsListBloc, TagsListState>(
         listenWhen: (_, curr) => curr is TagsListActionFailure,
         listener: (context, state) {
@@ -109,6 +124,10 @@ class _TagsView extends StatelessWidget {
     TagsListLoaded state,
     AppLocalizations l10n,
   ) {
+    if (state.tags.isEmpty) {
+      return _EmptyState(message: l10n.tagsEmpty);
+    }
+
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 6, 20, 28),
       children: [
@@ -123,29 +142,24 @@ class _TagsView extends StatelessWidget {
             ),
           ),
         ),
-        if (state.tags.isEmpty)
-          _EmptyState(message: l10n.tagsEmpty)
-        else
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.card,
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: Column(
-              children: [
-                for (var i = 0; i < state.tags.length; i++)
-                  _TagRow(
-                    tag: state.tags[i],
-                    showDivider: i < state.tags.length - 1,
-                    busy: state.busyId == state.tags[i].id,
-                    onEdit: () => _edit(context, state.tags[i]),
-                  ),
-              ],
-            ),
+        Container(
+          decoration: BoxDecoration(
+            color: AppColors.card,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppColors.border),
           ),
-        const SizedBox(height: 16),
-        _DashedButton(label: l10n.tagsCreateCta, onTap: () => _create(context)),
+          child: Column(
+            children: [
+              for (var i = 0; i < state.tags.length; i++)
+                _TagRow(
+                  tag: state.tags[i],
+                  showDivider: i < state.tags.length - 1,
+                  busy: state.busyId == state.tags[i].id,
+                  onEdit: () => _edit(context, state.tags[i]),
+                ),
+            ],
+          ),
+        ),
       ],
     );
   }
@@ -226,31 +240,6 @@ class _TagRow extends StatelessWidget {
   }
 }
 
-class _DashedButton extends StatelessWidget {
-  const _DashedButton({required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 52,
-      child: OutlinedButton.icon(
-        onPressed: onTap,
-        icon: const Icon(Icons.add_rounded, size: 18),
-        label: Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
-        style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.primary,
-          side: const BorderSide(color: Color(0xFFC4BEAD), width: 1.5),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        ),
-      ),
-    );
-  }
-}
-
 class _EmptyState extends StatelessWidget {
   const _EmptyState({required this.message});
 
@@ -258,13 +247,18 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-      alignment: Alignment.center,
-      child: Text(
-        message,
-        textAlign: TextAlign.center,
-        style: const TextStyle(color: AppColors.textSecondary, height: 1.4),
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 14,
+            height: 1.45,
+            color: AppColors.textMuted,
+          ),
+        ),
       ),
     );
   }
