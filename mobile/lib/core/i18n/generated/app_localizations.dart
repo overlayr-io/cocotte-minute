@@ -2337,6 +2337,294 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Autres'**
   String get shoppingAisleAutres;
+
+  /// No description provided for @playerModeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mode cuisine'**
+  String get playerModeLabel;
+
+  /// No description provided for @playerReadyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prêt à cuisiner ?'**
+  String get playerReadyTitle;
+
+  /// No description provided for @playerStepsBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{0 étape} =1{1 étape} other{{count} étapes}}'**
+  String playerStepsBadge(int count);
+
+  /// No description provided for @playerSubRecipesBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{0 sous-recette} =1{1 sous-recette} other{{count} sous-recettes}}'**
+  String playerSubRecipesBadge(int count);
+
+  /// No description provided for @playerTimersBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{0 minuteur} =1{1 minuteur} other{{count} minuteurs}}'**
+  String playerTimersBadge(int count);
+
+  /// No description provided for @playerServingsQuestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour combien de personnes ?'**
+  String get playerServingsQuestion;
+
+  /// No description provided for @playerServingsHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette prévue pour {base} — les quantités sont recalculées automatiquement.'**
+  String playerServingsHint(int base);
+
+  /// No description provided for @playerServingsUnit.
+  ///
+  /// In fr, this message translates to:
+  /// **'personnes'**
+  String get playerServingsUnit;
+
+  /// No description provided for @playerStartCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Commencer à cuisiner'**
+  String get playerStartCta;
+
+  /// No description provided for @playerWakelockNotice.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'écran restera allumé pendant toute la cuisson.'**
+  String get playerWakelockNotice;
+
+  /// No description provided for @playerStepProgress.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étape {current} / {total}'**
+  String playerStepProgress(int current, int total);
+
+  /// No description provided for @playerNextStep.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étape suivante'**
+  String get playerNextStep;
+
+  /// No description provided for @playerNext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suivant'**
+  String get playerNext;
+
+  /// No description provided for @playerAddTimerCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un minuteur'**
+  String get playerAddTimerCta;
+
+  /// No description provided for @playerNoTimerDetected.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun minuteur détecté sur cette étape'**
+  String get playerNoTimerDetected;
+
+  /// No description provided for @playerTimerDetectedHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Minuteur détecté : « {text} »'**
+  String playerTimerDetectedHint(String text);
+
+  /// No description provided for @playerIngredientsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ingrédients de l\'étape'**
+  String get playerIngredientsTitle;
+
+  /// No description provided for @playerForServings.
+  ///
+  /// In fr, this message translates to:
+  /// **'pour {count} pers.'**
+  String playerForServings(int count);
+
+  /// No description provided for @playerSubRecipeContext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans : {name}'**
+  String playerSubRecipeContext(String name);
+
+  /// No description provided for @playerSubRecipeBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'SOUS-RECETTE · {index} / {total}'**
+  String playerSubRecipeBadge(int index, int total);
+
+  /// No description provided for @playerTimerLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Minuteur'**
+  String get playerTimerLabel;
+
+  /// No description provided for @playerTimerStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démarrer'**
+  String get playerTimerStart;
+
+  /// No description provided for @playerTimerReset.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réinitialiser'**
+  String get playerTimerReset;
+
+  /// No description provided for @playerTimerDetectedAdjustable.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détecté dans l\'étape · ajustable'**
+  String get playerTimerDetectedAdjustable;
+
+  /// No description provided for @playerTimerSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Régler le minuteur'**
+  String get playerTimerSheetTitle;
+
+  /// No description provided for @playerTimerSheetDetected.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détecté dans l\'étape : « {text} »'**
+  String playerTimerSheetDetected(String text);
+
+  /// No description provided for @playerTimerSheetCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get playerTimerSheetCancel;
+
+  /// No description provided for @playerTimerSheetStart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Démarrer le minuteur'**
+  String get playerTimerSheetStart;
+
+  /// No description provided for @playerFinishTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'C\'est prêt !'**
+  String get playerFinishTitle;
+
+  /// No description provided for @playerFinishSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} · {steps, plural, =1{1 étape} other{{steps} étapes}} en {minutes} min. Bon appétit !'**
+  String playerFinishSubtitle(String name, int steps, int minutes);
+
+  /// No description provided for @playerFinishBackToRecipe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenir à la recette'**
+  String get playerFinishBackToRecipe;
+
+  /// No description provided for @playerFinishRedo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Refaire'**
+  String get playerFinishRedo;
+
+  /// No description provided for @playerResumeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprendre la cuisson ?'**
+  String get playerResumeTitle;
+
+  /// No description provided for @playerResumeBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu t\'es arrêté à l\'étape {step} sur {total}, il y a {minutes} min.'**
+  String playerResumeBody(int step, int total, int minutes);
+
+  /// No description provided for @playerResumeRestart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recommencer'**
+  String get playerResumeRestart;
+
+  /// No description provided for @playerResumeContinue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprendre à l\'étape {step}'**
+  String playerResumeContinue(int step);
+
+  /// No description provided for @playerQuitTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter le mode cuisine ?'**
+  String get playerQuitTitle;
+
+  /// No description provided for @playerQuitBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ta progression (étape {step} / {total}) et le minuteur en cours seront perdus.'**
+  String playerQuitBody(int step, int total);
+
+  /// No description provided for @playerQuitContinue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer la cuisson'**
+  String get playerQuitContinue;
+
+  /// No description provided for @playerQuitConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quitter'**
+  String get playerQuitConfirm;
+
+  /// No description provided for @playerSwitchTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une autre recette est en cours'**
+  String get playerSwitchTitle;
+
+  /// No description provided for @playerSwitchBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name}, étape {step} — la quitter et commencer celle-ci ?'**
+  String playerSwitchBody(String name, int step);
+
+  /// No description provided for @playerSwitchCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get playerSwitchCancel;
+
+  /// No description provided for @playerSwitchConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer'**
+  String get playerSwitchConfirm;
+
+  /// No description provided for @playerSummaryTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes les étapes'**
+  String get playerSummaryTitle;
+
+  /// No description provided for @playerSummaryHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'appuie pour sauter'**
+  String get playerSummaryHint;
+
+  /// No description provided for @playerResumeStepCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Reprendre l\'étape {step}'**
+  String playerResumeStepCta(int step);
+
+  /// No description provided for @playerProgressLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Progression'**
+  String get playerProgressLabel;
 }
 
 class _AppLocalizationsDelegate

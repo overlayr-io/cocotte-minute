@@ -884,5 +884,129 @@
   "shoppingAisleMaison": "Maison & entretien",
   "@shoppingAisleMaison": {},
   "shoppingAisleAutres": "Autres",
-  "@shoppingAisleAutres": {}
+  "@shoppingAisleAutres": {},
+
+  "playerModeLabel": "Mode cuisine",
+  "@playerModeLabel": {},
+  "playerReadyTitle": "Prêt à cuisiner ?",
+  "@playerReadyTitle": {},
+  "playerStepsBadge": "{count, plural, =0{0 étape} =1{1 étape} other{{count} étapes}}",
+  "@playerStepsBadge": { "placeholders": { "count": { "type": "int" } } },
+  "playerSubRecipesBadge": "{count, plural, =0{0 sous-recette} =1{1 sous-recette} other{{count} sous-recettes}}",
+  "@playerSubRecipesBadge": { "placeholders": { "count": { "type": "int" } } },
+  "playerTimersBadge": "{count, plural, =0{0 minuteur} =1{1 minuteur} other{{count} minuteurs}}",
+  "@playerTimersBadge": { "placeholders": { "count": { "type": "int" } } },
+  "playerServingsQuestion": "Pour combien de personnes ?",
+  "@playerServingsQuestion": {},
+  "playerServingsHint": "Recette prévue pour {base} — les quantités sont recalculées automatiquement.",
+  "@playerServingsHint": { "placeholders": { "base": { "type": "int" } } },
+  "playerServingsUnit": "personnes",
+  "@playerServingsUnit": {},
+  "playerStartCta": "Commencer à cuisiner",
+  "@playerStartCta": {},
+  "playerWakelockNotice": "L'écran restera allumé pendant toute la cuisson.",
+  "@playerWakelockNotice": {},
+
+  "playerStepProgress": "Étape {current} / {total}",
+  "@playerStepProgress": {
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "playerNextStep": "Étape suivante",
+  "@playerNextStep": {},
+  "playerNext": "Suivant",
+  "@playerNext": {},
+  "playerAddTimerCta": "Ajouter un minuteur",
+  "@playerAddTimerCta": {},
+  "playerNoTimerDetected": "Aucun minuteur détecté sur cette étape",
+  "@playerNoTimerDetected": {},
+  "playerTimerDetectedHint": "Minuteur détecté : « {text} »",
+  "@playerTimerDetectedHint": { "placeholders": { "text": { "type": "String" } } },
+  "playerIngredientsTitle": "Ingrédients de l'étape",
+  "@playerIngredientsTitle": {},
+  "playerForServings": "pour {count} pers.",
+  "@playerForServings": { "placeholders": { "count": { "type": "int" } } },
+  "playerSubRecipeContext": "Dans : {name}",
+  "@playerSubRecipeContext": { "placeholders": { "name": { "type": "String" } } },
+  "playerSubRecipeBadge": "SOUS-RECETTE · {index} / {total}",
+  "@playerSubRecipeBadge": {
+    "placeholders": { "index": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "playerTimerLabel": "Minuteur",
+  "@playerTimerLabel": {},
+  "playerTimerStart": "Démarrer",
+  "@playerTimerStart": {},
+  "playerTimerReset": "Réinitialiser",
+  "@playerTimerReset": {},
+  "playerTimerDetectedAdjustable": "Détecté dans l'étape · ajustable",
+  "@playerTimerDetectedAdjustable": {},
+
+  "playerTimerSheetTitle": "Régler le minuteur",
+  "@playerTimerSheetTitle": {},
+  "playerTimerSheetDetected": "Détecté dans l'étape : « {text} »",
+  "@playerTimerSheetDetected": { "placeholders": { "text": { "type": "String" } } },
+  "playerTimerSheetCancel": "Annuler",
+  "@playerTimerSheetCancel": {},
+  "playerTimerSheetStart": "Démarrer le minuteur",
+  "@playerTimerSheetStart": {},
+
+  "playerFinishTitle": "C'est prêt !",
+  "@playerFinishTitle": {},
+  "playerFinishSubtitle": "{name} · {steps, plural, =1{1 étape} other{{steps} étapes}} en {minutes} min. Bon appétit !",
+  "@playerFinishSubtitle": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "steps": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "playerFinishBackToRecipe": "Revenir à la recette",
+  "@playerFinishBackToRecipe": {},
+  "playerFinishRedo": "Refaire",
+  "@playerFinishRedo": {},
+
+  "playerResumeTitle": "Reprendre la cuisson ?",
+  "@playerResumeTitle": {},
+  "playerResumeBody": "Tu t'es arrêté à l'étape {step} sur {total}, il y a {minutes} min.",
+  "@playerResumeBody": {
+    "placeholders": {
+      "step": { "type": "int" },
+      "total": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "playerResumeRestart": "Recommencer",
+  "@playerResumeRestart": {},
+  "playerResumeContinue": "Reprendre à l'étape {step}",
+  "@playerResumeContinue": { "placeholders": { "step": { "type": "int" } } },
+
+  "playerQuitTitle": "Quitter le mode cuisine ?",
+  "@playerQuitTitle": {},
+  "playerQuitBody": "Ta progression (étape {step} / {total}) et le minuteur en cours seront perdus.",
+  "@playerQuitBody": {
+    "placeholders": { "step": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "playerQuitContinue": "Continuer la cuisson",
+  "@playerQuitContinue": {},
+  "playerQuitConfirm": "Quitter",
+  "@playerQuitConfirm": {},
+
+  "playerSwitchTitle": "Une autre recette est en cours",
+  "@playerSwitchTitle": {},
+  "playerSwitchBody": "{name}, étape {step} — la quitter et commencer celle-ci ?",
+  "@playerSwitchBody": {
+    "placeholders": { "name": { "type": "String" }, "step": { "type": "int" } }
+  },
+  "playerSwitchCancel": "Annuler",
+  "@playerSwitchCancel": {},
+  "playerSwitchConfirm": "Continuer",
+  "@playerSwitchConfirm": {},
+
+  "playerSummaryTitle": "Toutes les étapes",
+  "@playerSummaryTitle": {},
+  "playerSummaryHint": "appuie pour sauter",
+  "@playerSummaryHint": {},
+  "playerResumeStepCta": "Reprendre l'étape {step}",
+  "@playerResumeStepCta": { "placeholders": { "step": { "type": "int" } } },
+  "playerProgressLabel": "Progression",
+  "@playerProgressLabel": {}
 }

@@ -1,8 +1,9 @@
-import 'package:cocotte_minute/features/recipe_player/domain/playable_step.dart';
-import 'package:cocotte_minute/features/recipe_player/domain/recipe_timer.dart';
-import 'package:cocotte_minute/features/recipe_player/domain/resume_state.dart';
-import 'package:cocotte_minute/features/recipes/domain/recipe.dart';
 import 'package:equatable/equatable.dart';
+
+import '../../../recipes/domain/recipe.dart';
+import '../../domain/playable_step.dart';
+import '../../domain/recipe_timer.dart';
+import '../../domain/resume_state.dart';
 
 /// Phase du mode pas-à-pas : lancement (10a), cuisson active (10b/10d-10j/étape
 /// active + sommaire), ou fin (10g). Un seul champ plutôt que des booléens

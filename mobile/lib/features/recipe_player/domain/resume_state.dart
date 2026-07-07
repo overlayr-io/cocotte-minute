@@ -1,5 +1,6 @@
-import 'package:cocotte_minute/features/recipe_player/domain/recipe_timer.dart';
 import 'package:equatable/equatable.dart';
+
+import 'recipe_timer.dart';
 
 /// Version sérialisable d'un [RecipeTimer], pour la persistance locale.
 class PersistedTimer extends Equatable {

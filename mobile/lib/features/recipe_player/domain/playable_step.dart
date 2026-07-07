@@ -1,5 +1,6 @@
-import 'package:cocotte_minute/features/recipes/domain/recipe.dart';
 import 'package:equatable/equatable.dart';
+
+import '../../recipes/domain/recipe.dart';
 
 /// Contexte de sous-recette pour une étape provenant d'un bloc référence de
 /// base : nom de la sous-recette + position locale (pour le bandeau permanent

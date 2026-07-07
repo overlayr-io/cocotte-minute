@@ -1,15 +1,16 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:cocotte_minute/core/notifications/local_notifications_service.dart';
-import 'package:cocotte_minute/features/recipe_player/data/recipe_player_storage.dart';
-import 'package:cocotte_minute/features/recipe_player/domain/playable_step.dart';
-import 'package:cocotte_minute/features/recipe_player/domain/recipe_timer.dart';
-import 'package:cocotte_minute/features/recipe_player/domain/resume_state.dart';
-import 'package:cocotte_minute/features/recipe_player/presentation/bloc/recipe_player_state.dart';
-import 'package:cocotte_minute/features/recipes/data/recipes_repository.dart';
 
-export 'package:cocotte_minute/features/recipe_player/presentation/bloc/recipe_player_state.dart';
+import '../../../../core/notifications/local_notifications_service.dart';
+import '../../../recipes/data/recipes_repository.dart';
+import '../../data/recipe_player_storage.dart';
+import '../../domain/playable_step.dart';
+import '../../domain/recipe_timer.dart';
+import '../../domain/resume_state.dart';
+import 'recipe_player_state.dart';
+
+export 'recipe_player_state.dart';
 
 /// Pilote le mode pas-à-pas (mode cuisine) : chargement unique de la recette,
 /// navigation entre étapes, minuteurs, reprise après interruption.

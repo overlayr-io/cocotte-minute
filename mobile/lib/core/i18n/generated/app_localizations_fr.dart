@@ -1342,4 +1342,209 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get shoppingAisleAutres => 'Autres';
+
+  @override
+  String get playerModeLabel => 'Mode cuisine';
+
+  @override
+  String get playerReadyTitle => 'Prêt à cuisiner ?';
+
+  @override
+  String playerStepsBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count étapes',
+      one: '1 étape',
+      zero: '0 étape',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String playerSubRecipesBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sous-recettes',
+      one: '1 sous-recette',
+      zero: '0 sous-recette',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String playerTimersBadge(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count minuteurs',
+      one: '1 minuteur',
+      zero: '0 minuteur',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get playerServingsQuestion => 'Pour combien de personnes ?';
+
+  @override
+  String playerServingsHint(int base) {
+    return 'Recette prévue pour $base — les quantités sont recalculées automatiquement.';
+  }
+
+  @override
+  String get playerServingsUnit => 'personnes';
+
+  @override
+  String get playerStartCta => 'Commencer à cuisiner';
+
+  @override
+  String get playerWakelockNotice =>
+      'L\'écran restera allumé pendant toute la cuisson.';
+
+  @override
+  String playerStepProgress(int current, int total) {
+    return 'Étape $current / $total';
+  }
+
+  @override
+  String get playerNextStep => 'Étape suivante';
+
+  @override
+  String get playerNext => 'Suivant';
+
+  @override
+  String get playerAddTimerCta => 'Ajouter un minuteur';
+
+  @override
+  String get playerNoTimerDetected => 'Aucun minuteur détecté sur cette étape';
+
+  @override
+  String playerTimerDetectedHint(String text) {
+    return 'Minuteur détecté : « $text »';
+  }
+
+  @override
+  String get playerIngredientsTitle => 'Ingrédients de l\'étape';
+
+  @override
+  String playerForServings(int count) {
+    return 'pour $count pers.';
+  }
+
+  @override
+  String playerSubRecipeContext(String name) {
+    return 'Dans : $name';
+  }
+
+  @override
+  String playerSubRecipeBadge(int index, int total) {
+    return 'SOUS-RECETTE · $index / $total';
+  }
+
+  @override
+  String get playerTimerLabel => 'Minuteur';
+
+  @override
+  String get playerTimerStart => 'Démarrer';
+
+  @override
+  String get playerTimerReset => 'Réinitialiser';
+
+  @override
+  String get playerTimerDetectedAdjustable =>
+      'Détecté dans l\'étape · ajustable';
+
+  @override
+  String get playerTimerSheetTitle => 'Régler le minuteur';
+
+  @override
+  String playerTimerSheetDetected(String text) {
+    return 'Détecté dans l\'étape : « $text »';
+  }
+
+  @override
+  String get playerTimerSheetCancel => 'Annuler';
+
+  @override
+  String get playerTimerSheetStart => 'Démarrer le minuteur';
+
+  @override
+  String get playerFinishTitle => 'C\'est prêt !';
+
+  @override
+  String playerFinishSubtitle(String name, int steps, int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      steps,
+      locale: localeName,
+      other: '$steps étapes',
+      one: '1 étape',
+    );
+    return '$name · $_temp0 en $minutes min. Bon appétit !';
+  }
+
+  @override
+  String get playerFinishBackToRecipe => 'Revenir à la recette';
+
+  @override
+  String get playerFinishRedo => 'Refaire';
+
+  @override
+  String get playerResumeTitle => 'Reprendre la cuisson ?';
+
+  @override
+  String playerResumeBody(int step, int total, int minutes) {
+    return 'Tu t\'es arrêté à l\'étape $step sur $total, il y a $minutes min.';
+  }
+
+  @override
+  String get playerResumeRestart => 'Recommencer';
+
+  @override
+  String playerResumeContinue(int step) {
+    return 'Reprendre à l\'étape $step';
+  }
+
+  @override
+  String get playerQuitTitle => 'Quitter le mode cuisine ?';
+
+  @override
+  String playerQuitBody(int step, int total) {
+    return 'Ta progression (étape $step / $total) et le minuteur en cours seront perdus.';
+  }
+
+  @override
+  String get playerQuitContinue => 'Continuer la cuisson';
+
+  @override
+  String get playerQuitConfirm => 'Quitter';
+
+  @override
+  String get playerSwitchTitle => 'Une autre recette est en cours';
+
+  @override
+  String playerSwitchBody(String name, int step) {
+    return '$name, étape $step — la quitter et commencer celle-ci ?';
+  }
+
+  @override
+  String get playerSwitchCancel => 'Annuler';
+
+  @override
+  String get playerSwitchConfirm => 'Continuer';
+
+  @override
+  String get playerSummaryTitle => 'Toutes les étapes';
+
+  @override
+  String get playerSummaryHint => 'appuie pour sauter';
+
+  @override
+  String playerResumeStepCta(int step) {
+    return 'Reprendre l\'étape $step';
+  }
+
+  @override
+  String get playerProgressLabel => 'Progression';
 }

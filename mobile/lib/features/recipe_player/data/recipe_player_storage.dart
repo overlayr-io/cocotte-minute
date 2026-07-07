@@ -1,7 +1,8 @@
 import 'dart:convert';
 
-import 'package:cocotte_minute/features/recipe_player/domain/resume_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../domain/resume_state.dart';
 
 /// Persistance locale de l'état de reprise du mode pas-à-pas.
 ///
