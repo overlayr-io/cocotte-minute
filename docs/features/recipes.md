@@ -22,9 +22,10 @@ order: 5
 > quantité par stepper (pas dépendant de l'unité) + clavier décimal. Le serveur
 > fait un **upsert** à l'ajout (`PATCH …/ingredients/:id` pour la quantité seule).
 >
-> **Segment Ingrédients | Étapes.** En place sur la fiche ; l'onglet **Étapes est
-> désactivé** — la feature `recette-etapes` fait partie de la v1 et arrive dans
-> une itération suivante (le segment sert de point d'ancrage).
+> **Segment Ingrédients | Étapes (livré).** Vraie bascule sur la fiche : l'onglet
+> **Étapes** est actif (feature `recette-etapes`, écrans 9b-9h) — liste
+> réordonnable en drag & drop, étapes texte/bannière et références de recette de
+> base dépliées récursivement. Voir `docs/features/recipe-steps.md`.
 >
 > **Portions.** Le stepper Portions fait varier les quantités **affichées**
 > (`quantité × portions / servings`) : **scaling d'affichage local et éphémère,
@@ -139,8 +140,8 @@ recette de base dès la création.
   avec ce qui a été acté dans `PROJECT_CONTEXT.md`.
 
 ## Hors scope pour cette feature
-- Les étapes détaillées (feature séparée `recette-etapes`, prévue en v1 — le
-  segment Ingrédients | Étapes est déjà en place, onglet Étapes désactivé).
+- ~~Les étapes détaillées~~ → **livré** (feature `recette-etapes`, écrans 9b-9h) :
+  onglet Étapes actif, texte/bannière/référence de base, drag & drop.
 - ~~La quantité précise par ingrédient~~ → **livré** : `recipe_ingredients.quantity`
   (`numeric(10,2)`), unité toujours lue depuis l'ingrédient. Voir l'en-tête.
 - Le mode pas-à-pas d'exécution (feature séparée `mode-pas-a-pas`).
