@@ -6,6 +6,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../ingredients/domain/ingredient.dart';
 import '../../../ingredients/presentation/widgets/unit_selector.dart';
+import '../../../recipe_player/presentation/pages/recipe_player_page.dart';
 import '../../domain/recipe.dart';
 import '../bloc/recipe_detail_cubit.dart';
 import '../pages/recipe_detail_page.dart';
@@ -152,6 +153,13 @@ class _Loaded extends StatelessWidget {
                       icon: Icons.chevron_left_rounded,
                       onTap: () => Navigator.of(context).maybePop(true),
                     ),
+                    if (detail.steps.isNotEmpty)
+                      _PlayButton(
+                        onTap: busy
+                            ? null
+                            : () => Navigator.of(context)
+                                .push(RecipePlayerPage.route(detail.id)),
+                      ),
                     _RoundIconButton(
                       icon: Icons.more_vert_rounded,
                       onTap: busy ? null : () => _showMenu(context),
@@ -1125,6 +1133,33 @@ class _MetaItem extends StatelessWidget {
               fontSize: 13, fontWeight: FontWeight.w500, color: Colors.white),
         ),
       ],
+    );
+  }
+}
+
+class _PlayButton extends StatelessWidget {
+  const _PlayButton({required this.onTap});
+
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Tooltip(
+      message: l10n.recipePlayCta,
+      child: Material(
+        color: AppColors.accent,
+        shape: const CircleBorder(),
+        child: InkWell(
+          onTap: onTap,
+          customBorder: const CircleBorder(),
+          child: const SizedBox(
+            width: 44,
+            height: 44,
+            child: Icon(Icons.play_arrow_rounded, color: Colors.white, size: 24),
+          ),
+        ),
+      ),
     );
   }
 }

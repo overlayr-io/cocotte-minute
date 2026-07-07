@@ -2631,6 +2631,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Progression'**
   String get playerProgressLabel;
+
+  /// Tooltip du bouton qui lance le mode pas-à-pas depuis la fiche recette
+  ///
+  /// In fr, this message translates to:
+  /// **'Cuisiner cette recette'**
+  String get recipePlayCta;
 }
 
 class _AppLocalizationsDelegate

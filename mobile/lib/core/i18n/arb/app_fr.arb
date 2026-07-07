@@ -1010,5 +1010,10 @@
   "playerResumeStepCta": "Reprendre l'étape {step}",
   "@playerResumeStepCta": { "placeholders": { "step": { "type": "int" } } },
   "playerProgressLabel": "Progression",
-  "@playerProgressLabel": {}
+  "@playerProgressLabel": {},
+
+  "recipePlayCta": "Cuisiner cette recette",
+  "@recipePlayCta": {
+    "description": "Tooltip du bouton qui lance le mode pas-à-pas depuis la fiche recette"
+  }
 }

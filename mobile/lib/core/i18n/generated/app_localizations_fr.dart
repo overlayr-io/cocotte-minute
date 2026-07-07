@@ -1550,4 +1550,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get playerProgressLabel => 'Progression';
+
+  @override
+  String get recipePlayCta => 'Cuisiner cette recette';
 }
