@@ -1072,6 +1072,210 @@ abstract class AppLocalizations {
   /// **'« {name} » sera supprimé. Les recettes qu\'il contient ne sont pas supprimées.'**
   String categoryDeleteConfirmBody(String name);
 
+  /// No description provided for @recipesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recettes'**
+  String get recipesTitle;
+
+  /// No description provided for @recipesEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu n\'as pas encore de recette. Appuie sur + pour en créer une.'**
+  String get recipesEmpty;
+
+  /// No description provided for @recipeCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle recette'**
+  String get recipeCreateTitle;
+
+  /// No description provided for @recipeCreateAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer la recette'**
+  String get recipeCreateAction;
+
+  /// No description provided for @recipeFieldName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom de la recette'**
+  String get recipeFieldName;
+
+  /// No description provided for @recipeNameHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex. Lasagnes maison'**
+  String get recipeNameHint;
+
+  /// No description provided for @recipeNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le nom est obligatoire.'**
+  String get recipeNameRequired;
+
+  /// No description provided for @recipeNameHelper.
+  ///
+  /// In fr, this message translates to:
+  /// **'Seul champ obligatoire pour démarrer.'**
+  String get recipeNameHelper;
+
+  /// No description provided for @recipePhotoTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une photo'**
+  String get recipePhotoTitle;
+
+  /// No description provided for @recipePhotoHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Optionnel · modifiable plus tard'**
+  String get recipePhotoHint;
+
+  /// No description provided for @recipeBaseToggleTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette de base'**
+  String get recipeBaseToggleTitle;
+
+  /// No description provided for @recipeBaseToggleSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réutilisable comme composant'**
+  String get recipeBaseToggleSubtitle;
+
+  /// No description provided for @recipeBaseToggleHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une béchamel ou une pâte brisée réutilisée dans plusieurs recettes.'**
+  String get recipeBaseToggleHint;
+
+  /// No description provided for @recipeBaseBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette de base'**
+  String get recipeBaseBadge;
+
+  /// No description provided for @recipeBaseLockedHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Verrouillée : utilisée comme composant.'**
+  String get recipeBaseLockedHint;
+
+  /// No description provided for @recipeEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier la recette'**
+  String get recipeEditTitle;
+
+  /// No description provided for @recipeDeleteAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la recette'**
+  String get recipeDeleteAction;
+
+  /// No description provided for @recipeDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cette recette ?'**
+  String get recipeDeleteConfirmTitle;
+
+  /// No description provided for @recipeDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'« {name} » sera supprimée.'**
+  String recipeDeleteConfirmBody(String name);
+
+  /// No description provided for @recipeFieldDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Description'**
+  String get recipeFieldDescription;
+
+  /// No description provided for @recipeDescriptionHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quelques mots sur cette recette…'**
+  String get recipeDescriptionHint;
+
+  /// No description provided for @recipeFieldPrep.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prépa (min)'**
+  String get recipeFieldPrep;
+
+  /// No description provided for @recipeFieldCook.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cuisson (min)'**
+  String get recipeFieldCook;
+
+  /// No description provided for @recipeFieldRest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repos (min)'**
+  String get recipeFieldRest;
+
+  /// No description provided for @recipeFieldServings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnes'**
+  String get recipeFieldServings;
+
+  /// No description provided for @recipeIngredientsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ingrédients'**
+  String get recipeIngredientsSection;
+
+  /// No description provided for @recipeIngredientsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun ingrédient pour l\'instant.'**
+  String get recipeIngredientsEmpty;
+
+  /// No description provided for @recipeComponentsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sous-recettes utilisées'**
+  String get recipeComponentsSection;
+
+  /// No description provided for @recipeUsedInSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Utilisée dans'**
+  String get recipeUsedInSection;
+
+  /// No description provided for @recipeCreatorLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette de'**
+  String get recipeCreatorLabel;
+
+  /// No description provided for @recipeCreatorSelf.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toi'**
+  String get recipeCreatorSelf;
+
+  /// No description provided for @recipeServingsShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 pers.} other{{count} pers.}}'**
+  String recipeServingsShort(int count);
+
+  /// No description provided for @recipePrepShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prépa {min} min'**
+  String recipePrepShort(int min);
+
+  /// No description provided for @recipeCookShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cuisson {min} min'**
+  String recipeCookShort(int min);
+
   /// No description provided for @commonCancel.
   ///
   /// In fr, this message translates to:

@@ -538,6 +538,124 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get recipesTitle => 'Recettes';
+
+  @override
+  String get recipesEmpty =>
+      'Tu n\'as pas encore de recette. Appuie sur + pour en créer une.';
+
+  @override
+  String get recipeCreateTitle => 'Nouvelle recette';
+
+  @override
+  String get recipeCreateAction => 'Créer la recette';
+
+  @override
+  String get recipeFieldName => 'Nom de la recette';
+
+  @override
+  String get recipeNameHint => 'Ex. Lasagnes maison';
+
+  @override
+  String get recipeNameRequired => 'Le nom est obligatoire.';
+
+  @override
+  String get recipeNameHelper => 'Seul champ obligatoire pour démarrer.';
+
+  @override
+  String get recipePhotoTitle => 'Ajouter une photo';
+
+  @override
+  String get recipePhotoHint => 'Optionnel · modifiable plus tard';
+
+  @override
+  String get recipeBaseToggleTitle => 'Recette de base';
+
+  @override
+  String get recipeBaseToggleSubtitle => 'Réutilisable comme composant';
+
+  @override
+  String get recipeBaseToggleHint =>
+      'Une béchamel ou une pâte brisée réutilisée dans plusieurs recettes.';
+
+  @override
+  String get recipeBaseBadge => 'Recette de base';
+
+  @override
+  String get recipeBaseLockedHint => 'Verrouillée : utilisée comme composant.';
+
+  @override
+  String get recipeEditTitle => 'Modifier la recette';
+
+  @override
+  String get recipeDeleteAction => 'Supprimer la recette';
+
+  @override
+  String get recipeDeleteConfirmTitle => 'Supprimer cette recette ?';
+
+  @override
+  String recipeDeleteConfirmBody(String name) {
+    return '« $name » sera supprimée.';
+  }
+
+  @override
+  String get recipeFieldDescription => 'Description';
+
+  @override
+  String get recipeDescriptionHint => 'Quelques mots sur cette recette…';
+
+  @override
+  String get recipeFieldPrep => 'Prépa (min)';
+
+  @override
+  String get recipeFieldCook => 'Cuisson (min)';
+
+  @override
+  String get recipeFieldRest => 'Repos (min)';
+
+  @override
+  String get recipeFieldServings => 'Personnes';
+
+  @override
+  String get recipeIngredientsSection => 'Ingrédients';
+
+  @override
+  String get recipeIngredientsEmpty => 'Aucun ingrédient pour l\'instant.';
+
+  @override
+  String get recipeComponentsSection => 'Sous-recettes utilisées';
+
+  @override
+  String get recipeUsedInSection => 'Utilisée dans';
+
+  @override
+  String get recipeCreatorLabel => 'Recette de';
+
+  @override
+  String get recipeCreatorSelf => 'Toi';
+
+  @override
+  String recipeServingsShort(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pers.',
+      one: '1 pers.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recipePrepShort(int min) {
+    return 'Prépa $min min';
+  }
+
+  @override
+  String recipeCookShort(int min) {
+    return 'Cuisson $min min';
+  }
+
+  @override
   String get commonCancel => 'Annuler';
 
   @override

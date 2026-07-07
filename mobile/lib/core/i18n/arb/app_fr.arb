@@ -391,6 +391,97 @@
     }
   },
 
+  "recipesTitle": "Recettes",
+  "@recipesTitle": {},
+  "recipesEmpty": "Tu n'as pas encore de recette. Appuie sur + pour en créer une.",
+  "@recipesEmpty": {},
+
+  "recipeCreateTitle": "Nouvelle recette",
+  "@recipeCreateTitle": {},
+  "recipeCreateAction": "Créer la recette",
+  "@recipeCreateAction": {},
+  "recipeFieldName": "Nom de la recette",
+  "@recipeFieldName": {},
+  "recipeNameHint": "Ex. Lasagnes maison",
+  "@recipeNameHint": {},
+  "recipeNameRequired": "Le nom est obligatoire.",
+  "@recipeNameRequired": {},
+  "recipeNameHelper": "Seul champ obligatoire pour démarrer.",
+  "@recipeNameHelper": {},
+  "recipePhotoTitle": "Ajouter une photo",
+  "@recipePhotoTitle": {},
+  "recipePhotoHint": "Optionnel · modifiable plus tard",
+  "@recipePhotoHint": {},
+
+  "recipeBaseToggleTitle": "Recette de base",
+  "@recipeBaseToggleTitle": {},
+  "recipeBaseToggleSubtitle": "Réutilisable comme composant",
+  "@recipeBaseToggleSubtitle": {},
+  "recipeBaseToggleHint": "Une béchamel ou une pâte brisée réutilisée dans plusieurs recettes.",
+  "@recipeBaseToggleHint": {},
+  "recipeBaseBadge": "Recette de base",
+  "@recipeBaseBadge": {},
+  "recipeBaseLockedHint": "Verrouillée : utilisée comme composant.",
+  "@recipeBaseLockedHint": {},
+
+  "recipeEditTitle": "Modifier la recette",
+  "@recipeEditTitle": {},
+  "recipeDeleteAction": "Supprimer la recette",
+  "@recipeDeleteAction": {},
+  "recipeDeleteConfirmTitle": "Supprimer cette recette ?",
+  "@recipeDeleteConfirmTitle": {},
+  "recipeDeleteConfirmBody": "« {name} » sera supprimée.",
+  "@recipeDeleteConfirmBody": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "recipeFieldDescription": "Description",
+  "@recipeFieldDescription": {},
+  "recipeDescriptionHint": "Quelques mots sur cette recette…",
+  "@recipeDescriptionHint": {},
+  "recipeFieldPrep": "Prépa (min)",
+  "@recipeFieldPrep": {},
+  "recipeFieldCook": "Cuisson (min)",
+  "@recipeFieldCook": {},
+  "recipeFieldRest": "Repos (min)",
+  "@recipeFieldRest": {},
+  "recipeFieldServings": "Personnes",
+  "@recipeFieldServings": {},
+
+  "recipeIngredientsSection": "Ingrédients",
+  "@recipeIngredientsSection": {},
+  "recipeIngredientsEmpty": "Aucun ingrédient pour l'instant.",
+  "@recipeIngredientsEmpty": {},
+  "recipeComponentsSection": "Sous-recettes utilisées",
+  "@recipeComponentsSection": {},
+  "recipeUsedInSection": "Utilisée dans",
+  "@recipeUsedInSection": {},
+
+  "recipeCreatorLabel": "Recette de",
+  "@recipeCreatorLabel": {},
+  "recipeCreatorSelf": "Toi",
+  "@recipeCreatorSelf": {},
+  "recipeServingsShort": "{count, plural, =1{1 pers.} other{{count} pers.}}",
+  "@recipeServingsShort": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recipePrepShort": "Prépa {min} min",
+  "@recipePrepShort": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+  "recipeCookShort": "Cuisson {min} min",
+  "@recipeCookShort": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+
   "commonCancel": "Annuler",
   "@commonCancel": {},
   "commonSave": "Enregistrer",
