@@ -1647,4 +1647,85 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get guestReminderDialogDismiss => 'Plus tard';
+
+  @override
+  String get searchHint => 'Rechercher…';
+
+  @override
+  String get searchTriggerFolder => 'Dossier';
+
+  @override
+  String get searchTriggerTag => 'Tag';
+
+  @override
+  String get searchTriggerPerson => 'Personne';
+
+  @override
+  String get searchSectionFolders => 'Dossiers';
+
+  @override
+  String get searchSectionTags => 'Tags';
+
+  @override
+  String get searchSectionPeople => 'Famille';
+
+  @override
+  String searchCreateTag(String name) {
+    return 'Créer le tag « $name »';
+  }
+
+  @override
+  String get searchManageFamily => 'Gérer les membres de la famille';
+
+  @override
+  String get searchClearAll => 'Tout effacer';
+
+  @override
+  String searchResultsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count résultats',
+      one: '1 résultat',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchFolderRecipes(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recettes',
+      one: '1 recette',
+      zero: 'Aucune recette',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchFolderSubfolders(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sous-dossiers',
+      one: '1 sous-dossier',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String searchMinutesShort(int min) {
+    return '$min min';
+  }
+
+  @override
+  String get searchEmptyTitle => 'Aucune recette';
+
+  @override
+  String get searchNoSuggestion => 'Aucune proposition';
+
+  @override
+  String get searchIdleHint =>
+      'Tape « / » pour un dossier, « # » pour un tag, « @ » pour une personne.';
 }

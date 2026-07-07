@@ -2805,6 +2805,108 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Plus tard'**
   String get guestReminderDialogDismiss;
+
+  /// No description provided for @searchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher…'**
+  String get searchHint;
+
+  /// No description provided for @searchTriggerFolder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier'**
+  String get searchTriggerFolder;
+
+  /// No description provided for @searchTriggerTag.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tag'**
+  String get searchTriggerTag;
+
+  /// No description provided for @searchTriggerPerson.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personne'**
+  String get searchTriggerPerson;
+
+  /// No description provided for @searchSectionFolders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers'**
+  String get searchSectionFolders;
+
+  /// No description provided for @searchSectionTags.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tags'**
+  String get searchSectionTags;
+
+  /// No description provided for @searchSectionPeople.
+  ///
+  /// In fr, this message translates to:
+  /// **'Famille'**
+  String get searchSectionPeople;
+
+  /// No description provided for @searchCreateTag.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer le tag « {name} »'**
+  String searchCreateTag(String name);
+
+  /// No description provided for @searchManageFamily.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer les membres de la famille'**
+  String get searchManageFamily;
+
+  /// No description provided for @searchClearAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout effacer'**
+  String get searchClearAll;
+
+  /// No description provided for @searchResultsCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 résultat} other{{count} résultats}}'**
+  String searchResultsCount(int count);
+
+  /// No description provided for @searchFolderRecipes.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucune recette} =1{1 recette} other{{count} recettes}}'**
+  String searchFolderRecipes(int count);
+
+  /// No description provided for @searchFolderSubfolders.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 sous-dossier} other{{count} sous-dossiers}}'**
+  String searchFolderSubfolders(int count);
+
+  /// No description provided for @searchMinutesShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'{min} min'**
+  String searchMinutesShort(int min);
+
+  /// No description provided for @searchEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette'**
+  String get searchEmptyTitle;
+
+  /// No description provided for @searchNoSuggestion.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune proposition'**
+  String get searchNoSuggestion;
+
+  /// No description provided for @searchIdleHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tape « / » pour un dossier, « # » pour un tag, « @ » pour une personne.'**
+  String get searchIdleHint;
 }
 
 class _AppLocalizationsDelegate

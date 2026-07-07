@@ -1077,5 +1077,60 @@
   "@cancelDeletionSuccess": {},
 
   "guestReminderDialogDismiss": "Plus tard",
-  "@guestReminderDialogDismiss": {}
+  "@guestReminderDialogDismiss": {},
+
+  "searchHint": "Rechercher…",
+  "@searchHint": {},
+  "searchTriggerFolder": "Dossier",
+  "@searchTriggerFolder": {},
+  "searchTriggerTag": "Tag",
+  "@searchTriggerTag": {},
+  "searchTriggerPerson": "Personne",
+  "@searchTriggerPerson": {},
+  "searchSectionFolders": "Dossiers",
+  "@searchSectionFolders": {},
+  "searchSectionTags": "Tags",
+  "@searchSectionTags": {},
+  "searchSectionPeople": "Famille",
+  "@searchSectionPeople": {},
+  "searchCreateTag": "Créer le tag « {name} »",
+  "@searchCreateTag": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "searchManageFamily": "Gérer les membres de la famille",
+  "@searchManageFamily": {},
+  "searchClearAll": "Tout effacer",
+  "@searchClearAll": {},
+  "searchResultsCount": "{count, plural, =1{1 résultat} other{{count} résultats}}",
+  "@searchResultsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "searchFolderRecipes": "{count, plural, =0{Aucune recette} =1{1 recette} other{{count} recettes}}",
+  "@searchFolderRecipes": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "searchFolderSubfolders": "{count, plural, =1{1 sous-dossier} other{{count} sous-dossiers}}",
+  "@searchFolderSubfolders": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "searchMinutesShort": "{min} min",
+  "@searchMinutesShort": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+  "searchEmptyTitle": "Aucune recette",
+  "@searchEmptyTitle": {},
+  "searchNoSuggestion": "Aucune proposition",
+  "@searchNoSuggestion": {},
+  "searchIdleHint": "Tape « / » pour un dossier, « # » pour un tag, « @ » pour une personne.",
+  "@searchIdleHint": {}
 }
