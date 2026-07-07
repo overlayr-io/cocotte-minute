@@ -4,6 +4,7 @@ import '../../features/auth/data/auth_repository.dart';
 import '../../features/categories/data/categories_repository.dart';
 import '../../features/ingredients/data/ingredients_repository.dart';
 import '../../features/people/data/people_repository.dart';
+import '../../features/recipe_player/data/recipe_player_storage.dart';
 import '../../features/recipes/data/recipes_repository.dart';
 import '../../features/shopping_list/data/local/shopping_database.dart';
 import '../../features/shopping_list/data/shopping_list_api.dart';
@@ -38,6 +39,7 @@ void setupServiceLocator() {
   sl.registerLazySingleton<RecipesRepository>(
     () => RecipesRepository(apiClient: sl<ApiClient>()),
   );
+  sl.registerLazySingleton<RecipePlayerStorage>(() => const RecipePlayerStorage());
 
   // Liste de courses (offline-first) : base SQLite locale + API + sync réseau.
   sl.registerLazySingleton<ShoppingDatabase>(() => ShoppingDatabase());

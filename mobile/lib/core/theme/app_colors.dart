@@ -34,6 +34,10 @@ class AppColors {
 
   // Sémantique
   static const Color danger = Color(0xFFEF4444);
+
+  // Mode pas-à-pas (mode cuisine)
+  static const Color timerAccent = Color(0xFFE8A33D); // minuteur (ambre)
+  static const Color panelBackground = Color(0xFFEFEBE1); // panneau ingrédients/média
 }
 
 /// Familles de polices (déclarées dans pubspec.yaml, fichiers dans assets/fonts).
