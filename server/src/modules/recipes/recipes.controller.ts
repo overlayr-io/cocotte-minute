@@ -9,6 +9,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 
@@ -20,7 +21,12 @@ import {
   AddRecipeIngredientDto,
   AssignRecipeCategoryDto,
   AssignRecipeTagDto,
+  CreateRecipeStepDto,
+  ImportRecipeStepsDto,
+  ReorderRecipeStepsDto,
+  SetStepIngredientsDto,
   UpdateRecipeIngredientQuantityDto,
+  UpdateRecipeStepDto,
 } from './dto/recipe-relations.dto';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
@@ -115,6 +121,70 @@ export class RecipesController {
     @Param('ingredientId', ParseUUIDPipe) ingredientId: string,
   ): Promise<void> {
     return this.recipesService.removeIngredient(user.id, id, ingredientId);
+  }
+
+  // --- étapes ------------------------------------------------------------
+
+  @Post(':id/steps')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  addStep(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: CreateRecipeStepDto,
+  ): Promise<void> {
+    return this.recipesService.addStep(user.id, id, dto);
+  }
+
+  @Post(':id/steps/import')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  importSteps(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ImportRecipeStepsDto,
+  ): Promise<void> {
+    return this.recipesService.importSteps(user.id, id, dto.descriptions);
+  }
+
+  @Put(':id/steps/order')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  reorderSteps(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ReorderRecipeStepsDto,
+  ): Promise<void> {
+    return this.recipesService.reorderSteps(user.id, id, dto.stepIds);
+  }
+
+  @Patch(':id/steps/:stepId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  updateStep(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('stepId', ParseUUIDPipe) stepId: string,
+    @Body() dto: UpdateRecipeStepDto,
+  ): Promise<void> {
+    return this.recipesService.updateStep(user.id, id, stepId, dto);
+  }
+
+  @Delete(':id/steps/:stepId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeStep(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('stepId', ParseUUIDPipe) stepId: string,
+  ): Promise<void> {
+    return this.recipesService.removeStep(user.id, id, stepId);
+  }
+
+  @Put(':id/steps/:stepId/ingredients')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  setStepIngredients(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('stepId', ParseUUIDPipe) stepId: string,
+    @Body() dto: SetStepIngredientsDto,
+  ): Promise<void> {
+    return this.recipesService.setStepIngredients(user.id, id, stepId, dto.ingredientIds);
   }
 
   // --- composants (sous-recettes) ---------------------------------------

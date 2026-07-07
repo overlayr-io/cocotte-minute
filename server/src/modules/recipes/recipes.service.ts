@@ -1,11 +1,12 @@
 import {
+  BadRequestException,
   ConflictException,
   Inject,
   Injectable,
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { and, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import {
@@ -13,12 +14,19 @@ import {
   recipeCategories,
   recipeComponents,
   recipeIngredients,
+  recipeSteps,
   recipeTags,
   recipes,
+  stepIngredients,
   type RecipeRow,
+  type RecipeStepRow,
 } from '../../db/schema/recipes.schema';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
+import {
+  CreateRecipeStepDto,
+  UpdateRecipeStepDto,
+} from './dto/recipe-relations.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 
 /** Ligne de liste / carte (sans les relations lourdes). */
@@ -47,6 +55,43 @@ export interface RecipeIngredientLineDto {
   quantity: number;
 }
 
+/** Bannière d'une étape (couleur/icône dérivées du type côté client). */
+export interface RecipeStepBannerDto {
+  type: string;
+  text: string;
+}
+
+/** Étape figée affichée dans un bloc référence de base (lecture seule). */
+export interface RecipeExpandedStepDto {
+  number: number;
+  description: string;
+  banner: RecipeStepBannerDto | null;
+}
+
+/** Étape texte de la recette (éditable, réordonnable). */
+export interface RecipeTextStepDto {
+  kind: 'text';
+  id: string;
+  number: number;
+  description: string;
+  banner: RecipeStepBannerDto | null;
+  ingredients: RecipeIngredientLineDto[];
+}
+
+/**
+ * Bloc référence de base : les étapes de la recette de base, dépliées et
+ * numérotées dans la continuité (jamais copiées ; internes non réordonnables).
+ */
+export interface RecipeBaseRefStepDto {
+  kind: 'base_ref';
+  id: string;
+  baseRecipeId: string;
+  baseRecipeName: string;
+  steps: RecipeExpandedStepDto[];
+}
+
+export type RecipeStepDto = RecipeTextStepDto | RecipeBaseRefStepDto;
+
 /** Fiche détail complète. */
 export interface RecipeDetailDto extends RecipeSummaryDto {
   authorId: string;
@@ -54,6 +99,8 @@ export interface RecipeDetailDto extends RecipeSummaryDto {
   /** Recette de base utilisée comme composant ailleurs → `is_base` verrouillé. */
   isLocked: boolean;
   ingredients: RecipeIngredientLineDto[];
+  /** Étapes (arbre déjà déplié + numéroté ; réfs de base résolues récursivement). */
+  steps: RecipeStepDto[];
   /** Sous-recettes (recettes de base) utilisées par cette recette. */
   components: RecipeSummaryDto[];
   /** Recettes qui utilisent cette recette comme composant (seulement si `is_base`). */
@@ -143,6 +190,8 @@ export class RecipesService {
       ]);
 
     const ingredientLines = await this.hydrateIngredients(userId, ingredientRows);
+    const ingredientMap = new Map(ingredientLines.map((l) => [l.id, l]));
+    const steps = await this.buildRecipeSteps(id, ingredientMap);
     const components = await this.summariesByIds(
       userId,
       componentRows.map((r) => r.baseRecipeId),
@@ -167,6 +216,7 @@ export class RecipesService {
       description: row.description,
       isLocked: row.isBase && usedIn.length > 0,
       ingredients: ingredientLines,
+      steps,
       components,
       usedIn,
       categoryIds: categoryRows.map((r) => r.categoryId),
@@ -279,6 +329,181 @@ export class RecipesService {
           eq(recipeIngredients.ingredientId, ingredientId),
         ),
       );
+  }
+
+  // --- étapes ------------------------------------------------------------
+
+  /**
+   * Ajoute une étape : soit texte (description + bannière/ingrédients optionnels),
+   * soit une référence de base (`baseRecipeRefId` seul). Exclusivité + règles de
+   * référence (base possédée, is_base, pas de cycle) vérifiées ici.
+   */
+  async addStep(
+    userId: string,
+    recipeId: string,
+    dto: CreateRecipeStepDto,
+  ): Promise<void> {
+    await this.findOwnedOrFail(userId, recipeId);
+    const isRef = !!dto.baseRecipeRefId;
+    if (isRef) {
+      if (
+        dto.description ||
+        dto.bannerType ||
+        dto.bannerText ||
+        (dto.ingredientIds && dto.ingredientIds.length > 0)
+      ) {
+        throw new BadRequestException(
+          'Une référence de base ne peut pas porter de description, de bannière ni d’ingrédients',
+        );
+      }
+      await this.validateBaseRef(userId, recipeId, dto.baseRecipeRefId!);
+    } else {
+      const description = dto.description?.trim();
+      if (!description) {
+        throw new BadRequestException('La description de l’étape est obligatoire');
+      }
+      this.validateBanner(dto.bannerType, dto.bannerText);
+      if (dto.ingredientIds && dto.ingredientIds.length > 0) {
+        await this.assertIngredientsOnRecipe(recipeId, dto.ingredientIds);
+      }
+    }
+
+    const position = await this.nextStepPosition(recipeId);
+    const [step] = await this.db
+      .insert(recipeSteps)
+      .values({
+        recipeId,
+        position,
+        description: isRef ? null : dto.description!.trim(),
+        bannerType: isRef ? null : (dto.bannerType ?? null),
+        bannerText:
+          !isRef && dto.bannerType ? (dto.bannerText ?? '').trim() : null,
+        baseRecipeRefId: dto.baseRecipeRefId ?? null,
+      })
+      .returning({ id: recipeSteps.id });
+
+    if (!isRef && dto.ingredientIds && dto.ingredientIds.length > 0) {
+      await this.db
+        .insert(stepIngredients)
+        .values(dto.ingredientIds.map((ingredientId) => ({ stepId: step.id, ingredientId })));
+    }
+  }
+
+  /** Import texte : chaque entrée non vide devient une étape texte, à la suite. */
+  async importSteps(
+    userId: string,
+    recipeId: string,
+    descriptions: string[],
+  ): Promise<void> {
+    await this.findOwnedOrFail(userId, recipeId);
+    const clean = descriptions.map((d) => d.trim()).filter((d) => d.length > 0);
+    if (clean.length === 0) {
+      throw new BadRequestException('Aucune étape à créer');
+    }
+    let position = await this.nextStepPosition(recipeId);
+    await this.db
+      .insert(recipeSteps)
+      .values(clean.map((description) => ({ recipeId, position: position++, description })));
+  }
+
+  /** Édite une étape texte (description, bannière). `bannerType: null` la retire. */
+  async updateStep(
+    userId: string,
+    recipeId: string,
+    stepId: string,
+    dto: UpdateRecipeStepDto,
+  ): Promise<void> {
+    await this.findOwnedOrFail(userId, recipeId);
+    const step = await this.findStepOrFail(recipeId, stepId);
+    if (step.baseRecipeRefId) {
+      throw new BadRequestException('Une référence de base n’est pas éditable');
+    }
+
+    const patch: Partial<RecipeStepRow> = { updatedAt: new Date() };
+    if (dto.description !== undefined) {
+      const d = dto.description.trim();
+      if (!d) throw new BadRequestException('La description de l’étape est obligatoire');
+      patch.description = d;
+    }
+    if (dto.bannerType !== undefined) {
+      if (dto.bannerType === null) {
+        patch.bannerType = null;
+        patch.bannerText = null;
+      } else {
+        const text = (dto.bannerText ?? step.bannerText ?? '').trim();
+        if (!text) throw new BadRequestException('Le texte de la bannière est obligatoire');
+        patch.bannerType = dto.bannerType;
+        patch.bannerText = text;
+      }
+    } else if (dto.bannerText !== undefined && dto.bannerText !== null) {
+      if (!step.bannerType) {
+        throw new BadRequestException('Une bannière requiert un type');
+      }
+      const text = dto.bannerText.trim();
+      if (!text) throw new BadRequestException('Le texte de la bannière est obligatoire');
+      patch.bannerText = text;
+    }
+
+    await this.db.update(recipeSteps).set(patch).where(eq(recipeSteps.id, stepId));
+  }
+
+  async removeStep(userId: string, recipeId: string, stepId: string): Promise<void> {
+    await this.findOwnedOrFail(userId, recipeId);
+    await this.findStepOrFail(recipeId, stepId);
+    await this.db
+      .delete(recipeSteps)
+      .where(and(eq(recipeSteps.id, stepId), eq(recipeSteps.recipeId, recipeId)));
+  }
+
+  /** Réordonne les étapes de premier niveau (drag & drop). Doit lister toutes les étapes. */
+  async reorderSteps(
+    userId: string,
+    recipeId: string,
+    stepIds: string[],
+  ): Promise<void> {
+    await this.findOwnedOrFail(userId, recipeId);
+    const rows = await this.db
+      .select({ id: recipeSteps.id })
+      .from(recipeSteps)
+      .where(eq(recipeSteps.recipeId, recipeId));
+    const owned = new Set(rows.map((r) => r.id));
+    const unique = new Set(stepIds);
+    if (
+      unique.size !== stepIds.length ||
+      stepIds.length !== owned.size ||
+      stepIds.some((id) => !owned.has(id))
+    ) {
+      throw new BadRequestException('Liste d’étapes invalide pour le réordonnancement');
+    }
+    for (let i = 0; i < stepIds.length; i++) {
+      await this.db
+        .update(recipeSteps)
+        .set({ position: i, updatedAt: new Date() })
+        .where(and(eq(recipeSteps.id, stepIds[i]), eq(recipeSteps.recipeId, recipeId)));
+    }
+  }
+
+  /** Remplace la sélection d'ingrédients d'une étape texte (sous-ensemble recette). */
+  async setStepIngredients(
+    userId: string,
+    recipeId: string,
+    stepId: string,
+    ingredientIds: string[],
+  ): Promise<void> {
+    await this.findOwnedOrFail(userId, recipeId);
+    const step = await this.findStepOrFail(recipeId, stepId);
+    if (step.baseRecipeRefId) {
+      throw new BadRequestException('Une référence de base n’a pas d’ingrédients propres');
+    }
+    if (ingredientIds.length > 0) {
+      await this.assertIngredientsOnRecipe(recipeId, ingredientIds);
+    }
+    await this.db.delete(stepIngredients).where(eq(stepIngredients.stepId, stepId));
+    if (ingredientIds.length > 0) {
+      await this.db
+        .insert(stepIngredients)
+        .values(ingredientIds.map((ingredientId) => ({ stepId, ingredientId })));
+    }
   }
 
   // --- composants (sous-recettes) ---------------------------------------
@@ -459,6 +684,212 @@ export class RecipesService {
       imageUrl: i.imageUrl,
       quantity: quantities.get(i.id) ?? DEFAULT_INGREDIENT_QUANTITY,
     }));
+  }
+
+  // --- étapes : dépliage & validations ----------------------------------
+
+  /**
+   * Construit l'arbre d'étapes affichable : étapes texte numérotées + blocs
+   * référence de base dépliés récursivement (numérotation continue, réfs
+   * supprimées omises, anti-cycle). `ingredientMap` = ingrédients de la recette.
+   */
+  private async buildRecipeSteps(
+    recipeId: string,
+    ingredientMap: Map<string, RecipeIngredientLineDto>,
+  ): Promise<RecipeStepDto[]> {
+    const ownRows = await this.db
+      .select()
+      .from(recipeSteps)
+      .where(eq(recipeSteps.recipeId, recipeId))
+      .orderBy(asc(recipeSteps.position));
+
+    const textIds = ownRows.filter((r) => !r.baseRecipeRefId).map((r) => r.id);
+    const siRows = textIds.length
+      ? await this.db
+          .select()
+          .from(stepIngredients)
+          .where(inArray(stepIngredients.stepId, textIds))
+      : [];
+    const ingredientIdsByStep = new Map<string, string[]>();
+    for (const si of siRows) {
+      const arr = ingredientIdsByStep.get(si.stepId);
+      if (arr) arr.push(si.ingredientId);
+      else ingredientIdsByStep.set(si.stepId, [si.ingredientId]);
+    }
+
+    const counter = { n: 0 };
+    const out: RecipeStepDto[] = [];
+    for (const r of ownRows) {
+      if (r.baseRecipeRefId) {
+        const base = await this.findBaseForDisplay(r.baseRecipeRefId);
+        if (!base) continue; // référence supprimée → omise
+        const steps = await this.expandBaseSteps(
+          r.baseRecipeRefId,
+          new Set([recipeId]),
+          counter,
+        );
+        out.push({
+          kind: 'base_ref',
+          id: r.id,
+          baseRecipeId: base.id,
+          baseRecipeName: base.name,
+          steps,
+        });
+      } else if (r.description) {
+        const ingredients = (ingredientIdsByStep.get(r.id) ?? [])
+          .map((id) => ingredientMap.get(id))
+          .filter((x): x is RecipeIngredientLineDto => x !== undefined);
+        out.push({
+          kind: 'text',
+          id: r.id,
+          number: ++counter.n,
+          description: r.description,
+          banner: this.toBanner(r),
+          ingredients,
+        });
+      }
+    }
+    return out;
+  }
+
+  /** Déplie (récursivement, à plat) les étapes d'une recette de base référencée. */
+  private async expandBaseSteps(
+    baseId: string,
+    visited: Set<string>,
+    counter: { n: number },
+  ): Promise<RecipeExpandedStepDto[]> {
+    if (visited.has(baseId)) return [];
+    const [base] = await this.db
+      .select({ id: recipes.id })
+      .from(recipes)
+      .where(and(eq(recipes.id, baseId), isNull(recipes.deletedAt)));
+    if (!base) return [];
+    const nextVisited = new Set(visited).add(baseId);
+    const rows = await this.db
+      .select()
+      .from(recipeSteps)
+      .where(eq(recipeSteps.recipeId, baseId))
+      .orderBy(asc(recipeSteps.position));
+
+    const out: RecipeExpandedStepDto[] = [];
+    for (const r of rows) {
+      if (r.baseRecipeRefId) {
+        out.push(...(await this.expandBaseSteps(r.baseRecipeRefId, nextVisited, counter)));
+      } else if (r.description) {
+        out.push({
+          number: ++counter.n,
+          description: r.description,
+          banner: this.toBanner(r),
+        });
+      }
+    }
+    return out;
+  }
+
+  private toBanner(row: RecipeStepRow): RecipeStepBannerDto | null {
+    return row.bannerType ? { type: row.bannerType, text: row.bannerText ?? '' } : null;
+  }
+
+  private async findBaseForDisplay(
+    id: string,
+  ): Promise<{ id: string; name: string } | null> {
+    const [row] = await this.db
+      .select({ id: recipes.id, name: recipes.name })
+      .from(recipes)
+      .where(and(eq(recipes.id, id), isNull(recipes.deletedAt)));
+    return row ?? null;
+  }
+
+  private async validateBaseRef(
+    userId: string,
+    recipeId: string,
+    baseId: string,
+  ): Promise<void> {
+    if (baseId === recipeId) {
+      throw new ConflictException('Une recette ne peut pas se référencer elle-même');
+    }
+    const base = await this.findOwnedOrFail(userId, baseId);
+    if (!base.isBase) {
+      throw new ConflictException(
+        'Seule une recette de base peut être référencée dans une étape',
+      );
+    }
+    if (await this.refWouldCycle(recipeId, baseId, new Set())) {
+      throw new ConflictException('Cette référence créerait un cycle entre recettes');
+    }
+  }
+
+  /** Vrai si `baseId` référence (transitivement) `targetRecipeId` via ses étapes. */
+  private async refWouldCycle(
+    targetRecipeId: string,
+    baseId: string,
+    visited: Set<string>,
+  ): Promise<boolean> {
+    if (baseId === targetRecipeId) return true;
+    if (visited.has(baseId)) return false;
+    visited.add(baseId);
+    const rows = await this.db
+      .select({ ref: recipeSteps.baseRecipeRefId })
+      .from(recipeSteps)
+      .where(eq(recipeSteps.recipeId, baseId));
+    for (const r of rows) {
+      if (r.ref && (await this.refWouldCycle(targetRecipeId, r.ref, visited))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private validateBanner(type?: string | null, text?: string | null): void {
+    if (type && !(text && text.trim())) {
+      throw new BadRequestException('Le texte de la bannière est obligatoire');
+    }
+    if (!type && text && text.trim()) {
+      throw new BadRequestException('Une bannière requiert un type');
+    }
+  }
+
+  private async assertIngredientsOnRecipe(
+    recipeId: string,
+    ingredientIds: string[],
+  ): Promise<void> {
+    const rows = await this.db
+      .select({ id: recipeIngredients.ingredientId })
+      .from(recipeIngredients)
+      .where(
+        and(
+          eq(recipeIngredients.recipeId, recipeId),
+          inArray(recipeIngredients.ingredientId, ingredientIds),
+        ),
+      );
+    const present = new Set(rows.map((r) => r.id));
+    for (const id of ingredientIds) {
+      if (!present.has(id)) {
+        throw new BadRequestException('Ingrédient absent de la recette');
+      }
+    }
+  }
+
+  private async nextStepPosition(recipeId: string): Promise<number> {
+    const [row] = await this.db
+      .select({ max: sql<number>`coalesce(max(${recipeSteps.position}), -1)::int` })
+      .from(recipeSteps)
+      .where(eq(recipeSteps.recipeId, recipeId));
+    return (row?.max ?? -1) + 1;
+  }
+
+  private async findStepOrFail(
+    recipeId: string,
+    stepId: string,
+  ): Promise<RecipeStepRow> {
+    const [row] = await this.db
+      .select()
+      .from(recipeSteps)
+      .where(and(eq(recipeSteps.id, stepId), eq(recipeSteps.recipeId, recipeId)));
+    if (!row) {
+      throw new NotFoundException('Étape introuvable');
+    }
+    return row;
   }
 
   /** Résout des ids de recettes possédées (non supprimées) en résumés. */

@@ -1,4 +1,8 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { DrizzleDB } from '../../db/drizzle.provider';
 import { IngredientsService } from '../ingredients/ingredients.service';
@@ -199,6 +203,48 @@ describe('RecipesService', () => {
       const service = new RecipesService(db, ingredientsStub);
       await service.updateIngredientQuantity(USER, 'rec-1', 'ing-1', 80);
       expect(calls.some((c) => c.op === 'update')).toBe(true);
+    });
+  });
+
+  describe('addStep', () => {
+    it('refuse une référence de base avec une description', async () => {
+      const { db } = makeDb([[recipeRow()]]); // findOwnedOrFail
+      const service = new RecipesService(db, ingredientsStub);
+      await expect(
+        service.addStep(USER, 'rec-1', {
+          baseRecipeRefId: 'rec-2',
+          description: 'texte',
+        }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+
+    it('refuse l’auto-référence en étape', async () => {
+      const { db } = makeDb([[recipeRow()]]); // findOwnedOrFail
+      const service = new RecipesService(db, ingredientsStub);
+      await expect(
+        service.addStep(USER, 'rec-1', { baseRecipeRefId: 'rec-1' }),
+      ).rejects.toBeInstanceOf(ConflictException);
+    });
+
+    it('refuse une étape texte sans description', async () => {
+      const { db } = makeDb([[recipeRow()]]); // findOwnedOrFail
+      const service = new RecipesService(db, ingredientsStub);
+      await expect(
+        service.addStep(USER, 'rec-1', { description: '   ' }),
+      ).rejects.toBeInstanceOf(BadRequestException);
+    });
+  });
+
+  describe('updateStep', () => {
+    it('refuse d’éditer une référence de base', async () => {
+      const { db } = makeDb([
+        [recipeRow()], // findOwnedOrFail
+        [{ id: 'step-1', recipeId: 'rec-1', baseRecipeRefId: 'rec-2' }], // findStepOrFail
+      ]);
+      const service = new RecipesService(db, ingredientsStub);
+      await expect(
+        service.updateStep(USER, 'rec-1', 'step-1', { description: 'x' }),
+      ).rejects.toBeInstanceOf(BadRequestException);
     });
   });
 });
