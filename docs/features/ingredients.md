@@ -1,6 +1,6 @@
 ---
 feature: ingredients
-status: planned     # planned | in-progress | done
+status: done        # planned | in-progress | done
 scope: v1           # v1 | v2 | later
 depends_on: [auth]
 order: 2
@@ -86,3 +86,34 @@ permettant une personnalisation complète une fois importé.
   (seed manuel, script, interface admin future) ?
 - Stockage de la symétrie des alternatives : lignes dupliquées (A→B et B→A)
   ou déduction à la lecture (une seule ligne, requête bidirectionnelle) ?
+
+## Réalisation (fait)
+
+Questions ouvertes tranchées à l'implémentation :
+- **Catalogue système** : seedé via un **script** (`npm run db:seed:ingredients`
+  → `server/scripts/seed-ingredients.ts`) à partir d'un fichier JSON. Pas
+  d'interface admin (hors scope confirmé).
+- **Symétrie des alternatives** : **une seule ligne canonique** par paire
+  (`low_id < high_id` + index unique), symétrie déduite à la lecture (requête
+  bidirectionnelle). Pas de doublon A→B / B→A.
+
+### Backend
+- Table `ingredients` (`owner_id` nullable = système vs copie user, `imported_from_id`,
+  `unit` enum, `deleted_at` soft delete) + pivot `ingredient_alternatives`.
+- Endpoints : `GET /ingredients`, `GET /ingredients/system` (annoté
+  `alreadyImported`), `GET /ingredients/:id` (avec alternatives),
+  `POST /ingredients`, `POST /ingredients/:id/import` (409 si déjà importé),
+  `PATCH /ingredients/:id`, `DELETE /ingredients/:id` (soft delete),
+  `POST`/`DELETE /ingredients/:id/alternatives[/:altId]`.
+- Un ingrédient système est non modifiable/supprimable par un user (403). Purge
+  branchée dans le « repartir de zéro ».
+
+### Mobile
+- Écran `IngredientsPage` : onglets « Mes ingrédients » / « Catalogue système »
+  (avec import + badge « déjà importé ») + recherche. Page détail avec édition
+  nom/unité, gestion des alternatives (picker), suppression. Bottom-sheet de
+  création (nom + unité).
+
+### Gap connu
+- **Image** : le champ `imageUrl` existe (URL externe) mais **l'upload réel
+  d'image n'est pas branché** (pas de widget d'upload) — à faire ultérieurement.
