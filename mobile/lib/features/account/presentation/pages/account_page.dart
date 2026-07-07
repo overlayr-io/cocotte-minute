@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/coming_soon_page.dart';
 import '../../../auth/presentation/pages/auth_page.dart';
 import '../../../ingredients/presentation/pages/ingredients_page.dart';
+import '../../../tags/presentation/pages/tags_page.dart';
 import '../widgets/account_section.dart';
 
 /// Onglet Compte : profil invité/connecté + accès au contenu, à la famille,
@@ -56,8 +57,7 @@ class AccountPage extends StatelessWidget {
               AccountTile(
                 icon: Icons.sell_outlined,
                 label: l10n.accountRowTags,
-                onTap: () => Navigator.of(context)
-                    .push(ComingSoonPage.route(l10n.accountRowTags)),
+                onTap: () => Navigator.of(context).push(TagsPage.route()),
               ),
               AccountTile(
                 icon: Icons.folder_outlined,
