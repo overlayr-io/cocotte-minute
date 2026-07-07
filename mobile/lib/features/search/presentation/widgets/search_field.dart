@@ -32,15 +32,10 @@ class _SearchFieldState extends State<SearchField> {
   }
 
   @override
-  void dispose() {
-    _controller.dispose();
-    _focusNode.dispose();
-    super.dispose();
-  }
-
-  /// Resynchronise le champ quand le cubit a modifié la saisie (pastille ajoutée
-  /// → champ vidé, bouton déclencheur → préfixe inséré).
-  void _syncController() {
+  void didUpdateWidget(SearchField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Resynchronise le champ quand le cubit a modifié la saisie hors frappe
+    // (pastille ajoutée → champ vidé, bouton déclencheur → préfixe inséré).
     if (_controller.text != widget.state.rawInput) {
       _controller.value = TextEditingValue(
         text: widget.state.rawInput,
@@ -50,8 +45,14 @@ class _SearchFieldState extends State<SearchField> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    _syncController();
     final l10n = AppLocalizations.of(context);
     final state = widget.state;
     final cubit = context.read<SearchCubit>();
