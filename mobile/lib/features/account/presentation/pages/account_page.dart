@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/coming_soon_page.dart';
 import '../../../auth/presentation/pages/auth_page.dart';
 import '../../../ingredients/presentation/pages/ingredients_page.dart';
+import '../../../people/presentation/pages/famille_page.dart';
 import '../../../tags/presentation/pages/tags_page.dart';
 import '../widgets/account_section.dart';
 
@@ -75,8 +76,7 @@ class AccountPage extends StatelessWidget {
               AccountTile(
                 icon: Icons.groups_outlined,
                 label: l10n.accountRowPersons,
-                onTap: () => Navigator.of(context)
-                    .push(ComingSoonPage.route(l10n.accountSectionFamily)),
+                onTap: () => Navigator.of(context).push(FamillePage.route()),
               ),
             ],
           ),
