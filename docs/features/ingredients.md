@@ -77,7 +77,11 @@ permettant une personnalisation complète une fois importé.
 ## Hors scope pour cette feature
 - Le cas "un ingrédient peut être une recette de base (ex: béchamel)" —
   explicitement mentionné comme évolution future, pas dans cette feature.
-- Liaison ingrédient ↔ recette/étape — sera traité dans la feature recette.
+- Liaison ingrédient ↔ recette — **livré** dans `recipes` : pivot
+  `recipe_ingredients` avec **quantité** (`quantity numeric(10,2)`), l'unité étant
+  toujours lue depuis l'ingrédient. Ajout mobile via les écrans 8a/8b/8c (import
+  système et création réutilisent les endpoints de cette feature). Liaison
+  ingrédient ↔ **étape** : à venir avec `recette-etapes`.
 - Interface d'administration pour gérer le catalogue système d'ingrédients
   (comment le système lui-même crée ses ingrédients de base n'est pas définie ici).
 

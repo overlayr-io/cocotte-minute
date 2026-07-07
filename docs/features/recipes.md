@@ -9,23 +9,37 @@ order: 5
 # Recette (CRUD de base)
 
 > **État de livraison (v1).** Écrans dérivés des maquettes 1d (création),
-> 2d (fiche détail) — une seule page pour recette normale et de base, sections
-> conditionnelles sur `isBase`. Fiche détail avec **photo fixe en fond et corps
-> qui remonte au scroll** (photo `Positioned` + contenu en `CustomScrollView`).
+> 2d (fiche détail) et **8a/8b/8c (ajout d'ingrédient)** — une seule page pour
+> recette normale et de base, sections conditionnelles sur `isBase`. Fiche détail
+> avec **photo fixe en fond et corps qui remonte au scroll** (photo `Positioned` +
+> contenu en `CustomScrollView`).
 >
-> **Cadrage retenu avec l'utilisateur (hors périmètre de cette itération) :**
-> onglet Étapes, bouton Play / mode pas-à-pas, galerie, note ⭐ et bouton Suivre
-> sont **retirés** (reviendront dans leurs features dédiées). **Pas de quantité**
-> par ingrédient en v1 : `recipe_ingredients` = (recipe_id, ingredient_id) seul,
-> lignes = emoji + nom. `servings` par défaut = **1**.
+> **Ingrédients dans les recettes (livré).** `recipe_ingredients` porte une
+> **quantité** (`quantity numeric(10,2)`, migration `0006`) ; l'unité n'est jamais
+> stockée sur la ligne, toujours **lue depuis `ingredients.unit`**. Ajout depuis le
+> mobile branché (feuilles 8a/8b/8c : sélection multiple, import système, création
+> auto-sélectionnée), édition de quantité et retrait sur la fiche. Saisie de
+> quantité par stepper (pas dépendant de l'unité) + clavier décimal. Le serveur
+> fait un **upsert** à l'ajout (`PATCH …/ingredients/:id` pour la quantité seule).
+>
+> **Segment Ingrédients | Étapes.** En place sur la fiche ; l'onglet **Étapes est
+> désactivé** — la feature `recette-etapes` fait partie de la v1 et arrive dans
+> une itération suivante (le segment sert de point d'ancrage).
+>
+> **Portions.** Le stepper Portions fait varier les quantités **affichées**
+> (`quantité × portions / servings`) : **scaling d'affichage local et éphémère,
+> jamais persisté** ; repart de `servings` (défaut **1**) à chaque ouverture.
+>
+> **Toujours hors périmètre (features dédiées) :** bouton Play / mode pas-à-pas,
+> galerie, note ⭐, bouton Suivre.
 >
 > **Pivots dette branchés :** `recipe_categories` et `recipe_tags` créés ; les
 > `recipeCount` réels sont désormais renvoyés par Tags et Catégories (via
 > `RecipesService`, dépendance à sens unique). L'assignation catégorie/tag ↔
 > recette existe côté serveur (endpoints) mais son UI mobile est différée.
 >
-> **Différé (non bloquant) :** ajout d'ingrédient / de composant depuis le mobile
-> (pickers) — les endpoints serveur existent déjà ; upload de photo réel.
+> **Différé (non bloquant) :** ajout de **composant / sous-recette** depuis le
+> mobile (picker) — l'endpoint serveur existe déjà ; upload de photo réel.
 
 ## Problème résolu
 Domaine métier central de l'application : permettre la création et la gestion
@@ -125,9 +139,10 @@ recette de base dès la création.
   avec ce qui a été acté dans `PROJECT_CONTEXT.md`.
 
 ## Hors scope pour cette feature
-- Les étapes détaillées (feature séparée `recette-etapes`).
-- La quantité précise par ingrédient dans une recette (mentionné mais pas
-  détaillé ici — à clarifier : montant + unité par ligne d'ingrédient).
+- Les étapes détaillées (feature séparée `recette-etapes`, prévue en v1 — le
+  segment Ingrédients | Étapes est déjà en place, onglet Étapes désactivé).
+- ~~La quantité précise par ingrédient~~ → **livré** : `recipe_ingredients.quantity`
+  (`numeric(10,2)`), unité toujours lue depuis l'ingrédient. Voir l'en-tête.
 - Le mode pas-à-pas d'exécution (feature séparée `mode-pas-a-pas`).
 
 ## Questions tranchées
