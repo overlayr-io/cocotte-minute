@@ -153,6 +153,32 @@ export class RecipesService {
     return rows.map(toSummary);
   }
 
+  /**
+   * Recettes rangées dans un dossier donné (pivot `recipe_categories`), les
+   * plus récentes d'abord, hors supprimées. Ne renvoie que les recettes de
+   * l'utilisateur — l'appartenance du dossier est vérifiée en amont par
+   * CategoriesService. Directes uniquement (pas de récursion sous-dossiers,
+   * cohérent avec `countByCategoryIds`).
+   */
+  async listByCategory(
+    userId: string,
+    categoryId: string,
+  ): Promise<RecipeSummaryDto[]> {
+    const rows = await this.db
+      .select({ recipe: recipes })
+      .from(recipeCategories)
+      .innerJoin(recipes, eq(recipes.id, recipeCategories.recipeId))
+      .where(
+        and(
+          eq(recipeCategories.categoryId, categoryId),
+          eq(recipes.authorId, userId),
+          isNull(recipes.deletedAt),
+        ),
+      )
+      .orderBy(desc(recipes.createdAt));
+    return rows.map((r) => toSummary(r.recipe));
+  }
+
   async create(userId: string, dto: CreateRecipeDto): Promise<RecipeSummaryDto> {
     const [row] = await this.db
       .insert(recipes)

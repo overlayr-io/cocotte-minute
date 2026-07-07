@@ -16,7 +16,7 @@ import {
   categories,
   type CategoryRow,
 } from '../../db/schema/categories.schema';
-import { RecipesService } from '../recipes/recipes.service';
+import { RecipesService, type RecipeSummaryDto } from '../recipes/recipes.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
@@ -79,6 +79,19 @@ export class CategoriesService {
       rows.map((r) => r.id),
     );
     return rows.map((row) => toDto(row, counts.get(row.id) ?? 0));
+  }
+
+  /**
+   * Recettes rangées dans un de mes dossiers. Vérifie d'abord que le dossier
+   * m'appartient (404 sinon), puis délègue le listing au service Recipes —
+   * dépendance à sens unique, cohérent avec `recipeCount`.
+   */
+  async listRecipes(
+    userId: string,
+    categoryId: string,
+  ): Promise<RecipeSummaryDto[]> {
+    await this.findOwnedOrFail(userId, categoryId);
+    return this.recipesService.listByCategory(userId, categoryId);
   }
 
   async create(userId: string, dto: CreateCategoryDto): Promise<CategoryDto> {
