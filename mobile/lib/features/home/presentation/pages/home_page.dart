@@ -11,6 +11,7 @@ import '../../../recipes/data/recipes_repository.dart';
 import '../../../recipes/domain/recipe.dart';
 import '../../../recipes/presentation/pages/recipe_create_page.dart';
 import '../../../recipes/presentation/pages/recipe_detail_page.dart';
+import '../../../search/presentation/pages/search_page.dart';
 import '../bloc/home_cubit.dart';
 
 /// Couleurs du bandeau crème de l'en-tête (maquette 1b/2a).
@@ -51,12 +52,6 @@ class _HomeView extends StatelessWidget {
     final cubit = context.read<HomeCubit>();
     await Navigator.of(context).push(RecipeDetailPage.route(id));
     await cubit.load();
-  }
-
-  void _comingSoon(BuildContext context, String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -113,8 +108,10 @@ class _HomeView extends StatelessWidget {
             child: _SearchAndChips(
               categories: state.categories,
               l10n: l10n,
-              onSearchTap: () => _comingSoon(context, l10n.homeSearchComingSoon),
-              onCategoryTap: () => _comingSoon(context, l10n.homeSearchComingSoon),
+              onSearchTap: () =>
+                  Navigator.of(context).push(SearchPage.route()),
+              onCategoryTap: (category) => Navigator.of(context)
+                  .push(SearchPage.route(initialFolder: category)),
             ),
           ),
         ),
@@ -212,7 +209,9 @@ class _SearchAndChips extends StatelessWidget {
   final List<Category> categories;
   final AppLocalizations l10n;
   final VoidCallback onSearchTap;
-  final VoidCallback onCategoryTap;
+
+  /// Ouvre la recherche, éventuellement pré-filtrée sur un dossier (null = « Tout »).
+  final ValueChanged<Category?> onCategoryTap;
 
   @override
   Widget build(BuildContext context) {
@@ -244,7 +243,7 @@ class _SearchAndChips extends StatelessWidget {
                   label: l10n.homeCategoryAll,
                   emoji: '🍽️',
                   active: true,
-                  onTap: onCategoryTap,
+                  onTap: () => onCategoryTap(null),
                 ),
                 for (final c in categories) ...[
                   const SizedBox(width: 16),
@@ -252,7 +251,7 @@ class _SearchAndChips extends StatelessWidget {
                     label: c.name,
                     emoji: c.icon,
                     active: false,
-                    onTap: onCategoryTap,
+                    onTap: () => onCategoryTap(c),
                   ),
                 ],
               ],
