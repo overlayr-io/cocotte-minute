@@ -5,14 +5,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../domain/category.dart';
 import 'category_path.dart';
 
-/// Palette d'emojis système suggérés pour un dossier. L'utilisateur peut aussi
-/// n'en mettre aucun (icône dossier par défaut).
-const List<String> kCategoryEmojiOptions = [
-  '🍽️', '🥗', '🍰', '🥤', '🍝', '🥘', '🍕', '🥩',
-  '🍲', '🍜', '🥐', '🧁', '🍹', '🥧', '🍔', '🌮',
-  '🥞', '🍣', '🧀', '🍞', '🥑', '🍎', '☕', '🍫',
-];
-
 /// Issue de la sheet dossier : enregistrement (nom + emoji + parent) ou demande
 /// de suppression (édition uniquement).
 sealed class CategorySheetResult {
@@ -177,8 +169,8 @@ class _CategoryFormSheetState extends State<_CategoryFormSheet> {
             const SizedBox(height: 18),
             _Label(l10n.categoryFieldIcon),
             const SizedBox(height: 11),
-            _EmojiPicker(
-              selected: _icon,
+            _EmojiField(
+              initial: _icon,
               onChanged: (emoji) => setState(() => _icon = emoji),
             ),
             const SizedBox(height: 18),
@@ -254,86 +246,125 @@ class _CategoryFormSheetState extends State<_CategoryFormSheet> {
   }
 }
 
-class _EmojiPicker extends StatelessWidget {
-  const _EmojiPicker({required this.selected, required this.onChanged});
+/// Champ emoji : la pastille est un vrai champ de saisie. La toucher ouvre le
+/// clavier système (l'utilisateur bascule sur les emojis et insère celui qu'il
+/// veut). On ne conserve que le dernier « caractère » perçu (un seul emoji,
+/// gestion des séquences ZWJ via `characters`).
+class _EmojiField extends StatefulWidget {
+  const _EmojiField({required this.initial, required this.onChanged});
 
-  final String? selected;
+  final String? initial;
   final ValueChanged<String?> onChanged;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Center(
-          child: Container(
-            width: 76,
-            height: 76,
-            decoration: BoxDecoration(
-              color: AppColors.primaryTint,
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.border),
-            ),
-            alignment: Alignment.center,
-            child: selected != null
-                ? Text(selected!, style: const TextStyle(fontSize: 36))
-                : const Icon(Icons.folder_outlined,
-                    size: 32, color: AppColors.primary),
-          ),
-        ),
-        const SizedBox(height: 14),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            _EmojiTile(
-              onTap: () => onChanged(null),
-              selected: selected == null,
-              child: const Icon(Icons.folder_outlined,
-                  size: 18, color: Color(0xFFA79F8B)),
-            ),
-            for (final emoji in kCategoryEmojiOptions)
-              _EmojiTile(
-                onTap: () => onChanged(emoji),
-                selected: selected == emoji,
-                child: Text(emoji, style: const TextStyle(fontSize: 18)),
-              ),
-          ],
-        ),
-      ],
-    );
-  }
+  State<_EmojiField> createState() => _EmojiFieldState();
 }
 
-class _EmojiTile extends StatelessWidget {
-  const _EmojiTile({
-    required this.child,
-    required this.selected,
-    required this.onTap,
-  });
+class _EmojiFieldState extends State<_EmojiField> {
+  late final TextEditingController _controller;
+  final FocusNode _focusNode = FocusNode();
 
-  final Widget child;
-  final bool selected;
-  final VoidCallback onTap;
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initial ?? '');
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _onChanged(String value) {
+    final chars = value.characters;
+    final emoji = chars.isEmpty ? '' : chars.last.toString();
+    if (emoji != value) {
+      _controller.value = TextEditingValue(
+        text: emoji,
+        selection: TextSelection.collapsed(offset: emoji.length),
+      );
+    }
+    setState(() {});
+    widget.onChanged(emoji.isEmpty ? null : emoji);
+  }
+
+  void _clear() {
+    _controller.clear();
+    setState(() {});
+    widget.onChanged(null);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        height: 40,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: AppColors.card,
-          borderRadius: BorderRadius.circular(11),
-          border: Border.all(
-            color: selected ? AppColors.primary : AppColors.border,
-            width: selected ? 2 : 1,
+    final l10n = AppLocalizations.of(context);
+    final hasEmoji = _controller.text.isNotEmpty;
+
+    return Column(
+      children: [
+        Center(
+          child: GestureDetector(
+            onTap: _focusNode.requestFocus,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 76,
+                  height: 76,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryTint,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppColors.border),
+                  ),
+                  child: SizedBox(
+                    width: 56,
+                    child: TextField(
+                      controller: _controller,
+                      focusNode: _focusNode,
+                      textAlign: TextAlign.center,
+                      showCursor: false,
+                      maxLines: 1,
+                      autocorrect: false,
+                      enableSuggestions: false,
+                      style: const TextStyle(fontSize: 34, height: 1.1),
+                      decoration: const InputDecoration(
+                        isCollapsed: true,
+                        border: InputBorder.none,
+                        counterText: '',
+                      ),
+                      onChanged: _onChanged,
+                    ),
+                  ),
+                ),
+                if (!hasEmoji)
+                  const IgnorePointer(
+                    child: Icon(Icons.folder_outlined,
+                        size: 32, color: AppColors.primary),
+                  ),
+              ],
+            ),
           ),
         ),
-        child: child,
-      ),
+        const SizedBox(height: 10),
+        if (hasEmoji)
+          TextButton(
+            onPressed: _clear,
+            style: TextButton.styleFrom(foregroundColor: AppColors.textSecondary),
+            child: Text(l10n.categoryIconClear),
+          )
+        else
+          Text(
+            l10n.categoryIconHint,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 12.5,
+              height: 1.4,
+              color: AppColors.textMuted,
+            ),
+          ),
+      ],
     );
   }
 }

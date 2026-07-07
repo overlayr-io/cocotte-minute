@@ -508,6 +508,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get categoryFieldIcon => 'Emoji';
 
   @override
+  String get categoryIconHint =>
+      'Touche pour ouvrir le clavier et choisir un emoji.';
+
+  @override
+  String get categoryIconClear => 'Retirer l\'emoji';
+
+  @override
   String get categoryFieldName => 'Nom';
 
   @override

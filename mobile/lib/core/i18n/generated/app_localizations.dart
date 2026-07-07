@@ -1018,6 +1018,18 @@ abstract class AppLocalizations {
   /// **'Emoji'**
   String get categoryFieldIcon;
 
+  /// No description provided for @categoryIconHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Touche pour ouvrir le clavier et choisir un emoji.'**
+  String get categoryIconHint;
+
+  /// No description provided for @categoryIconClear.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer l\'emoji'**
+  String get categoryIconClear;
+
   /// No description provided for @categoryFieldName.
   ///
   /// In fr, this message translates to:
