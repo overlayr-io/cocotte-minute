@@ -303,13 +303,13 @@ class _SearchBar extends StatelessWidget {
                 ),
               ),
               Container(
-                width: 38,
-                height: 38,
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
                   color: AppColors.pill,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.tune_rounded,
+                child: const Icon(Icons.filter_list_rounded,
                     color: AppColors.primary, size: 20),
               ),
             ],
