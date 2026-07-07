@@ -9,6 +9,7 @@ import { DbModule } from './db/db.module';
 import { AccountModule } from './modules/account/account.module';
 import { HealthModule } from './modules/health/health.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
+import { PeopleModule } from './modules/people/people.module';
 import { TagsModule } from './modules/tags/tags.module';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -63,6 +64,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     HealthModule,
     IngredientsModule,
     TagsModule,
+    PeopleModule,
     AccountModule,
   ],
   providers: [
