@@ -47,19 +47,24 @@ class RecipeSummary extends Equatable {
       [id, name, photoUrl, isBase, prepTime, cookTime, restTime, servings];
 }
 
-/// Ligne d'ingrédient telle qu'affichée sur la fiche (nom + unité lue depuis
-/// l'ingrédient ; pas de quantité en v1).
+/// Ligne d'ingrédient telle qu'affichée sur la fiche : nom + unité (lue depuis
+/// l'ingrédient) + quantité (pour `servings` personnes ; la mise à l'échelle par
+/// portions est un calcul d'affichage côté client, jamais persisté).
 class RecipeIngredientLine extends Equatable {
   const RecipeIngredientLine({
     required this.id,
     required this.name,
     required this.unit,
+    required this.quantity,
     this.imageUrl,
   });
 
   final String id;
   final String name;
+
+  /// Valeur `wire` de l'unité (cf. `IngredientUnit.fromWire`).
   final String unit;
+  final double quantity;
   final String? imageUrl;
 
   factory RecipeIngredientLine.fromJson(Map<String, dynamic> json) {
@@ -67,12 +72,13 @@ class RecipeIngredientLine extends Equatable {
       id: json['id'] as String,
       name: json['name'] as String,
       unit: json['unit'] as String,
+      quantity: (json['quantity'] as num?)?.toDouble() ?? 1,
       imageUrl: json['imageUrl'] as String?,
     );
   }
 
   @override
-  List<Object?> get props => [id, name, unit, imageUrl];
+  List<Object?> get props => [id, name, unit, quantity, imageUrl];
 }
 
 /// Fiche détail complète d'une recette. La même page sert une recette normale et

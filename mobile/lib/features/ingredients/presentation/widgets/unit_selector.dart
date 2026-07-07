@@ -15,6 +15,44 @@ String unitLabel(AppLocalizations l10n, IngredientUnit unit) {
   };
 }
 
+/// Abréviation courte accolée à une quantité (« 120 g », « 2 c.à.s »).
+String unitShort(AppLocalizations l10n, IngredientUnit unit) {
+  return switch (unit) {
+    IngredientUnit.gramme => l10n.unitShortGramme,
+    IngredientUnit.milligramme => l10n.unitShortMilligramme,
+    IngredientUnit.piece => l10n.unitShortPiece,
+    IngredientUnit.cuillereCafe => l10n.unitShortCuillereCafe,
+    IngredientUnit.cuillereSoupe => l10n.unitShortCuillereSoupe,
+  };
+}
+
+/// Formule descriptive de l'unité (sous-titre du picker : « en grammes »).
+String unitDescription(AppLocalizations l10n, IngredientUnit unit) {
+  return switch (unit) {
+    IngredientUnit.gramme => l10n.unitDescriptionGramme,
+    IngredientUnit.milligramme => l10n.unitDescriptionMilligramme,
+    IngredientUnit.piece => l10n.unitDescriptionPiece,
+    IngredientUnit.cuillereCafe => l10n.unitDescriptionCuillereCafe,
+    IngredientUnit.cuillereSoupe => l10n.unitDescriptionCuillereSoupe,
+  };
+}
+
+/// Format d'affichage d'une quantité : entier sans décimales, sinon jusqu'à 2
+/// décimales, séparateur virgule (FR) et zéros de fin retirés (2,5 / 120).
+String formatQuantity(double quantity) {
+  if (quantity == quantity.roundToDouble()) return quantity.round().toString();
+  var s = quantity.toStringAsFixed(2);
+  s = s.replaceAll(RegExp(r'0+$'), '').replaceAll(RegExp(r'\.$'), '');
+  return s.replaceAll('.', ',');
+}
+
+/// Quantité + unité courte (« 120 g »).
+String formatQuantityWithUnit(
+  AppLocalizations l10n,
+  double quantity,
+  IngredientUnit unit,
+) => '${formatQuantity(quantity)} ${unitShort(l10n, unit)}';
+
 /// Sélecteur d'unité sous forme de puces (une seule sélectionnée).
 class UnitSelector extends StatelessWidget {
   const UnitSelector({super.key, required this.selected, required this.onChanged});

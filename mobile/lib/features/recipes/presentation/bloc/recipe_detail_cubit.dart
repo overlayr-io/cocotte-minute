@@ -63,9 +63,12 @@ class RecipeDetailLoaded extends RecipeDetailState {
   List<Object?> get props => [detail, busy, message, deleted];
 }
 
-/// Charge et pilote une fiche recette (édition des champs de base, suppression).
-/// L'ajout d'ingrédients / de composants se fera dans une itération ultérieure
-/// (pickers) ; le serveur les expose déjà.
+/// Ligne à ajouter à une recette : ingrédient + quantité (unité lue depuis
+/// l'ingrédient côté serveur).
+typedef RecipeIngredientDraft = ({String ingredientId, double quantity});
+
+/// Charge et pilote une fiche recette : édition des champs de base, suppression,
+/// et gestion des ingrédients (ajout multiple, modification de quantité, retrait).
 class RecipeDetailCubit extends Cubit<RecipeDetailState> {
   RecipeDetailCubit({
     required RecipesRepository repository,
@@ -127,5 +130,53 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     } on RecipesRepositoryException catch (e) {
       emit(current.copyWith(busy: false, message: e.message));
     }
+  }
+
+  /// Ajoute plusieurs ingrédients (avec leur quantité) puis recharge la fiche.
+  /// Ré-ajouter un ingrédient déjà présent met à jour sa quantité (upsert serveur).
+  Future<void> addIngredients(List<RecipeIngredientDraft> drafts) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded || drafts.isEmpty) return;
+    emit(current.copyWith(busy: true));
+    try {
+      for (final d in drafts) {
+        await _repository.addIngredient(recipeId, d.ingredientId, d.quantity);
+      }
+      await _reload();
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(busy: false, message: e.message));
+    }
+  }
+
+  Future<void> updateIngredientQuantity(
+    String ingredientId,
+    double quantity,
+  ) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    emit(current.copyWith(busy: true));
+    try {
+      await _repository.updateIngredientQuantity(recipeId, ingredientId, quantity);
+      await _reload();
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(busy: false, message: e.message));
+    }
+  }
+
+  Future<void> removeIngredient(String ingredientId) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    emit(current.copyWith(busy: true));
+    try {
+      await _repository.removeIngredient(recipeId, ingredientId);
+      await _reload();
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(busy: false, message: e.message));
+    }
+  }
+
+  Future<void> _reload() async {
+    final detail = await _repository.fetchDetail(recipeId);
+    emit(RecipeDetailLoaded(detail: detail));
   }
 }

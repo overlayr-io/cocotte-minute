@@ -21,6 +21,29 @@ enum IngredientUnit {
   }
 }
 
+/// Réglages de quantité par unité pour les recettes : pas du stepper (jamais 1
+/// par 1 sur les petites unités) et quantité par défaut à la sélection. La
+/// saisie clavier reste libre (décimale) ; ces valeurs ne bornent que le stepper.
+extension IngredientUnitQuantity on IngredientUnit {
+  /// Incrément du stepper +/−.
+  double get quantityStep => switch (this) {
+    IngredientUnit.gramme => 10,
+    IngredientUnit.milligramme => 100,
+    IngredientUnit.piece => 1,
+    IngredientUnit.cuillereCafe => 0.5,
+    IngredientUnit.cuillereSoupe => 0.5,
+  };
+
+  /// Quantité proposée quand l'ingrédient est sélectionné pour la première fois.
+  double get defaultQuantity => switch (this) {
+    IngredientUnit.gramme => 100,
+    IngredientUnit.milligramme => 100,
+    IngredientUnit.piece => 1,
+    IngredientUnit.cuillereCafe => 1,
+    IngredientUnit.cuillereSoupe => 1,
+  };
+}
+
 /// Un ingrédient — système (catalogue de base) ou copie utilisateur.
 class Ingredient extends Equatable {
   const Ingredient({

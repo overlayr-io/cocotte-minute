@@ -95,6 +95,46 @@ class RecipesRepository {
     }
   }
 
+  /// Ajoute (ou met à jour la quantité d') un ingrédient sur la recette.
+  Future<void> addIngredient(
+    String recipeId,
+    String ingredientId,
+    double quantity,
+  ) async {
+    try {
+      await _dio.post<void>(
+        '/recipes/$recipeId/ingredients',
+        data: {'ingredientId': ingredientId, 'quantity': quantity},
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'ajouter l\'ingrédient.');
+    }
+  }
+
+  /// Met à jour la seule quantité d'un ingrédient déjà présent sur la recette.
+  Future<void> updateIngredientQuantity(
+    String recipeId,
+    String ingredientId,
+    double quantity,
+  ) async {
+    try {
+      await _dio.patch<void>(
+        '/recipes/$recipeId/ingredients/$ingredientId',
+        data: {'quantity': quantity},
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de modifier la quantité.');
+    }
+  }
+
+  Future<void> removeIngredient(String recipeId, String ingredientId) async {
+    try {
+      await _dio.delete<void>('/recipes/$recipeId/ingredients/$ingredientId');
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de retirer l\'ingrédient.');
+    }
+  }
+
   RecipesRepositoryException _mapError(DioException e, String fallback) {
     // 400/403/404/409 : le serveur renvoie un message FR actionnable (verrou
     // is_base, composant invalide, recette introuvable...), on le remonte tel quel.

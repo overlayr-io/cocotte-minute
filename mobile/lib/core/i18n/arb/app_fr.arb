@@ -260,6 +260,28 @@
   "unitCuillereSoupe": "c.à.s",
   "@unitCuillereSoupe": {},
 
+  "unitShortGramme": "g",
+  "@unitShortGramme": {},
+  "unitShortMilligramme": "mg",
+  "@unitShortMilligramme": {},
+  "unitShortPiece": "pce",
+  "@unitShortPiece": {},
+  "unitShortCuillereCafe": "c.à.c",
+  "@unitShortCuillereCafe": {},
+  "unitShortCuillereSoupe": "c.à.s",
+  "@unitShortCuillereSoupe": {},
+
+  "unitDescriptionGramme": "en grammes",
+  "@unitDescriptionGramme": {},
+  "unitDescriptionMilligramme": "en milligrammes",
+  "@unitDescriptionMilligramme": {},
+  "unitDescriptionPiece": "à la pièce",
+  "@unitDescriptionPiece": {},
+  "unitDescriptionCuillereCafe": "en cuillères à café",
+  "@unitDescriptionCuillereCafe": {},
+  "unitDescriptionCuillereSoupe": "en cuillères à soupe",
+  "@unitDescriptionCuillereSoupe": {},
+
   "tagsTitle": "Tags",
   "@tagsTitle": {},
   "tagsIntro": "Qualifie tes recettes, sous-recettes et personnes. Utilisables comme filtres dans la recherche.",
@@ -479,6 +501,44 @@
   "@recipeCookShort": {
     "placeholders": {
       "min": { "type": "int" }
+    }
+  },
+
+  "recipeStepsTab": "Étapes",
+  "@recipeStepsTab": {},
+  "recipeServingsSectionTitle": "Portions",
+  "@recipeServingsSectionTitle": {},
+  "recipeServingsScaleHint": "Les quantités s'adaptent",
+  "@recipeServingsScaleHint": {},
+  "recipeIngredientsAddCta": "Ajouter des ingrédients",
+  "@recipeIngredientsAddCta": {},
+  "recipeIngredientQuantityTitle": "Quantité",
+  "@recipeIngredientQuantityTitle": {},
+  "recipeIngredientRemove": "Retirer de la recette",
+  "@recipeIngredientRemove": {},
+  "recipeIngredientAddedToast": "{count, plural, =1{1 ingrédient ajouté} other{{count} ingrédients ajoutés}}",
+  "@recipeIngredientAddedToast": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "addIngredientsTitle": "Ajouter des ingrédients",
+  "@addIngredientsTitle": {},
+  "addIngredientsSearchHint": "Rechercher un ingrédient",
+  "@addIngredientsSearchHint": {},
+  "addIngredientsTabCatalog": "Catalogue système",
+  "@addIngredientsTabCatalog": {},
+  "addIngredientsCreateCta": "Créer un nouvel ingrédient",
+  "@addIngredientsCreateCta": {},
+  "addIngredientsCatalogInfo": "Importe un ingrédient système pour l'ajouter à tes ingrédients, puis à la recette.",
+  "@addIngredientsCatalogInfo": {},
+  "addIngredientsEmptyMine": "Aucun ingrédient. Crée ou importe-en un depuis le catalogue.",
+  "@addIngredientsEmptyMine": {},
+  "addIngredientsCta": "{count, plural, =0{Sélectionne un ingrédient} =1{Ajouter 1 ingrédient} other{Ajouter {count} ingrédients}}",
+  "@addIngredientsCta": {
+    "placeholders": {
+      "count": { "type": "int" }
     }
   },
 

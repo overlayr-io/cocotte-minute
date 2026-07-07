@@ -748,6 +748,66 @@ abstract class AppLocalizations {
   /// **'c.à.s'**
   String get unitCuillereSoupe;
 
+  /// No description provided for @unitShortGramme.
+  ///
+  /// In fr, this message translates to:
+  /// **'g'**
+  String get unitShortGramme;
+
+  /// No description provided for @unitShortMilligramme.
+  ///
+  /// In fr, this message translates to:
+  /// **'mg'**
+  String get unitShortMilligramme;
+
+  /// No description provided for @unitShortPiece.
+  ///
+  /// In fr, this message translates to:
+  /// **'pce'**
+  String get unitShortPiece;
+
+  /// No description provided for @unitShortCuillereCafe.
+  ///
+  /// In fr, this message translates to:
+  /// **'c.à.c'**
+  String get unitShortCuillereCafe;
+
+  /// No description provided for @unitShortCuillereSoupe.
+  ///
+  /// In fr, this message translates to:
+  /// **'c.à.s'**
+  String get unitShortCuillereSoupe;
+
+  /// No description provided for @unitDescriptionGramme.
+  ///
+  /// In fr, this message translates to:
+  /// **'en grammes'**
+  String get unitDescriptionGramme;
+
+  /// No description provided for @unitDescriptionMilligramme.
+  ///
+  /// In fr, this message translates to:
+  /// **'en milligrammes'**
+  String get unitDescriptionMilligramme;
+
+  /// No description provided for @unitDescriptionPiece.
+  ///
+  /// In fr, this message translates to:
+  /// **'à la pièce'**
+  String get unitDescriptionPiece;
+
+  /// No description provided for @unitDescriptionCuillereCafe.
+  ///
+  /// In fr, this message translates to:
+  /// **'en cuillères à café'**
+  String get unitDescriptionCuillereCafe;
+
+  /// No description provided for @unitDescriptionCuillereSoupe.
+  ///
+  /// In fr, this message translates to:
+  /// **'en cuillères à soupe'**
+  String get unitDescriptionCuillereSoupe;
+
   /// No description provided for @tagsTitle.
   ///
   /// In fr, this message translates to:
@@ -1275,6 +1335,90 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Cuisson {min} min'**
   String recipeCookShort(int min);
+
+  /// No description provided for @recipeStepsTab.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étapes'**
+  String get recipeStepsTab;
+
+  /// No description provided for @recipeServingsSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Portions'**
+  String get recipeServingsSectionTitle;
+
+  /// No description provided for @recipeServingsScaleHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les quantités s\'adaptent'**
+  String get recipeServingsScaleHint;
+
+  /// No description provided for @recipeIngredientsAddCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter des ingrédients'**
+  String get recipeIngredientsAddCta;
+
+  /// No description provided for @recipeIngredientQuantityTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité'**
+  String get recipeIngredientQuantityTitle;
+
+  /// No description provided for @recipeIngredientRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer de la recette'**
+  String get recipeIngredientRemove;
+
+  /// No description provided for @recipeIngredientAddedToast.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 ingrédient ajouté} other{{count} ingrédients ajoutés}}'**
+  String recipeIngredientAddedToast(int count);
+
+  /// No description provided for @addIngredientsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter des ingrédients'**
+  String get addIngredientsTitle;
+
+  /// No description provided for @addIngredientsSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher un ingrédient'**
+  String get addIngredientsSearchHint;
+
+  /// No description provided for @addIngredientsTabCatalog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catalogue système'**
+  String get addIngredientsTabCatalog;
+
+  /// No description provided for @addIngredientsCreateCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer un nouvel ingrédient'**
+  String get addIngredientsCreateCta;
+
+  /// No description provided for @addIngredientsCatalogInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importe un ingrédient système pour l\'ajouter à tes ingrédients, puis à la recette.'**
+  String get addIngredientsCatalogInfo;
+
+  /// No description provided for @addIngredientsEmptyMine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun ingrédient. Crée ou importe-en un depuis le catalogue.'**
+  String get addIngredientsEmptyMine;
+
+  /// No description provided for @addIngredientsCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Sélectionne un ingrédient} =1{Ajouter 1 ingrédient} other{Ajouter {count} ingrédients}}'**
+  String addIngredientsCta(int count);
 
   /// No description provided for @homeGreetingQuestion.
   ///

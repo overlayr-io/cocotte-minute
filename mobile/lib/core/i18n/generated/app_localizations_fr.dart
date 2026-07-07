@@ -343,6 +343,36 @@ class AppLocalizationsFr extends AppLocalizations {
   String get unitCuillereSoupe => 'c.à.s';
 
   @override
+  String get unitShortGramme => 'g';
+
+  @override
+  String get unitShortMilligramme => 'mg';
+
+  @override
+  String get unitShortPiece => 'pce';
+
+  @override
+  String get unitShortCuillereCafe => 'c.à.c';
+
+  @override
+  String get unitShortCuillereSoupe => 'c.à.s';
+
+  @override
+  String get unitDescriptionGramme => 'en grammes';
+
+  @override
+  String get unitDescriptionMilligramme => 'en milligrammes';
+
+  @override
+  String get unitDescriptionPiece => 'à la pièce';
+
+  @override
+  String get unitDescriptionCuillereCafe => 'en cuillères à café';
+
+  @override
+  String get unitDescriptionCuillereSoupe => 'en cuillères à soupe';
+
+  @override
   String get tagsTitle => 'Tags';
 
   @override
@@ -653,6 +683,67 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String recipeCookShort(int min) {
     return 'Cuisson $min min';
+  }
+
+  @override
+  String get recipeStepsTab => 'Étapes';
+
+  @override
+  String get recipeServingsSectionTitle => 'Portions';
+
+  @override
+  String get recipeServingsScaleHint => 'Les quantités s\'adaptent';
+
+  @override
+  String get recipeIngredientsAddCta => 'Ajouter des ingrédients';
+
+  @override
+  String get recipeIngredientQuantityTitle => 'Quantité';
+
+  @override
+  String get recipeIngredientRemove => 'Retirer de la recette';
+
+  @override
+  String recipeIngredientAddedToast(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ingrédients ajoutés',
+      one: '1 ingrédient ajouté',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get addIngredientsTitle => 'Ajouter des ingrédients';
+
+  @override
+  String get addIngredientsSearchHint => 'Rechercher un ingrédient';
+
+  @override
+  String get addIngredientsTabCatalog => 'Catalogue système';
+
+  @override
+  String get addIngredientsCreateCta => 'Créer un nouvel ingrédient';
+
+  @override
+  String get addIngredientsCatalogInfo =>
+      'Importe un ingrédient système pour l\'ajouter à tes ingrédients, puis à la recette.';
+
+  @override
+  String get addIngredientsEmptyMine =>
+      'Aucun ingrédient. Crée ou importe-en un depuis le catalogue.';
+
+  @override
+  String addIngredientsCta(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ajouter $count ingrédients',
+      one: 'Ajouter 1 ingrédient',
+      zero: 'Sélectionne un ingrédient',
+    );
+    return '$_temp0';
   }
 
   @override
