@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm';
 import {
   boolean,
   integer,
+  numeric,
   pgTable,
   primaryKey,
   text,
@@ -21,6 +22,12 @@ import { tags } from './tags.schema';
  * sa création, et le prorata futur des quantités part d'une base non nulle.
  */
 export const DEFAULT_SERVINGS = 1;
+
+/**
+ * Quantité par défaut d'une ligne `recipe_ingredients` (fallback serveur). Le
+ * client envoie toujours une quantité explicite (défaut par unité côté mobile).
+ */
+export const DEFAULT_INGREDIENT_QUANTITY = 1;
 
 /**
  * Recettes — domaine métier central (cf. features/recipes.md).
@@ -55,10 +62,11 @@ export const recipes = pgTable('recipes', {
 });
 
 /**
- * Ingrédients d'une recette. Pivot (recipe_id, ingredient_id) — pas de quantité
- * en v1 (cf. décision produit : lignes = ingrédient seul, la quantité viendra
- * avec la feature ingrédients-quantités). L'unité, quand elle existera, sera
- * toujours lue depuis `ingredients.unit`, jamais dupliquée ici.
+ * Ingrédients d'une recette. Pivot (recipe_id, ingredient_id) + quantité.
+ * La quantité est un décimal (feature ingrédients-quantités) exprimé pour
+ * `recipes.servings` personnes ; la mise à l'échelle par portions est un calcul
+ * d'affichage côté client, jamais persisté. L'unité n'est jamais dupliquée ici :
+ * elle est toujours lue depuis `ingredients.unit`.
  */
 export const recipeIngredients = pgTable(
   'recipe_ingredients',
@@ -69,6 +77,10 @@ export const recipeIngredients = pgTable(
     ingredientId: uuid('ingredient_id')
       .notNull()
       .references(() => ingredients.id, { onDelete: 'cascade' }),
+    /** Quantité pour `recipes.servings` personnes. Décimal (ex: 2,5 c.à.s). */
+    quantity: numeric('quantity', { precision: 10, scale: 2, mode: 'number' })
+      .notNull()
+      .default(DEFAULT_INGREDIENT_QUANTITY),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [primaryKey({ columns: [t.recipeId, t.ingredientId] })],
