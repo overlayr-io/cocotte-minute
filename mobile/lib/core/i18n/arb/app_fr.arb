@@ -855,5 +855,26 @@
   "shoppingPremiumReopen": "Rouvrir",
   "@shoppingPremiumReopen": {},
   "shoppingPremiumPreviewBanner": "Aperçu Premium — non actif en version gratuite.",
-  "@shoppingPremiumPreviewBanner": {}
+  "@shoppingPremiumPreviewBanner": {},
+
+  "shoppingAisleFruitsLegumes": "Fruits & légumes",
+  "@shoppingAisleFruitsLegumes": {},
+  "shoppingAisleFrais": "Crémerie & frais",
+  "@shoppingAisleFrais": {},
+  "shoppingAisleViandesPoissons": "Viandes & poissons",
+  "@shoppingAisleViandesPoissons": {},
+  "shoppingAisleEpicerieSalee": "Épicerie salée",
+  "@shoppingAisleEpicerieSalee": {},
+  "shoppingAisleEpicerieSucree": "Épicerie sucrée",
+  "@shoppingAisleEpicerieSucree": {},
+  "shoppingAisleBoulangerie": "Boulangerie",
+  "@shoppingAisleBoulangerie": {},
+  "shoppingAisleBoissons": "Boissons",
+  "@shoppingAisleBoissons": {},
+  "shoppingAisleSurgeles": "Surgelés",
+  "@shoppingAisleSurgeles": {},
+  "shoppingAisleMaison": "Maison & entretien",
+  "@shoppingAisleMaison": {},
+  "shoppingAisleAutres": "Autres",
+  "@shoppingAisleAutres": {}
 }

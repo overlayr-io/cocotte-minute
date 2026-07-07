@@ -2265,6 +2265,66 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aperçu Premium — non actif en version gratuite.'**
   String get shoppingPremiumPreviewBanner;
+
+  /// No description provided for @shoppingAisleFruitsLegumes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fruits & légumes'**
+  String get shoppingAisleFruitsLegumes;
+
+  /// No description provided for @shoppingAisleFrais.
+  ///
+  /// In fr, this message translates to:
+  /// **'Crémerie & frais'**
+  String get shoppingAisleFrais;
+
+  /// No description provided for @shoppingAisleViandesPoissons.
+  ///
+  /// In fr, this message translates to:
+  /// **'Viandes & poissons'**
+  String get shoppingAisleViandesPoissons;
+
+  /// No description provided for @shoppingAisleEpicerieSalee.
+  ///
+  /// In fr, this message translates to:
+  /// **'Épicerie salée'**
+  String get shoppingAisleEpicerieSalee;
+
+  /// No description provided for @shoppingAisleEpicerieSucree.
+  ///
+  /// In fr, this message translates to:
+  /// **'Épicerie sucrée'**
+  String get shoppingAisleEpicerieSucree;
+
+  /// No description provided for @shoppingAisleBoulangerie.
+  ///
+  /// In fr, this message translates to:
+  /// **'Boulangerie'**
+  String get shoppingAisleBoulangerie;
+
+  /// No description provided for @shoppingAisleBoissons.
+  ///
+  /// In fr, this message translates to:
+  /// **'Boissons'**
+  String get shoppingAisleBoissons;
+
+  /// No description provided for @shoppingAisleSurgeles.
+  ///
+  /// In fr, this message translates to:
+  /// **'Surgelés'**
+  String get shoppingAisleSurgeles;
+
+  /// No description provided for @shoppingAisleMaison.
+  ///
+  /// In fr, this message translates to:
+  /// **'Maison & entretien'**
+  String get shoppingAisleMaison;
+
+  /// No description provided for @shoppingAisleAutres.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autres'**
+  String get shoppingAisleAutres;
 }
 
 class _AppLocalizationsDelegate

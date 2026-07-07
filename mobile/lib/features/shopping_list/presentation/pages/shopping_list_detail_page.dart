@@ -10,6 +10,7 @@ import '../bloc/shopping_list_cubit.dart';
 import '../widgets/add_free_item_sheet.dart';
 import '../widgets/alternative_sheet.dart';
 import '../widgets/export_sheet.dart';
+import '../widgets/shopping_aisle.dart';
 import '../widgets/shopping_format.dart';
 
 /// Écran 5e — liste générée : progression, vues (par recette / par rayon / A–Z),
@@ -223,20 +224,43 @@ class _Loaded extends StatelessWidget {
       return widgets;
     }
 
-    // Vues « à plat » (tout regroupé). « Par rayon » retombe sur l'ordre courant
-    // tant que les rayons d'ingrédient ne sont pas modélisés ; A–Z trie par nom.
-    final items = [...detail.items];
-    if (view == ShoppingView.az) {
-      items.sort(
-        (a, b) => a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()),
-      );
+    if (view == ShoppingView.byAisle) {
+      // Regroupement par rayon (heuristique nom → rayon, cf. shopping_aisle.dart),
+      // avec un petit titre gris par rayon.
+      final byAisle = <ShoppingAisle, List<ShoppingListItem>>{};
+      for (final item in detail.items) {
+        byAisle.putIfAbsent(aisleOf(item.name), () => []).add(item);
+      }
+      final widgets = <Widget>[];
+      for (final aisle in kAisleOrder) {
+        final items = byAisle[aisle];
+        if (items == null || items.isEmpty) continue;
+        items.sort(
+          (a, b) =>
+              a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()),
+        );
+        widgets.add(_SectionLabel(text: aisleLabel(l10n, aisle)));
+        widgets.add(
+          _PlainCard(
+            children: [
+              for (final item in items) _ItemRow(item: item, cubit: cubit),
+            ],
+          ),
+        );
+      }
+      return widgets;
     }
+
+    // A–Z : tout additionné, trié par nom, détail du calcul en sous-titre.
+    final items = [...detail.items]..sort(
+      (a, b) => a.displayName.toLowerCase().compareTo(b.displayName.toLowerCase()),
+    );
     return [
-      _GroupCard(
-        title: detail.list.name,
-        subtitle: l10n.shoppingItemsCount(items.length),
-        leading: const _CartDot(),
-        children: [for (final item in items) _ItemRow(item: item, cubit: cubit)],
+      _PlainCard(
+        children: [
+          for (final item in items)
+            _ItemRow(item: item, cubit: cubit, showBreakdown: true),
+        ],
       ),
     ];
   }
@@ -489,13 +513,62 @@ class _GroupCard extends StatelessWidget {
   }
 }
 
+/// Petit titre de rayon (gris, majuscules) au-dessus d'un groupe — vue par rayon.
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 8, top: 2),
+      child: Text(
+        text.toUpperCase(),
+        style: const TextStyle(
+          fontSize: 11.5,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.5,
+          color: Color(0xFFB0AB9B),
+        ),
+      ),
+    );
+  }
+}
+
+/// Carte d'articles sans en-tête (vues par rayon / A–Z).
+class _PlainCard extends StatelessWidget {
+  const _PlainCard({required this.children});
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(children: children),
+    );
+  }
+}
+
 class _ItemRow extends StatelessWidget {
-  const _ItemRow({required this.item, required this.cubit, this.quantityForRecipe});
+  const _ItemRow({
+    required this.item,
+    required this.cubit,
+    this.quantityForRecipe,
+    this.showBreakdown = false,
+  });
 
   final ShoppingListItem item;
   final ShoppingListCubit cubit;
   /// Si fourni, affiche la quantité apportée par cette recette (vue par recette).
   final String? quantityForRecipe;
+  /// Vue A–Z : affiche le détail du calcul « X + X + X » sous l'article agrégé.
+  final bool showBreakdown;
 
   @override
   Widget build(BuildContext context) {
@@ -561,6 +634,25 @@ class _ItemRow extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 2),
                         child: Text(
                           '↳ ${item.name}',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ),
+                    if (showBreakdown &&
+                        item.sources.length >= 2 &&
+                        !item.isChecked)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          item.sources
+                              .map((s) => shoppingQuantityLabel(
+                                    l10n,
+                                    s.quantity,
+                                    item.unit,
+                                  ))
+                              .join(' + '),
                           style: const TextStyle(
                             fontSize: 11,
                             color: AppColors.textMuted,

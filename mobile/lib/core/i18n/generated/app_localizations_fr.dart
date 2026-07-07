@@ -1298,4 +1298,34 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get shoppingPremiumPreviewBanner =>
       'Aperçu Premium — non actif en version gratuite.';
+
+  @override
+  String get shoppingAisleFruitsLegumes => 'Fruits & légumes';
+
+  @override
+  String get shoppingAisleFrais => 'Crémerie & frais';
+
+  @override
+  String get shoppingAisleViandesPoissons => 'Viandes & poissons';
+
+  @override
+  String get shoppingAisleEpicerieSalee => 'Épicerie salée';
+
+  @override
+  String get shoppingAisleEpicerieSucree => 'Épicerie sucrée';
+
+  @override
+  String get shoppingAisleBoulangerie => 'Boulangerie';
+
+  @override
+  String get shoppingAisleBoissons => 'Boissons';
+
+  @override
+  String get shoppingAisleSurgeles => 'Surgelés';
+
+  @override
+  String get shoppingAisleMaison => 'Maison & entretien';
+
+  @override
+  String get shoppingAisleAutres => 'Autres';
 }
