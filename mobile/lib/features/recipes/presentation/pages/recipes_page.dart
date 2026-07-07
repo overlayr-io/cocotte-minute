@@ -5,22 +5,27 @@ import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_view.dart';
-import '../../data/recipes_repository.dart';
-import '../../domain/recipe.dart';
-import '../bloc/recipes_list_bloc.dart';
+import '../../../categories/data/categories_repository.dart';
+import '../../../categories/domain/category.dart';
+import '../../../categories/presentation/bloc/categories_list_bloc.dart';
+import '../../../categories/presentation/pages/category_folder_page.dart';
+import '../../../categories/presentation/widgets/category_form_sheet.dart';
 import 'recipe_create_page.dart';
 import 'recipe_detail_page.dart';
 
-/// Onglet « Recettes » : liste des recettes du compte, création via l'action
-/// trailing de l'AppBar (jamais de bouton central), ouverture de la fiche au tap.
+/// Onglet « Recettes » (maquette 7b — vue Dossiers) : titre, recherche, cartes
+/// de dossiers (racines) et bouton « Nouveau dossier ». Toucher un dossier
+/// l'ouvre pour voir ses recettes ; le FAB corail crée une recette. La vue est
+/// alimentée par le bloc Catégories (dossiers = catégories rangeant les
+/// recettes) ; la recherche est un placeholder visuel (non branchée).
 class RecipesPage extends StatelessWidget {
   const RecipesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => RecipesListBloc(repository: sl<RecipesRepository>())
-        ..add(const RecipesRequested()),
+      create: (_) => CategoriesListBloc(repository: sl<CategoriesRepository>())
+        ..add(const CategoriesRequested()),
       child: const _RecipesView(),
     );
   }
@@ -30,161 +35,212 @@ class _RecipesView extends StatelessWidget {
   const _RecipesView();
 
   Future<void> _create(BuildContext context) async {
-    final bloc = context.read<RecipesListBloc>();
+    final bloc = context.read<CategoriesListBloc>();
     final created = await Navigator.of(context).push(RecipeCreatePage.route());
     if (created == null) return;
     // Redirection automatique vers la fiche de la recette créée (cf. recipes.md).
     if (context.mounted) {
       await Navigator.of(context).push(RecipeDetailPage.route(created.id));
     }
-    bloc.add(const RecipesRequested());
+    // Rafraîchit les compteurs de recettes des dossiers au retour.
+    bloc.add(const CategoriesRequested());
   }
 
-  Future<void> _open(BuildContext context, String id) async {
-    final bloc = context.read<RecipesListBloc>();
-    await Navigator.of(context).push(RecipeDetailPage.route(id));
-    bloc.add(const RecipesRequested());
+  void _openFolder(BuildContext context, Category category) {
+    Navigator.of(context).push(
+      CategoryFolderPage.route(
+        bloc: context.read<CategoriesListBloc>(),
+        category: category,
+      ),
+    );
+  }
+
+  Future<void> _newFolder(
+    BuildContext context,
+    List<Category> all,
+  ) async {
+    final bloc = context.read<CategoriesListBloc>();
+    final result = await showCategoryFormSheet(
+      context,
+      parentId: null,
+      allCategories: all,
+    );
+    if (result is CategorySaved) {
+      bloc.add(
+        CategoryCreated(
+          name: result.name,
+          icon: result.icon,
+          parentCategoryId: result.parentCategoryId,
+        ),
+      );
+    }
+  }
+
+  void _comingSoon(BuildContext context, String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.recipesTitle),
-        actions: [
-          BlocBuilder<RecipesListBloc, RecipesListState>(
-            builder: (context, state) {
-              if (state is! RecipesListLoaded) return const SizedBox.shrink();
-              return IconButton(
-                onPressed: () => _create(context),
-                icon: const Icon(Icons.add_rounded),
-                tooltip: l10n.recipeCreateTitle,
-              );
-            },
+      backgroundColor: AppColors.surface,
+      body: Stack(
+        children: [
+          SafeArea(
+            bottom: false,
+            child: BlocConsumer<CategoriesListBloc, CategoriesListState>(
+              listenWhen: (_, curr) => curr is CategoriesListActionFailure,
+              listener: (context, state) {
+                if (state is CategoriesListActionFailure) {
+                  _comingSoon(context, state.message);
+                }
+              },
+              builder: (context, state) {
+                return switch (state) {
+                  CategoriesListError(:final message) => ErrorView(
+                      message: message,
+                      onRetry: () => context
+                          .read<CategoriesListBloc>()
+                          .add(const CategoriesRequested()),
+                    ),
+                  CategoriesListLoaded() => _content(context, state, l10n),
+                  _ => const Center(child: CircularProgressIndicator()),
+                };
+              },
+            ),
           ),
-          const SizedBox(width: 4),
+          // FAB corail (créer une recette), au-dessus de la barre du shell —
+          // même calage que l'Accueil.
+          Positioned(
+            right: 20,
+            bottom: 96,
+            child: _Fab(onTap: () => _create(context)),
+          ),
         ],
-      ),
-      body: SafeArea(
-        top: false,
-        child: BlocBuilder<RecipesListBloc, RecipesListState>(
-          builder: (context, state) {
-            return switch (state) {
-              RecipesListError(:final message) => ErrorView(
-                  message: message,
-                  onRetry: () =>
-                      context.read<RecipesListBloc>().add(const RecipesRequested()),
-                ),
-              RecipesListLoaded(:final recipes) =>
-                _content(context, recipes, l10n),
-              _ => const Center(child: CircularProgressIndicator()),
-            };
-          },
-        ),
       ),
     );
   }
 
   Widget _content(
     BuildContext context,
-    List<RecipeSummary> recipes,
+    CategoriesListLoaded state,
     AppLocalizations l10n,
   ) {
-    if (recipes.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
+    final folders = state.childrenOf(null);
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(20, 8, 20, 150),
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 4, bottom: 14),
           child: Text(
-            l10n.recipesEmpty,
-            textAlign: TextAlign.center,
+            l10n.recipesTitle,
             style: const TextStyle(
-                fontSize: 14, height: 1.5, color: AppColors.textMuted),
+              fontFamily: AppFonts.display,
+              fontWeight: FontWeight.w700,
+              fontSize: 27,
+              letterSpacing: -0.5,
+              color: AppColors.textPrimary,
+            ),
           ),
         ),
-      );
-    }
-    return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(20, 10, 20, 100),
-      itemCount: recipes.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 12),
-      itemBuilder: (context, i) => _RecipeCard(
-        recipe: recipes[i],
-        l10n: l10n,
-        onTap: () => _open(context, recipes[i].id),
-      ),
+        _SearchBar(
+          hint: l10n.recipesSearchHint,
+          onTap: () => _comingSoon(context, l10n.homeSearchComingSoon),
+        ),
+        const SizedBox(height: 18),
+        if (folders.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              l10n.categoriesEmpty,
+              style: const TextStyle(
+                fontSize: 13.5,
+                height: 1.45,
+                color: AppColors.textMuted,
+              ),
+            ),
+          )
+        else
+          for (final folder in folders)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 11),
+              child: _FolderCard(
+                category: folder,
+                subfolderCount: state.childrenOf(folder.id).length,
+                l10n: l10n,
+                onTap: () => _openFolder(context, folder),
+              ),
+            ),
+        const SizedBox(height: 3),
+        _NewFolderButton(
+          label: l10n.categoryCreateTitle,
+          onTap: () => _newFolder(context, state.categories),
+        ),
+      ],
     );
   }
 }
 
-class _RecipeCard extends StatelessWidget {
-  const _RecipeCard({required this.recipe, required this.l10n, required this.onTap});
+/// Carte d'un dossier racine (maquette 7b) : pastille emoji, nom, sous-titre
+/// « N recettes · M sous-dossiers », chevron.
+class _FolderCard extends StatelessWidget {
+  const _FolderCard({
+    required this.category,
+    required this.subfolderCount,
+    required this.l10n,
+    required this.onTap,
+  });
 
-  final RecipeSummary recipe;
+  final Category category;
+  final int subfolderCount;
   final AppLocalizations l10n;
   final VoidCallback onTap;
+
+  String _subtitle() {
+    final recipes = l10n.categoriesRecipeCount(category.recipeCount);
+    if (subfolderCount == 0) return recipes;
+    return '$recipes · ${l10n.categoriesSubfolderCount(subfolderCount)}';
+  }
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.card,
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(20),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(20),
         child: Container(
+          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(color: AppColors.border),
           ),
-          padding: const EdgeInsets.all(10),
           child: Row(
             children: [
-              _Thumb(recipe: recipe),
+              _FolderTile(icon: category.icon),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            recipe.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontFamily: AppFonts.display,
-                              fontSize: 16.5,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        ),
-                        if (recipe.isBase) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryTint,
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                            child: Text(
-                              l10n.recipeBaseBadge,
-                              style: const TextStyle(
-                                fontSize: 10.5,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                    const SizedBox(height: 5),
                     Text(
-                      '${l10n.recipeServingsShort(recipe.servings)} · ${l10n.recipePrepShort(recipe.prepTime)}',
+                      category.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontFamily: AppFonts.display,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 17,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      _subtitle(),
                       style: const TextStyle(
                           fontSize: 13, color: AppColors.textMuted),
                     ),
@@ -201,32 +257,150 @@ class _RecipeCard extends StatelessWidget {
   }
 }
 
-class _Thumb extends StatelessWidget {
-  const _Thumb({required this.recipe});
+class _FolderTile extends StatelessWidget {
+  const _FolderTile({this.icon});
 
-  final RecipeSummary recipe;
+  final String? icon;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 64,
-      height: 64,
-      clipBehavior: Clip.antiAlias,
+      width: 56,
+      height: 56,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
-        gradient: recipe.photoUrl == null
-            ? LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: recipe.isBase
-                    ? const [Color(0xFF6B8E5A), Color(0xFF4F6B41)]
-                    : const [Color(0xFFE9A08F), Color(0xFFC6533F)],
-              )
-            : null,
+        color: AppColors.primaryTint,
+        borderRadius: BorderRadius.circular(15),
       ),
-      child: recipe.photoUrl != null
-          ? Image.network(recipe.photoUrl!, fit: BoxFit.cover)
-          : const Icon(Icons.restaurant_rounded, color: Colors.white, size: 24),
+      child: icon != null
+          ? Text(icon!, style: const TextStyle(fontSize: 26))
+          : const Icon(Icons.folder_rounded, size: 24, color: AppColors.primary),
+    );
+  }
+}
+
+class _NewFolderButton extends StatelessWidget {
+  const _NewFolderButton({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        height: 56,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: const Color(0xFFC4BEAD),
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.add_rounded, size: 18, color: AppColors.primary),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: AppColors.primary,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Barre de recherche (placeholder visuel, non branchée) — même style que
+/// l'Accueil : champ blanc, icône loupe, pastille filtre.
+class _SearchBar extends StatelessWidget {
+  const _SearchBar({required this.hint, required this.onTap});
+
+  final String hint;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      elevation: 0,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: Container(
+          height: 50,
+          padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.textPrimary.withValues(alpha: 0.10),
+                blurRadius: 14,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.search_rounded,
+                  color: AppColors.textMuted, size: 22),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  hint,
+                  style:
+                      const TextStyle(fontSize: 15, color: AppColors.textMuted),
+                ),
+              ),
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: AppColors.pill,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.tune_rounded,
+                    color: AppColors.primary, size: 19),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _Fab extends StatelessWidget {
+  const _Fab({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.accent,
+      shape: const CircleBorder(),
+      elevation: 6,
+      shadowColor: AppColors.accent.withValues(alpha: 0.6),
+      child: InkWell(
+        onTap: onTap,
+        customBorder: const CircleBorder(),
+        child: const SizedBox(
+          width: 60,
+          height: 60,
+          child: Icon(Icons.add_rounded, color: Colors.white, size: 30),
+        ),
+      ),
     );
   }
 }
