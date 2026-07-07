@@ -1,7 +1,7 @@
 # Ce qu'il manque — du plus petit au plus gros chantier
 
 État des lieux basé sur `PROJECT_CONTEXT.md`, `docs/features/*.md` et le code réel (mobile + server).
-Constat général : le socle v1 (auth de base, ingrédients, tags/personnes, catégories, recettes, étapes, mode pas-à-pas, liste de courses) est très avancé. Les deux vrais chantiers non démarrés sont **recherche avancée** et **limites freemium** ; le seul écart réglementaire est la **suppression de compte RGPD**.
+Constat général : le socle v1 (auth de base, ingrédients, tags/personnes, catégories, recettes, étapes, mode pas-à-pas, liste de courses, recherche avancée) est très avancé. Le vrai chantier non démarré restant est **limites freemium** ; le seul écart réglementaire est la **suppression de compte RGPD**.
 
 ## 🟢 Petit (finition / correctif ciblé)
 
@@ -22,15 +22,11 @@ Constat général : le socle v1 (auth de base, ingrédients, tags/personnes, cat
 ## 🟠 Moyen
 
 11. **Auth — RGPD suppression de compte (délai 30 jours)** : **seul écart de conformité réglementaire**, explicitement requis par `docs/ENGINEERING_CONSTRAINTS.md` mais totalement absent du code (pas de champ `account_status`/`deletion_requested_at`, pas d'endpoint, pas de job CRON, écran "bientôt disponible"). Périmètre clair : migration DB + 2 endpoints + `@nestjs/schedule` + écran mobile + anonymisation.
-12. **Limites freemium** ([limite-freemium.md](../docs/features/limite-freemium.md)) : pas commencée. Nécessite un champ statut premium simple + 3 vérifications serveur (compteur sous-recettes, limite 1 liste active, plafond critères de recherche) + UI d'incitation. Dépend de la recherche avancée et d'une décision sur le plafond exact (6 ou 8). Le paiement réel (Stripe/RevenueCat) reste hors scope v1.
-
-## 🔴 Moyen à gros
-
-13. **Recherche avancée** ([advanced-search.md](../docs/features/advanced-search.md)) : pas commencée du tout (aucun module `search` côté server, aucun dossier côté mobile — juste une barre placeholder). Tous les prérequis (tags, personnes, catégories, ingrédients, recettes) sont livrés. Complexité principale : filtres combinés en ET (nom, tags, personnes, ingrédients, scope catégorie récursif) côté serveur + UI de filtres combinables côté mobile.
+12. **Limites freemium** ([limite-freemium.md](../docs/features/limite-freemium.md)) : pas commencée. Nécessite un champ statut premium simple + 3 vérifications serveur (compteur sous-recettes, limite 1 liste active, plafond critères de recherche) + UI d'incitation. La recherche avancée dont ça dépend est désormais livrée ([advanced-search.md](../docs/features/advanced-search.md)) ; reste à trancher le plafond exact de critères cumulés (6 ou 8). Le paiement réel (Stripe/RevenueCat) reste hors scope v1.
 
 ## ⚫ Gros
 
-14. **Recettes — vue "Découverte"** (maquette 7b : bascule Dossiers/Découverte, hero à la une, rangées par saison/temps/personne) : non construite, décision explicite de différer. Nécessite de nouveaux champs serveur (saison) et de nouvelles requêtes (par personne/temps) + un nouvel écran à plusieurs rangées.
+13. **Recettes — vue "Découverte"** (maquette 7b : bascule Dossiers/Découverte, hero à la une, rangées par saison/temps/personne) : non construite, décision explicite de différer. Nécessite de nouveaux champs serveur (saison) et de nouvelles requêtes (par personne/temps) + un nouvel écran à plusieurs rangées.
 
 ## Hors scope v1 (mentionné pour mémoire, aucun doc dédié)
 

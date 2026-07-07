@@ -1,6 +1,6 @@
 ---
 feature: recherche-avancee
-status: planned     # planned | in-progress | done
+status: done        # planned | in-progress | done
 scope: v1           # v1 | v2 | later
 depends_on: [recette-base, tags-personnes, categories, ingredients]
 order: 9
@@ -16,22 +16,36 @@ Permettre de retrouver rapidement une recette selon des critères multiples
 
 ## Comportement attendu
 
-### Filtres du v1
+### Filtres du v1 (livrés)
 - Recherche textuelle sur le **nom** de la recette.
 - Filtre par **tags** (un ou plusieurs).
 - Filtre par **personnes** (une ou plusieurs — via les tags associés à la 
   personne, cf. `tags-personnes.md`).
-- Filtre par **ingrédients à inclure** (une ou plusieurs).
-- Scope optionnel par **catégorie/dossier** : restreindre la recherche à 
-  l'intérieur d'une catégorie donnée (et ses sous-catégories si imbriquées, 
-  cf. `categories.md`).
+- Filtre par **catégorie/dossier** : restreindre la recherche à 
+  l'intérieur d'une catégorie donnée (et ses sous-catégories, imbriquées 
+  récursivement, cf. `categories.md`).
 
-### Combinaison des filtres
-- Par défaut : logique **ET** — une recette doit correspondre à TOUS les 
-  filtres actifs simultanément pour apparaître dans les résultats.
+### Interaction retenue à l'implémentation : barre unique façon Notion
+Plutôt qu'un panneau de filtres séparé, la recherche est **une seule barre** :
+taper `/` ouvre l'autocomplétion dossiers, `#` l'autocomplétion tags (avec
+création à la volée), `@` l'autocomplétion personnes ; trois boutons sous le
+champ ouvrent les mêmes menus sans taper. Chaque sélection devient une
+**pastille** affichée sous la ligne de saisie, cumulée avec les précédentes.
+Le texte non préfixé reste la recherche libre par nom.
+
+### Combinaison des filtres (tranchée avec le PO à l'implémentation)
+- **Entre dimensions** (dossier / tag / personne / texte) : logique **ET** —
+  une recette doit correspondre à TOUTES les dimensions actives.
+- **Tags explicites** (si plusieurs sélectionnés) : **ET** — la recette doit
+  porter tous les tags cochés.
+- **Dossiers** (si plusieurs sélectionnés) : **OU**, et chaque dossier est
+  déplié en incluant tous ses descendants (récursif).
+- **Personnes** (si plusieurs sélectionnées) : la recette doit porter **au
+  moins un** tag parmi l'union des tags de toutes les personnes sélectionnées
+  (**OU**) — reste de son côté combiné en ET avec les autres dimensions.
 - Évolution future prévue (pas dans ce v1) : une marge de pertinence 
   permettant de faire remonter des recettes correspondant à au moins un 
-  des filtres (logique OU/scoring), pas encore définie précisément.
+  des filtres entre dimensions (logique OU/scoring), pas encore définie précisément.
 
 ### Architecture pensée pour la future IA locale
 - L'API de recherche doit être conçue avec des **paramètres structurés** 
@@ -43,17 +57,23 @@ Permettre de retrouver rapidement une recette selon des critères multiples
 
 ## Impact technique
 - Server :
-  - Endpoint `GET /recipes/search` (ou `POST` si la complexité des filtres 
-    le justifie) acceptant les paramètres structurés ci-dessus.
-  - Requête combinant les jointures nécessaires (`recipe_tags`, `person_tags`, 
-    `recipe_ingredients`, `recipe_categories`) avec logique ET entre les 
-    familles de filtres actives.
+  - Endpoint `GET /search/recipes` (params : `q`, `categoryIds[]`, `tagIds[]`,
+    `personIds[]`), chemin choisi plutôt que `/recipes/search` pour ne pas
+    entrer en collision avec la route `@Get(':id')` de `RecipesController`.
+  - Nouveau **`SearchModule`** transverse (orchestration) qui importe
+    `RecipesModule`/`CategoriesModule`/`PeopleModule` et délègue aux services
+    propriétaires — acyclique car ces modules importent déjà `RecipesModule`
+    pour leurs compteurs (dépendance à sens unique préexistante). Ne stocke ni
+    n'interroge aucun schéma Drizzle directement.
+  - `CategoriesService.expandWithDescendants` (déplie un dossier + ses
+    descendants), `PeopleService.tagIdsForPeople` (union des tags d'une
+    sélection de personnes), `RecipesService.search` (combine nom/dossiers/tags
+    résolus, restreint à ses propres pivots `recipe_tags`/`recipe_categories`).
 - Mobile : 
-  - Feature `search/` (Bloc), barre de recherche + panneau de filtres 
-    (tags, personnes, ingrédients, catégorie).
-  - Les paramètres de recherche sont construits sous une forme structurée 
-    identique à celle attendue par le server, pour rester cohérent avec la 
-    future intégration IA.
+  - Feature `search/` (Cubit, pas Bloc — lecture seule + debounce), barre
+    unique + pastilles (cf. ci-dessus) plutôt qu'un panneau de filtres séparé.
+  - Cache passif : dossiers/tags/personnes chargés une seule fois au montage
+    de l'écran (pas de refetch), cohérent avec `ENGINEERING_CONSTRAINTS.md`.
 - DB : aucune nouvelle table — la recherche s'appuie sur les tables déjà 
   définies dans les features précédentes.
 
@@ -65,6 +85,13 @@ Permettre de retrouver rapidement une recette selon des critères multiples
   en contient (cohérent avec l'imbrication définie dans `categories.md`).
 
 ## Hors scope pour cette feature
+- **Filtre par ingrédients à inclure** : retiré du périmètre par décision PO à
+  l'implémentation (la maquette de référence retenue, 11a-e, ne le montre pas —
+  contrairement à un écran antérieur écarté). Non implémenté ni côté server ni
+  mobile.
+- **Plafond freemium de critères cumulés** : la maquette 11a-e n'affiche aucune
+  limite (contrairement à l'écran antérieur écarté) ; le plafond reste planifié
+  dans `limite-freemium.md`, pas dans ce v1.
 - Intégration réelle de l'IA locale (prompt → paramètres de recherche) — 
   prévue architecturalement (paramètres structurés) mais pas implémentée 
   dans ce v1.
@@ -72,8 +99,21 @@ Permettre de retrouver rapidement une recette selon des critères multiples
 - Recherche full-text avancée (fautes de frappe, synonymes) — non précisée, 
   recherche simple sur le nom pour ce v1.
 
-## Questions ouvertes / à trancher
-- La recherche par nom est-elle une correspondance stricte, "contient", ou 
-  insensible à la casse/accents ? (à définir à l'implémentation)
-- Tri des résultats de recherche : par pertinence, alphabétique, date de 
-  création ? (non précisé)
+## Réalisation (2026-07-07)
+
+Livré en un point (server + mobile), à partir des maquettes handoff **11a-e**
+(barre façon Notion, `/` `#` `@`) plutôt que du panneau de filtres envisagé
+initialement dans ce document.
+
+- **Questions ouvertes résolues** : recherche par nom = `ilike` (insensible à
+  la casse, "contient"), tri des résultats = date de création décroissante
+  (les plus récentes d'abord, cohérent avec `listMine`/`listByCategory`).
+- **Endpoint** : `GET /search/recipes`, pas `POST` — les paramètres restent
+  simples (listes d'ids + texte), un `GET` suffisait.
+- **Écart de nommage** : chemin `/search/recipes` (et non `/recipes/search`)
+  pour éviter la collision avec `RecipesController@Get(':id')`.
+- **Pas de panneau de filtres séparé** : remplacé par la barre unique à
+  pastilles cumulées (cf. section interaction ci-dessus).
+- Tests unitaires server sur `SearchService` (résolution des critères
+  transverses) ; pas de tests mobile (hors périmètre v1, cf.
+  `ENGINEERING_CONSTRAINTS.md`).
