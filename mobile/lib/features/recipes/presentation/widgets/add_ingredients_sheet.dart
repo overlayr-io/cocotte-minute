@@ -366,7 +366,7 @@ class _SelectableRow extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final selected = quantity != null;
     return Material(
-      color: selected ? AppColors.card : AppColors.card,
+      color: AppColors.card,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onToggle,
