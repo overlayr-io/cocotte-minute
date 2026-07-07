@@ -9,6 +9,7 @@ import { and, eq, inArray, isNull, ne, sql } from 'drizzle-orm';
 
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import { tags, type TagRow } from '../../db/schema/tags.schema';
+import { RecipesService } from '../recipes/recipes.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 
@@ -39,7 +40,12 @@ function toDto(row: TagRow, recipeCount = 0): TagDto {
 export class TagsService {
   private readonly logger = new Logger(TagsService.name);
 
-  constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
+  constructor(
+    @Inject(DRIZZLE) private readonly db: DrizzleDB,
+    // Compteur de recettes par tag (pivot recipe_tags), via le service Recipes —
+    // dépendance à sens unique (Recipes n'importe pas Tags), pas de cross-schéma.
+    private readonly recipesService: RecipesService,
+  ) {}
 
   /**
    * Tags possédés par l'utilisateur parmi une liste d'ids (hors supprimés).
@@ -62,14 +68,18 @@ export class TagsService {
     return rows.map((row) => toDto(row));
   }
 
-  /** Tags de l'utilisateur, hors supprimés, triés par nom. */
+  /** Tags de l'utilisateur, hors supprimés, triés par nom, avec le nombre de recettes. */
   async listMine(userId: string): Promise<TagDto[]> {
     const rows = await this.db
       .select()
       .from(tags)
       .where(and(eq(tags.ownerId, userId), isNull(tags.deletedAt)))
       .orderBy(tags.name);
-    return rows.map((row) => toDto(row));
+    const counts = await this.recipesService.countByTagIds(
+      userId,
+      rows.map((r) => r.id),
+    );
+    return rows.map((row) => toDto(row, counts.get(row.id) ?? 0));
   }
 
   async create(userId: string, dto: CreateTagDto): Promise<TagDto> {

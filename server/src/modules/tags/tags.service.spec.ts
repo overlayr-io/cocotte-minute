@@ -54,11 +54,16 @@ const row = (over: Partial<Record<string, unknown>> = {}) => ({
   ...over,
 });
 
+const recipesStub = {
+  countByCategoryIds: async () => new Map<string, number>(),
+  countByTagIds: async () => new Map<string, number>(),
+} as unknown as import('../recipes/recipes.service').RecipesService;
+
 describe('TagsService', () => {
   describe('listMine', () => {
     it('mappe les lignes en DTO avec recipeCount = 0', async () => {
       const { db } = makeDb([[row()]]);
-      const service = new TagsService(db);
+      const service = new TagsService(db, recipesStub);
 
       const result = await service.listMine(USER);
 
@@ -78,7 +83,7 @@ describe('TagsService', () => {
     it('insère quand le nom est libre', async () => {
       // 1) vérif unicité → aucun tag existant, 2) insert → ligne créée
       const { db, calls } = makeDb([[], [row({ name: 'Épicé', color: '#B14A3F' })]]);
-      const service = new TagsService(db);
+      const service = new TagsService(db, recipesStub);
 
       const result = await service.create(USER, { name: 'Épicé', color: '#B14A3F' });
 
@@ -89,7 +94,7 @@ describe('TagsService', () => {
 
     it('refuse un nom déjà utilisé (409) sans insérer', async () => {
       const { db, calls } = makeDb([[{ id: 'other' }]]);
-      const service = new TagsService(db);
+      const service = new TagsService(db, recipesStub);
 
       await expect(service.create(USER, { name: 'Végétarien', color: '#3F7D3A' })).rejects.toBeInstanceOf(
         ConflictException,
@@ -101,7 +106,7 @@ describe('TagsService', () => {
   describe('update', () => {
     it('lève NotFound si le tag n’existe pas', async () => {
       const { db } = makeDb([[]]); // findOwnedOrFail → rien
-      const service = new TagsService(db);
+      const service = new TagsService(db, recipesStub);
 
       await expect(service.update(USER, 'tag-x', { name: 'X' })).rejects.toBeInstanceOf(
         NotFoundException,
@@ -110,7 +115,7 @@ describe('TagsService', () => {
 
     it('lève NotFound si le tag appartient à un autre compte', async () => {
       const { db } = makeDb([[row({ ownerId: 'someone-else' })]]);
-      const service = new TagsService(db);
+      const service = new TagsService(db, recipesStub);
 
       await expect(service.update(USER, 'tag-1', { color: '#3D6DA8' })).rejects.toBeInstanceOf(
         NotFoundException,
@@ -121,14 +126,14 @@ describe('TagsService', () => {
   describe('softDelete', () => {
     it('lève NotFound si le tag appartient à un autre compte', async () => {
       const { db } = makeDb([[row({ ownerId: 'someone-else' })]]);
-      const service = new TagsService(db);
+      const service = new TagsService(db, recipesStub);
 
       await expect(service.softDelete(USER, 'tag-1')).rejects.toBeInstanceOf(NotFoundException);
     });
 
     it('marque supprimé quand le tag est possédé', async () => {
       const { db, calls } = makeDb([[row()], undefined]);
-      const service = new TagsService(db);
+      const service = new TagsService(db, recipesStub);
 
       await service.softDelete(USER, 'tag-1');
 

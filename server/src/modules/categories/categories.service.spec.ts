@@ -58,12 +58,17 @@ const catRow = (over: Partial<Record<string, unknown>> = {}) => ({
   ...over,
 });
 
+const recipesStub = {
+  countByCategoryIds: async () => new Map<string, number>(),
+  countByTagIds: async () => new Map<string, number>(),
+} as unknown as import('../recipes/recipes.service').RecipesService;
+
 describe('CategoriesService', () => {
   describe('listMine', () => {
     it('sème les dossiers par défaut au premier accès (compte vierge)', async () => {
       // ensureDefaults: select existant (vide) → insert seed ; puis select liste
       const { db, calls } = makeDb([[], undefined, [catRow({ isDefault: true })]]);
-      const service = new CategoriesService(db);
+      const service = new CategoriesService(db, recipesStub);
 
       const result = await service.listMine(USER);
 
@@ -73,7 +78,7 @@ describe('CategoriesService', () => {
 
     it('ne sème pas si au moins une catégorie existe déjà', async () => {
       const { db, calls } = makeDb([[{ id: 'cat-1' }], [catRow()]]);
-      const service = new CategoriesService(db);
+      const service = new CategoriesService(db, recipesStub);
 
       await service.listMine(USER);
 
@@ -85,7 +90,7 @@ describe('CategoriesService', () => {
     it('crée un dossier racine à la profondeur 1', async () => {
       // pas de parent → assertNameAvailable select (libre) → insert returning
       const { db } = makeDb([[], [catRow({ depth: 1 })]]);
-      const service = new CategoriesService(db);
+      const service = new CategoriesService(db, recipesStub);
 
       const result = await service.create(USER, { name: 'Fêtes' });
 
@@ -99,7 +104,7 @@ describe('CategoriesService', () => {
         [],
         [catRow({ id: 'child', depth: 3, parentCategoryId: 'parent' })],
       ]);
-      const service = new CategoriesService(db);
+      const service = new CategoriesService(db, recipesStub);
 
       const result = await service.create(USER, {
         name: 'Italiennes',
@@ -111,7 +116,7 @@ describe('CategoriesService', () => {
 
     it('refuse de dépasser la profondeur maximale (5)', async () => {
       const { db } = makeDb([[catRow({ id: 'parent', depth: 5 })]]);
-      const service = new CategoriesService(db);
+      const service = new CategoriesService(db, recipesStub);
 
       await expect(
         service.create(USER, { name: 'Trop profond', parentCategoryId: 'parent' }),
@@ -120,7 +125,7 @@ describe('CategoriesService', () => {
 
     it('refuse un nom déjà porté par un frère', async () => {
       const { db } = makeDb([[{ id: 'cat-existing' }]]);
-      const service = new CategoriesService(db);
+      const service = new CategoriesService(db, recipesStub);
 
       await expect(service.create(USER, { name: 'Plat' })).rejects.toBeInstanceOf(
         ConflictException,
@@ -131,7 +136,7 @@ describe('CategoriesService', () => {
   describe('update', () => {
     it('refuse de modifier un dossier par défaut', async () => {
       const { db } = makeDb([[catRow({ isDefault: true })]]);
-      const service = new CategoriesService(db);
+      const service = new CategoriesService(db, recipesStub);
 
       await expect(
         service.update(USER, 'cat-1', { name: 'Autre' }),
@@ -142,7 +147,7 @@ describe('CategoriesService', () => {
   describe('softDelete', () => {
     it('refuse de supprimer un dossier par défaut', async () => {
       const { db } = makeDb([[catRow({ isDefault: true })]]);
-      const service = new CategoriesService(db);
+      const service = new CategoriesService(db, recipesStub);
 
       await expect(service.softDelete(USER, 'cat-1')).rejects.toBeInstanceOf(
         ForbiddenException,
@@ -152,7 +157,7 @@ describe('CategoriesService', () => {
     it('bloque la suppression si le dossier contient des sous-dossiers', async () => {
       // findOwnedOrFail → hasChildren select renvoie un enfant
       const { db } = makeDb([[catRow()], [{ id: 'child' }]]);
-      const service = new CategoriesService(db);
+      const service = new CategoriesService(db, recipesStub);
 
       await expect(service.softDelete(USER, 'cat-1')).rejects.toBeInstanceOf(
         ConflictException,
@@ -161,7 +166,7 @@ describe('CategoriesService', () => {
 
     it('supprime (soft) un dossier vide non par défaut', async () => {
       const { db, calls } = makeDb([[catRow()], [], undefined]);
-      const service = new CategoriesService(db);
+      const service = new CategoriesService(db, recipesStub);
 
       await service.softDelete(USER, 'cat-1');
 
@@ -170,7 +175,7 @@ describe('CategoriesService', () => {
 
     it('lève NotFound si le dossier appartient à un autre compte', async () => {
       const { db } = makeDb([[catRow({ ownerId: 'other' })]]);
-      const service = new CategoriesService(db);
+      const service = new CategoriesService(db, recipesStub);
 
       await expect(service.softDelete(USER, 'cat-1')).rejects.toBeInstanceOf(
         NotFoundException,

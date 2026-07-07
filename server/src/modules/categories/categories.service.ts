@@ -16,6 +16,7 @@ import {
   categories,
   type CategoryRow,
 } from '../../db/schema/categories.schema';
+import { RecipesService } from '../recipes/recipes.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
@@ -53,7 +54,12 @@ function toDto(row: CategoryRow, recipeCount = 0): CategoryDto {
 export class CategoriesService {
   private readonly logger = new Logger(CategoriesService.name);
 
-  constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
+  constructor(
+    @Inject(DRIZZLE) private readonly db: DrizzleDB,
+    // Compteur de recettes par dossier (pivot recipe_categories), via le service
+    // Recipes — dépendance à sens unique (Recipes n'importe pas Categories).
+    private readonly recipesService: RecipesService,
+  ) {}
 
   /**
    * Arborescence à plat de l'utilisateur (hors supprimées). Sème les dossiers
@@ -68,7 +74,11 @@ export class CategoriesService {
       .from(categories)
       .where(and(eq(categories.ownerId, userId), isNull(categories.deletedAt)))
       .orderBy(categories.createdAt);
-    return rows.map((row) => toDto(row));
+    const counts = await this.recipesService.countByCategoryIds(
+      userId,
+      rows.map((r) => r.id),
+    );
+    return rows.map((row) => toDto(row, counts.get(row.id) ?? 0));
   }
 
   async create(userId: string, dto: CreateCategoryDto): Promise<CategoryDto> {
