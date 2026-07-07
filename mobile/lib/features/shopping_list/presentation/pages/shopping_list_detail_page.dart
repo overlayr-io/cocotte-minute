@@ -143,7 +143,8 @@ class _Loaded extends StatelessWidget {
                     ),
                     style: const TextStyle(
                       fontSize: 12.5,
-                      color: AppColors.textMuted,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 14),
@@ -627,6 +628,8 @@ class _ItemRow extends StatelessWidget {
                             : AppColors.textPrimary,
                         decoration:
                             item.isChecked ? TextDecoration.lineThrough : null,
+                        decorationColor: AppColors.textSecondary,
+                        decorationThickness: 2,
                       ),
                     ),
                     if (item.isReplaced && !item.isChecked)
