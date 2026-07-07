@@ -20,6 +20,7 @@ function makeDb(results: unknown[]): { db: DrizzleDB; calls: { op: string }[] } 
       'set',
       'returning',
       'onConflictDoNothing',
+      'onConflictDoUpdate',
       'limit',
     ]) {
       b[m] = () => b;
@@ -60,6 +61,17 @@ const recipeRow = (over: Partial<Record<string, unknown>> = {}) => ({
 });
 
 const ingredientsStub = {} as IngredientsService;
+
+const ingredientDto = (over: Partial<Record<string, unknown>> = {}) => ({
+  id: 'ing-1',
+  name: 'Tomate',
+  unit: 'gramme',
+  imageUrl: null,
+  isSystem: false,
+  importedFromId: null,
+  createdAt: '2026-01-01T00:00:00.000Z',
+  ...over,
+});
 
 describe('RecipesService', () => {
   describe('create', () => {
@@ -138,6 +150,55 @@ describe('RecipesService', () => {
       const service = new RecipesService(db, ingredientsStub);
       await service.addComponent(USER, 'rec-1', 'rec-2');
       expect(calls.some((c) => c.op === 'insert')).toBe(true);
+    });
+  });
+
+  describe('addIngredient', () => {
+    it('lève NotFound si l’ingrédient n’est pas possédé', async () => {
+      const { db } = makeDb([[recipeRow()]]); // findOwnedOrFail
+      const ingredients = {
+        listByIds: jest.fn().mockResolvedValue([]),
+      } as unknown as IngredientsService;
+      const service = new RecipesService(db, ingredients);
+      await expect(
+        service.addIngredient(USER, 'rec-1', 'ing-1', 120),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('upsert la ligne avec sa quantité', async () => {
+      const { db, calls } = makeDb([
+        [recipeRow()], // findOwnedOrFail
+        undefined, // insert onConflictDoUpdate
+      ]);
+      const ingredients = {
+        listByIds: jest.fn().mockResolvedValue([ingredientDto()]),
+      } as unknown as IngredientsService;
+      const service = new RecipesService(db, ingredients);
+      await service.addIngredient(USER, 'rec-1', 'ing-1', 2.5);
+      expect(calls.some((c) => c.op === 'insert')).toBe(true);
+    });
+  });
+
+  describe('updateIngredientQuantity', () => {
+    it('lève NotFound si l’ingrédient n’est pas sur la recette', async () => {
+      const { db } = makeDb([
+        [recipeRow()], // findOwnedOrFail
+        [], // update returning → aucune ligne
+      ]);
+      const service = new RecipesService(db, ingredientsStub);
+      await expect(
+        service.updateIngredientQuantity(USER, 'rec-1', 'ing-1', 80),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('met à jour la quantité quand la ligne existe', async () => {
+      const { db, calls } = makeDb([
+        [recipeRow()], // findOwnedOrFail
+        [{ ingredientId: 'ing-1' }], // update returning
+      ]);
+      const service = new RecipesService(db, ingredientsStub);
+      await service.updateIngredientQuantity(USER, 'rec-1', 'ing-1', 80);
+      expect(calls.some((c) => c.op === 'update')).toBe(true);
     });
   });
 });

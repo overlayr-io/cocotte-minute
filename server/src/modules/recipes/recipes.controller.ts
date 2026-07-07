@@ -20,6 +20,7 @@ import {
   AddRecipeIngredientDto,
   AssignRecipeCategoryDto,
   AssignRecipeTagDto,
+  UpdateRecipeIngredientQuantityDto,
 } from './dto/recipe-relations.dto';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
@@ -82,7 +83,28 @@ export class RecipesController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: AddRecipeIngredientDto,
   ): Promise<void> {
-    return this.recipesService.addIngredient(user.id, id, dto.ingredientId);
+    return this.recipesService.addIngredient(
+      user.id,
+      id,
+      dto.ingredientId,
+      dto.quantity,
+    );
+  }
+
+  @Patch(':id/ingredients/:ingredientId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  updateIngredientQuantity(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('ingredientId', ParseUUIDPipe) ingredientId: string,
+    @Body() dto: UpdateRecipeIngredientQuantityDto,
+  ): Promise<void> {
+    return this.recipesService.updateIngredientQuantity(
+      user.id,
+      id,
+      ingredientId,
+      dto.quantity,
+    );
   }
 
   @Delete(':id/ingredients/:ingredientId')

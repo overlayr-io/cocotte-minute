@@ -9,6 +9,7 @@ import { and, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import {
+  DEFAULT_INGREDIENT_QUANTITY,
   recipeCategories,
   recipeComponents,
   recipeIngredients,
@@ -33,12 +34,17 @@ export interface RecipeSummaryDto {
   createdAt: string;
 }
 
-/** Ingrédient tel qu'affiché sur la fiche (nom + unité lue depuis l'ingrédient). */
+/**
+ * Ingrédient tel qu'affiché sur la fiche : nom + unité (lue depuis l'ingrédient)
+ * + quantité (pour `recipes.servings` personnes ; la mise à l'échelle par
+ * portions est un calcul d'affichage côté client).
+ */
 export interface RecipeIngredientLineDto {
   id: string;
   name: string;
   unit: string;
   imageUrl: string | null;
+  quantity: number;
 }
 
 /** Fiche détail complète. */
@@ -116,7 +122,10 @@ export class RecipesService {
     const [ingredientRows, componentRows, categoryRows, tagRows] =
       await Promise.all([
         this.db
-          .select({ ingredientId: recipeIngredients.ingredientId })
+          .select({
+            ingredientId: recipeIngredients.ingredientId,
+            quantity: recipeIngredients.quantity,
+          })
           .from(recipeIngredients)
           .where(eq(recipeIngredients.recipeId, id)),
         this.db
@@ -133,10 +142,7 @@ export class RecipesService {
           .where(eq(recipeTags.recipeId, id)),
       ]);
 
-    const ingredientLines = await this.hydrateIngredients(
-      userId,
-      ingredientRows.map((r) => r.ingredientId),
-    );
+    const ingredientLines = await this.hydrateIngredients(userId, ingredientRows);
     const components = await this.summariesByIds(
       userId,
       componentRows.map((r) => r.baseRecipeId),
@@ -212,10 +218,15 @@ export class RecipesService {
 
   // --- ingrédients -------------------------------------------------------
 
+  /**
+   * Ajoute un ingrédient à une recette avec sa quantité. Ré-ajouter un ingrédient
+   * déjà présent met à jour sa quantité (upsert) plutôt que de no-op.
+   */
   async addIngredient(
     userId: string,
     recipeId: string,
     ingredientId: string,
+    quantity: number,
   ): Promise<void> {
     await this.findOwnedOrFail(userId, recipeId);
     const [owned] = await this.ingredientsService.listByIds(userId, [ingredientId]);
@@ -224,8 +235,34 @@ export class RecipesService {
     }
     await this.db
       .insert(recipeIngredients)
-      .values({ recipeId, ingredientId })
-      .onConflictDoNothing();
+      .values({ recipeId, ingredientId, quantity })
+      .onConflictDoUpdate({
+        target: [recipeIngredients.recipeId, recipeIngredients.ingredientId],
+        set: { quantity },
+      });
+  }
+
+  /** Met à jour la quantité d'un ingrédient déjà présent sur la recette. */
+  async updateIngredientQuantity(
+    userId: string,
+    recipeId: string,
+    ingredientId: string,
+    quantity: number,
+  ): Promise<void> {
+    await this.findOwnedOrFail(userId, recipeId);
+    const [updated] = await this.db
+      .update(recipeIngredients)
+      .set({ quantity })
+      .where(
+        and(
+          eq(recipeIngredients.recipeId, recipeId),
+          eq(recipeIngredients.ingredientId, ingredientId),
+        ),
+      )
+      .returning({ ingredientId: recipeIngredients.ingredientId });
+    if (!updated) {
+      throw new NotFoundException("Cet ingrédient n'est pas dans la recette");
+    }
   }
 
   async removeIngredient(
@@ -400,17 +437,27 @@ export class RecipesService {
 
   // --- privé -------------------------------------------------------------
 
+  /**
+   * Résout les lignes du pivot (id + quantité) en lignes affichables, en lisant
+   * nom/unité/image depuis le service Ingredients (isolation des domaines). La
+   * quantité vient du pivot, pas de l'ingrédient.
+   */
   private async hydrateIngredients(
     userId: string,
-    ids: string[],
+    lines: { ingredientId: string; quantity: number }[],
   ): Promise<RecipeIngredientLineDto[]> {
-    if (ids.length === 0) return [];
-    const owned = await this.ingredientsService.listByIds(userId, ids);
+    if (lines.length === 0) return [];
+    const quantities = new Map(lines.map((l) => [l.ingredientId, l.quantity]));
+    const owned = await this.ingredientsService.listByIds(
+      userId,
+      lines.map((l) => l.ingredientId),
+    );
     return owned.map((i) => ({
       id: i.id,
       name: i.name,
       unit: i.unit,
       imageUrl: i.imageUrl,
+      quantity: quantities.get(i.id) ?? DEFAULT_INGREDIENT_QUANTITY,
     }));
   }
 
