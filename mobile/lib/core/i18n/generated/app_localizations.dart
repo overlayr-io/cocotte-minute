@@ -100,7 +100,7 @@ abstract class AppLocalizations {
   /// **'Cocotte Minute'**
   String get appTitle;
 
-  /// Bouton de nouvelle tentative sur une page d'erreur
+  /// No description provided for @commonRetry.
   ///
   /// In fr, this message translates to:
   /// **'Réessayer'**
@@ -1797,6 +1797,474 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Supprimer'**
   String get commonDelete;
+
+  /// No description provided for @shoppingTabEyebrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Courses'**
+  String get shoppingTabEyebrow;
+
+  /// No description provided for @shoppingTabTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes courses'**
+  String get shoppingTabTitle;
+
+  /// No description provided for @shoppingFreeBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gratuit · 1/1'**
+  String get shoppingFreeBadge;
+
+  /// No description provided for @shoppingDefaultListName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste de la semaine'**
+  String get shoppingDefaultListName;
+
+  /// No description provided for @shoppingCreateFromRecipes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer depuis mes recettes'**
+  String get shoppingCreateFromRecipes;
+
+  /// No description provided for @shoppingLockedSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique & listes multiples'**
+  String get shoppingLockedSectionTitle;
+
+  /// No description provided for @shoppingPremiumKicker.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cocotte Premium'**
+  String get shoppingPremiumKicker;
+
+  /// No description provided for @shoppingPremiumTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Listes illimitées + historique'**
+  String get shoppingPremiumTitle;
+
+  /// No description provided for @shoppingPremiumBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Crée autant de listes que tu veux et retrouve toutes les précédentes.'**
+  String get shoppingPremiumBody;
+
+  /// No description provided for @shoppingPremiumCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Débloquer Premium'**
+  String get shoppingPremiumCta;
+
+  /// No description provided for @shoppingEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune liste en cours'**
+  String get shoppingEmptyTitle;
+
+  /// No description provided for @shoppingEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Génère ta liste de courses à partir de tes recettes.'**
+  String get shoppingEmptyBody;
+
+  /// No description provided for @shoppingLoadError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger tes courses.'**
+  String get shoppingLoadError;
+
+  /// No description provided for @shoppingItemsCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucun article} =1{1 article} other{{count} articles}}'**
+  String shoppingItemsCount(int count);
+
+  /// No description provided for @shoppingRecipesCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucune recette} =1{1 recette} other{{count} recettes}}'**
+  String shoppingRecipesCount(int count);
+
+  /// No description provided for @shoppingServingsCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 pers.} other{{count} pers.}}'**
+  String shoppingServingsCount(int count);
+
+  /// No description provided for @shoppingListSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'{items} · {recipes} · {servings} pers.'**
+  String shoppingListSummary(String items, String recipes, int servings);
+
+  /// No description provided for @shoppingStepLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étape {current} / {total}'**
+  String shoppingStepLabel(int current, int total);
+
+  /// No description provided for @shoppingStep1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quelles recettes cuisines-tu ?'**
+  String get shoppingStep1Title;
+
+  /// No description provided for @shoppingStep1Subtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'On assemblera la liste de courses à partir de ta sélection.'**
+  String get shoppingStep1Subtitle;
+
+  /// No description provided for @shoppingSearchRecipe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une recette'**
+  String get shoppingSearchRecipe;
+
+  /// No description provided for @shoppingContinue.
+  ///
+  /// In fr, this message translates to:
+  /// **'Continuer'**
+  String get shoppingContinue;
+
+  /// No description provided for @shoppingContinueWithCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{Continuer · 1 recette} other{Continuer · {count} recettes}}'**
+  String shoppingContinueWithCount(int count);
+
+  /// No description provided for @shoppingStep2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour combien de parts ?'**
+  String get shoppingStep2Title;
+
+  /// No description provided for @shoppingStep2Subtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'On multiplie les ingrédients de chaque recette en conséquence.'**
+  String get shoppingStep2Subtitle;
+
+  /// No description provided for @shoppingBaseServings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette de base : {count} pers.'**
+  String shoppingBaseServings(int count);
+
+  /// No description provided for @shoppingTotalServings.
+  ///
+  /// In fr, this message translates to:
+  /// **'Total : {parts} parts sur {recipes} recettes.'**
+  String shoppingTotalServings(int parts, int recipes);
+
+  /// No description provided for @shoppingStep3Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Qu\'as-tu déjà chez toi ?'**
+  String get shoppingStep3Title;
+
+  /// No description provided for @shoppingStep3Subtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Coche les ingrédients que tu as déjà.'**
+  String get shoppingStep3Subtitle;
+
+  /// No description provided for @shoppingInStock.
+  ///
+  /// In fr, this message translates to:
+  /// **'En stock'**
+  String get shoppingInStock;
+
+  /// No description provided for @shoppingGenerateWithCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Générer ma liste} =1{Générer ma liste · 1 article} other{Générer ma liste · {count} articles}}'**
+  String shoppingGenerateWithCount(int count);
+
+  /// No description provided for @shoppingNoRecipesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette'**
+  String get shoppingNoRecipesTitle;
+
+  /// No description provided for @shoppingNoRecipesBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Crée d\'abord une recette pour générer une liste.'**
+  String get shoppingNoRecipesBody;
+
+  /// No description provided for @shoppingGenerateOfflineError.
+  ///
+  /// In fr, this message translates to:
+  /// **'La génération d\'une liste nécessite une connexion.'**
+  String get shoppingGenerateOfflineError;
+
+  /// No description provided for @shoppingListEyebrow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste auto'**
+  String get shoppingListEyebrow;
+
+  /// No description provided for @shoppingViewByRecipe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par recette'**
+  String get shoppingViewByRecipe;
+
+  /// No description provided for @shoppingViewByAisle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Par rayon'**
+  String get shoppingViewByAisle;
+
+  /// No description provided for @shoppingViewAz.
+  ///
+  /// In fr, this message translates to:
+  /// **'A–Z'**
+  String get shoppingViewAz;
+
+  /// No description provided for @shoppingOtherItems.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autres articles'**
+  String get shoppingOtherItems;
+
+  /// No description provided for @shoppingOtherItemsSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoutés à la main · hors recette'**
+  String get shoppingOtherItemsSubtitle;
+
+  /// No description provided for @shoppingRecipeMeta.
+  ///
+  /// In fr, this message translates to:
+  /// **'{servings} parts · {items}'**
+  String shoppingRecipeMeta(int servings, String items);
+
+  /// No description provided for @shoppingAddItem.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un article'**
+  String get shoppingAddItem;
+
+  /// No description provided for @shoppingAddItemTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvel article'**
+  String get shoppingAddItemTitle;
+
+  /// No description provided for @shoppingAddItemHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom de l\'article'**
+  String get shoppingAddItemHint;
+
+  /// No description provided for @shoppingAddItemQtyHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Quantité (optionnel)'**
+  String get shoppingAddItemQtyHint;
+
+  /// No description provided for @shoppingAltAvailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'alt. dispo'**
+  String get shoppingAltAvailable;
+
+  /// No description provided for @shoppingRename.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renommer la liste'**
+  String get shoppingRename;
+
+  /// No description provided for @shoppingClear.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vider la liste'**
+  String get shoppingClear;
+
+  /// No description provided for @shoppingClearConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vider cette liste ?'**
+  String get shoppingClearConfirmTitle;
+
+  /// No description provided for @shoppingClearConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'La liste sera supprimée. En gratuit, l\'historique n\'est pas conservé.'**
+  String get shoppingClearConfirmBody;
+
+  /// No description provided for @shoppingProgress.
+  ///
+  /// In fr, this message translates to:
+  /// **'{checked}/{total}'**
+  String shoppingProgress(int checked, int total);
+
+  /// No description provided for @shoppingDetailSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'{items} · {recipes} · {added} ajouts'**
+  String shoppingDetailSummary(String items, String recipes, int added);
+
+  /// No description provided for @shoppingExportTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter'**
+  String get shoppingExportTitle;
+
+  /// No description provided for @shoppingExportSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter'**
+  String get shoppingExportSection;
+
+  /// No description provided for @shoppingExportPdf.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter en PDF'**
+  String get shoppingExportPdf;
+
+  /// No description provided for @shoppingExportPdfSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste prête à imprimer'**
+  String get shoppingExportPdfSubtitle;
+
+  /// No description provided for @shoppingExportNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Convertir en note'**
+  String get shoppingExportNote;
+
+  /// No description provided for @shoppingExportNoteSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier la liste comme texte'**
+  String get shoppingExportNoteSubtitle;
+
+  /// No description provided for @shoppingExportHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les articles cochés (déjà en stock) n\'apparaissent pas dans l\'export.'**
+  String get shoppingExportHint;
+
+  /// No description provided for @shoppingExportCopied.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste copiée dans le presse-papiers.'**
+  String get shoppingExportCopied;
+
+  /// No description provided for @shoppingExportPdfSoon.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'export PDF arrive prochainement.'**
+  String get shoppingExportPdfSoon;
+
+  /// No description provided for @shoppingAltTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Introuvable en magasin ?'**
+  String get shoppingAltTitle;
+
+  /// No description provided for @shoppingAltSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplace {name} par une alternative. Ta recette n\'est pas modifiée.'**
+  String shoppingAltSubtitle(String name);
+
+  /// No description provided for @shoppingAltSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Alternatives définies'**
+  String get shoppingAltSection;
+
+  /// No description provided for @shoppingAltNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le remplacement ne s\'applique qu\'à cette liste de courses.'**
+  String get shoppingAltNote;
+
+  /// No description provided for @shoppingAltConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplacer dans la liste'**
+  String get shoppingAltConfirm;
+
+  /// No description provided for @shoppingAltKeepOriginal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Garder l\'original'**
+  String get shoppingAltKeepOriginal;
+
+  /// No description provided for @shoppingAltReset.
+  ///
+  /// In fr, this message translates to:
+  /// **'Revenir à l\'original'**
+  String get shoppingAltReset;
+
+  /// No description provided for @shoppingAltNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune alternative définie pour cet ingrédient.'**
+  String get shoppingAltNone;
+
+  /// No description provided for @shoppingAltNoneHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoute des alternatives depuis la fiche de l\'ingrédient.'**
+  String get shoppingAltNoneHint;
+
+  /// No description provided for @shoppingAltOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion nécessaire pour charger les alternatives.'**
+  String get shoppingAltOffline;
+
+  /// No description provided for @shoppingPremiumBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Premium'**
+  String get shoppingPremiumBadge;
+
+  /// No description provided for @shoppingPremiumNewList.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle liste depuis mes recettes'**
+  String get shoppingPremiumNewList;
+
+  /// No description provided for @shoppingPremiumActiveLists.
+  ///
+  /// In fr, this message translates to:
+  /// **'Listes actives'**
+  String get shoppingPremiumActiveLists;
+
+  /// No description provided for @shoppingPremiumUnlimited.
+  ///
+  /// In fr, this message translates to:
+  /// **'Illimité'**
+  String get shoppingPremiumUnlimited;
+
+  /// No description provided for @shoppingPremiumHistory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique'**
+  String get shoppingPremiumHistory;
+
+  /// No description provided for @shoppingPremiumReopen.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rouvrir'**
+  String get shoppingPremiumReopen;
+
+  /// No description provided for @shoppingPremiumPreviewBanner.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aperçu Premium — non actif en version gratuite.'**
+  String get shoppingPremiumPreviewBanner;
 }
 
 class _AppLocalizationsDelegate

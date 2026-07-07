@@ -992,4 +992,310 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get commonDelete => 'Supprimer';
+
+  @override
+  String get shoppingTabEyebrow => 'Courses';
+
+  @override
+  String get shoppingTabTitle => 'Mes courses';
+
+  @override
+  String get shoppingFreeBadge => 'Gratuit · 1/1';
+
+  @override
+  String get shoppingDefaultListName => 'Liste de la semaine';
+
+  @override
+  String get shoppingCreateFromRecipes => 'Créer depuis mes recettes';
+
+  @override
+  String get shoppingLockedSectionTitle => 'Historique & listes multiples';
+
+  @override
+  String get shoppingPremiumKicker => 'Cocotte Premium';
+
+  @override
+  String get shoppingPremiumTitle => 'Listes illimitées + historique';
+
+  @override
+  String get shoppingPremiumBody =>
+      'Crée autant de listes que tu veux et retrouve toutes les précédentes.';
+
+  @override
+  String get shoppingPremiumCta => 'Débloquer Premium';
+
+  @override
+  String get shoppingEmptyTitle => 'Aucune liste en cours';
+
+  @override
+  String get shoppingEmptyBody =>
+      'Génère ta liste de courses à partir de tes recettes.';
+
+  @override
+  String get shoppingLoadError => 'Impossible de charger tes courses.';
+
+  @override
+  String shoppingItemsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count articles',
+      one: '1 article',
+      zero: 'Aucun article',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shoppingRecipesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recettes',
+      one: '1 recette',
+      zero: 'Aucune recette',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shoppingServingsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pers.',
+      one: '1 pers.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String shoppingListSummary(String items, String recipes, int servings) {
+    return '$items · $recipes · $servings pers.';
+  }
+
+  @override
+  String shoppingStepLabel(int current, int total) {
+    return 'Étape $current / $total';
+  }
+
+  @override
+  String get shoppingStep1Title => 'Quelles recettes cuisines-tu ?';
+
+  @override
+  String get shoppingStep1Subtitle =>
+      'On assemblera la liste de courses à partir de ta sélection.';
+
+  @override
+  String get shoppingSearchRecipe => 'Rechercher une recette';
+
+  @override
+  String get shoppingContinue => 'Continuer';
+
+  @override
+  String shoppingContinueWithCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Continuer · $count recettes',
+      one: 'Continuer · 1 recette',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shoppingStep2Title => 'Pour combien de parts ?';
+
+  @override
+  String get shoppingStep2Subtitle =>
+      'On multiplie les ingrédients de chaque recette en conséquence.';
+
+  @override
+  String shoppingBaseServings(int count) {
+    return 'Recette de base : $count pers.';
+  }
+
+  @override
+  String shoppingTotalServings(int parts, int recipes) {
+    return 'Total : $parts parts sur $recipes recettes.';
+  }
+
+  @override
+  String get shoppingStep3Title => 'Qu\'as-tu déjà chez toi ?';
+
+  @override
+  String get shoppingStep3Subtitle => 'Coche les ingrédients que tu as déjà.';
+
+  @override
+  String get shoppingInStock => 'En stock';
+
+  @override
+  String shoppingGenerateWithCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Générer ma liste · $count articles',
+      one: 'Générer ma liste · 1 article',
+      zero: 'Générer ma liste',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get shoppingNoRecipesTitle => 'Aucune recette';
+
+  @override
+  String get shoppingNoRecipesBody =>
+      'Crée d\'abord une recette pour générer une liste.';
+
+  @override
+  String get shoppingGenerateOfflineError =>
+      'La génération d\'une liste nécessite une connexion.';
+
+  @override
+  String get shoppingListEyebrow => 'Liste auto';
+
+  @override
+  String get shoppingViewByRecipe => 'Par recette';
+
+  @override
+  String get shoppingViewByAisle => 'Par rayon';
+
+  @override
+  String get shoppingViewAz => 'A–Z';
+
+  @override
+  String get shoppingOtherItems => 'Autres articles';
+
+  @override
+  String get shoppingOtherItemsSubtitle => 'Ajoutés à la main · hors recette';
+
+  @override
+  String shoppingRecipeMeta(int servings, String items) {
+    return '$servings parts · $items';
+  }
+
+  @override
+  String get shoppingAddItem => 'Ajouter un article';
+
+  @override
+  String get shoppingAddItemTitle => 'Nouvel article';
+
+  @override
+  String get shoppingAddItemHint => 'Nom de l\'article';
+
+  @override
+  String get shoppingAddItemQtyHint => 'Quantité (optionnel)';
+
+  @override
+  String get shoppingAltAvailable => 'alt. dispo';
+
+  @override
+  String get shoppingRename => 'Renommer la liste';
+
+  @override
+  String get shoppingClear => 'Vider la liste';
+
+  @override
+  String get shoppingClearConfirmTitle => 'Vider cette liste ?';
+
+  @override
+  String get shoppingClearConfirmBody =>
+      'La liste sera supprimée. En gratuit, l\'historique n\'est pas conservé.';
+
+  @override
+  String shoppingProgress(int checked, int total) {
+    return '$checked/$total';
+  }
+
+  @override
+  String shoppingDetailSummary(String items, String recipes, int added) {
+    return '$items · $recipes · $added ajouts';
+  }
+
+  @override
+  String get shoppingExportTitle => 'Exporter';
+
+  @override
+  String get shoppingExportSection => 'Exporter';
+
+  @override
+  String get shoppingExportPdf => 'Exporter en PDF';
+
+  @override
+  String get shoppingExportPdfSubtitle => 'Liste prête à imprimer';
+
+  @override
+  String get shoppingExportNote => 'Convertir en note';
+
+  @override
+  String get shoppingExportNoteSubtitle => 'Copier la liste comme texte';
+
+  @override
+  String get shoppingExportHint =>
+      'Les articles cochés (déjà en stock) n\'apparaissent pas dans l\'export.';
+
+  @override
+  String get shoppingExportCopied => 'Liste copiée dans le presse-papiers.';
+
+  @override
+  String get shoppingExportPdfSoon => 'L\'export PDF arrive prochainement.';
+
+  @override
+  String get shoppingAltTitle => 'Introuvable en magasin ?';
+
+  @override
+  String shoppingAltSubtitle(String name) {
+    return 'Remplace $name par une alternative. Ta recette n\'est pas modifiée.';
+  }
+
+  @override
+  String get shoppingAltSection => 'Alternatives définies';
+
+  @override
+  String get shoppingAltNote =>
+      'Le remplacement ne s\'applique qu\'à cette liste de courses.';
+
+  @override
+  String get shoppingAltConfirm => 'Remplacer dans la liste';
+
+  @override
+  String get shoppingAltKeepOriginal => 'Garder l\'original';
+
+  @override
+  String get shoppingAltReset => 'Revenir à l\'original';
+
+  @override
+  String get shoppingAltNone =>
+      'Aucune alternative définie pour cet ingrédient.';
+
+  @override
+  String get shoppingAltNoneHint =>
+      'Ajoute des alternatives depuis la fiche de l\'ingrédient.';
+
+  @override
+  String get shoppingAltOffline =>
+      'Connexion nécessaire pour charger les alternatives.';
+
+  @override
+  String get shoppingPremiumBadge => 'Premium';
+
+  @override
+  String get shoppingPremiumNewList => 'Nouvelle liste depuis mes recettes';
+
+  @override
+  String get shoppingPremiumActiveLists => 'Listes actives';
+
+  @override
+  String get shoppingPremiumUnlimited => 'Illimité';
+
+  @override
+  String get shoppingPremiumHistory => 'Historique';
+
+  @override
+  String get shoppingPremiumReopen => 'Rouvrir';
+
+  @override
+  String get shoppingPremiumPreviewBanner =>
+      'Aperçu Premium — non actif en version gratuite.';
 }
