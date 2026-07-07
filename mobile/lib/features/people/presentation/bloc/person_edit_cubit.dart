@@ -108,13 +108,18 @@ class PersonEditCubit extends Cubit<PersonEditState> {
     }
   }
 
-  Future<void> save({required String firstName, String? lastName}) async {
+  Future<void> save({
+    required String firstName,
+    String? lastName,
+    String? avatarUrl,
+  }) async {
     emit(state.copyWith(saving: true));
     try {
       final updated = await _people.update(
         state.person.id,
         firstName: firstName,
         lastName: lastName,
+        avatarUrl: avatarUrl,
       );
       emit(state.copyWith(
         person: updated,

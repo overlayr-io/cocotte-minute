@@ -12,6 +12,7 @@ import '../../features/shopping_list/data/shopping_list_repository.dart';
 import '../../features/shopping_list/data/shopping_sync_service.dart';
 import '../../features/tags/data/tags_repository.dart';
 import '../network/api_client.dart';
+import '../storage/image_upload_service.dart';
 
 /// Conteneur d'injection de dépendances global.
 ///
@@ -40,6 +41,10 @@ void setupServiceLocator() {
     () => RecipesRepository(apiClient: sl<ApiClient>()),
   );
   sl.registerLazySingleton<RecipePlayerStorage>(() => const RecipePlayerStorage());
+
+  // Upload d'image partagé (ingrédient, avatar personne, photo recette) vers
+  // Supabase Storage — bucket public « images ».
+  sl.registerLazySingleton<ImageUploadService>(() => const ImageUploadService());
 
   // Liste de courses (offline-first) : base SQLite locale + API + sync réseau.
   sl.registerLazySingleton<ShoppingDatabase>(() => ShoppingDatabase());

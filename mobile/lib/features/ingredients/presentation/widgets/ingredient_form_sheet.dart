@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/image_upload_picker.dart';
 import '../../domain/ingredient.dart';
 import 'unit_selector.dart';
 
 /// Données saisies pour créer un ingrédient.
-typedef IngredientDraft = ({String name, IngredientUnit unit});
+typedef IngredientDraft = ({String name, IngredientUnit unit, String? imageUrl});
 
-/// Bottom-sheet de création d'un ingrédient custom (nom + unité).
-/// L'upload d'image sera branché dans un lot ultérieur (emplacement prévu).
+/// Bottom-sheet de création d'un ingrédient custom (nom + unité + image).
 Future<IngredientDraft?> showCreateIngredientSheet(BuildContext context) {
   return showModalBottomSheet<IngredientDraft>(
     context: context,
@@ -29,6 +29,7 @@ class _IngredientFormSheet extends StatefulWidget {
 class _IngredientFormSheetState extends State<_IngredientFormSheet> {
   final _nameController = TextEditingController();
   IngredientUnit _unit = IngredientUnit.gramme;
+  String? _imageUrl;
   bool _showError = false;
 
   @override
@@ -43,7 +44,7 @@ class _IngredientFormSheetState extends State<_IngredientFormSheet> {
       setState(() => _showError = true);
       return;
     }
-    Navigator.of(context).pop((name: name, unit: _unit));
+    Navigator.of(context).pop((name: name, unit: _unit, imageUrl: _imageUrl));
   }
 
   @override
@@ -85,7 +86,14 @@ class _IngredientFormSheetState extends State<_IngredientFormSheet> {
               ),
             ),
             const SizedBox(height: 18),
-            Center(child: _ImagePlaceholder()),
+            Center(
+              child: ImageUploadPicker(
+                folder: 'ingredients',
+                initialUrl: _imageUrl,
+                onUploaded: (url) => setState(() => _imageUrl = url),
+                placeholder: _ImagePlaceholder(),
+              ),
+            ),
             const SizedBox(height: 18),
             _Label(l10n.ingredientFieldName),
             const SizedBox(height: 7),

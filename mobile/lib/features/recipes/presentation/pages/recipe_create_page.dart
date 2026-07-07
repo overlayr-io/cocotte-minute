@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/image_upload_picker.dart';
 import '../../data/recipes_repository.dart';
 import '../../domain/recipe.dart';
 
-/// Écran de création (maquette 1d) : flow minimal — photo (optionnelle, non
-/// branchée en v1), nom (obligatoire), toggle « recette de base » décidé dès la
-/// création. Renvoie la [RecipeSummary] créée pour rediriger vers sa fiche.
+/// Écran de création (maquette 1d) : flow minimal — photo (optionnelle),
+/// nom (obligatoire), toggle « recette de base » décidé dès la création.
+/// Renvoie la [RecipeSummary] créée pour rediriger vers sa fiche.
 class RecipeCreatePage extends StatefulWidget {
   const RecipeCreatePage({super.key});
 
@@ -23,6 +24,7 @@ class RecipeCreatePage extends StatefulWidget {
 class _RecipeCreatePageState extends State<RecipeCreatePage> {
   final _nameController = TextEditingController();
   final _repository = sl<RecipesRepository>();
+  String? _photoUrl;
   bool _isBase = false;
   bool _showNameError = false;
   bool _submitting = false;
@@ -41,7 +43,11 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
     }
     setState(() => _submitting = true);
     try {
-      final created = await _repository.create(name: name, isBase: _isBase);
+      final created = await _repository.create(
+        name: name,
+        photoUrl: _photoUrl,
+        isBase: _isBase,
+      );
       if (mounted) Navigator.of(context).pop(created);
     } on RecipesRepositoryException catch (e) {
       if (!mounted) return;
@@ -67,7 +73,15 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(22, 8, 22, 24),
         children: [
-          _PhotoPicker(l10n: l10n),
+          ImageUploadPicker(
+            folder: 'recipes',
+            shape: ImageUploadShape.card,
+            size: 172,
+            borderRadius: 22,
+            initialUrl: _photoUrl,
+            onUploaded: (url) => setState(() => _photoUrl = url),
+            placeholder: _PhotoPicker(l10n: l10n),
+          ),
           const SizedBox(height: 22),
           _FieldLabel(label: l10n.recipeFieldName, required: true),
           const SizedBox(height: 8),
@@ -156,7 +170,8 @@ class _PhotoPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Upload non branché en v1 (cf. dette avatar) : placeholder visuel fidèle 1d.
+    // Placeholder visuel (maquette 1d) affiché tant qu'aucune photo n'est
+    // choisie ; le tap/upload est géré par ImageUploadPicker qui l'enveloppe.
     return Container(
       height: 172,
       decoration: BoxDecoration(

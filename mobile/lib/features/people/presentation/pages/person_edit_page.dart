@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/image_upload_picker.dart';
 import '../../../tags/data/tags_repository.dart';
 import '../../../tags/domain/tag.dart';
 import '../../../tags/presentation/widgets/tag_colors.dart';
@@ -47,6 +48,7 @@ class _PersonEditView extends StatefulWidget {
 class _PersonEditViewState extends State<_PersonEditView> {
   late final TextEditingController _firstNameController;
   late final TextEditingController _lastNameController;
+  String? _avatarUrl;
   bool _showError = false;
 
   @override
@@ -55,6 +57,7 @@ class _PersonEditViewState extends State<_PersonEditView> {
     final person = context.read<PersonEditCubit>().state.person;
     _firstNameController = TextEditingController(text: person.firstName);
     _lastNameController = TextEditingController(text: person.lastName ?? '');
+    _avatarUrl = person.avatarUrl;
   }
 
   @override
@@ -70,9 +73,11 @@ class _PersonEditViewState extends State<_PersonEditView> {
       setState(() => _showError = true);
       return;
     }
-    context
-        .read<PersonEditCubit>()
-        .save(firstName: firstName, lastName: _lastNameController.text.trim());
+    context.read<PersonEditCubit>().save(
+          firstName: firstName,
+          lastName: _lastNameController.text.trim(),
+          avatarUrl: _avatarUrl,
+        );
   }
 
   Future<void> _confirmDelete() async {
@@ -135,12 +140,16 @@ class _PersonEditViewState extends State<_PersonEditView> {
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
             children: [
               Center(
-                child: PersonAvatar(
-                  name: _firstNameController.text.isEmpty
-                      ? state.person.firstName
-                      : _firstNameController.text,
-                  imageUrl: state.person.avatarUrl,
-                  size: 82,
+                child: ImageUploadPicker(
+                  folder: 'avatars',
+                  initialUrl: _avatarUrl,
+                  onUploaded: (url) => setState(() => _avatarUrl = url),
+                  placeholder: PersonAvatar(
+                    name: _firstNameController.text.isEmpty
+                        ? state.person.firstName
+                        : _firstNameController.text,
+                    size: 82,
+                  ),
                 ),
               ),
               const SizedBox(height: 22),

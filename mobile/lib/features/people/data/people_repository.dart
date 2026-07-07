@@ -48,11 +48,13 @@ class PeopleRepository {
     }
   }
 
-  /// Édite prénom + nom. `lastName` null/vide → le nom est retiré (envoyé null).
+  /// Édite prénom + nom (+ avatar). `lastName` null/vide → le nom est retiré
+  /// (envoyé null). `avatarUrl` n'est envoyé que s'il est renseigné (jamais effacé).
   Future<Person> update(
     String id, {
     required String firstName,
     String? lastName,
+    String? avatarUrl,
   }) async {
     try {
       final res = await _dio.patch<Map<String, dynamic>>(
@@ -60,6 +62,7 @@ class PeopleRepository {
         data: {
           'firstName': firstName,
           'lastName': (lastName == null || lastName.isEmpty) ? null : lastName,
+          'avatarUrl': ?avatarUrl,
         },
       );
       return Person.fromJson(res.data!);

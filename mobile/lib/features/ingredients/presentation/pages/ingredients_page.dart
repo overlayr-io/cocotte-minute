@@ -66,9 +66,13 @@ class _IngredientsViewState extends State<_IngredientsView> {
   Future<void> _create() async {
     final draft = await showCreateIngredientSheet(context);
     if (!mounted || draft == null) return;
-    context
-        .read<IngredientsListBloc>()
-        .add(IngredientCreated(name: draft.name, unit: draft.unit));
+    context.read<IngredientsListBloc>().add(
+          IngredientCreated(
+            name: draft.name,
+            unit: draft.unit,
+            imageUrl: draft.imageUrl,
+          ),
+        );
   }
 
   @override
