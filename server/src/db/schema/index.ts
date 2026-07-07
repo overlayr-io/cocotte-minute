@@ -8,3 +8,4 @@ export * from './tags.schema';
 export * from './people.schema';
 export * from './person-tags.schema';
 export * from './categories.schema';
+export * from './recipes.schema';
