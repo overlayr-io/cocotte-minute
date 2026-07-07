@@ -234,6 +234,41 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     }
   }
 
+  // --- composants (sous-recettes) ---------------------------------------
+
+  Future<void> addComponent(String baseRecipeId) =>
+      _runStepAction(() => _repository.addComponent(recipeId, baseRecipeId));
+
+  Future<void> removeComponent(String baseRecipeId) =>
+      _runStepAction(() => _repository.removeComponent(recipeId, baseRecipeId));
+
+  // --- rangement & étiquetage -------------------------------------------
+  // Toggles depuis une feuille restée ouverte : pas d'overlay bloquant (sinon
+  // il clignoterait derrière la feuille à chaque appui), juste un rechargement.
+
+  Future<void> assignCategory(String categoryId) =>
+      _runRelationAction(() => _repository.assignCategory(recipeId, categoryId));
+
+  Future<void> unassignCategory(String categoryId) => _runRelationAction(
+      () => _repository.unassignCategory(recipeId, categoryId));
+
+  Future<void> assignTag(String tagId) =>
+      _runRelationAction(() => _repository.assignTag(recipeId, tagId));
+
+  Future<void> unassignTag(String tagId) =>
+      _runRelationAction(() => _repository.unassignTag(recipeId, tagId));
+
+  Future<void> _runRelationAction(Future<void> Function() action) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    try {
+      await action();
+      await _reload();
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(message: e.message));
+    }
+  }
+
   Future<void> _runStepAction(Future<void> Function() action) async {
     final current = state;
     if (current is! RecipeDetailLoaded) return;

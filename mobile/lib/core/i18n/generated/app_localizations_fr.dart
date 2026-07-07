@@ -673,6 +673,51 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recipeUsedInSection => 'Utilisée dans';
 
   @override
+  String get recipeComponentsAddCta => 'Ajouter une sous-recette';
+
+  @override
+  String get recipeComponentRemove => 'Retirer la sous-recette';
+
+  @override
+  String get recipeTagsSection => 'Tags';
+
+  @override
+  String get recipeTagsNone => 'Aucun tag';
+
+  @override
+  String get recipeTagsEdit => 'Modifier les tags';
+
+  @override
+  String get recipeTagsSheetTitle => 'Étiqueter la recette';
+
+  @override
+  String get recipeTagsSheetSubtitle =>
+      'Choisis les tags à associer à cette recette.';
+
+  @override
+  String get recipeTagsSheetEmpty =>
+      'Tu n\'as pas encore de tag. Crée-en depuis Compte → Tags.';
+
+  @override
+  String get recipeFoldersSection => 'Dossiers';
+
+  @override
+  String get recipeFoldersNone => 'Dans aucun dossier';
+
+  @override
+  String get recipeFoldersEdit => 'Ranger dans un dossier';
+
+  @override
+  String get recipeFoldersSheetTitle => 'Ranger la recette';
+
+  @override
+  String get recipeFoldersSheetSubtitle => 'Choisis un ou plusieurs dossiers.';
+
+  @override
+  String get recipeFoldersSheetEmpty =>
+      'Aucun dossier. Crée-en depuis Compte → Catégories.';
+
+  @override
   String get recipeCreatorLabel => 'Recette de';
 
   @override

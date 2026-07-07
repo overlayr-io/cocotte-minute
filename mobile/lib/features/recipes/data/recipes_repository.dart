@@ -249,6 +249,71 @@ class RecipesRepository {
     }
   }
 
+  // --- composants (sous-recettes) ---------------------------------------
+
+  /// Ajoute une recette de base comme composant. Le serveur refuse une recette
+  /// non « de base » ou créant un cycle (message FR remonté tel quel).
+  Future<void> addComponent(String recipeId, String baseRecipeId) async {
+    try {
+      await _dio.post<void>(
+        '/recipes/$recipeId/components',
+        data: {'baseRecipeId': baseRecipeId},
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'ajouter la sous-recette.');
+    }
+  }
+
+  Future<void> removeComponent(String recipeId, String baseRecipeId) async {
+    try {
+      await _dio.delete<void>('/recipes/$recipeId/components/$baseRecipeId');
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de retirer la sous-recette.');
+    }
+  }
+
+  // --- rangement & étiquetage -------------------------------------------
+
+  /// Range la recette dans un dossier (catégorie).
+  Future<void> assignCategory(String recipeId, String categoryId) async {
+    try {
+      await _dio.post<void>(
+        '/recipes/$recipeId/categories',
+        data: {'categoryId': categoryId},
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de ranger la recette.');
+    }
+  }
+
+  Future<void> unassignCategory(String recipeId, String categoryId) async {
+    try {
+      await _dio.delete<void>('/recipes/$recipeId/categories/$categoryId');
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de retirer la recette du dossier.');
+    }
+  }
+
+  /// Étiquette la recette avec un tag.
+  Future<void> assignTag(String recipeId, String tagId) async {
+    try {
+      await _dio.post<void>(
+        '/recipes/$recipeId/tags',
+        data: {'tagId': tagId},
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'ajouter le tag.');
+    }
+  }
+
+  Future<void> unassignTag(String recipeId, String tagId) async {
+    try {
+      await _dio.delete<void>('/recipes/$recipeId/tags/$tagId');
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de retirer le tag.');
+    }
+  }
+
   RecipesRepositoryException _mapError(DioException e, String fallback) {
     // 400/403/404/409 : le serveur renvoie un message FR actionnable (verrou
     // is_base, composant invalide, recette introuvable...), on le remonte tel quel.

@@ -11,8 +11,10 @@ import '../../domain/recipe.dart';
 import '../bloc/recipe_detail_cubit.dart';
 import '../pages/recipe_detail_page.dart';
 import 'add_ingredients_sheet.dart';
+import 'base_recipe_picker_sheet.dart';
 import 'quantity_stepper.dart';
 import 'recipe_edit_sheet.dart';
+import 'recipe_organization_section.dart';
 import 'steps_content.dart';
 
 const double _kHeroHeight = 300;
@@ -130,7 +132,14 @@ class _Loaded extends StatelessWidget {
               SliverToBoxAdapter(
                 child: SizedBox(
                   height: _kHeroHeight - _kSheetOverlap,
-                  child: _HeroTitle(detail: detail, l10n: l10n),
+                  child: _HeroTitle(
+                    detail: detail,
+                    l10n: l10n,
+                    onPlay: busy
+                        ? null
+                        : () => Navigator.of(context)
+                            .push(RecipePlayerPage.route(detail.id)),
+                  ),
                 ),
               ),
               SliverToBoxAdapter(
@@ -153,13 +162,6 @@ class _Loaded extends StatelessWidget {
                       icon: Icons.chevron_left_rounded,
                       onTap: () => Navigator.of(context).maybePop(true),
                     ),
-                    if (detail.steps.isNotEmpty)
-                      _PlayButton(
-                        onTap: busy
-                            ? null
-                            : () => Navigator.of(context)
-                                .push(RecipePlayerPage.route(detail.id)),
-                      ),
                     _RoundIconButton(
                       icon: Icons.more_vert_rounded,
                       onTap: busy ? null : () => _showMenu(context),
@@ -265,10 +267,11 @@ class _HeroImage extends StatelessWidget {
 }
 
 class _HeroTitle extends StatelessWidget {
-  const _HeroTitle({required this.detail, required this.l10n});
+  const _HeroTitle({required this.detail, required this.l10n, this.onPlay});
 
   final RecipeDetail detail;
   final AppLocalizations l10n;
+  final VoidCallback? onPlay;
 
   @override
   Widget build(BuildContext context) {
@@ -277,39 +280,50 @@ class _HeroTitle extends StatelessWidget {
       alignment: Alignment.bottomLeft,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 0, 20, 18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            if (detail.isBase)
-              _Badge(
-                label: l10n.recipeBaseBadge,
-                background: AppColors.primary,
-                foreground: Colors.white,
-                icon: Icons.link_rounded,
-              ),
-            const SizedBox(height: 12),
-            Text(
-              s.name,
-              style: const TextStyle(
-                fontFamily: AppFonts.display,
-                fontWeight: FontWeight.w700,
-                fontSize: 28,
-                height: 1.08,
-                letterSpacing: -0.5,
-                color: Colors.white,
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (detail.isBase)
+                    _Badge(
+                      label: l10n.recipeBaseBadge,
+                      background: AppColors.primary,
+                      foreground: Colors.white,
+                      icon: Icons.link_rounded,
+                    ),
+                  const SizedBox(height: 12),
+                  Text(
+                    s.name,
+                    style: const TextStyle(
+                      fontFamily: AppFonts.display,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 28,
+                      height: 1.08,
+                      letterSpacing: -0.5,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 16,
+                    runSpacing: 6,
+                    children: [
+                      _MetaItem(icon: Icons.person_outline_rounded, label: l10n.recipeServingsShort(s.servings)),
+                      _MetaItem(icon: Icons.schedule_rounded, label: l10n.recipePrepShort(s.prepTime)),
+                      _MetaItem(icon: Icons.local_fire_department_outlined, label: l10n.recipeCookShort(s.cookTime)),
+                    ],
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 16,
-              runSpacing: 6,
-              children: [
-                _MetaItem(icon: Icons.person_outline_rounded, label: l10n.recipeServingsShort(s.servings)),
-                _MetaItem(icon: Icons.schedule_rounded, label: l10n.recipePrepShort(s.prepTime)),
-                _MetaItem(icon: Icons.local_fire_department_outlined, label: l10n.recipeCookShort(s.cookTime)),
-              ],
-            ),
+            if (detail.steps.isNotEmpty) ...[
+              const SizedBox(width: 12),
+              _PlayButton(onTap: onPlay),
+            ],
           ],
         ),
       ),
@@ -366,6 +380,36 @@ class _SheetState extends State<_Sheet> {
     }
   }
 
+  Future<void> _addComponent() async {
+    final cubit = context.read<RecipeDetailCubit>();
+    final picked = await showBaseRecipePicker(context, excludeRecipeId: detail.id);
+    if (picked == null) return;
+    await cubit.addComponent(picked.id);
+  }
+
+  Future<void> _removeComponent(RecipeSummary component) async {
+    final cubit = context.read<RecipeDetailCubit>();
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.recipeComponentRemove),
+        content: Text(l10n.recipeDeleteConfirmBody(component.name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
+            child: Text(l10n.commonDelete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) await cubit.removeComponent(component.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     final scale = _portions / _base;
@@ -390,6 +434,8 @@ class _SheetState extends State<_Sheet> {
                   fontSize: 14, height: 1.55, color: AppColors.textSecondary),
             ),
           ],
+          const SizedBox(height: 18),
+          RecipeOrganizationSection(detail: detail),
           const SizedBox(height: 18),
           if (_tab == 0) ...[
             _PortionsCard(
@@ -437,19 +483,22 @@ class _SheetState extends State<_Sheet> {
         label: l10n.recipeIngredientsAddCta,
         onTap: _addIngredients,
       ),
-      if (detail.components.isNotEmpty) ...[
-        _SectionHeader(
-            title: l10n.recipeComponentsSection, count: detail.components.length),
-        for (final comp in detail.components)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10),
-            child: _RecipeLinkCard(
-              recipe: comp,
-              subtitle: l10n.recipeBaseBadge,
-              onTap: () => _openRecipe(context, comp.id),
-            ),
+      _SectionHeader(
+          title: l10n.recipeComponentsSection, count: detail.components.length),
+      for (final comp in detail.components)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: _RecipeLinkCard(
+            recipe: comp,
+            subtitle: l10n.recipeBaseBadge,
+            onTap: () => _openRecipe(context, comp.id),
+            onRemove: () => _removeComponent(comp),
           ),
-      ],
+        ),
+      _AddIngredientsButton(
+        label: l10n.recipeComponentsAddCta,
+        onTap: _addComponent,
+      ),
       if (detail.isBase && detail.usedIn.isNotEmpty) ...[
         _SectionHeader(
             title: l10n.recipeUsedInSection,
@@ -939,11 +988,19 @@ class _IngredientRow extends StatelessWidget {
 }
 
 class _RecipeLinkCard extends StatelessWidget {
-  const _RecipeLinkCard({required this.recipe, this.subtitle, required this.onTap});
+  const _RecipeLinkCard({
+    required this.recipe,
+    this.subtitle,
+    required this.onTap,
+    this.onRemove,
+  });
 
   final RecipeSummary recipe;
   final String? subtitle;
   final VoidCallback onTap;
+
+  /// Si fourni, affiche un bouton de retrait à la place du chevron.
+  final VoidCallback? onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -1007,8 +1064,17 @@ class _RecipeLinkCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right_rounded,
-                  size: 20, color: Color(0xFFC4C0B5)),
+              if (onRemove != null)
+                IconButton(
+                  onPressed: onRemove,
+                  icon: const Icon(Icons.close_rounded,
+                      size: 20, color: AppColors.danger),
+                  tooltip: AppLocalizations.of(context).recipeComponentRemove,
+                  visualDensity: VisualDensity.compact,
+                )
+              else
+                const Icon(Icons.chevron_right_rounded,
+                    size: 20, color: Color(0xFFC4C0B5)),
             ],
           ),
         ),

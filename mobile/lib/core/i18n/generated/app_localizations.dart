@@ -1318,6 +1318,90 @@ abstract class AppLocalizations {
   /// **'Utilisée dans'**
   String get recipeUsedInSection;
 
+  /// No description provided for @recipeComponentsAddCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une sous-recette'**
+  String get recipeComponentsAddCta;
+
+  /// No description provided for @recipeComponentRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer la sous-recette'**
+  String get recipeComponentRemove;
+
+  /// No description provided for @recipeTagsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tags'**
+  String get recipeTagsSection;
+
+  /// No description provided for @recipeTagsNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun tag'**
+  String get recipeTagsNone;
+
+  /// No description provided for @recipeTagsEdit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier les tags'**
+  String get recipeTagsEdit;
+
+  /// No description provided for @recipeTagsSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étiqueter la recette'**
+  String get recipeTagsSheetTitle;
+
+  /// No description provided for @recipeTagsSheetSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisis les tags à associer à cette recette.'**
+  String get recipeTagsSheetSubtitle;
+
+  /// No description provided for @recipeTagsSheetEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu n\'as pas encore de tag. Crée-en depuis Compte → Tags.'**
+  String get recipeTagsSheetEmpty;
+
+  /// No description provided for @recipeFoldersSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers'**
+  String get recipeFoldersSection;
+
+  /// No description provided for @recipeFoldersNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans aucun dossier'**
+  String get recipeFoldersNone;
+
+  /// No description provided for @recipeFoldersEdit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ranger dans un dossier'**
+  String get recipeFoldersEdit;
+
+  /// No description provided for @recipeFoldersSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ranger la recette'**
+  String get recipeFoldersSheetTitle;
+
+  /// No description provided for @recipeFoldersSheetSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisis un ou plusieurs dossiers.'**
+  String get recipeFoldersSheetSubtitle;
+
+  /// No description provided for @recipeFoldersSheetEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun dossier. Crée-en depuis Compte → Catégories.'**
+  String get recipeFoldersSheetEmpty;
+
   /// No description provided for @recipeCreatorLabel.
   ///
   /// In fr, this message translates to:
