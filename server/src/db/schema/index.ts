@@ -5,3 +5,5 @@
 export * from './ingredients.schema';
 export * from './ingredient-alternatives.schema';
 export * from './tags.schema';
+export * from './people.schema';
+export * from './person-tags.schema';
