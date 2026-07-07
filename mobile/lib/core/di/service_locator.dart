@@ -4,6 +4,7 @@ import '../../features/auth/data/auth_repository.dart';
 import '../../features/categories/data/categories_repository.dart';
 import '../../features/ingredients/data/ingredients_repository.dart';
 import '../../features/people/data/people_repository.dart';
+import '../../features/recipes/data/recipes_repository.dart';
 import '../../features/tags/data/tags_repository.dart';
 import '../network/api_client.dart';
 
@@ -29,5 +30,8 @@ void setupServiceLocator() {
   );
   sl.registerLazySingleton<CategoriesRepository>(
     () => CategoriesRepository(apiClient: sl<ApiClient>()),
+  );
+  sl.registerLazySingleton<RecipesRepository>(
+    () => RecipesRepository(apiClient: sl<ApiClient>()),
   );
 }
