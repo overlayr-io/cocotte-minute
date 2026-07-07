@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../features/account/data/account_repository.dart';
+import '../../features/account/presentation/bloc/account_status_cubit.dart';
 import '../../features/account/presentation/pages/account_page.dart';
+import '../../features/account/presentation/widgets/cancel_deletion_banner.dart';
 import '../../features/auth/presentation/pages/auth_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/recipes/presentation/pages/recipes_page.dart';
 import '../../features/shopping_list/presentation/pages/shopping_page.dart';
 import '../auth/auth_bloc.dart';
+import '../di/service_locator.dart';
 import '../i18n/generated/app_localizations.dart';
 import '../theme/app_colors.dart';
 
@@ -77,13 +81,24 @@ class _MainShellState extends State<MainShell> {
       const AccountPage(),
     ];
 
-    return Scaffold(
-      extendBody: true,
-      backgroundColor: AppColors.surface,
-      body: IndexedStack(index: _index, children: tabs),
-      bottomNavigationBar: _CocotteNavBar(
-        currentIndex: _index,
-        onTap: (i) => setState(() => _index = i),
+    // Bannière d'annulation RGPD : globale à tous les onglets, chargée au
+    // démarrage. N'affiche rien tant que le compte n'est pas `pending_deletion`.
+    return BlocProvider<AccountStatusCubit>(
+      create: (_) =>
+          AccountStatusCubit(accountRepository: sl<AccountRepository>())..load(),
+      child: Scaffold(
+        extendBody: true,
+        backgroundColor: AppColors.surface,
+        body: Column(
+          children: [
+            const CancelDeletionBanner(),
+            Expanded(child: IndexedStack(index: _index, children: tabs)),
+          ],
+        ),
+        bottomNavigationBar: _CocotteNavBar(
+          currentIndex: _index,
+          onTap: (i) => setState(() => _index = i),
+        ),
       ),
     );
   }

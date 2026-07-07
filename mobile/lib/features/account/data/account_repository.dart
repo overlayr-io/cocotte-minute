@@ -44,6 +44,25 @@ class AccountRepository {
     }
   }
 
+  /// Lit le statut RGPD du compte courant (pour la bannière d'annulation).
+  ///
+  /// `status: active` par défaut ; `pending_deletion` avec `deletionScheduledAt`
+  /// (échéance ISO J+30) si une suppression est en attente. Le payload ne porte
+  /// pas de champ `anonymous` (non pertinent en lecture) — [AccountDeletionResult]
+  /// le laisse à `false` par défaut.
+  Future<AccountDeletionResult> getStatus() async {
+    try {
+      final res = await _dio.get<Map<String, dynamic>>('/account/status');
+      return AccountDeletionResult.fromJson(res.data ?? const {});
+    } on DioException catch (e) {
+      throw _mapError(
+        e,
+        conflictMessage: 'Impossible de lire le statut du compte.',
+        fallback: 'Impossible de lire le statut du compte.',
+      );
+    }
+  }
+
   /// Annule une suppression en attente (tant que le délai de 30 jours court).
   ///
   /// 409 si aucune suppression n'est en attente ou si le délai est dépassé.
