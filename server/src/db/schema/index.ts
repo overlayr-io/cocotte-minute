@@ -4,3 +4,4 @@
  */
 export * from './ingredients.schema';
 export * from './ingredient-alternatives.schema';
+export * from './tags.schema';
