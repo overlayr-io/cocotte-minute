@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../features/account/presentation/pages/account_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/recipes/presentation/pages/recipes_page.dart';
+import '../../features/shopping_list/presentation/pages/shopping_page.dart';
 import '../i18n/generated/app_localizations.dart';
 import '../theme/app_colors.dart';
 
@@ -24,11 +25,10 @@ class _MainShellState extends State<MainShell> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
     final tabs = <Widget>[
       const HomePage(),
       const RecipesPage(),
-      _PlaceholderTab(title: l10n.navShopping),
+      const ShoppingPage(),
       const AccountPage(),
     ];
 
@@ -39,40 +39,6 @@ class _MainShellState extends State<MainShell> {
       bottomNavigationBar: _CocotteNavBar(
         currentIndex: _index,
         onTap: (i) => setState(() => _index = i),
-      ),
-    );
-  }
-}
-
-/// Onglet provisoire pour les sections pas encore construites.
-class _PlaceholderTab extends StatelessWidget {
-  const _PlaceholderTab({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return SafeArea(
-      bottom: false,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              title,
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.w700),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              l10n.comingSoonBody,
-              style: const TextStyle(color: AppColors.textSecondary),
-            ),
-          ],
-        ),
       ),
     );
   }
