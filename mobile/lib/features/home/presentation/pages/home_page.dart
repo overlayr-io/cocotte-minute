@@ -109,7 +109,7 @@ class _HomeView extends StatelessWidget {
         SliverPersistentHeader(
           pinned: true,
           delegate: _StickyHeader(
-            extent: 176,
+            extent: 186,
             child: _SearchAndChips(
               categories: state.categories,
               l10n: l10n,
