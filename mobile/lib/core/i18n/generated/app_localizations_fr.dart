@@ -460,6 +460,77 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get categoriesTitle => 'Catégories';
+
+  @override
+  String get categoriesIntro =>
+      'Range tes recettes en dossiers. Touche un dossier pour l\'ouvrir.';
+
+  @override
+  String get categoriesEmpty => 'Aucun dossier pour l\'instant.';
+
+  @override
+  String get categoriesEmptyFolder =>
+      'Aucun sous-dossier ici. Ajoute-en un avec le bouton +.';
+
+  @override
+  String get categoriesSubfoldersLabel => 'Sous-dossiers';
+
+  @override
+  String get categoriesRecipesLabel => 'Recettes du dossier';
+
+  @override
+  String get categoriesRecipesEmpty =>
+      'Les recettes rangées dans ce dossier apparaîtront ici.';
+
+  @override
+  String categoriesRecipeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recettes',
+      one: '1 recette',
+      zero: '0 recette',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get categoryDefaultBadge => 'Défaut';
+
+  @override
+  String get categoryCreateTitle => 'Nouveau dossier';
+
+  @override
+  String get categoryEditTitle => 'Modifier le dossier';
+
+  @override
+  String get categoryFieldIcon => 'Emoji';
+
+  @override
+  String get categoryFieldName => 'Nom';
+
+  @override
+  String get categoryNameHint => 'ex : Pâtes';
+
+  @override
+  String get categoryNameRequired => 'Donne un nom au dossier.';
+
+  @override
+  String get categoryFieldParent => 'Dossier parent';
+
+  @override
+  String get categoryParentRoot => 'À la racine';
+
+  @override
+  String get categoryDeleteConfirmTitle => 'Supprimer ce dossier ?';
+
+  @override
+  String categoryDeleteConfirmBody(String name) {
+    return '« $name » sera supprimé. Les recettes qu\'il contient ne sont pas supprimées.';
+  }
+
+  @override
   String get commonCancel => 'Annuler';
 
   @override

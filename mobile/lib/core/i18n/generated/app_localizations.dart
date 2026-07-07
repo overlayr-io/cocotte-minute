@@ -946,6 +946,120 @@ abstract class AppLocalizations {
   /// **'{name} et ses associations de tags seront supprimés.'**
   String personDeleteConfirmBody(String name);
 
+  /// No description provided for @categoriesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catégories'**
+  String get categoriesTitle;
+
+  /// No description provided for @categoriesIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Range tes recettes en dossiers. Touche un dossier pour l\'ouvrir.'**
+  String get categoriesIntro;
+
+  /// No description provided for @categoriesEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun dossier pour l\'instant.'**
+  String get categoriesEmpty;
+
+  /// No description provided for @categoriesEmptyFolder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun sous-dossier ici. Ajoute-en un avec le bouton +.'**
+  String get categoriesEmptyFolder;
+
+  /// No description provided for @categoriesSubfoldersLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sous-dossiers'**
+  String get categoriesSubfoldersLabel;
+
+  /// No description provided for @categoriesRecipesLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recettes du dossier'**
+  String get categoriesRecipesLabel;
+
+  /// No description provided for @categoriesRecipesEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les recettes rangées dans ce dossier apparaîtront ici.'**
+  String get categoriesRecipesEmpty;
+
+  /// No description provided for @categoriesRecipeCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{0 recette} =1{1 recette} other{{count} recettes}}'**
+  String categoriesRecipeCount(int count);
+
+  /// No description provided for @categoryDefaultBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Défaut'**
+  String get categoryDefaultBadge;
+
+  /// No description provided for @categoryCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau dossier'**
+  String get categoryCreateTitle;
+
+  /// No description provided for @categoryEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le dossier'**
+  String get categoryEditTitle;
+
+  /// No description provided for @categoryFieldIcon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Emoji'**
+  String get categoryFieldIcon;
+
+  /// No description provided for @categoryFieldName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get categoryFieldName;
+
+  /// No description provided for @categoryNameHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'ex : Pâtes'**
+  String get categoryNameHint;
+
+  /// No description provided for @categoryNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Donne un nom au dossier.'**
+  String get categoryNameRequired;
+
+  /// No description provided for @categoryFieldParent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossier parent'**
+  String get categoryFieldParent;
+
+  /// No description provided for @categoryParentRoot.
+  ///
+  /// In fr, this message translates to:
+  /// **'À la racine'**
+  String get categoryParentRoot;
+
+  /// No description provided for @categoryDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer ce dossier ?'**
+  String get categoryDeleteConfirmTitle;
+
+  /// No description provided for @categoryDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'« {name} » sera supprimé. Les recettes qu\'il contient ne sont pas supprimées.'**
+  String categoryDeleteConfirmBody(String name);
+
   /// No description provided for @commonCancel.
   ///
   /// In fr, this message translates to:
