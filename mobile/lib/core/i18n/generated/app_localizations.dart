@@ -1054,6 +1054,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, =0{0 recette} =1{1 recette} other{{count} recettes}}'**
   String categoriesRecipeCount(int count);
 
+  /// No description provided for @categoriesSubfolderCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 sous-dossier} other{{count} sous-dossiers}}'**
+  String categoriesSubfolderCount(int count);
+
   /// No description provided for @categoryDefaultBadge.
   ///
   /// In fr, this message translates to:
@@ -1143,6 +1149,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Tu n\'as pas encore de recette. Appuie sur + pour en créer une.'**
   String get recipesEmpty;
+
+  /// No description provided for @recipesSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher dans tes recettes'**
+  String get recipesSearchHint;
 
   /// No description provided for @recipeCreateTitle.
   ///

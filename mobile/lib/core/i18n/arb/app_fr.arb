@@ -382,6 +382,12 @@
       "count": { "type": "int" }
     }
   },
+  "categoriesSubfolderCount": "{count, plural, =1{1 sous-dossier} other{{count} sous-dossiers}}",
+  "@categoriesSubfolderCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "categoryDefaultBadge": "Défaut",
   "@categoryDefaultBadge": {},
   "categoryCreateTitle": "Nouveau dossier",
@@ -417,6 +423,8 @@
   "@recipesTitle": {},
   "recipesEmpty": "Tu n'as pas encore de recette. Appuie sur + pour en créer une.",
   "@recipesEmpty": {},
+  "recipesSearchHint": "Rechercher dans tes recettes",
+  "@recipesSearchHint": {},
 
   "recipeCreateTitle": "Nouvelle recette",
   "@recipeCreateTitle": {},

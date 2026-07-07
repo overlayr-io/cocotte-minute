@@ -526,6 +526,17 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String categoriesSubfolderCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sous-dossiers',
+      one: '1 sous-dossier',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get categoryDefaultBadge => 'Défaut';
 
   @override
@@ -573,6 +584,9 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get recipesEmpty =>
       'Tu n\'as pas encore de recette. Appuie sur + pour en créer une.';
+
+  @override
+  String get recipesSearchHint => 'Rechercher dans tes recettes';
 
   @override
   String get recipeCreateTitle => 'Nouvelle recette';

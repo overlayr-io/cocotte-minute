@@ -33,6 +33,20 @@ class RecipesRepository {
     }
   }
 
+  /// Recettes rangées dans un dossier (les plus récentes d'abord).
+  Future<List<RecipeSummary>> fetchByCategory(String categoryId) async {
+    try {
+      final res =
+          await _dio.get<List<dynamic>>('/categories/$categoryId/recipes');
+      return (res.data ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(RecipeSummary.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de charger les recettes du dossier.');
+    }
+  }
+
   Future<RecipeDetail> fetchDetail(String id) async {
     try {
       final res = await _dio.get<Map<String, dynamic>>('/recipes/$id');
