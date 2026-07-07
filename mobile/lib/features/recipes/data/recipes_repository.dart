@@ -135,6 +135,106 @@ class RecipesRepository {
     }
   }
 
+  // --- étapes ------------------------------------------------------------
+
+  Future<void> addTextStep(
+    String recipeId, {
+    required String description,
+    StepBanner? banner,
+    List<String> ingredientIds = const [],
+  }) async {
+    try {
+      await _dio.post<void>(
+        '/recipes/$recipeId/steps',
+        data: {
+          'description': description,
+          'bannerType': ?banner?.type.wire,
+          'bannerText': ?banner?.text,
+          'ingredientIds': ingredientIds,
+        },
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'ajouter l\'étape.');
+    }
+  }
+
+  Future<void> addBaseRefStep(String recipeId, String baseRecipeId) async {
+    try {
+      await _dio.post<void>(
+        '/recipes/$recipeId/steps',
+        data: {'baseRecipeRefId': baseRecipeId},
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'ajouter la sous-recette.');
+    }
+  }
+
+  Future<void> importSteps(String recipeId, List<String> descriptions) async {
+    try {
+      await _dio.post<void>(
+        '/recipes/$recipeId/steps/import',
+        data: {'descriptions': descriptions},
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'importer les étapes.');
+    }
+  }
+
+  /// Édite une étape texte. `banner == null` retire la bannière (null explicite).
+  Future<void> updateStep(
+    String recipeId,
+    String stepId, {
+    required String description,
+    StepBanner? banner,
+  }) async {
+    try {
+      await _dio.patch<void>(
+        '/recipes/$recipeId/steps/$stepId',
+        data: {
+          'description': description,
+          'bannerType': banner?.type.wire,
+          'bannerText': banner?.text,
+        },
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'enregistrer l\'étape.');
+    }
+  }
+
+  Future<void> removeStep(String recipeId, String stepId) async {
+    try {
+      await _dio.delete<void>('/recipes/$recipeId/steps/$stepId');
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de supprimer l\'étape.');
+    }
+  }
+
+  Future<void> reorderSteps(String recipeId, List<String> stepIds) async {
+    try {
+      await _dio.put<void>(
+        '/recipes/$recipeId/steps/order',
+        data: {'stepIds': stepIds},
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de réordonner les étapes.');
+    }
+  }
+
+  Future<void> setStepIngredients(
+    String recipeId,
+    String stepId,
+    List<String> ingredientIds,
+  ) async {
+    try {
+      await _dio.put<void>(
+        '/recipes/$recipeId/steps/$stepId/ingredients',
+        data: {'ingredientIds': ingredientIds},
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'enregistrer les ingrédients de l\'étape.');
+    }
+  }
+
   RecipesRepositoryException _mapError(DioException e, String fallback) {
     // 400/403/404/409 : le serveur renvoie un message FR actionnable (verrou
     // is_base, composant invalide, recette introuvable...), on le remonte tel quel.

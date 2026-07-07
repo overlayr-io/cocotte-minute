@@ -1342,6 +1342,306 @@ abstract class AppLocalizations {
   /// **'Étapes'**
   String get recipeStepsTab;
 
+  /// No description provided for @recipeStepsEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune étape pour l\'instant'**
+  String get recipeStepsEmptyTitle;
+
+  /// No description provided for @recipeStepsEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Décris le déroulé de ta recette. Colle un texte d\'un coup, ou ajoute les étapes une par une.'**
+  String get recipeStepsEmptyBody;
+
+  /// No description provided for @recipeStepsPasteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Coller un texte'**
+  String get recipeStepsPasteTitle;
+
+  /// No description provided for @recipeStepsPasteSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Chaque paragraphe devient une étape'**
+  String get recipeStepsPasteSubtitle;
+
+  /// No description provided for @recipeStepsOneByOneTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une par une'**
+  String get recipeStepsOneByOneTitle;
+
+  /// No description provided for @recipeStepsOneByOneSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Composer chaque étape, avec bannière ou sous-recette'**
+  String get recipeStepsOneByOneSubtitle;
+
+  /// No description provided for @recipeStepsAddCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une étape'**
+  String get recipeStepsAddCta;
+
+  /// No description provided for @recipeStepIngredientsChip.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 ingrédient} other{{count} ingrédients}}'**
+  String recipeStepIngredientsChip(int count);
+
+  /// No description provided for @recipeStepBaseRefLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} · recette de base'**
+  String recipeStepBaseRefLabel(String name);
+
+  /// No description provided for @recipeStepFrozenNote.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étapes figées, modifiables depuis leur recette'**
+  String get recipeStepFrozenNote;
+
+  /// No description provided for @recipeStepRemoveRef.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer la référence'**
+  String get recipeStepRemoveRef;
+
+  /// No description provided for @recipeStepsImportTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer des étapes'**
+  String get recipeStepsImportTitle;
+
+  /// No description provided for @recipeStepsImportHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sépare chaque étape par une ligne vide. Ce mode ne crée que des étapes texte (pas de sous-recette).'**
+  String get recipeStepsImportHint;
+
+  /// No description provided for @recipeStepsImportPlaceholder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Colle ton texte ici…'**
+  String get recipeStepsImportPlaceholder;
+
+  /// No description provided for @recipeStepsDetected.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucune étape détectée} =1{1 étape détectée} other{{count} étapes détectées}}'**
+  String recipeStepsDetected(int count);
+
+  /// No description provided for @recipeStepsImportCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Créer les étapes} =1{Créer 1 étape} other{Créer {count} étapes}}'**
+  String recipeStepsImportCta(int count);
+
+  /// No description provided for @recipeStepAddTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étape {number}'**
+  String recipeStepAddTitle(int number);
+
+  /// No description provided for @recipeStepEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier l\'étape {number}'**
+  String recipeStepEditTitle(int number);
+
+  /// No description provided for @recipeStepAlreadyAdded.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Aucune étape ajoutée} =1{1 étape déjà ajoutée} other{{count} étapes déjà ajoutées}}'**
+  String recipeStepAlreadyAdded(int count);
+
+  /// No description provided for @recipeStepFieldDescription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Description'**
+  String get recipeStepFieldDescription;
+
+  /// No description provided for @recipeStepDescriptionHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Décris cette étape…'**
+  String get recipeStepDescriptionHint;
+
+  /// No description provided for @recipeStepAddOptional.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter (optionnel)'**
+  String get recipeStepAddOptional;
+
+  /// No description provided for @recipeStepBannerOption.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une bannière'**
+  String get recipeStepBannerOption;
+
+  /// No description provided for @recipeStepBannerOptionHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Warning, info, danger ou learn'**
+  String get recipeStepBannerOptionHint;
+
+  /// No description provided for @recipeStepBaseRefOption.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une recette de base'**
+  String get recipeStepBaseRefOption;
+
+  /// No description provided for @recipeStepBaseRefOptionHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Insère ses étapes par référence'**
+  String get recipeStepBaseRefOptionHint;
+
+  /// No description provided for @recipeStepBannerLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bannière'**
+  String get recipeStepBannerLabel;
+
+  /// No description provided for @recipeStepBannerRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer'**
+  String get recipeStepBannerRemove;
+
+  /// No description provided for @recipeStepBannerTextHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Texte de la bannière'**
+  String get recipeStepBannerTextHint;
+
+  /// No description provided for @recipeStepBaseRefUnavailableLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Référence recette de base'**
+  String get recipeStepBaseRefUnavailableLabel;
+
+  /// No description provided for @recipeStepBaseRefUnavailable.
+  ///
+  /// In fr, this message translates to:
+  /// **'indispo. avec une bannière'**
+  String get recipeStepBaseRefUnavailable;
+
+  /// No description provided for @recipeStepIngredientsSectionLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ingrédients de l\'étape'**
+  String get recipeStepIngredientsSectionLabel;
+
+  /// No description provided for @recipeStepSelect.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionner'**
+  String get recipeStepSelect;
+
+  /// No description provided for @recipeStepAddNext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter et suivant'**
+  String get recipeStepAddNext;
+
+  /// No description provided for @recipeStepFinish.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminer'**
+  String get recipeStepFinish;
+
+  /// No description provided for @recipeStepDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer l\'étape'**
+  String get recipeStepDelete;
+
+  /// No description provided for @recipeStepDescriptionRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Décris l\'étape avant de l\'ajouter.'**
+  String get recipeStepDescriptionRequired;
+
+  /// No description provided for @stepBannerWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Warning'**
+  String get stepBannerWarning;
+
+  /// No description provided for @stepBannerInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Info'**
+  String get stepBannerInfo;
+
+  /// No description provided for @stepBannerDanger.
+  ///
+  /// In fr, this message translates to:
+  /// **'Danger'**
+  String get stepBannerDanger;
+
+  /// No description provided for @stepBannerLearn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Learn'**
+  String get stepBannerLearn;
+
+  /// No description provided for @recipeStepIngredientsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ingrédients de l\'étape'**
+  String get recipeStepIngredientsTitle;
+
+  /// No description provided for @recipeStepIngredientsSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Parmi ceux de la recette'**
+  String get recipeStepIngredientsSubtitle;
+
+  /// No description provided for @recipeStepIngredientsInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionne uniquement les ingrédients utilisés à cette étape.'**
+  String get recipeStepIngredientsInfo;
+
+  /// No description provided for @recipeStepIngredientsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoute d\'abord des ingrédients à la recette.'**
+  String get recipeStepIngredientsEmpty;
+
+  /// No description provided for @recipeStepIngredientsValidate.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Valider} =1{Valider · 1 sélectionné} other{Valider · {count} sélectionnés}}'**
+  String recipeStepIngredientsValidate(int count);
+
+  /// No description provided for @recipeStepBasePickerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette de base'**
+  String get recipeStepBasePickerTitle;
+
+  /// No description provided for @recipeStepBasePickerSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ses étapes seront insérées par référence'**
+  String get recipeStepBasePickerSubtitle;
+
+  /// No description provided for @recipeStepBasePickerEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette de base disponible.'**
+  String get recipeStepBasePickerEmpty;
+
+  /// No description provided for @commonClose.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fermer'**
+  String get commonClose;
+
   /// No description provided for @recipeServingsSectionTitle.
   ///
   /// In fr, this message translates to:

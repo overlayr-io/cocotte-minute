@@ -689,6 +689,214 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recipeStepsTab => 'Étapes';
 
   @override
+  String get recipeStepsEmptyTitle => 'Aucune étape pour l\'instant';
+
+  @override
+  String get recipeStepsEmptyBody =>
+      'Décris le déroulé de ta recette. Colle un texte d\'un coup, ou ajoute les étapes une par une.';
+
+  @override
+  String get recipeStepsPasteTitle => 'Coller un texte';
+
+  @override
+  String get recipeStepsPasteSubtitle => 'Chaque paragraphe devient une étape';
+
+  @override
+  String get recipeStepsOneByOneTitle => 'Ajouter une par une';
+
+  @override
+  String get recipeStepsOneByOneSubtitle =>
+      'Composer chaque étape, avec bannière ou sous-recette';
+
+  @override
+  String get recipeStepsAddCta => 'Ajouter une étape';
+
+  @override
+  String recipeStepIngredientsChip(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ingrédients',
+      one: '1 ingrédient',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recipeStepBaseRefLabel(String name) {
+    return '$name · recette de base';
+  }
+
+  @override
+  String get recipeStepFrozenNote =>
+      'Étapes figées, modifiables depuis leur recette';
+
+  @override
+  String get recipeStepRemoveRef => 'Retirer la référence';
+
+  @override
+  String get recipeStepsImportTitle => 'Importer des étapes';
+
+  @override
+  String get recipeStepsImportHint =>
+      'Sépare chaque étape par une ligne vide. Ce mode ne crée que des étapes texte (pas de sous-recette).';
+
+  @override
+  String get recipeStepsImportPlaceholder => 'Colle ton texte ici…';
+
+  @override
+  String recipeStepsDetected(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count étapes détectées',
+      one: '1 étape détectée',
+      zero: 'Aucune étape détectée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recipeStepsImportCta(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Créer $count étapes',
+      one: 'Créer 1 étape',
+      zero: 'Créer les étapes',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String recipeStepAddTitle(int number) {
+    return 'Étape $number';
+  }
+
+  @override
+  String recipeStepEditTitle(int number) {
+    return 'Modifier l\'étape $number';
+  }
+
+  @override
+  String recipeStepAlreadyAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count étapes déjà ajoutées',
+      one: '1 étape déjà ajoutée',
+      zero: 'Aucune étape ajoutée',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recipeStepFieldDescription => 'Description';
+
+  @override
+  String get recipeStepDescriptionHint => 'Décris cette étape…';
+
+  @override
+  String get recipeStepAddOptional => 'Ajouter (optionnel)';
+
+  @override
+  String get recipeStepBannerOption => 'Une bannière';
+
+  @override
+  String get recipeStepBannerOptionHint => 'Warning, info, danger ou learn';
+
+  @override
+  String get recipeStepBaseRefOption => 'Une recette de base';
+
+  @override
+  String get recipeStepBaseRefOptionHint => 'Insère ses étapes par référence';
+
+  @override
+  String get recipeStepBannerLabel => 'Bannière';
+
+  @override
+  String get recipeStepBannerRemove => 'Retirer';
+
+  @override
+  String get recipeStepBannerTextHint => 'Texte de la bannière';
+
+  @override
+  String get recipeStepBaseRefUnavailableLabel => 'Référence recette de base';
+
+  @override
+  String get recipeStepBaseRefUnavailable => 'indispo. avec une bannière';
+
+  @override
+  String get recipeStepIngredientsSectionLabel => 'Ingrédients de l\'étape';
+
+  @override
+  String get recipeStepSelect => 'Sélectionner';
+
+  @override
+  String get recipeStepAddNext => 'Ajouter et suivant';
+
+  @override
+  String get recipeStepFinish => 'Terminer';
+
+  @override
+  String get recipeStepDelete => 'Supprimer l\'étape';
+
+  @override
+  String get recipeStepDescriptionRequired =>
+      'Décris l\'étape avant de l\'ajouter.';
+
+  @override
+  String get stepBannerWarning => 'Warning';
+
+  @override
+  String get stepBannerInfo => 'Info';
+
+  @override
+  String get stepBannerDanger => 'Danger';
+
+  @override
+  String get stepBannerLearn => 'Learn';
+
+  @override
+  String get recipeStepIngredientsTitle => 'Ingrédients de l\'étape';
+
+  @override
+  String get recipeStepIngredientsSubtitle => 'Parmi ceux de la recette';
+
+  @override
+  String get recipeStepIngredientsInfo =>
+      'Sélectionne uniquement les ingrédients utilisés à cette étape.';
+
+  @override
+  String get recipeStepIngredientsEmpty =>
+      'Ajoute d\'abord des ingrédients à la recette.';
+
+  @override
+  String recipeStepIngredientsValidate(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Valider · $count sélectionnés',
+      one: 'Valider · 1 sélectionné',
+      zero: 'Valider',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recipeStepBasePickerTitle => 'Recette de base';
+
+  @override
+  String get recipeStepBasePickerSubtitle =>
+      'Ses étapes seront insérées par référence';
+
+  @override
+  String get recipeStepBasePickerEmpty => 'Aucune recette de base disponible.';
+
+  @override
+  String get commonClose => 'Fermer';
+
+  @override
   String get recipeServingsSectionTitle => 'Portions';
 
   @override

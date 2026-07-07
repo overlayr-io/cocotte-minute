@@ -81,6 +81,132 @@ class RecipeIngredientLine extends Equatable {
   List<Object?> get props => [id, name, unit, quantity, imageUrl];
 }
 
+/// Type de bannière d'une étape. `wire` = valeur stable échangée avec l'API ;
+/// la couleur et l'icône sont dérivées côté UI.
+enum StepBannerType {
+  warning('warning'),
+  info('info'),
+  danger('danger'),
+  learn('learn');
+
+  const StepBannerType(this.wire);
+
+  final String wire;
+
+  static StepBannerType fromWire(String value) => StepBannerType.values.firstWhere(
+        (t) => t.wire == value,
+        orElse: () => StepBannerType.info,
+      );
+}
+
+/// Bannière d'une étape : un préréglage + un texte court.
+class StepBanner extends Equatable {
+  const StepBanner({required this.type, required this.text});
+
+  final StepBannerType type;
+  final String text;
+
+  factory StepBanner.fromJson(Map<String, dynamic> json) => StepBanner(
+        type: StepBannerType.fromWire(json['type'] as String),
+        text: json['text'] as String? ?? '',
+      );
+
+  @override
+  List<Object?> get props => [type, text];
+}
+
+/// Étape « figée » affichée dans un bloc référence de base (lecture seule).
+class ExpandedStep extends Equatable {
+  const ExpandedStep({required this.description, this.banner});
+
+  final String description;
+  final StepBanner? banner;
+
+  factory ExpandedStep.fromJson(Map<String, dynamic> json) => ExpandedStep(
+        description: json['description'] as String? ?? '',
+        banner: json['banner'] == null
+            ? null
+            : StepBanner.fromJson(json['banner'] as Map<String, dynamic>),
+      );
+
+  @override
+  List<Object?> get props => [description, banner];
+}
+
+/// Une étape de recette : soit une étape texte (éditable, réordonnable), soit
+/// un bloc référence de base (ses étapes sont dépliées, figées).
+sealed class RecipeStep extends Equatable {
+  const RecipeStep();
+
+  String get id;
+
+  factory RecipeStep.fromJson(Map<String, dynamic> json) {
+    return json['kind'] == 'base_ref'
+        ? RecipeBaseRefStep.fromJson(json)
+        : RecipeTextStep.fromJson(json);
+  }
+}
+
+class RecipeTextStep extends RecipeStep {
+  const RecipeTextStep({
+    required this.id,
+    required this.description,
+    this.banner,
+    this.ingredients = const [],
+  });
+
+  @override
+  final String id;
+  final String description;
+  final StepBanner? banner;
+  final List<RecipeIngredientLine> ingredients;
+
+  factory RecipeTextStep.fromJson(Map<String, dynamic> json) => RecipeTextStep(
+        id: json['id'] as String,
+        description: json['description'] as String? ?? '',
+        banner: json['banner'] == null
+            ? null
+            : StepBanner.fromJson(json['banner'] as Map<String, dynamic>),
+        ingredients: ((json['ingredients'] as List<dynamic>?) ?? const [])
+            .cast<Map<String, dynamic>>()
+            .map(RecipeIngredientLine.fromJson)
+            .toList(),
+      );
+
+  @override
+  List<Object?> get props => [id, description, banner, ingredients];
+}
+
+class RecipeBaseRefStep extends RecipeStep {
+  const RecipeBaseRefStep({
+    required this.id,
+    required this.baseRecipeId,
+    required this.baseRecipeName,
+    this.steps = const [],
+  });
+
+  @override
+  final String id;
+  final String baseRecipeId;
+  final String baseRecipeName;
+
+  /// Étapes de la recette de base, dépliées et figées.
+  final List<ExpandedStep> steps;
+
+  factory RecipeBaseRefStep.fromJson(Map<String, dynamic> json) => RecipeBaseRefStep(
+        id: json['id'] as String,
+        baseRecipeId: json['baseRecipeId'] as String,
+        baseRecipeName: json['baseRecipeName'] as String? ?? '',
+        steps: ((json['steps'] as List<dynamic>?) ?? const [])
+            .cast<Map<String, dynamic>>()
+            .map(ExpandedStep.fromJson)
+            .toList(),
+      );
+
+  @override
+  List<Object?> get props => [id, baseRecipeId, baseRecipeName, steps];
+}
+
 /// Fiche détail complète d'une recette. La même page sert une recette normale et
 /// une recette de base ; certaines sections ne s'affichent que dans l'un des cas
 /// (« Sous-recettes utilisées » côté normale, « Utilisée dans » côté base).
@@ -91,6 +217,7 @@ class RecipeDetail extends Equatable {
     this.description,
     this.isLocked = false,
     this.ingredients = const [],
+    this.steps = const [],
     this.components = const [],
     this.usedIn = const [],
     this.categoryIds = const [],
@@ -106,6 +233,9 @@ class RecipeDetail extends Equatable {
   final bool isLocked;
 
   final List<RecipeIngredientLine> ingredients;
+
+  /// Étapes (arbre déjà déplié : les blocs référence portent leurs sous-étapes).
+  final List<RecipeStep> steps;
 
   /// Sous-recettes (recettes de base) utilisées par cette recette.
   final List<RecipeSummary> components;
@@ -133,6 +263,7 @@ class RecipeDetail extends Equatable {
       description: json['description'] as String?,
       isLocked: json['isLocked'] as bool? ?? false,
       ingredients: list('ingredients', RecipeIngredientLine.fromJson),
+      steps: list('steps', RecipeStep.fromJson),
       components: list('components', RecipeSummary.fromJson),
       usedIn: list('usedIn', RecipeSummary.fromJson),
       categoryIds:
@@ -148,6 +279,7 @@ class RecipeDetail extends Equatable {
         description,
         isLocked,
         ingredients,
+        steps,
         components,
         usedIn,
         categoryIds,

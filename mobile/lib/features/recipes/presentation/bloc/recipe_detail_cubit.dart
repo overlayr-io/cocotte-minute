@@ -175,6 +175,77 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     }
   }
 
+  // --- étapes ------------------------------------------------------------
+
+  Future<void> addTextStep({
+    required String description,
+    StepBanner? banner,
+    List<String> ingredientIds = const [],
+  }) =>
+      _runStepAction(() => _repository.addTextStep(
+            recipeId,
+            description: description,
+            banner: banner,
+            ingredientIds: ingredientIds,
+          ));
+
+  Future<void> addBaseRefStep(String baseRecipeId) =>
+      _runStepAction(() => _repository.addBaseRefStep(recipeId, baseRecipeId));
+
+  Future<void> importSteps(List<String> descriptions) =>
+      _runStepAction(() => _repository.importSteps(recipeId, descriptions));
+
+  Future<void> updateStep(
+    String stepId, {
+    required String description,
+    StepBanner? banner,
+    List<String>? ingredientIds,
+  }) =>
+      _runStepAction(() async {
+        await _repository.updateStep(
+          recipeId,
+          stepId,
+          description: description,
+          banner: banner,
+        );
+        if (ingredientIds != null) {
+          await _repository.setStepIngredients(recipeId, stepId, ingredientIds);
+        }
+      });
+
+  Future<void> removeStep(String stepId) =>
+      _runStepAction(() => _repository.removeStep(recipeId, stepId));
+
+  Future<void> setStepIngredients(String stepId, List<String> ingredientIds) =>
+      _runStepAction(
+          () => _repository.setStepIngredients(recipeId, stepId, ingredientIds));
+
+  /// Réordonne sans overlay bloquant (drag & drop) : le serveur renumérote,
+  /// puis on recharge. En cas d'erreur, message + rechargement (revert visuel).
+  Future<void> reorderSteps(List<String> stepIds) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    try {
+      await _repository.reorderSteps(recipeId, stepIds);
+      await _reload();
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(message: e.message));
+      await _reload();
+    }
+  }
+
+  Future<void> _runStepAction(Future<void> Function() action) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    emit(current.copyWith(busy: true));
+    try {
+      await action();
+      await _reload();
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(busy: false, message: e.message));
+    }
+  }
+
   Future<void> _reload() async {
     final detail = await _repository.fetchDetail(recipeId);
     emit(RecipeDetailLoaded(detail: detail));
