@@ -9,6 +9,7 @@ import { DbModule } from './db/db.module';
 import { AccountModule } from './modules/account/account.module';
 import { HealthModule } from './modules/health/health.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
+import { TagsModule } from './modules/tags/tags.module';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -61,6 +62,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     // Modules métier (un module = une feature) :
     HealthModule,
     IngredientsModule,
+    TagsModule,
     AccountModule,
   ],
   providers: [
