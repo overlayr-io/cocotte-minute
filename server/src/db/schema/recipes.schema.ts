@@ -3,6 +3,7 @@ import {
   boolean,
   integer,
   numeric,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
@@ -107,6 +108,65 @@ export const recipeComponents = pgTable(
 );
 
 /**
+ * Bannière d'une étape (cf. features/recipe-steps.md). 4 préréglages ; l'icône
+ * et la couleur sont dérivées du type côté client (pas de couleur stockée).
+ */
+export const RECIPE_STEP_BANNERS = ['warning', 'info', 'danger', 'learn'] as const;
+export type RecipeStepBanner = (typeof RECIPE_STEP_BANNERS)[number];
+export const recipeStepBannerEnum = pgEnum('recipe_step_banner', RECIPE_STEP_BANNERS);
+
+/**
+ * Étapes d'une recette (feature recette-etapes). Une étape est de l'un des deux
+ * types, mutuellement exclusifs (contrainte vérifiée côté service) :
+ *  - **texte** : `description` obligatoire, `banner_type`/`banner_text` optionnels
+ *    (ensemble), pas de `base_recipe_ref_id` ;
+ *  - **référence de base** : `base_recipe_ref_id` seul (pointe une recette
+ *    `is_base = true`), pas de description ni bannière — ses étapes sont affichées
+ *    par référence (dépliées récursivement au rendu), jamais copiées.
+ * `position` porte l'ordre global (drag & drop). Les étapes internes d'une
+ * référence ne sont jamais réordonnées/éditées depuis la recette parente.
+ */
+export const recipeSteps = pgTable('recipe_steps', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  recipeId: uuid('recipe_id')
+    .notNull()
+    .references(() => recipes.id, { onDelete: 'cascade' }),
+  /** Ordre dans la recette (0-based, réécrit au réordonnancement). */
+  position: integer('position').notNull(),
+  /** Étape texte : description obligatoire ; null pour une référence de base. */
+  description: text('description'),
+  bannerType: recipeStepBannerEnum('banner_type'),
+  bannerText: text('banner_text'),
+  /** Référence vers une recette de base (is_base = true) — exclusif avec le texte/bannière. */
+  baseRecipeRefId: uuid('base_recipe_ref_id').references(
+    (): AnyPgColumn => recipes.id,
+    { onDelete: 'cascade' },
+  ),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+/**
+ * Liaison étape ↔ ingrédient de la recette (feature recette-etapes / mode cuisine).
+ * Sous-ensemble des ingrédients déjà sur la recette (jamais de nouvel ingrédient
+ * ici). Pas d'id propre sur `recipe_ingredients` → on référence l'ingrédient
+ * directement ; la recette est implicite via l'étape.
+ */
+export const stepIngredients = pgTable(
+  'step_ingredients',
+  {
+    stepId: uuid('step_id')
+      .notNull()
+      .references(() => recipeSteps.id, { onDelete: 'cascade' }),
+    ingredientId: uuid('ingredient_id')
+      .notNull()
+      .references(() => ingredients.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.stepId, t.ingredientId] })],
+);
+
+/**
  * Rangement : une recette peut appartenir à plusieurs dossiers (feature
  * categories). Pivot (recipe_id, category_id). Alimente le `recipeCount` réel
  * exposé par la feature Catégories.
@@ -153,3 +213,5 @@ export type RecipeRow = typeof recipes.$inferSelect;
 export type NewRecipeRow = typeof recipes.$inferInsert;
 export type RecipeIngredientRow = typeof recipeIngredients.$inferSelect;
 export type RecipeComponentRow = typeof recipeComponents.$inferSelect;
+export type RecipeStepRow = typeof recipeSteps.$inferSelect;
+export type StepIngredientRow = typeof stepIngredients.$inferSelect;
