@@ -1,12 +1,31 @@
 ---
 feature: recette-base
-status: planned     # planned | in-progress | done
+status: done        # planned | in-progress | done
 scope: v1           # v1 | v2 | later
 depends_on: [auth, ingredients, tags-personnes, categories]
 order: 5
 ---
 
 # Recette (CRUD de base)
+
+> **État de livraison (v1).** Écrans dérivés des maquettes 1d (création),
+> 2d (fiche détail) — une seule page pour recette normale et de base, sections
+> conditionnelles sur `isBase`. Fiche détail avec **photo fixe en fond et corps
+> qui remonte au scroll** (photo `Positioned` + contenu en `CustomScrollView`).
+>
+> **Cadrage retenu avec l'utilisateur (hors périmètre de cette itération) :**
+> onglet Étapes, bouton Play / mode pas-à-pas, galerie, note ⭐ et bouton Suivre
+> sont **retirés** (reviendront dans leurs features dédiées). **Pas de quantité**
+> par ingrédient en v1 : `recipe_ingredients` = (recipe_id, ingredient_id) seul,
+> lignes = emoji + nom. `servings` par défaut = **1**.
+>
+> **Pivots dette branchés :** `recipe_categories` et `recipe_tags` créés ; les
+> `recipeCount` réels sont désormais renvoyés par Tags et Catégories (via
+> `RecipesService`, dépendance à sens unique). L'assignation catégorie/tag ↔
+> recette existe côté serveur (endpoints) mais son UI mobile est différée.
+>
+> **Différé (non bloquant) :** ajout d'ingrédient / de composant depuis le mobile
+> (pickers) — les endpoints serveur existent déjà ; upload de photo réel.
 
 ## Problème résolu
 Domaine métier central de l'application : permettre la création et la gestion
@@ -111,9 +130,9 @@ recette de base dès la création.
   détaillé ici — à clarifier : montant + unité par ligne d'ingrédient).
 - Le mode pas-à-pas d'exécution (feature séparée `mode-pas-a-pas`).
 
-## Questions ouvertes / à trancher
-- Nombre de personnes par défaut à 0 semble étrange pour une recette utilisable
-  — confirmer si 0 est vraiment voulu ou si un défaut plus réaliste (ex: 1 ou 4)
-  est préférable.
-- Une recette peut-elle exister sans aucun ingrédient/étape (brouillon), ou
-  y a-t-il un minimum requis pour la considérer "complète" ?
+## Questions tranchées
+- **Nombre de personnes par défaut = 1** (`DEFAULT_SERVINGS` serveur ≡
+  `kDefaultServings` mobile). Une recette est utilisable dès sa création.
+- **Une recette peut exister sans ingrédient ni étape** (brouillon) : aucune
+  contrainte de complétude en v1 — on crée avec juste un nom puis on complète
+  sur la fiche.
