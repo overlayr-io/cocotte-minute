@@ -11,6 +11,7 @@ import '../../../ingredients/presentation/pages/ingredients_page.dart';
 import '../../../people/presentation/pages/famille_page.dart';
 import '../../../tags/presentation/pages/tags_page.dart';
 import '../widgets/account_section.dart';
+import 'delete_account_page.dart';
 
 /// Onglet Compte : profil invité/connecté + accès au contenu, à la famille,
 /// à la gestion du compte, à l'aide et à la confidentialité.
@@ -23,6 +24,14 @@ class AccountPage extends StatelessWidget {
     final authState = context.watch<AuthBloc>().state;
     final isGuest = authState is AuthAuthenticated && authState.isAnonymous;
     final email = authState is AuthAuthenticated ? authState.user.email : null;
+    // Rappel J+14 : basé sur la date de création du compte anonyme
+    // (`currentUser.createdAt`), jamais sur un stockage local séparé.
+    final createdAt = authState is AuthAuthenticated
+        ? DateTime.tryParse(authState.user.createdAt)
+        : null;
+    final showReminder = isGuest &&
+        createdAt != null &&
+        DateTime.now().difference(createdAt) >= const Duration(days: 14);
 
     return SafeArea(
       bottom: false,
@@ -40,7 +49,7 @@ class AccountPage extends StatelessWidget {
             ),
           ),
           _ProfileCard(isGuest: isGuest, email: email),
-          if (isGuest) ...[
+          if (showReminder) ...[
             const SizedBox(height: 14),
             _GuestReminder(
               onCreateAccount: () => Navigator.of(context).push(AuthPage.route()),
@@ -108,8 +117,8 @@ class AccountPage extends StatelessWidget {
                   iconBackground: const Color(0xFFFBE9E7),
                   labelColor: const Color(0xFFE0554A),
                   label: l10n.accountRowDelete,
-                  onTap: () => Navigator.of(context)
-                      .push(ComingSoonPage.route(l10n.accountRowDelete)),
+                  onTap: () =>
+                      Navigator.of(context).push(DeleteAccountPage.route()),
                 ),
               ],
             ),

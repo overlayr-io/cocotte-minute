@@ -1,5 +1,6 @@
 import 'package:get_it/get_it.dart';
 
+import '../../features/account/data/account_repository.dart';
 import '../../features/auth/data/auth_repository.dart';
 import '../../features/categories/data/categories_repository.dart';
 import '../../features/ingredients/data/ingredients_repository.dart';
@@ -24,6 +25,9 @@ void setupServiceLocator() {
   sl.registerLazySingleton<ApiClient>(() => ApiClient());
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepository(apiClient: sl<ApiClient>()),
+  );
+  sl.registerLazySingleton<AccountRepository>(
+    () => AccountRepository(apiClient: sl<ApiClient>()),
   );
   sl.registerLazySingleton<IngredientsRepository>(
     () => IngredientsRepository(apiClient: sl<ApiClient>()),

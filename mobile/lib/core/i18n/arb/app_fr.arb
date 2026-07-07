@@ -1046,5 +1046,36 @@
   "recipePlayCta": "Cuisiner cette recette",
   "@recipePlayCta": {
     "description": "Tooltip du bouton qui lance le mode pas-à-pas depuis la fiche recette"
-  }
+  },
+
+  "deleteAccountTitle": "Supprimer mon compte",
+  "@deleteAccountTitle": {},
+  "deleteAccountGuestHeading": "Supprimer définitivement ce compte invité ?",
+  "@deleteAccountGuestHeading": {},
+  "deleteAccountGuestBody": "Toutes tes données (recettes, ingrédients, tags, personnes, listes) seront supprimées définitivement et immédiatement. Cette action est irréversible. Un nouveau compte invité vierge sera créé.",
+  "@deleteAccountGuestBody": {},
+  "deleteAccountFullHeading": "Supprimer mon compte ?",
+  "@deleteAccountFullHeading": {},
+  "deleteAccountFullBody": "Ton compte est immédiatement anonymisé, puis définitivement supprimé après un délai de 30 jours. Pendant ce délai, tu peux annuler la suppression et récupérer ton compte en te reconnectant. Tu vas être déconnecté(e).",
+  "@deleteAccountFullBody": {},
+  "deleteAccountConfirm": "Supprimer mon compte",
+  "@deleteAccountConfirm": {},
+  "deleteAccountCancel": "Annuler",
+  "@deleteAccountCancel": {},
+  "deleteAccountGuestDone": "Ton compte a été supprimé. Nouveau compte invité créé.",
+  "@deleteAccountGuestDone": {},
+  "deleteAccountPendingDone": "Suppression enregistrée. Tu as 30 jours pour l'annuler en te reconnectant.",
+  "@deleteAccountPendingDone": {},
+
+  "cancelDeletionBannerTitle": "Suppression de compte en attente",
+  "@cancelDeletionBannerTitle": {},
+  "cancelDeletionBannerBody": "Ton compte sera définitivement supprimé à la fin du délai de 30 jours. Tu peux encore l'annuler.",
+  "@cancelDeletionBannerBody": {},
+  "cancelDeletionBannerCta": "Annuler la suppression",
+  "@cancelDeletionBannerCta": {},
+  "cancelDeletionSuccess": "Suppression annulée. Ton compte est de nouveau actif.",
+  "@cancelDeletionSuccess": {},
+
+  "guestReminderDialogDismiss": "Plus tard",
+  "@guestReminderDialogDismiss": {}
 }

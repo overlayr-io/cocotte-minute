@@ -1598,4 +1598,53 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recipePlayCta => 'Cuisiner cette recette';
+
+  @override
+  String get deleteAccountTitle => 'Supprimer mon compte';
+
+  @override
+  String get deleteAccountGuestHeading =>
+      'Supprimer définitivement ce compte invité ?';
+
+  @override
+  String get deleteAccountGuestBody =>
+      'Toutes tes données (recettes, ingrédients, tags, personnes, listes) seront supprimées définitivement et immédiatement. Cette action est irréversible. Un nouveau compte invité vierge sera créé.';
+
+  @override
+  String get deleteAccountFullHeading => 'Supprimer mon compte ?';
+
+  @override
+  String get deleteAccountFullBody =>
+      'Ton compte est immédiatement anonymisé, puis définitivement supprimé après un délai de 30 jours. Pendant ce délai, tu peux annuler la suppression et récupérer ton compte en te reconnectant. Tu vas être déconnecté(e).';
+
+  @override
+  String get deleteAccountConfirm => 'Supprimer mon compte';
+
+  @override
+  String get deleteAccountCancel => 'Annuler';
+
+  @override
+  String get deleteAccountGuestDone =>
+      'Ton compte a été supprimé. Nouveau compte invité créé.';
+
+  @override
+  String get deleteAccountPendingDone =>
+      'Suppression enregistrée. Tu as 30 jours pour l\'annuler en te reconnectant.';
+
+  @override
+  String get cancelDeletionBannerTitle => 'Suppression de compte en attente';
+
+  @override
+  String get cancelDeletionBannerBody =>
+      'Ton compte sera définitivement supprimé à la fin du délai de 30 jours. Tu peux encore l\'annuler.';
+
+  @override
+  String get cancelDeletionBannerCta => 'Annuler la suppression';
+
+  @override
+  String get cancelDeletionSuccess =>
+      'Suppression annulée. Ton compte est de nouveau actif.';
+
+  @override
+  String get guestReminderDialogDismiss => 'Plus tard';
 }

@@ -85,6 +85,36 @@ class AuthRepository {
     }
   }
 
+  /// Déconnecte l'utilisateur courant.
+  ///
+  /// Le changement de session est capté par l'`AuthBloc` global (via
+  /// `onAuthStateChange`), qui bascule alors sur l'écran d'auth.
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+    } on AuthException catch (e) {
+      throw AuthRepositoryException(e.message);
+    } catch (_) {
+      throw const AuthRepositoryException('Déconnexion impossible.');
+    }
+  }
+
+  /// Recrée une session anonyme vierge (comme une première installation).
+  ///
+  /// Utilisé après la suppression immédiate d'un compte invité : l'ancien
+  /// compte anonyme a été supprimé côté serveur, on repart sur un compte neuf.
+  Future<void> recreateAnonymousSession() async {
+    try {
+      await _auth.signInAnonymously();
+    } on AuthException catch (e) {
+      throw AuthRepositoryException(e.message);
+    } catch (_) {
+      throw const AuthRepositoryException(
+        'Impossible de recréer une session anonyme.',
+      );
+    }
+  }
+
   /// "Repartir de zéro" : supprime toutes les données invité liées au compte
   /// courant (cascade côté serveur), pour démarrer sur un compte vierge.
   Future<void> resetGuestData() async {

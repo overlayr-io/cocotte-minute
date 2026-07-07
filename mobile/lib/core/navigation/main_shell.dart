@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../features/account/presentation/pages/account_page.dart';
+import '../../features/auth/presentation/pages/auth_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/recipes/presentation/pages/recipes_page.dart';
 import '../../features/shopping_list/presentation/pages/shopping_page.dart';
+import '../auth/auth_bloc.dart';
 import '../i18n/generated/app_localizations.dart';
 import '../theme/app_colors.dart';
 
@@ -22,6 +25,48 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   int _index = 0; // Accueil par défaut.
+
+  @override
+  void initState() {
+    super.initState();
+    // Rappel J+14 (informatif, jamais bloquant) : à chaque lancement, si le
+    // compte anonyme a plus de 2 semaines, on invite à créer un compte.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowGuestReminder());
+  }
+
+  void _maybeShowGuestReminder() {
+    if (!mounted) return;
+    final authState = context.read<AuthBloc>().state;
+    if (authState is! AuthAuthenticated || !authState.isAnonymous) return;
+    // Date de création du compte anonyme = `currentUser.createdAt`
+    // (pas de stockage local séparé, cf. auth.md).
+    final createdAt = DateTime.tryParse(authState.user.createdAt);
+    if (createdAt == null ||
+        DateTime.now().difference(createdAt) < const Duration(days: 14)) {
+      return;
+    }
+    final l10n = AppLocalizations.of(context);
+    showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.accountReminderTitle),
+        content: Text(l10n.accountReminderBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.guestReminderDialogDismiss),
+          ),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              Navigator.of(context).push(AuthPage.route());
+            },
+            child: Text(l10n.accountReminderCta),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

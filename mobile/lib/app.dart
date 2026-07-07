@@ -37,7 +37,10 @@ class _AuthGate extends StatelessWidget {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, state) {
         return switch (state) {
-          AuthAuthenticated() => const MainShell(),
+          // La clé par `userId` garantit une coquille neuve (onglet Accueil) au
+          // changement de compte — ex. recréation d'un compte invité après
+          // suppression, qui doit repartir « comme une première installation ».
+          AuthAuthenticated(:final user) => MainShell(key: ValueKey(user.id)),
           // Après déconnexion explicite : écran de connexion/inscription.
           AuthUnauthenticated() => const AuthPage(),
           AuthFailure(:final message) => ErrorView(

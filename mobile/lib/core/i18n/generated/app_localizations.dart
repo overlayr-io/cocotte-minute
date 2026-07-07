@@ -2721,6 +2721,90 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Cuisiner cette recette'**
   String get recipePlayCta;
+
+  /// No description provided for @deleteAccountTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer mon compte'**
+  String get deleteAccountTitle;
+
+  /// No description provided for @deleteAccountGuestHeading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer définitivement ce compte invité ?'**
+  String get deleteAccountGuestHeading;
+
+  /// No description provided for @deleteAccountGuestBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes tes données (recettes, ingrédients, tags, personnes, listes) seront supprimées définitivement et immédiatement. Cette action est irréversible. Un nouveau compte invité vierge sera créé.'**
+  String get deleteAccountGuestBody;
+
+  /// No description provided for @deleteAccountFullHeading.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer mon compte ?'**
+  String get deleteAccountFullHeading;
+
+  /// No description provided for @deleteAccountFullBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ton compte est immédiatement anonymisé, puis définitivement supprimé après un délai de 30 jours. Pendant ce délai, tu peux annuler la suppression et récupérer ton compte en te reconnectant. Tu vas être déconnecté(e).'**
+  String get deleteAccountFullBody;
+
+  /// No description provided for @deleteAccountConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer mon compte'**
+  String get deleteAccountConfirm;
+
+  /// No description provided for @deleteAccountCancel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get deleteAccountCancel;
+
+  /// No description provided for @deleteAccountGuestDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ton compte a été supprimé. Nouveau compte invité créé.'**
+  String get deleteAccountGuestDone;
+
+  /// No description provided for @deleteAccountPendingDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suppression enregistrée. Tu as 30 jours pour l\'annuler en te reconnectant.'**
+  String get deleteAccountPendingDone;
+
+  /// No description provided for @cancelDeletionBannerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suppression de compte en attente'**
+  String get cancelDeletionBannerTitle;
+
+  /// No description provided for @cancelDeletionBannerBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ton compte sera définitivement supprimé à la fin du délai de 30 jours. Tu peux encore l\'annuler.'**
+  String get cancelDeletionBannerBody;
+
+  /// No description provided for @cancelDeletionBannerCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler la suppression'**
+  String get cancelDeletionBannerCta;
+
+  /// No description provided for @cancelDeletionSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suppression annulée. Ton compte est de nouveau actif.'**
+  String get cancelDeletionSuccess;
+
+  /// No description provided for @guestReminderDialogDismiss.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus tard'**
+  String get guestReminderDialogDismiss;
 }
 
 class _AppLocalizationsDelegate
