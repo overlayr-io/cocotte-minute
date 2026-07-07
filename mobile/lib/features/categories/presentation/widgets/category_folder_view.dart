@@ -4,8 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_view.dart';
+import '../../../recipes/presentation/pages/recipe_detail_page.dart';
+import '../../../recipes/presentation/widgets/recipe_list_card.dart';
 import '../../domain/category.dart';
 import '../bloc/categories_list_bloc.dart';
+import '../bloc/folder_recipes_cubit.dart';
 import '../pages/category_folder_page.dart';
 import 'category_form_sheet.dart';
 import 'category_path.dart';
@@ -231,7 +234,7 @@ class CategoryFolderView extends StatelessWidget {
           const SizedBox(height: 8),
           _SectionLabel(l10n.categoriesRecipesLabel),
           const SizedBox(height: 8),
-          _RecipesPlaceholder(message: l10n.categoriesRecipesEmpty),
+          _FolderRecipes(categoryId: current.id, l10n: l10n),
         ],
       ],
     );
@@ -413,10 +416,69 @@ class _EmptyFolders extends StatelessWidget {
   }
 }
 
-class _RecipesPlaceholder extends StatelessWidget {
-  const _RecipesPlaceholder({required this.message});
+/// Recettes rangées dans le dossier courant (cubit [FolderRecipesCubit] fourni
+/// par [CategoryFolderPage]). Chargement/erreur non bloquants : la navigation
+/// dans les sous-dossiers reste possible même si ce bloc échoue.
+class _FolderRecipes extends StatelessWidget {
+  const _FolderRecipes({required this.categoryId, required this.l10n});
+
+  final String categoryId;
+  final AppLocalizations l10n;
+
+  Future<void> _open(BuildContext context, String id) async {
+    final cubit = context.read<FolderRecipesCubit>();
+    await Navigator.of(context).push(RecipeDetailPage.route(id));
+    // Une suppression/édition sur la fiche peut changer le contenu du dossier.
+    await cubit.load(categoryId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<FolderRecipesCubit, FolderRecipesState>(
+      builder: (context, state) {
+        return switch (state) {
+          FolderRecipesError(:final message) => _RecipesNotice(
+              message: message,
+              actionLabel: l10n.commonRetry,
+              onAction: () =>
+                  context.read<FolderRecipesCubit>().load(categoryId),
+            ),
+          FolderRecipesLoaded(:final recipes) => recipes.isEmpty
+              ? _RecipesNotice(message: l10n.categoriesRecipesEmpty)
+              : Column(
+                  children: [
+                    for (final r in recipes)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 9),
+                        child: RecipeListCard(
+                          recipe: r,
+                          onTap: () => _open(context, r.id),
+                        ),
+                      ),
+                  ],
+                ),
+          _ => const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+        };
+      },
+    );
+  }
+}
+
+/// Encart discret (dossier vide ou erreur de chargement non bloquante), avec
+/// une action optionnelle de réessai.
+class _RecipesNotice extends StatelessWidget {
+  const _RecipesNotice({
+    required this.message,
+    this.actionLabel,
+    this.onAction,
+  });
 
   final String message;
+  final String? actionLabel;
+  final VoidCallback? onAction;
 
   @override
   Widget build(BuildContext context) {
@@ -426,16 +488,24 @@ class _RecipesPlaceholder extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.card,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: const Color(0xFFD8D2C4), style: BorderStyle.solid),
+        border: Border.all(color: const Color(0xFFD8D2C4)),
       ),
-      child: Text(
-        message,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontSize: 13.5,
-          height: 1.45,
-          color: AppColors.textSecondary,
-        ),
+      child: Column(
+        children: [
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 13.5,
+              height: 1.45,
+              color: AppColors.textSecondary,
+            ),
+          ),
+          if (actionLabel != null && onAction != null) ...[
+            const SizedBox(height: 6),
+            TextButton(onPressed: onAction, child: Text(actionLabel!)),
+          ],
+        ],
       ),
     );
   }
