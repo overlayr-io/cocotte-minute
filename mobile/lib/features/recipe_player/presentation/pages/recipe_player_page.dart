@@ -10,6 +10,11 @@ import '../../../recipes/data/recipes_repository.dart';
 import '../../data/recipe_player_storage.dart';
 import '../bloc/recipe_player_cubit.dart';
 import '../widgets/mobile/mobile_player_view.dart';
+import '../widgets/tablet/tablet_player_view.dart';
+
+/// Tablette à partir de cette largeur logique la plus courte (indépendant de
+/// l'orientation, contrairement à `width` seul — cf. convention Material).
+const _tabletShortestSideThreshold = 600.0;
 
 /// Page du mode pas-à-pas : verrouille le paysage et garde l'écran allumé
 /// tant qu'elle est affichée, quel que soit l'appareil (mobile ou tablette —
@@ -69,7 +74,10 @@ class _RecipePlayerPageState extends State<RecipePlayerPage> {
                   message: message,
                   onRetry: _cubit.load,
                 ),
-              RecipePlayerLoaded() => MobilePlayerView(cubit: _cubit),
+              RecipePlayerLoaded() => MediaQuery.sizeOf(context).shortestSide >=
+                      _tabletShortestSideThreshold
+                  ? TabletPlayerView(cubit: _cubit)
+                  : MobilePlayerView(cubit: _cubit),
             };
           },
         ),

@@ -2458,6 +2458,12 @@ abstract class AppLocalizations {
   /// **'SOUS-RECETTE · {index} / {total}'**
   String playerSubRecipeBadge(int index, int total);
 
+  /// No description provided for @playerSubRecipeLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'SOUS-RECETTE'**
+  String get playerSubRecipeLabel;
+
   /// No description provided for @playerTimerLabel.
   ///
   /// In fr, this message translates to:

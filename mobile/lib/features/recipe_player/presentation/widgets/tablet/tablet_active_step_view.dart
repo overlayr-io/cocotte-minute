@@ -13,20 +13,20 @@ import '../shared/step_timer_card.dart';
 import '../shared/sub_recipe_strip.dart';
 import '../shared/timer_chip.dart';
 
-/// Étape active en mobile paysage (maquette 10d/10e/10j) : instruction en
-/// grand à gauche, image + minuteur/ingrédients à droite. Bandeau de
-/// sous-recette permanent si l'étape provient d'une référence de base ;
-/// minuteur en cours affiché en top bar quand il ne concerne pas l'étape
-/// affichée.
-class MobileActiveStepView extends StatelessWidget {
-  const MobileActiveStepView({
+/// Étape active tablette (maquette 10b) : instruction en grand à gauche,
+/// image + minuteur/ingrédients à droite. Le bouton « Étapes » (au centre de
+/// la barre du haut) ouvre le sommaire (10c) via [onOpenSummary].
+class TabletActiveStepView extends StatelessWidget {
+  const TabletActiveStepView({
     super.key,
     required this.cubit,
     required this.state,
+    required this.onOpenSummary,
   });
 
   final RecipePlayerCubit cubit;
   final RecipePlayerLoaded state;
+  final VoidCallback onOpenSummary;
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +46,7 @@ class MobileActiveStepView extends StatelessWidget {
         _TopBar(
           cubit: cubit,
           state: state,
+          onOpenSummary: onOpenSummary,
           chipTimer: showChipInTopBar ? runningTimer : null,
         ),
         Expanded(
@@ -53,18 +54,18 @@ class MobileActiveStepView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                flex: 3,
+                flex: 11,
                 child: Padding(
-                  padding: const EdgeInsets.fromLTRB(28, 22, 18, 20),
+                  padding: const EdgeInsets.fromLTRB(52, 44, 40, 40),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        width: 46,
-                        height: 46,
+                        width: 64,
+                        height: 64,
                         decoration: BoxDecoration(
                           color: AppColors.textPrimary,
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(20),
                         ),
                         alignment: Alignment.center,
                         child: Text(
@@ -72,12 +73,12 @@ class MobileActiveStepView extends StatelessWidget {
                           style: const TextStyle(
                             fontFamily: AppFonts.display,
                             fontWeight: FontWeight.w700,
-                            fontSize: 21,
+                            fontSize: 30,
                             color: Colors.white,
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 22),
                       Expanded(
                         child: SingleChildScrollView(
                           child: Text(
@@ -85,34 +86,34 @@ class MobileActiveStepView extends StatelessWidget {
                             style: const TextStyle(
                               fontFamily: AppFonts.display,
                               fontWeight: FontWeight.w600,
-                              fontSize: 24,
-                              height: 1.25,
+                              fontSize: 32,
+                              height: 1.24,
                               color: AppColors.textPrimary,
                             ),
                           ),
                         ),
                       ),
                       if (step.banner != null) ...[
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 14),
                         StepBannerBox(banner: step.banner!),
                       ],
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 18),
                       Row(
                         children: [
                           RoundNavButton(
                             icon: Icons.chevron_left_rounded,
                             onTap: state.isFirstStep ? null : cubit.previousStep,
                           ),
-                          const SizedBox(width: 12),
+                          const SizedBox(width: 14),
                           Expanded(
                             child: ElevatedButton.icon(
                               onPressed: cubit.nextStep,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 15),
+                                padding: const EdgeInsets.symmetric(vertical: 18),
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: BorderRadius.circular(18),
                                 ),
                               ),
                               icon: const Icon(Icons.chevron_right_rounded),
@@ -120,7 +121,10 @@ class MobileActiveStepView extends StatelessWidget {
                                 state.isLastStep
                                     ? l10n.playerNext
                                     : l10n.playerNextStep,
-                                style: const TextStyle(fontWeight: FontWeight.w700),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
                           ),
@@ -131,24 +135,24 @@ class MobileActiveStepView extends StatelessWidget {
                 ),
               ),
               Expanded(
-                flex: 2,
+                flex: 9,
                 child: Container(
                   color: AppColors.panelBackground,
-                  padding: const EdgeInsets.all(18),
+                  padding: const EdgeInsets.all(26),
                   child: SingleChildScrollView(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         if (state.detail.summary.photoUrl != null)
                           ClipRRect(
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(20),
                             child: Image.network(
                               state.detail.summary.photoUrl!,
-                              height: 140,
+                              height: 200,
                               fit: BoxFit.cover,
                             ),
                           ),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 20),
                         if (stepTimer != null)
                           StepTimerCard(cubit: cubit, timer: stepTimer)
                         else
@@ -157,7 +161,7 @@ class MobileActiveStepView extends StatelessWidget {
                             description: step.description,
                             cubit: cubit,
                           ),
-                        const SizedBox(height: 14),
+                        const SizedBox(height: 20),
                         StepIngredientsPanel(
                           ingredients: step.ingredients,
                           scale: scale,
@@ -176,17 +180,23 @@ class MobileActiveStepView extends StatelessWidget {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.cubit, required this.state, this.chipTimer});
+  const _TopBar({
+    required this.cubit,
+    required this.state,
+    required this.onOpenSummary,
+    this.chipTimer,
+  });
 
   final RecipePlayerCubit cubit;
   final RecipePlayerLoaded state;
+  final VoidCallback onOpenSummary;
   final RecipeTimer? chipTimer;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      padding: const EdgeInsets.fromLTRB(24, 14, 18, 12),
+      padding: const EdgeInsets.fromLTRB(34, 20, 30, 18),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: AppColors.border)),
       ),
@@ -199,42 +209,63 @@ class _TopBar extends StatelessWidget {
               style: const TextStyle(
                 fontFamily: AppFonts.display,
                 fontWeight: FontWeight.w700,
-                fontSize: 15,
+                fontSize: 17,
                 color: AppColors.textPrimary,
               ),
             ),
           ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                l10n.playerStepProgress(state.currentIndex + 1, state.totalSteps),
-                style: const TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 6),
-              SizedBox(
-                width: 170,
-                height: 5,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(999),
-                  child: LinearProgressIndicator(
-                    value: (state.currentIndex + 1) / state.totalSteps,
-                    backgroundColor: AppColors.divider,
-                    valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+          InkWell(
+            borderRadius: BorderRadius.circular(14),
+            onTap: onOpenSummary,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        l10n.playerStepProgress(
+                          state.currentIndex + 1,
+                          state.totalSteps,
+                        ),
+                        style: const TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.expand_more_rounded,
+                        size: 18,
+                        color: AppColors.textMuted,
+                      ),
+                    ],
                   ),
-                ),
+                  const SizedBox(height: 7),
+                  SizedBox(
+                    width: 340,
+                    height: 6,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(999),
+                      child: LinearProgressIndicator(
+                        value: (state.currentIndex + 1) / state.totalSteps,
+                        backgroundColor: AppColors.divider,
+                        valueColor: const AlwaysStoppedAnimation(AppColors.primary),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-          if (chipTimer != null) ...[
-            const SizedBox(width: 12),
-            TimerChip(timer: chipTimer!),
-          ],
           const SizedBox(width: 12),
+          if (chipTimer != null) ...[
+            TimerChip(timer: chipTimer!),
+            const SizedBox(width: 12),
+          ],
           RoundNavButton(
             icon: Icons.close_rounded,
             onTap: () async {

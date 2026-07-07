@@ -931,6 +931,8 @@
   "@playerSubRecipeBadge": {
     "placeholders": { "index": { "type": "int" }, "total": { "type": "int" } }
   },
+  "playerSubRecipeLabel": "SOUS-RECETTE",
+  "@playerSubRecipeLabel": {},
   "playerTimerLabel": "Minuteur",
   "@playerTimerLabel": {},
   "playerTimerStart": "Démarrer",

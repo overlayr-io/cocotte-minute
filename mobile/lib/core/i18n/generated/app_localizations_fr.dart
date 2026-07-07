@@ -1444,6 +1444,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get playerSubRecipeLabel => 'SOUS-RECETTE';
+
+  @override
   String get playerTimerLabel => 'Minuteur';
 
   @override
