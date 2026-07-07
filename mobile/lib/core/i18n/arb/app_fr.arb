@@ -260,6 +260,47 @@
   "unitCuillereSoupe": "c.à.s",
   "@unitCuillereSoupe": {},
 
+  "tagsTitle": "Tags",
+  "@tagsTitle": {},
+  "tagsIntro": "Qualifie tes recettes, sous-recettes et personnes. Utilisables comme filtres dans la recherche.",
+  "@tagsIntro": {},
+  "tagsEmpty": "Aucun tag pour l'instant. Crée ton premier tag pour qualifier tes recettes.",
+  "@tagsEmpty": {},
+  "tagsCreateCta": "Nouveau tag",
+  "@tagsCreateCta": {},
+  "tagsRecipeCount": "{count, plural, =0{0 recette} =1{1 recette} other{{count} recettes}}",
+  "@tagsRecipeCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "tagCreateTitle": "Nouveau tag",
+  "@tagCreateTitle": {},
+  "tagEditTitle": "Modifier le tag",
+  "@tagEditTitle": {},
+  "tagFieldName": "Nom",
+  "@tagFieldName": {},
+  "tagNameHint": "ex : Épicé",
+  "@tagNameHint": {},
+  "tagNameRequired": "Donne un nom au tag.",
+  "@tagNameRequired": {},
+  "tagFieldColor": "Couleur",
+  "@tagFieldColor": {},
+  "tagPreview": "Aperçu",
+  "@tagPreview": {},
+  "tagPreviewPlaceholder": "Nom du tag",
+  "@tagPreviewPlaceholder": {},
+  "tagCreateAction": "Créer le tag",
+  "@tagCreateAction": {},
+  "tagDeleteConfirmTitle": "Supprimer ce tag ?",
+  "@tagDeleteConfirmTitle": {},
+  "tagDeleteConfirmBody": "« {name} » sera retiré des recettes et des personnes associées.",
+  "@tagDeleteConfirmBody": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
   "commonCancel": "Annuler",
   "@commonCancel": {},
   "commonSave": "Enregistrer",

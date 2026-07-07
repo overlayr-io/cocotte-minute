@@ -343,6 +343,67 @@ class AppLocalizationsFr extends AppLocalizations {
   String get unitCuillereSoupe => 'c.à.s';
 
   @override
+  String get tagsTitle => 'Tags';
+
+  @override
+  String get tagsIntro =>
+      'Qualifie tes recettes, sous-recettes et personnes. Utilisables comme filtres dans la recherche.';
+
+  @override
+  String get tagsEmpty =>
+      'Aucun tag pour l\'instant. Crée ton premier tag pour qualifier tes recettes.';
+
+  @override
+  String get tagsCreateCta => 'Nouveau tag';
+
+  @override
+  String tagsRecipeCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recettes',
+      one: '1 recette',
+      zero: '0 recette',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get tagCreateTitle => 'Nouveau tag';
+
+  @override
+  String get tagEditTitle => 'Modifier le tag';
+
+  @override
+  String get tagFieldName => 'Nom';
+
+  @override
+  String get tagNameHint => 'ex : Épicé';
+
+  @override
+  String get tagNameRequired => 'Donne un nom au tag.';
+
+  @override
+  String get tagFieldColor => 'Couleur';
+
+  @override
+  String get tagPreview => 'Aperçu';
+
+  @override
+  String get tagPreviewPlaceholder => 'Nom du tag';
+
+  @override
+  String get tagCreateAction => 'Créer le tag';
+
+  @override
+  String get tagDeleteConfirmTitle => 'Supprimer ce tag ?';
+
+  @override
+  String tagDeleteConfirmBody(String name) {
+    return '« $name » sera retiré des recettes et des personnes associées.';
+  }
+
+  @override
   String get commonCancel => 'Annuler';
 
   @override

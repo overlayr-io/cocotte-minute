@@ -748,6 +748,102 @@ abstract class AppLocalizations {
   /// **'c.à.s'**
   String get unitCuillereSoupe;
 
+  /// No description provided for @tagsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tags'**
+  String get tagsTitle;
+
+  /// No description provided for @tagsIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Qualifie tes recettes, sous-recettes et personnes. Utilisables comme filtres dans la recherche.'**
+  String get tagsIntro;
+
+  /// No description provided for @tagsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun tag pour l\'instant. Crée ton premier tag pour qualifier tes recettes.'**
+  String get tagsEmpty;
+
+  /// No description provided for @tagsCreateCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau tag'**
+  String get tagsCreateCta;
+
+  /// No description provided for @tagsRecipeCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{0 recette} =1{1 recette} other{{count} recettes}}'**
+  String tagsRecipeCount(int count);
+
+  /// No description provided for @tagCreateTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau tag'**
+  String get tagCreateTitle;
+
+  /// No description provided for @tagEditTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier le tag'**
+  String get tagEditTitle;
+
+  /// No description provided for @tagFieldName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom'**
+  String get tagFieldName;
+
+  /// No description provided for @tagNameHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'ex : Épicé'**
+  String get tagNameHint;
+
+  /// No description provided for @tagNameRequired.
+  ///
+  /// In fr, this message translates to:
+  /// **'Donne un nom au tag.'**
+  String get tagNameRequired;
+
+  /// No description provided for @tagFieldColor.
+  ///
+  /// In fr, this message translates to:
+  /// **'Couleur'**
+  String get tagFieldColor;
+
+  /// No description provided for @tagPreview.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aperçu'**
+  String get tagPreview;
+
+  /// No description provided for @tagPreviewPlaceholder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du tag'**
+  String get tagPreviewPlaceholder;
+
+  /// No description provided for @tagCreateAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer le tag'**
+  String get tagCreateAction;
+
+  /// No description provided for @tagDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer ce tag ?'**
+  String get tagDeleteConfirmTitle;
+
+  /// No description provided for @tagDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'« {name} » sera retiré des recettes et des personnes associées.'**
+  String tagDeleteConfirmBody(String name);
+
   /// No description provided for @commonCancel.
   ///
   /// In fr, this message translates to:
