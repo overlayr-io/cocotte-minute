@@ -39,6 +39,20 @@ order: 5
 > `RecipesService`, dépendance à sens unique). L'assignation catégorie/tag ↔
 > recette existe côté serveur (endpoints) mais son UI mobile est différée.
 >
+> **Onglet Recettes = vue Dossiers (livré, maquette 7b).** L'onglet Recettes
+> n'affiche plus une liste plate : c'est désormais la vue **Dossiers** de la
+> feature `categories` (titre, recherche **placeholder visuel** non branchée,
+> cartes de dossiers racines « N recettes · M sous-dossiers », bouton « Nouveau
+> dossier », FAB corail pour créer une recette). Ouvrir un dossier liste ses
+> recettes via le nouvel endpoint `GET /categories/:id/recipes`
+> (`RecipesService.listByCategory`, pivot `recipe_categories`, tri récent) —
+> chargement non bloquant (`FolderRecipesCubit`), carte partagée
+> `RecipeListCard`. Compte → Catégories reste accessible séparément (création
+> de sous-dossiers). La vue **Découverte** du 7b (bascule Dossiers/Découverte,
+> hero à la une, rangées par saison/temps/personne) n'a **pas** été construite :
+> aucune donnée serveur pour l'alimenter (pas de champ saison, pas de requête
+> par personne) — différée, décision explicite.
+>
 > **Différé (non bloquant) :** ajout de **composant / sous-recette** depuis le
 > mobile (picker) — l'endpoint serveur existe déjà ; upload de photo réel.
 
