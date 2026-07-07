@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { CategoriesService } from '../categories/categories.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { PeopleService } from '../people/people.service';
 import { TagsService } from '../tags/tags.service';
@@ -12,6 +13,7 @@ export class AccountService {
     private readonly ingredientsService: IngredientsService,
     private readonly tagsService: TagsService,
     private readonly peopleService: PeopleService,
+    private readonly categoriesService: CategoriesService,
   ) {}
 
   /**
@@ -34,6 +36,7 @@ export class AccountService {
     await this.peopleService.deleteAllForUser(userId);
     await this.ingredientsService.deleteAllForUser(userId);
     await this.tagsService.deleteAllForUser(userId);
+    await this.categoriesService.deleteAllForUser(userId);
     this.logger.log(`Données invité réinitialisées pour l'utilisateur ${userId}`);
   }
 }
