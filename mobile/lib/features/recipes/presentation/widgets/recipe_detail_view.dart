@@ -12,6 +12,7 @@ import '../pages/recipe_detail_page.dart';
 import 'add_ingredients_sheet.dart';
 import 'quantity_stepper.dart';
 import 'recipe_edit_sheet.dart';
+import 'steps_content.dart';
 
 const double _kHeroHeight = 300;
 // Chevauchement de la fiche par-dessus le bas de la photo (coins arrondis qui
@@ -324,6 +325,9 @@ class _SheetState extends State<_Sheet> {
   /// `servings` à chaque ouverture de la fiche.
   late int _portions = widget.detail.summary.servings;
 
+  /// Onglet du segment : 0 = Ingrédients, 1 = Étapes.
+  int _tab = 0;
+
   RecipeDetail get detail => widget.detail;
   AppLocalizations get l10n => widget.l10n;
 
@@ -379,57 +383,80 @@ class _SheetState extends State<_Sheet> {
             ),
           ],
           const SizedBox(height: 18),
-          _PortionsCard(
-            portions: _portions,
+          if (_tab == 0) ...[
+            _PortionsCard(
+              portions: _portions,
+              l10n: l10n,
+              onChanged: (v) => setState(() => _portions = v),
+            ),
+            const SizedBox(height: 16),
+          ],
+          _IngredientsStepsSegment(
+            selected: _tab,
             l10n: l10n,
-            onChanged: (v) => setState(() => _portions = v),
+            onChanged: (i) => setState(() => _tab = i),
           ),
-          const SizedBox(height: 16),
-          _IngredientsStepsSegment(l10n: l10n),
           const SizedBox(height: 12),
-          if (detail.ingredients.isEmpty)
-            _EmptyHint(message: l10n.recipeIngredientsEmpty)
+          if (_tab == 0)
+            ..._ingredientsTab(context, l10n, scale)
           else
-            for (final ing in detail.ingredients)
-              _IngredientRow(
-                ingredient: ing,
-                scale: scale,
-                onTap: () => _editLine(ing),
-              ),
-          const SizedBox(height: 14),
-          _AddIngredientsButton(
-            label: l10n.recipeIngredientsAddCta,
-            onTap: _addIngredients,
-          ),
-          if (detail.components.isNotEmpty) ...[
-            _SectionHeader(title: l10n.recipeComponentsSection, count: detail.components.length),
-            for (final comp in detail.components)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: _RecipeLinkCard(
-                  recipe: comp,
-                  subtitle: l10n.recipeBaseBadge,
-                  onTap: () => _openRecipe(context, comp.id),
-                ),
-              ),
-          ],
-          if (detail.isBase && detail.usedIn.isNotEmpty) ...[
-            _SectionHeader(
-                title: l10n.recipeUsedInSection,
-                count: detail.usedIn.length,
-                accent: true),
-            for (final parent in detail.usedIn)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: _RecipeLinkCard(
-                  recipe: parent,
-                  onTap: () => _openRecipe(context, parent.id),
-                ),
-              ),
-          ],
+            StepsContent(
+              detail: detail,
+              cubit: context.read<RecipeDetailCubit>(),
+            ),
         ],
       ),
     );
+  }
+
+  List<Widget> _ingredientsTab(
+    BuildContext context,
+    AppLocalizations l10n,
+    double scale,
+  ) {
+    return [
+      if (detail.ingredients.isEmpty)
+        _EmptyHint(message: l10n.recipeIngredientsEmpty)
+      else
+        for (final ing in detail.ingredients)
+          _IngredientRow(
+            ingredient: ing,
+            scale: scale,
+            onTap: () => _editLine(ing),
+          ),
+      const SizedBox(height: 14),
+      _AddIngredientsButton(
+        label: l10n.recipeIngredientsAddCta,
+        onTap: _addIngredients,
+      ),
+      if (detail.components.isNotEmpty) ...[
+        _SectionHeader(
+            title: l10n.recipeComponentsSection, count: detail.components.length),
+        for (final comp in detail.components)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: _RecipeLinkCard(
+              recipe: comp,
+              subtitle: l10n.recipeBaseBadge,
+              onTap: () => _openRecipe(context, comp.id),
+            ),
+          ),
+      ],
+      if (detail.isBase && detail.usedIn.isNotEmpty) ...[
+        _SectionHeader(
+            title: l10n.recipeUsedInSection,
+            count: detail.usedIn.length,
+            accent: true),
+        for (final parent in detail.usedIn)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: _RecipeLinkCard(
+              recipe: parent,
+              onTap: () => _openRecipe(context, parent.id),
+            ),
+          ),
+      ],
+    ];
   }
 
   Future<void> _openRecipe(BuildContext context, String id) async {
@@ -595,11 +622,17 @@ class _SquareButton extends StatelessWidget {
   }
 }
 
-/// Segment « Ingrédients | Étapes » — Étapes désactivé (feature à venir).
+/// Segment « Ingrédients | Étapes » (bascule locale de l'onglet actif).
 class _IngredientsStepsSegment extends StatelessWidget {
-  const _IngredientsStepsSegment({required this.l10n});
+  const _IngredientsStepsSegment({
+    required this.selected,
+    required this.l10n,
+    required this.onChanged,
+  });
 
+  final int selected;
   final AppLocalizations l10n;
+  final ValueChanged<int> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -611,47 +644,44 @@ class _IngredientsStepsSegment extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 9),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.textPrimary.withValues(alpha: 0.12),
-                    blurRadius: 6,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Text(
-                l10n.recipeIngredientsSection,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 9),
-              child: Text(
-                l10n.recipeStepsTab,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w600,
-                  // Grisé : onglet désactivé tant que la feature Étapes n'existe pas.
-                  color: Color(0xFFC4BEAD),
-                ),
-              ),
-            ),
-          ),
+          _tab(l10n.recipeIngredientsSection, 0),
+          _tab(l10n.recipeStepsTab, 1),
         ],
+      ),
+    );
+  }
+
+  Widget _tab(String label, int index) {
+    final active = selected == index;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => onChanged(index),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(vertical: 9),
+          decoration: BoxDecoration(
+            color: active ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: active
+                ? [
+                    BoxShadow(
+                      color: AppColors.textPrimary.withValues(alpha: 0.12),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 13.5,
+              fontWeight: active ? FontWeight.w700 : FontWeight.w600,
+              color: active ? AppColors.textPrimary : AppColors.textSecondary,
+            ),
+          ),
+        ),
       ),
     );
   }
