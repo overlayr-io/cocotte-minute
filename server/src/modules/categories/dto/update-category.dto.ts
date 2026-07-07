@@ -24,6 +24,6 @@ export class UpdateCategoryDto {
   @IsOptional()
   @ValidateIf((o: UpdateCategoryDto) => o.icon !== null)
   @IsString()
-  @MaxLength(16)
+  @MaxLength(32)
   icon?: string | null;
 }

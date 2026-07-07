@@ -45,8 +45,12 @@ export const categories = pgTable('categories', {
   /** UUID Supabase du propriétaire. Une catégorie appartient toujours à un compte. */
   ownerId: uuid('owner_id').notNull(),
   name: varchar('name', { length: 120 }).notNull(),
-  /** Emoji système, optionnel. Null = icône dossier par défaut côté client. */
-  icon: varchar('icon', { length: 16 }),
+  /**
+   * Emoji système, optionnel. Null = icône dossier par défaut côté client.
+   * 32 caractères pour encaisser les emojis composés (ZWJ familles, drapeaux)
+   * dont la longueur UTF-16 dépasse 16.
+   */
+  icon: varchar('icon', { length: 32 }),
   /** Dossier parent (null = racine). Pointe toujours vers une catégorie du même compte. */
   parentCategoryId: uuid('parent_category_id').references(
     (): AnyPgColumn => categories.id,

@@ -17,7 +17,7 @@ export class CreateCategoryDto {
   /** Emoji système, optionnel (null/absent = icône dossier par défaut côté client). */
   @IsOptional()
   @IsString()
-  @MaxLength(16)
+  @MaxLength(32)
   icon?: string;
 
   /** Dossier parent (absent = racine). Doit appartenir au même compte. */
