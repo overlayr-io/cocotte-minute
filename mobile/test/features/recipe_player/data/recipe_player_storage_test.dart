@@ -21,6 +21,7 @@ void main() {
       const state = ResumeState(
         recipeId: 'r1',
         recipeName: 'Pâtes à la bolognaise',
+        selectedServings: 4,
         currentIndex: 2,
         sessionStartedAtMillis: 1000,
       );
@@ -34,6 +35,7 @@ void main() {
       const state = ResumeState(
         recipeId: 'r1',
         recipeName: 'Pâtes à la bolognaise',
+        selectedServings: 4,
         currentIndex: 2,
         sessionStartedAtMillis: 1000,
       );

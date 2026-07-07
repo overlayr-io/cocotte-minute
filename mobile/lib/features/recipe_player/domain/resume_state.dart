@@ -54,6 +54,7 @@ class ResumeState extends Equatable {
   const ResumeState({
     required this.recipeId,
     required this.recipeName,
+    required this.selectedServings,
     required this.currentIndex,
     required this.sessionStartedAtMillis,
     this.timers = const [],
@@ -61,6 +62,10 @@ class ResumeState extends Equatable {
 
   final String recipeId;
   final String recipeName;
+
+  /// Nombre de personnes choisi au lancement — conservé pour que la reprise
+  /// affiche les mêmes quantités que la session interrompue.
+  final int selectedServings;
   final int currentIndex;
   final int sessionStartedAtMillis;
   final List<PersistedTimer> timers;
@@ -68,6 +73,7 @@ class ResumeState extends Equatable {
   factory ResumeState.fromJson(Map<String, dynamic> json) => ResumeState(
         recipeId: json['recipeId'] as String,
         recipeName: json['recipeName'] as String,
+        selectedServings: json['selectedServings'] as int,
         currentIndex: json['currentIndex'] as int,
         sessionStartedAtMillis: json['sessionStartedAtMillis'] as int,
         timers: ((json['timers'] as List<dynamic>?) ?? const [])
@@ -79,12 +85,19 @@ class ResumeState extends Equatable {
   Map<String, dynamic> toJson() => {
         'recipeId': recipeId,
         'recipeName': recipeName,
+        'selectedServings': selectedServings,
         'currentIndex': currentIndex,
         'sessionStartedAtMillis': sessionStartedAtMillis,
         'timers': timers.map((t) => t.toJson()).toList(),
       };
 
   @override
-  List<Object?> get props =>
-      [recipeId, recipeName, currentIndex, sessionStartedAtMillis, timers];
+  List<Object?> get props => [
+        recipeId,
+        recipeName,
+        selectedServings,
+        currentIndex,
+        sessionStartedAtMillis,
+        timers,
+      ];
 }
