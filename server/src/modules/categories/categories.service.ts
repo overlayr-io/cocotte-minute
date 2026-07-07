@@ -154,7 +154,7 @@ export class CategoriesService {
 
   /**
    * Soft delete. Refusé pour les dossiers par défaut et bloqué si le dossier
-   * n'est pas vide (sous-dossiers — et, à terme, recettes rangées dedans).
+   * n'est pas vide (sous-dossiers ou recettes rangées dedans).
    */
   async softDelete(userId: string, id: string): Promise<void> {
     const current = await this.findOwnedOrFail(userId, id);
@@ -168,8 +168,11 @@ export class CategoriesService {
         'Ce dossier contient des sous-dossiers : videz-le d’abord',
       );
     }
-    // TODO(recettes): bloquer aussi si des recettes sont rangées dans ce dossier
-    //   une fois le pivot recipe_categories créé (feature recettes).
+    if (await this.hasRecipes(userId, id)) {
+      throw new ConflictException(
+        'Ce dossier contient des recettes : videz-le d’abord',
+      );
+    }
     await this.db
       .update(categories)
       .set({ deletedAt: new Date(), updatedAt: new Date() })
@@ -252,6 +255,16 @@ export class CategoriesService {
       )
       .limit(1);
     return child !== undefined;
+  }
+
+  /**
+   * Vrai si au moins une recette (possédée, non supprimée) est rangée dans ce
+   * dossier. Passe par le service Recipes (pivot `recipe_categories`) pour ne
+   * pas interroger un domaine voisin en direct.
+   */
+  private async hasRecipes(userId: string, id: string): Promise<boolean> {
+    const counts = await this.recipesService.countByCategoryIds(userId, [id]);
+    return (counts.get(id) ?? 0) > 0;
   }
 
   /** Récupère une catégorie de l'utilisateur (non supprimée), ou lève. */
