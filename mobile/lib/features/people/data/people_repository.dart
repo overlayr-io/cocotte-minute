@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/network/json_list_cache.dart';
+import '../../recipes/domain/recipe.dart';
 import '../domain/person.dart';
 
 /// Erreur portant un message exploitable pour l'UI (snackbar/page d'erreur).
@@ -119,6 +120,19 @@ class PeopleRepository {
       return Person.fromJson(res.data!);
     } on DioException catch (e) {
       throw _mapError(e, 'Impossible de retirer le tag.');
+    }
+  }
+
+  /// « Ses recettes » : recettes associées directement à la personne.
+  Future<List<RecipeSummary>> fetchRecipes(String personId) async {
+    try {
+      final res = await _dio.get<List<dynamic>>('/people/$personId/recipes');
+      return (res.data ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(RecipeSummary.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de charger ses recettes.');
     }
   }
 

@@ -950,6 +950,40 @@ class AppLocalizationsEn extends AppLocalizations {
       'No people yet. Add family members from the Account tab.';
 
   @override
+  String get personRecipesLabel => 'Their recipes';
+
+  @override
+  String get personRecipesAddTooltip => 'Add recipes';
+
+  @override
+  String get personRecipesRemoveTooltip => 'Remove recipe';
+
+  @override
+  String get personRecipesEmptyHint =>
+      'No recipes yet. Add their favourite dishes with the + button.';
+
+  @override
+  String get personRecipesPickTitle => 'Add recipes';
+
+  @override
+  String get personRecipesPickSearchHint => 'Search a recipe…';
+
+  @override
+  String get personRecipesPickEmpty => 'No recipes to add.';
+
+  @override
+  String personRecipesPickAdd(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count recipes',
+      one: 'Add 1 recipe',
+      zero: 'Add',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get recipesTitle => 'Recipes';
 
   @override

@@ -956,6 +956,40 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucune personne pour l\'instant. Ajoute des membres de ta famille depuis l\'onglet Compte.';
 
   @override
+  String get personRecipesLabel => 'Ses recettes';
+
+  @override
+  String get personRecipesAddTooltip => 'Ajouter des recettes';
+
+  @override
+  String get personRecipesRemoveTooltip => 'Retirer la recette';
+
+  @override
+  String get personRecipesEmptyHint =>
+      'Aucune recette associée. Ajoute ses plats préférés avec le bouton +.';
+
+  @override
+  String get personRecipesPickTitle => 'Ajouter des recettes';
+
+  @override
+  String get personRecipesPickSearchHint => 'Rechercher une recette…';
+
+  @override
+  String get personRecipesPickEmpty => 'Aucune recette à ajouter.';
+
+  @override
+  String personRecipesPickAdd(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ajouter $count recettes',
+      one: 'Ajouter 1 recette',
+      zero: 'Ajouter',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get recipesTitle => 'Recettes';
 
   @override

@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../recipes/domain/recipe.dart';
 import '../../../tags/data/tags_repository.dart';
 import '../../../tags/domain/tag.dart';
 import '../../data/people_repository.dart';
@@ -15,6 +16,9 @@ class PersonEditState extends Equatable {
     this.allTags = const [],
     this.tagsLoading = true,
     this.busyTagIds = const {},
+    this.recipes = const [],
+    this.recipesLoading = true,
+    this.recipesBusy = false,
     this.saving = false,
     this.message,
     this.outcome = PersonEditOutcome.none,
@@ -24,6 +28,14 @@ class PersonEditState extends Equatable {
   final List<Tag> allTags;
   final bool tagsLoading;
   final Set<String> busyTagIds;
+
+  /// « Ses recettes » : recettes associées directement à la personne.
+  final List<RecipeSummary> recipes;
+  final bool recipesLoading;
+
+  /// Mutation d'association de recettes en cours (ajout multiple ou retrait).
+  final bool recipesBusy;
+
   final bool saving;
 
   /// Message d'échec transitoire (snackbar), consommé puis remis à null.
@@ -35,6 +47,9 @@ class PersonEditState extends Equatable {
     List<Tag>? allTags,
     bool? tagsLoading,
     Set<String>? busyTagIds,
+    List<RecipeSummary>? recipes,
+    bool? recipesLoading,
+    bool? recipesBusy,
     bool? saving,
     String? message,
     PersonEditOutcome? outcome,
@@ -44,6 +59,9 @@ class PersonEditState extends Equatable {
       allTags: allTags ?? this.allTags,
       tagsLoading: tagsLoading ?? this.tagsLoading,
       busyTagIds: busyTagIds ?? this.busyTagIds,
+      recipes: recipes ?? this.recipes,
+      recipesLoading: recipesLoading ?? this.recipesLoading,
+      recipesBusy: recipesBusy ?? this.recipesBusy,
       saving: saving ?? this.saving,
       message: message,
       outcome: outcome ?? this.outcome,
@@ -56,6 +74,9 @@ class PersonEditState extends Equatable {
     allTags,
     tagsLoading,
     busyTagIds,
+    recipes,
+    recipesLoading,
+    recipesBusy,
     saving,
     message,
     outcome,
@@ -105,6 +126,54 @@ class PersonEditCubit extends Cubit<PersonEditState> {
         busyTagIds: {...state.busyTagIds}..remove(tag.id),
         message: e.message,
       ));
+    }
+  }
+
+  /// Charge « ses recettes » (associations directes personne↔recette).
+  Future<void> loadRecipes() async {
+    emit(state.copyWith(recipesLoading: true));
+    try {
+      final recipes = await _people.fetchRecipes(state.person.id);
+      emit(state.copyWith(recipes: recipes, recipesLoading: false));
+    } on PeopleRepositoryException catch (e) {
+      emit(state.copyWith(recipesLoading: false, message: e.message));
+    }
+  }
+
+  /// Associe un lot de recettes (sélection multiple), puis recharge la section.
+  Future<void> addRecipes(List<String> recipeIds) async {
+    if (recipeIds.isEmpty || state.recipesBusy) return;
+    emit(state.copyWith(recipesBusy: true));
+    try {
+      Person person = state.person;
+      for (final id in recipeIds) {
+        person = await _people.addRecipe(person.id, id);
+      }
+      final recipes = await _people.fetchRecipes(person.id);
+      emit(state.copyWith(
+        person: person,
+        recipes: recipes,
+        recipesBusy: false,
+      ));
+    } on PeopleRepositoryException catch (e) {
+      emit(state.copyWith(recipesBusy: false, message: e.message));
+      await loadRecipes();
+    }
+  }
+
+  /// Retire une recette de « ses recettes ».
+  Future<void> removeRecipe(String recipeId) async {
+    if (state.recipesBusy) return;
+    emit(state.copyWith(recipesBusy: true));
+    try {
+      final person = await _people.removeRecipe(state.person.id, recipeId);
+      emit(state.copyWith(
+        person: person,
+        recipes: state.recipes.where((r) => r.id != recipeId).toList(),
+        recipesBusy: false,
+      ));
+    } on PeopleRepositoryException catch (e) {
+      emit(state.copyWith(recipesBusy: false, message: e.message));
     }
   }
 

@@ -1802,6 +1802,54 @@ abstract class AppLocalizations {
   /// **'Aucune personne pour l\'instant. Ajoute des membres de ta famille depuis l\'onglet Compte.'**
   String get recipePeopleSheetEmpty;
 
+  /// No description provided for @personRecipesLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ses recettes'**
+  String get personRecipesLabel;
+
+  /// No description provided for @personRecipesAddTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter des recettes'**
+  String get personRecipesAddTooltip;
+
+  /// No description provided for @personRecipesRemoveTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer la recette'**
+  String get personRecipesRemoveTooltip;
+
+  /// No description provided for @personRecipesEmptyHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette associée. Ajoute ses plats préférés avec le bouton +.'**
+  String get personRecipesEmptyHint;
+
+  /// No description provided for @personRecipesPickTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter des recettes'**
+  String get personRecipesPickTitle;
+
+  /// No description provided for @personRecipesPickSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une recette…'**
+  String get personRecipesPickSearchHint;
+
+  /// No description provided for @personRecipesPickEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette à ajouter.'**
+  String get personRecipesPickEmpty;
+
+  /// No description provided for @personRecipesPickAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Ajouter} =1{Ajouter 1 recette} other{Ajouter {count} recettes}}'**
+  String personRecipesPickAdd(num count);
+
   /// No description provided for @recipesTitle.
   ///
   /// In fr, this message translates to:
