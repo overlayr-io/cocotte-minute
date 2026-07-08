@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  Partage de recette (feature partage-recette) : universal links vers /r/<token>.
+	  TODO déploiement :
+	    1. Remplacer TODO_DOMAIN par le domaine public du serveur (= PUBLIC_BASE_URL).
+	    2. Lier ce fichier au target Runner dans Xcode
+	       (Signing & Capabilities → Associated Domains), ce qui renseigne
+	       CODE_SIGN_ENTITLEMENTS dans project.pbxproj.
+	    3. Servir /.well-known/apple-app-site-association avec l'appID
+	       <TeamID>.com.cocotteminute.cocotteMinute (cf. APPLE_APP_ID serveur).
+	-->
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:TODO_DOMAIN</string>
+	</array>
+</dict>
+</plist>

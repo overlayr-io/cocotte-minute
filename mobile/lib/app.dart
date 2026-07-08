@@ -4,13 +4,36 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/auth/auth_bloc.dart';
 import 'core/i18n/generated/app_localizations.dart';
 import 'core/i18n/locale_cubit.dart';
+import 'core/navigation/app_navigator.dart';
+import 'core/navigation/deep_link_service.dart';
 import 'core/navigation/main_shell.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/error_view.dart';
 import 'features/auth/presentation/pages/auth_page.dart';
 
-class CocotteApp extends StatelessWidget {
+class CocotteApp extends StatefulWidget {
   const CocotteApp({super.key});
+
+  @override
+  State<CocotteApp> createState() => _CocotteAppState();
+}
+
+class _CocotteAppState extends State<CocotteApp> {
+  final DeepLinkService _deepLinks = DeepLinkService();
+
+  @override
+  void initState() {
+    super.initState();
+    // Démarré après le premier frame : le navigateur (appNavigatorKey) doit être
+    // monté pour pouvoir pousser la recette d'un lien reçu à froid.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _deepLinks.init());
+  }
+
+  @override
+  void dispose() {
+    _deepLinks.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +47,7 @@ class CocotteApp extends StatelessWidget {
           return MaterialApp(
             onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
             debugShowCheckedModeBanner: false,
+            navigatorKey: appNavigatorKey,
             theme: AppTheme.light,
             darkTheme: AppTheme.dark,
             // `null` = suit la langue de l'appareil (option « Système »).
