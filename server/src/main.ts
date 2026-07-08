@@ -1,9 +1,13 @@
+import { setDefaultResultOrder } from 'node:dns';
+
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
+
+setDefaultResultOrder('ipv4first');
 
 async function bootstrap(): Promise<void> {
   // bufferLogs: on retient les logs de bootstrap jusqu'à ce que pino prenne le relais.
