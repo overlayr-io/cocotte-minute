@@ -216,6 +216,155 @@ class AppLocalizationsFr extends AppLocalizations {
   String get accountRowManageData => 'Gérer mes données';
 
   @override
+  String get accountGuestCtaTitle => 'Garde tes recettes pour toujours';
+
+  @override
+  String get accountGuestCtaBody =>
+      'Crée un compte gratuit pour sauvegarder tes recettes et les retrouver sur tous tes appareils.';
+
+  @override
+  String get accountGuestCtaButton => 'Créer ton compte';
+
+  @override
+  String get accountGuestLogoutTitle => 'Se déconnecter ?';
+
+  @override
+  String get accountGuestLogoutBody =>
+      'Tu es en compte invité : après déconnexion, tu ne pourras plus retrouver tes recettes ni tes listes. Crée d\'abord un compte pour les conserver.';
+
+  @override
+  String get accountGuestLogoutConfirm => 'Se déconnecter quand même';
+
+  @override
+  String get accountGuestLogoutSublabel =>
+      'En invité : tes données seront perdues';
+
+  @override
+  String get accountRowDeleteGuest => 'Supprimer mes données';
+
+  @override
+  String get accountGuestDeleteSublabel => 'Effacement immédiat et définitif';
+
+  @override
+  String get privacyPolicyIntro =>
+      'Cocotte Minute respecte tes données. Voici, simplement, ce que l\'app collecte et pourquoi.';
+
+  @override
+  String get privacyPolicyS1Title => 'Ce que nous collectons';
+
+  @override
+  String get privacyPolicyS1Body =>
+      'Tes recettes, dossiers, tags, personnes et listes de courses, ainsi que l\'adresse e-mail de ton compte si tu en as créé un. En compte invité, seul un identifiant technique anonyme est utilisé.';
+
+  @override
+  String get privacyPolicyS2Title => 'Pourquoi nous les utilisons';
+
+  @override
+  String get privacyPolicyS2Body =>
+      'Uniquement pour faire fonctionner l\'app : sauvegarder ton contenu, le synchroniser entre tes appareils et générer tes listes de courses. Aucune revente de données, aucune publicité ciblée.';
+
+  @override
+  String get privacyPolicyS3Title => 'Où elles sont stockées';
+
+  @override
+  String get privacyPolicyS3Body =>
+      'Sur des serveurs sécurisés hébergés dans l\'Union européenne. Tes listes de courses sont aussi conservées sur ton appareil pour fonctionner hors connexion.';
+
+  @override
+  String get privacyPolicyS4Title => 'Combien de temps';
+
+  @override
+  String get privacyPolicyS4Body =>
+      'Tant que ton compte existe. Si tu supprimes ton compte, tes données sont anonymisées immédiatement puis définitivement effacées sous 30 jours. Pour un compte invité, l\'effacement est immédiat.';
+
+  @override
+  String get privacyPolicyS5Title => 'Tes droits';
+
+  @override
+  String get privacyPolicyS5Body =>
+      'Tu peux consulter, corriger ou supprimer tes données à tout moment depuis l\'app (Compte → Gérer mes données). Pour toute question, écris-nous via « Nous contacter ».';
+
+  @override
+  String get termsIntro =>
+      'En utilisant Cocotte Minute, tu acceptes ces quelques règles de bon sens.';
+
+  @override
+  String get termsS1Title => 'Le service';
+
+  @override
+  String get termsS1Body =>
+      'Cocotte Minute te permet de créer, organiser et cuisiner tes recettes, et de générer des listes de courses. Le service évolue régulièrement ; certaines fonctionnalités peuvent changer.';
+
+  @override
+  String get termsS2Title => 'Ton contenu';
+
+  @override
+  String get termsS2Body =>
+      'Tes recettes t\'appartiennent. Tu nous autorises simplement à les stocker et à les afficher pour te fournir le service — rien d\'autre.';
+
+  @override
+  String get termsS3Title => 'Compte invité';
+
+  @override
+  String get termsS3Body =>
+      'Sans compte, tes données sont liées à cet appareil. Crée un compte à tout moment pour les sécuriser : tout est conservé lors de la conversion.';
+
+  @override
+  String get termsS4Title => 'Usage acceptable';
+
+  @override
+  String get termsS4Body =>
+      'N\'utilise pas l\'app pour publier des contenus illégaux ou porter atteinte aux droits d\'autrui, et ne tente pas de perturber le service.';
+
+  @override
+  String get termsS5Title => 'Suppression';
+
+  @override
+  String get termsS5Body =>
+      'Tu peux supprimer ton compte et tes données à tout moment depuis Compte → Gérer mes données.';
+
+  @override
+  String get termsS6Title => 'Responsabilité';
+
+  @override
+  String get termsS6Body =>
+      'Le service est fourni « en l\'état ». Nous faisons le maximum pour qu\'il soit fiable, sans pouvoir garantir une disponibilité permanente.';
+
+  @override
+  String get manageDataStoredSection => 'Ce que Cocotte conserve';
+
+  @override
+  String get manageDataStoredRecipes => 'Recettes, dossiers et tags';
+
+  @override
+  String get manageDataStoredRecipesSub =>
+      'Stockés sur nos serveurs sécurisés (Union européenne)';
+
+  @override
+  String get manageDataStoredShopping => 'Listes de courses';
+
+  @override
+  String get manageDataStoredShoppingSub =>
+      'Sur cet appareil, synchronisées avec ton compte';
+
+  @override
+  String get manageDataStoredAccount => 'Compte';
+
+  @override
+  String get manageDataStoredAccountSub =>
+      'Ton e-mail si tu as créé un compte, un identifiant anonyme sinon';
+
+  @override
+  String get manageDataRightsSection => 'Tes droits';
+
+  @override
+  String get manageDataDeleteLabel => 'Supprimer mon compte et mes données';
+
+  @override
+  String get manageDataDeleteSub =>
+      'Compte : effacement définitif sous 30 jours · Invité : immédiat';
+
+  @override
   String get ingredientsTitle => 'Mes ingrédients';
 
   @override

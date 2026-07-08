@@ -38,7 +38,11 @@ class AccountSection extends StatelessWidget {
               for (var i = 0; i < tiles.length; i++) ...[
                 tiles[i],
                 if (i != tiles.length - 1)
-                  const Divider(height: 1, thickness: 1, color: Color(0xFFF1EEE7)),
+                  const Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Color(0xFFF1EEE7),
+                  ),
               ],
             ],
           ),
@@ -54,6 +58,7 @@ class AccountTile extends StatelessWidget {
     super.key,
     required this.icon,
     required this.label,
+    this.sublabel,
     this.onTap,
     this.iconColor = AppColors.primary,
     this.iconBackground = AppColors.primaryTint,
@@ -64,6 +69,10 @@ class AccountTile extends StatelessWidget {
 
   final IconData icon;
   final String label;
+
+  /// Ligne secondaire discrète sous le libellé (contexte, conséquence…).
+  final String? sublabel;
+
   final VoidCallback? onTap;
   final Color iconColor;
   final Color iconBackground;
@@ -90,20 +99,39 @@ class AccountTile extends StatelessWidget {
             ),
             const SizedBox(width: 13),
             Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: labelColor,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: labelColor,
+                    ),
+                  ),
+                  if (sublabel != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      sublabel!,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        height: 1.35,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ],
+                ],
               ),
             ),
             if (trailing != null) trailing!,
             if (showChevron) ...[
               const SizedBox(width: 6),
-              const Icon(Icons.chevron_right_rounded,
-                  size: 22, color: Color(0xFFCBC7BB)),
+              const Icon(
+                Icons.chevron_right_rounded,
+                size: 22,
+                color: Color(0xFFCBC7BB),
+              ),
             ],
           ],
         ),

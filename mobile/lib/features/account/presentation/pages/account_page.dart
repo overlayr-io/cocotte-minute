@@ -6,6 +6,7 @@ import '../../../../core/auth/auth_bloc.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/i18n/locale_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/widgets/coming_soon_page.dart';
 import '../../../auth/presentation/pages/auth_page.dart';
 import '../../../categories/presentation/pages/categories_page.dart';
@@ -15,6 +16,9 @@ import '../../../tags/presentation/pages/tags_page.dart';
 import '../widgets/account_section.dart';
 import 'delete_account_page.dart';
 import 'language_page.dart';
+import 'manage_data_page.dart';
+import 'privacy_policy_page.dart';
+import 'terms_page.dart';
 
 /// Onglet Compte : profil invité/connecté + accès au contenu, à la famille,
 /// à la gestion du compte, à l'aide et à la confidentialité.
@@ -24,22 +28,14 @@ class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    // select : ne reconstruit la page que si ces trois valeurs changent,
+    // select : ne reconstruit la page que si ces valeurs changent,
     // pas à chaque émission de l'AuthBloc (refresh de session, etc.).
-    final (isGuest, email, createdAtRaw) =
-        context.select<AuthBloc, (bool, String?, String?)>((bloc) {
+    final (isGuest, email) = context.select<AuthBloc, (bool, String?)>((bloc) {
       final s = bloc.state;
       return s is AuthAuthenticated
-          ? (s.isAnonymous, s.user.email, s.user.createdAt)
-          : (false, null, null);
+          ? (s.isAnonymous, s.user.email)
+          : (false, null);
     });
-    // Rappel J+14 : basé sur la date de création du compte anonyme
-    // (`currentUser.createdAt`), jamais sur un stockage local séparé.
-    final createdAt =
-        createdAtRaw != null ? DateTime.tryParse(createdAtRaw) : null;
-    final showReminder = isGuest &&
-        createdAt != null &&
-        DateTime.now().difference(createdAt) >= const Duration(days: 14);
 
     // Écoute la langue courante pour rafraîchir le sous-titre de la tuile.
     context.watch<LocaleCubit>();
@@ -54,16 +50,18 @@ class AccountPage extends StatelessWidget {
             child: Text(
               l10n.accountTitle,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.5,
-                  ),
+                fontWeight: FontWeight.w700,
+                letterSpacing: -0.5,
+              ),
             ),
           ),
           _ProfileCard(isGuest: isGuest, email: email),
-          if (showReminder) ...[
+          // Invitation permanente à créer un compte (remplace le rappel J+14).
+          if (isGuest) ...[
             const SizedBox(height: 14),
-            _GuestReminder(
-              onCreateAccount: () => Navigator.of(context).push(AuthPage.route()),
+            _GuestCta(
+              onCreateAccount: () =>
+                  Navigator.of(context).push(AuthPage.route()),
             ),
           ],
 
@@ -74,7 +72,8 @@ class AccountPage extends StatelessWidget {
               AccountTile(
                 icon: Icons.eco_outlined,
                 label: l10n.accountRowIngredients,
-                onTap: () => Navigator.of(context).push(IngredientsPage.route()),
+                onTap: () =>
+                    Navigator.of(context).push(IngredientsPage.route()),
               ),
               AccountTile(
                 icon: Icons.sell_outlined,
@@ -113,45 +112,54 @@ class AccountPage extends StatelessWidget {
                 trailing: Text(
                   _currentLanguageLabel(context, l10n),
                   style: const TextStyle(
-                      fontSize: 13.5, color: AppColors.textMuted),
+                    fontSize: 13.5,
+                    color: AppColors.textMuted,
+                  ),
                 ),
                 onTap: () => Navigator.of(context).push(LanguagePage.route()),
               ),
             ],
           ),
 
-          // Compte (uniquement connecté) — gérer / déconnexion / suppression
-          if (!isGuest)
-            AccountSection(
-              title: l10n.accountSectionAccount,
-              tiles: [
+          // Compte — gérer (connecté) / déconnexion / suppression. Visible aussi
+          // en invité : la déconnexion prévient de la perte de données et la
+          // suppression passe par le circuit anonyme (purge immédiate).
+          AccountSection(
+            title: l10n.accountSectionAccount,
+            tiles: [
+              if (!isGuest)
                 AccountTile(
                   icon: Icons.settings_outlined,
                   iconColor: const Color(0xFF5B6774),
                   iconBackground: const Color(0xFFEDF0F3),
                   label: l10n.accountRowManage,
-                  onTap: () => Navigator.of(context)
-                      .push(ComingSoonPage.route(l10n.accountRowManage)),
+                  onTap: () => Navigator.of(
+                    context,
+                  ).push(ComingSoonPage.route(l10n.accountRowManage)),
                 ),
-                AccountTile(
-                  icon: Icons.logout_rounded,
-                  iconColor: const Color(0xFF5B6774),
-                  iconBackground: const Color(0xFFEDF0F3),
-                  label: l10n.accountRowLogout,
-                  showChevron: false,
-                  onTap: () => context.read<AuthBloc>().add(const AuthSignedOut()),
-                ),
-                AccountTile(
-                  icon: Icons.delete_outline_rounded,
-                  iconColor: const Color(0xFFE0554A),
-                  iconBackground: const Color(0xFFFBE9E7),
-                  labelColor: const Color(0xFFE0554A),
-                  label: l10n.accountRowDelete,
-                  onTap: () =>
-                      Navigator.of(context).push(DeleteAccountPage.route()),
-                ),
-              ],
-            ),
+              AccountTile(
+                icon: Icons.logout_rounded,
+                iconColor: const Color(0xFF5B6774),
+                iconBackground: const Color(0xFFEDF0F3),
+                label: l10n.accountRowLogout,
+                sublabel: isGuest ? l10n.accountGuestLogoutSublabel : null,
+                showChevron: false,
+                onTap: () => _signOut(context, isGuest: isGuest),
+              ),
+              AccountTile(
+                icon: Icons.delete_outline_rounded,
+                iconColor: const Color(0xFFE0554A),
+                iconBackground: const Color(0xFFFBE9E7),
+                labelColor: const Color(0xFFE0554A),
+                label: isGuest
+                    ? l10n.accountRowDeleteGuest
+                    : l10n.accountRowDelete,
+                sublabel: isGuest ? l10n.accountGuestDeleteSublabel : null,
+                onTap: () =>
+                    Navigator.of(context).push(DeleteAccountPage.route()),
+              ),
+            ],
+          ),
 
           // Aide
           AccountSection(
@@ -162,16 +170,18 @@ class AccountPage extends StatelessWidget {
                 iconColor: const Color(0xFF5B6774),
                 iconBackground: const Color(0xFFEDF0F3),
                 label: l10n.accountRowHelpCenter,
-                onTap: () => Navigator.of(context)
-                    .push(ComingSoonPage.route(l10n.accountRowHelpCenter)),
+                onTap: () => Navigator.of(
+                  context,
+                ).push(ComingSoonPage.route(l10n.accountRowHelpCenter)),
               ),
               AccountTile(
                 icon: Icons.mail_outline_rounded,
                 iconColor: const Color(0xFF5B6774),
                 iconBackground: const Color(0xFFEDF0F3),
                 label: l10n.accountRowContact,
-                onTap: () => Navigator.of(context)
-                    .push(ComingSoonPage.route(l10n.accountRowContact)),
+                onTap: () => Navigator.of(
+                  context,
+                ).push(ComingSoonPage.route(l10n.accountRowContact)),
               ),
             ],
           ),
@@ -185,24 +195,22 @@ class AccountPage extends StatelessWidget {
                 iconColor: const Color(0xFF5B6774),
                 iconBackground: const Color(0xFFEDF0F3),
                 label: l10n.accountRowPrivacyPolicy,
-                onTap: () => Navigator.of(context)
-                    .push(ComingSoonPage.route(l10n.accountRowPrivacyPolicy)),
+                onTap: () =>
+                    Navigator.of(context).push(PrivacyPolicyPage.route()),
               ),
               AccountTile(
                 icon: Icons.description_outlined,
                 iconColor: const Color(0xFF5B6774),
                 iconBackground: const Color(0xFFEDF0F3),
                 label: l10n.accountRowTerms,
-                onTap: () => Navigator.of(context)
-                    .push(ComingSoonPage.route(l10n.accountRowTerms)),
+                onTap: () => Navigator.of(context).push(TermsPage.route()),
               ),
               AccountTile(
                 icon: Icons.privacy_tip_outlined,
                 iconColor: const Color(0xFF5B6774),
                 iconBackground: const Color(0xFFEDF0F3),
                 label: l10n.accountRowManageData,
-                onTap: () => Navigator.of(context)
-                    .push(ComingSoonPage.route(l10n.accountRowManageData)),
+                onTap: () => Navigator.of(context).push(ManageDataPage.route()),
               ),
             ],
           ),
@@ -212,7 +220,56 @@ class AccountPage extends StatelessWidget {
       ),
     );
   }
+
+  /// Déconnexion. En invité : dialogue d'avertissement (la session anonyme et
+  /// ses données ne seront plus accessibles), avec « créer un compte » mis en
+  /// avant comme alternative.
+  Future<void> _signOut(BuildContext context, {required bool isGuest}) async {
+    final bloc = context.read<AuthBloc>();
+    if (!isGuest) {
+      bloc.add(const AuthSignedOut());
+      return;
+    }
+    final l10n = AppLocalizations.of(context);
+    final action = await showDialog<_GuestLogoutAction>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.accountGuestLogoutTitle),
+        content: Text(l10n.accountGuestLogoutBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () =>
+                Navigator.of(dialogContext).pop(_GuestLogoutAction.signOut),
+            style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+            child: Text(l10n.accountGuestLogoutConfirm),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(
+              dialogContext,
+            ).pop(_GuestLogoutAction.createAccount),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.primary),
+            child: Text(l10n.accountGuestCtaButton),
+          ),
+        ],
+      ),
+    );
+    if (!context.mounted) return;
+    switch (action) {
+      case _GuestLogoutAction.createAccount:
+        Navigator.of(context).push(AuthPage.route());
+      case _GuestLogoutAction.signOut:
+        bloc.add(const AuthSignedOut());
+      case null:
+        break;
+    }
+  }
 }
+
+enum _GuestLogoutAction { signOut, createAccount }
 
 /// Numéro de version/build de l'app, affiché en bas de la page compte.
 class _VersionFooter extends StatelessWidget {
@@ -257,7 +314,9 @@ class _ProfileCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final displayName = isGuest
         ? l10n.accountGuestName
-        : (email != null && email!.contains('@') ? email!.split('@').first : l10n.navAccount);
+        : (email != null && email!.contains('@')
+              ? email!.split('@').first
+              : l10n.navAccount);
     final initial = (!isGuest && email != null && email!.isNotEmpty)
         ? email!.substring(0, 1).toUpperCase()
         : null;
@@ -300,7 +359,10 @@ class _ProfileCard extends StatelessWidget {
                   isGuest ? l10n.accountGuestSubtitle : (email ?? ''),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textMuted,
+                  ),
                 ),
               ],
             ),
@@ -346,7 +408,10 @@ class _Avatar extends StatelessWidget {
           shape: BoxShape.circle,
           border: Border.all(color: const Color(0xFFC9C3B4), width: 2),
         ),
-        child: const Icon(Icons.person_outline_rounded, color: Color(0xFFA79F8B)),
+        child: const Icon(
+          Icons.person_outline_rounded,
+          color: Color(0xFFA79F8B),
+        ),
       );
     }
     return Container(
@@ -374,8 +439,10 @@ class _Avatar extends StatelessWidget {
   }
 }
 
-class _GuestReminder extends StatelessWidget {
-  const _GuestReminder({required this.onCreateAccount});
+/// Carte permanente d'invitation à créer un compte (mode invité) : titre,
+/// sous-titre et un unique bouton « Créer ton compte ».
+class _GuestCta extends StatelessWidget {
+  const _GuestCta({required this.onCreateAccount});
 
   final VoidCallback onCreateAccount;
 
@@ -389,39 +456,30 @@ class _GuestReminder extends StatelessWidget {
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFFFF6F61), Color(0xFFF0574A)],
+          colors: [AppColors.primary, Color(0xFF5C7A4C)],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFFFF6F61).withValues(alpha: 0.5),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-        ],
+        boxShadow: AppShadows.glow(const Color(0xFF5C7A4C)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              const Icon(Icons.access_time_rounded, color: Colors.white, size: 18),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  l10n.accountReminderTitle,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                    fontSize: 14.5,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
           Text(
-            l10n.accountReminderBody,
-            style: const TextStyle(color: Colors.white, fontSize: 13.5, height: 1.45),
+            l10n.accountGuestCtaTitle,
+            style: const TextStyle(
+              fontFamily: AppFonts.display,
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            l10n.accountGuestCtaBody,
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.88),
+              fontSize: 13.5,
+              height: 1.45,
+            ),
           ),
           const SizedBox(height: 12),
           SizedBox(
@@ -431,14 +489,17 @@ class _GuestReminder extends StatelessWidget {
               onPressed: onCreateAccount,
               style: FilledButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: const Color(0xFFF0574A),
+                foregroundColor: const Color(0xFF4E683F),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(13),
                 ),
               ),
               child: Text(
-                l10n.accountReminderCta,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                l10n.accountGuestCtaButton,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 15,
+                ),
               ),
             ),
           ),

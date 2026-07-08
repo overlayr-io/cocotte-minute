@@ -6,6 +6,8 @@ import 'package:supabase_flutter/supabase_flutter.dart' show OAuthProvider;
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../account/presentation/pages/privacy_policy_page.dart';
+import '../../../account/presentation/pages/terms_page.dart';
 import '../../data/auth_repository.dart';
 import '../bloc/auth_form_bloc.dart';
 import '../widgets/auth_text_field.dart';
@@ -207,9 +209,19 @@ class _AuthViewState extends State<_AuthView> {
                   ),
                 ],
                 const SizedBox(height: 18),
-                Center(child: _SwitchModeLink(isCreate: _isCreate, onTap: _toggleMode)),
+                Center(
+                  child: _SwitchModeLink(
+                    isCreate: _isCreate,
+                    onTap: _toggleMode,
+                  ),
+                ),
                 const SizedBox(height: 16),
-                const LegalNotice(),
+                LegalNotice(
+                  onTapTerms: () =>
+                      Navigator.of(context).push(TermsPage.route()),
+                  onTapPrivacy: () =>
+                      Navigator.of(context).push(PrivacyPolicyPage.route()),
+                ),
               ],
             ),
           ),
@@ -254,10 +266,7 @@ class _AppIconPlaceholder extends StatelessWidget {
         ),
       ),
       clipBehavior: Clip.antiAlias,
-      child: Image.asset(
-        'assets/branding/app_icon.png',
-        fit: BoxFit.cover,
-      ),
+      child: Image.asset('assets/branding/app_icon.png', fit: BoxFit.cover),
     );
   }
 }
@@ -354,7 +363,9 @@ class _SwitchModeLink extends StatelessWidget {
                   : '${l10n.authNoAccountYet} ',
             ),
             TextSpan(
-              text: isCreate ? l10n.authSwitchToSignIn : l10n.authSwitchToCreate,
+              text: isCreate
+                  ? l10n.authSwitchToSignIn
+                  : l10n.authSwitchToCreate,
               style: const TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.w700,

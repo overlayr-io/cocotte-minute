@@ -26,7 +26,9 @@ class CancelDeletionBanner extends StatelessWidget {
           case AccountStatusCancelSuccess():
             messenger
               ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(l10n.cancelDeletionSuccess)));
+              ..showSnackBar(
+                SnackBar(content: Text(l10n.cancelDeletionSuccess)),
+              );
           case AccountStatusCancelFailure(:final message):
             messenger
               ..hideCurrentSnackBar()
@@ -87,8 +89,11 @@ class _BannerCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.warning_amber_rounded,
-                  color: Color(0xFFE0554A), size: 20),
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: Color(0xFFE0554A),
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -120,8 +125,9 @@ class _BannerCard extends StatelessWidget {
               style: FilledButton.styleFrom(
                 backgroundColor: const Color(0xFFE0554A),
                 foregroundColor: Colors.white,
-                disabledBackgroundColor:
-                    const Color(0xFFE0554A).withValues(alpha: 0.6),
+                disabledBackgroundColor: const Color(
+                  0xFFE0554A,
+                ).withValues(alpha: 0.6),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(13),
                 ),
