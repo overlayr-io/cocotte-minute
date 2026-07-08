@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../../core/auth/auth_bloc.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
@@ -200,8 +201,32 @@ class AccountPage extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 20),
+          const _VersionFooter(),
         ],
       ),
+    );
+  }
+}
+
+/// Numéro de version/build de l'app, affiché en bas de la page compte.
+class _VersionFooter extends StatelessWidget {
+  const _VersionFooter();
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<PackageInfo>(
+      future: PackageInfo.fromPlatform(),
+      builder: (context, snapshot) {
+        final info = snapshot.data;
+        if (info == null) return const SizedBox.shrink();
+        return Center(
+          child: Text(
+            'Cocotte Minute · v${info.version} (${info.buildNumber})',
+            style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+          ),
+        );
+      },
     );
   }
 }
