@@ -66,6 +66,8 @@ RecipePlayerCubit _buildCubit({String recipeId = 'r1'}) {
 Future<void> _pumpApp(WidgetTester tester, RecipePlayerCubit cubit) async {
   await tester.pumpWidget(
     MaterialApp(
+      // Locale figée : les assertions ciblent les textes FR.
+      locale: const Locale('fr'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
       home: Scaffold(
