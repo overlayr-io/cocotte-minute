@@ -1,9 +1,15 @@
+import { setDefaultResultOrder } from 'node:dns';
+
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { Logger } from 'nestjs-pino';
 
 import { AppModule } from './app.module';
+
+// Render (plan gratuit) n'a pas de sortie réseau IPv6 : sans ce réglage, Node résout
+// les hosts Postgres/Supabase en IPv6 en priorité et échoue avec ENETUNREACH.
+setDefaultResultOrder('ipv4first');
 
 async function bootstrap(): Promise<void> {
   // bufferLogs: on retient les logs de bootstrap jusqu'à ce que pino prenne le relais.
