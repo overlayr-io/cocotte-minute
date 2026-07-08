@@ -24,14 +24,19 @@ class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final authState = context.watch<AuthBloc>().state;
-    final isGuest = authState is AuthAuthenticated && authState.isAnonymous;
-    final email = authState is AuthAuthenticated ? authState.user.email : null;
+    // select : ne reconstruit la page que si ces trois valeurs changent,
+    // pas à chaque émission de l'AuthBloc (refresh de session, etc.).
+    final (isGuest, email, createdAtRaw) =
+        context.select<AuthBloc, (bool, String?, String?)>((bloc) {
+      final s = bloc.state;
+      return s is AuthAuthenticated
+          ? (s.isAnonymous, s.user.email, s.user.createdAt)
+          : (false, null, null);
+    });
     // Rappel J+14 : basé sur la date de création du compte anonyme
     // (`currentUser.createdAt`), jamais sur un stockage local séparé.
-    final createdAt = authState is AuthAuthenticated
-        ? DateTime.tryParse(authState.user.createdAt)
-        : null;
+    final createdAt =
+        createdAtRaw != null ? DateTime.tryParse(createdAtRaw) : null;
     final showReminder = isGuest &&
         createdAt != null &&
         DateTime.now().difference(createdAt) >= const Duration(days: 14);

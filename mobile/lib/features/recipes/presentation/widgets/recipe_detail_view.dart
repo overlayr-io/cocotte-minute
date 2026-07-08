@@ -47,6 +47,15 @@ class RecipeDetailView extends StatelessWidget {
             ..showSnackBar(SnackBar(content: Text(state.message!)));
         }
       },
+      // message/deleted sont l'affaire du listener : ne pas reconstruire toute
+      // la fiche (photo héro comprise) pour un simple snackbar.
+      buildWhen: (previous, current) {
+        if (previous is RecipeDetailLoaded && current is RecipeDetailLoaded) {
+          return previous.detail != current.detail ||
+              previous.busy != current.busy;
+        }
+        return true;
+      },
       builder: (context, state) {
         return switch (state) {
           RecipeDetailError(:final message) => Scaffold(
