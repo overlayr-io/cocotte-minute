@@ -9,6 +9,7 @@ import { validateEnv } from './config/env.validation';
 import { DbModule } from './db/db.module';
 import { AccountModule } from './modules/account/account.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { DiscoveryModule } from './modules/discovery/discovery.module';
 import { HealthModule } from './modules/health/health.module';
 import { HelpModule } from './modules/help/help.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
@@ -76,6 +77,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     CategoriesModule,
     RecipesModule,
     SearchModule,
+    DiscoveryModule,
     ShoppingListsModule,
     AccountModule,
     HelpModule,
