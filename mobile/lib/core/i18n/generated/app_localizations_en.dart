@@ -1330,6 +1330,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeFeaturedHint => 'Swipe';
 
   @override
+  String get homeHeroBadge => 'Featured';
+
+  @override
+  String get homeSeasonBadge => 'In season';
+
+  @override
+  String get homeSeeAll => 'See all';
+
+  @override
+  String homeRowSeasonalIn(String month) {
+    return 'In season in $month';
+  }
+
+  @override
+  String get homeRowQuick => 'Ready in 30 min';
+
+  @override
+  String get homeRowRecent => 'Recently added';
+
+  @override
+  String homeRowPerson(String name) {
+    return 'For $name';
+  }
+
+  @override
+  String get homeRowBase => 'Your base recipes';
+
+  @override
+  String get homeRowLarge => 'For a crowd';
+
+  @override
+  String get homeRowSolo => 'Solo or for two';
+
+  @override
   String get homeEmptyTitle => 'Nothing to cook… yet';
 
   @override

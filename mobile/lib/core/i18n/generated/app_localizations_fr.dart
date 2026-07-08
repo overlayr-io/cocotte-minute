@@ -1337,6 +1337,40 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeFeaturedHint => 'Glisse';
 
   @override
+  String get homeHeroBadge => 'À la une';
+
+  @override
+  String get homeSeasonBadge => 'De saison';
+
+  @override
+  String get homeSeeAll => 'Tout voir';
+
+  @override
+  String homeRowSeasonalIn(String month) {
+    return 'De saison en $month';
+  }
+
+  @override
+  String get homeRowQuick => 'Prêt en 30 min';
+
+  @override
+  String get homeRowRecent => 'Récemment ajoutées';
+
+  @override
+  String homeRowPerson(String name) {
+    return 'Pour $name';
+  }
+
+  @override
+  String get homeRowBase => 'Tes recettes de base';
+
+  @override
+  String get homeRowLarge => 'Pour la tablée';
+
+  @override
+  String get homeRowSolo => 'En solo ou à deux';
+
+  @override
   String get homeEmptyTitle => 'Rien à cuisiner… pour l\'instant';
 
   @override

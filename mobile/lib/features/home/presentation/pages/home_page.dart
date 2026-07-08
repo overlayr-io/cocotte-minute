@@ -8,20 +8,20 @@ import '../../../../core/widgets/app_network_image.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../categories/data/categories_repository.dart';
 import '../../../categories/domain/category.dart';
-import '../../../recipes/data/recipes_repository.dart';
 import '../../../recipes/domain/recipe.dart';
 import '../../../recipes/presentation/pages/recipe_create_page.dart';
 import '../../../recipes/presentation/pages/recipe_detail_page.dart';
 import '../../../search/presentation/pages/search_page.dart';
+import '../../data/discovery_repository.dart';
 import '../bloc/home_cubit.dart';
 
 /// Couleurs du bandeau crème de l'en-tête (maquette 1b/2a).
 const Color _kCreamTop = Color(0xFFEAE1C8);
 const Color _kCreamBottom = Color(0xFFEFE8D4);
 
-/// Onglet « Accueil » : salutation, recherche + chips catégories (qui se collent
-/// en haut au scroll), suggestion du jour et carrousel « Mises en avant ».
-/// Composé à partir des recettes et catégories du compte — aucun endpoint dédié.
+/// Onglet « Accueil » = flux Découverte : salutation, recherche + chips dossiers
+/// (collants au scroll), hero « à la une » puis rangées éditoriales (de saison,
+/// prêt en 30 min, récentes, par personne, recettes de base, portions).
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => HomeCubit(
-        recipesRepository: sl<RecipesRepository>(),
+        discoveryRepository: sl<DiscoveryRepository>(),
         categoriesRepository: sl<CategoriesRepository>(),
       )..load(),
       child: const _HomeView(),
@@ -94,14 +94,12 @@ class _HomeView extends StatelessWidget {
   Widget _content(BuildContext context, HomeLoaded state, AppLocalizations l10n) {
     return CustomScrollView(
       slivers: [
-        // Salutation : défile et laisse place au header collant.
         SliverToBoxAdapter(
           child: ColoredBox(
             color: _kCreamTop,
             child: _Greeting(l10n: l10n),
           ),
         ),
-        // Recherche + chips catégories : se collent en haut (fond crème inclus).
         SliverPersistentHeader(
           pinned: true,
           delegate: _StickyHeader(
@@ -109,41 +107,302 @@ class _HomeView extends StatelessWidget {
             child: _SearchAndChips(
               categories: state.categories,
               l10n: l10n,
-              onSearchTap: () =>
-                  Navigator.of(context).push(SearchPage.route()),
+              onSearchTap: () => Navigator.of(context).push(SearchPage.route()),
               onCategoryTap: (category) => Navigator.of(context)
                   .push(SearchPage.route(initialFolder: category)),
             ),
           ),
         ),
-        // Corps sur fond clair.
         SliverToBoxAdapter(
           child: Container(
             color: AppColors.surface,
             padding: const EdgeInsets.only(bottom: 150),
             child: state.isEmpty
                 ? _EmptyBody(l10n: l10n, onCreate: () => _create(context))
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (state.suggestion != null)
-                        _SuggestionSection(
-                          recipe: state.suggestion!,
-                          l10n: l10n,
-                          onTap: () =>
-                              _openRecipe(context, state.suggestion!.id),
-                        ),
-                      if (state.featured.length > 1)
-                        _FeaturedSection(
-                          recipes: state.featured,
-                          l10n: l10n,
-                          onTapRecipe: (id) => _openRecipe(context, id),
-                        ),
-                    ],
+                : _DiscoveryBody(
+                    state: state,
+                    l10n: l10n,
+                    onOpenRecipe: (id) => _openRecipe(context, id),
+                    onSeeAll: () =>
+                        Navigator.of(context).push(SearchPage.route()),
                   ),
           ),
         ),
       ],
+    );
+  }
+}
+
+// --- corps Découverte --------------------------------------------------------
+
+class _DiscoveryBody extends StatelessWidget {
+  const _DiscoveryBody({
+    required this.state,
+    required this.l10n,
+    required this.onOpenRecipe,
+    required this.onSeeAll,
+  });
+
+  final HomeLoaded state;
+  final AppLocalizations l10n;
+  final ValueChanged<String> onOpenRecipe;
+  final VoidCallback onSeeAll;
+
+  static const _monthsFr = [
+    'janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août',
+    'septembre', 'octobre', 'novembre', 'décembre',
+  ];
+  static const _monthsEn = [
+    'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December',
+  ];
+
+  String _monthName(BuildContext context) {
+    final index = (state.month - 1).clamp(0, 11);
+    final isFrench = Localizations.localeOf(context).languageCode == 'fr';
+    return (isFrench ? _monthsFr : _monthsEn)[index];
+  }
+
+  String _title(DiscoverySection s, String monthName) {
+    return switch (s.kind) {
+      DiscoverySectionKind.seasonal => l10n.homeRowSeasonalIn(monthName),
+      DiscoverySectionKind.quick => l10n.homeRowQuick,
+      DiscoverySectionKind.recent => l10n.homeRowRecent,
+      DiscoverySectionKind.person => l10n.homeRowPerson(s.personName ?? ''),
+      DiscoverySectionKind.base => l10n.homeRowBase,
+      DiscoverySectionKind.large => l10n.homeRowLarge,
+      DiscoverySectionKind.solo => l10n.homeRowSolo,
+    };
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final hero = state.hero!;
+    final monthName = _monthName(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
+          child: _RecipePoster(
+            recipe: hero,
+            l10n: l10n,
+            height: 210,
+            accentBadge: l10n.homeHeroBadge,
+            lightBadge: state.heroSeasonal ? l10n.homeSeasonBadge : null,
+            onTap: () => onOpenRecipe(hero.id),
+          ),
+        ),
+        for (final section in state.sections)
+          _DiscoveryRow(
+            title: _title(section, monthName),
+            avatarUrl:
+                section.kind == DiscoverySectionKind.person ? section.avatarUrl : null,
+            initial: section.kind == DiscoverySectionKind.person
+                ? (section.personName ?? '?')
+                : null,
+            recipes: section.recipes,
+            l10n: l10n,
+            seeAllLabel: l10n.homeSeeAll,
+            onSeeAll: onSeeAll,
+            onTapRecipe: onOpenRecipe,
+          ),
+      ],
+    );
+  }
+}
+
+class _DiscoveryRow extends StatelessWidget {
+  const _DiscoveryRow({
+    required this.title,
+    required this.recipes,
+    required this.l10n,
+    required this.seeAllLabel,
+    required this.onSeeAll,
+    required this.onTapRecipe,
+    this.avatarUrl,
+    this.initial,
+  });
+
+  final String title;
+  final List<RecipeSummary> recipes;
+  final AppLocalizations l10n;
+  final String seeAllLabel;
+  final VoidCallback onSeeAll;
+  final ValueChanged<String> onTapRecipe;
+  final String? avatarUrl;
+  final String? initial;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 22),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                if (avatarUrl != null || initial != null) ...[
+                  _RowAvatar(url: avatarUrl, initial: initial ?? '?'),
+                  const SizedBox(width: 9),
+                ],
+                Expanded(child: _SectionTitle(title: title)),
+                GestureDetector(
+                  onTap: onSeeAll,
+                  behavior: HitTestBehavior.opaque,
+                  child: Text(
+                    seeAllLabel,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textMuted,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 13),
+          SizedBox(
+            height: 156,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              itemCount: recipes.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 14),
+              itemBuilder: (context, i) => _LandscapeCard(
+                recipe: recipes[i],
+                l10n: l10n,
+                onTap: () => onTapRecipe(recipes[i].id),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _RowAvatar extends StatelessWidget {
+  const _RowAvatar({required this.url, required this.initial});
+
+  final String? url;
+  final String initial;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 26,
+      height: 26,
+      clipBehavior: Clip.antiAlias,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF8FAE7C), AppColors.primary],
+        ),
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: url != null
+          ? AppNetworkImage(url!, decodeWidth: 52)
+          : Text(
+              initial.isNotEmpty ? initial.substring(0, 1).toUpperCase() : '?',
+              style: const TextStyle(
+                fontFamily: AppFonts.display,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+                color: Colors.white,
+              ),
+            ),
+    );
+  }
+}
+
+/// Carte paysage d'une rangée Découverte (216×156, style Netflix).
+class _LandscapeCard extends StatelessWidget {
+  const _LandscapeCard({
+    required this.recipe,
+    required this.l10n,
+    required this.onTap,
+  });
+
+  final RecipeSummary recipe;
+  final AppLocalizations l10n;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: SizedBox(
+        width: 216,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(22),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (recipe.photoUrl != null)
+                AppNetworkImage(recipe.photoUrl!, decodeWidth: 216)
+              else
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: recipe.isBase
+                          ? const [Color(0xFF7D9C6A), Color(0xFF5E7F4F)]
+                          : const [Color(0xFFC6957F), Color(0xFF9C5A44)],
+                    ),
+                  ),
+                ),
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0x00000000), Color(0xC71F2933)],
+                    stops: [0.38, 1],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 14,
+                right: 14,
+                bottom: 12,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      recipe.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontFamily: AppFonts.display,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 17,
+                        letterSpacing: -0.01,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '${l10n.recipeServingsShort(recipe.servings)}  ·  ${l10n.recipePrepShort(recipe.prepTime)}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -272,10 +531,6 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Même gabarit que le vrai champ de l'écran de recherche (SearchField) :
-    // rayon, bordure, ombre, tailles d'icônes et teinte du hint identiques,
-    // pour que le fondu vers la recherche se lise comme un simple changement
-    // de mode. L'icône filtre est sur fond transparent.
     return Material(
       color: Colors.white,
       borderRadius: BorderRadius.circular(17),
@@ -407,176 +662,23 @@ class _StickyHeader extends SliverPersistentHeaderDelegate {
       oldDelegate.child != child || oldDelegate.extent != extent;
 }
 
-// --- suggestion --------------------------------------------------------------
-
-class _SuggestionSection extends StatelessWidget {
-  const _SuggestionSection({
-    required this.recipe,
-    required this.l10n,
-    required this.onTap,
-  });
-
-  final RecipeSummary recipe;
-  final AppLocalizations l10n;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 22, 20, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _SectionTitle(title: l10n.homeSuggestionTitle),
-          const SizedBox(height: 13),
-          _RecipePoster(
-            recipe: recipe,
-            l10n: l10n,
-            height: 220,
-            badge: l10n.homeSuggestionBadge,
-            onTap: onTap,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// --- carrousel ---------------------------------------------------------------
-
-class _FeaturedSection extends StatefulWidget {
-  const _FeaturedSection({
-    required this.recipes,
-    required this.l10n,
-    required this.onTapRecipe,
-  });
-
-  final List<RecipeSummary> recipes;
-  final AppLocalizations l10n;
-  final ValueChanged<String> onTapRecipe;
-
-  @override
-  State<_FeaturedSection> createState() => _FeaturedSectionState();
-}
-
-class _FeaturedSectionState extends State<_FeaturedSection> {
-  late final PageController _controller;
-  int _page = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = PageController(viewportFraction: 0.86);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final recipes = widget.recipes;
-    return Padding(
-      padding: const EdgeInsets.only(top: 22),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _SectionTitle(title: widget.l10n.homeFeaturedTitle),
-                Row(
-                  children: [
-                    Text(
-                      widget.l10n.homeFeaturedHint,
-                      style: const TextStyle(fontSize: 13, color: AppColors.textMuted),
-                    ),
-                    const Icon(Icons.chevron_right_rounded,
-                        size: 18, color: AppColors.textMuted),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 13),
-          SizedBox(
-            height: 220,
-            // Inset gauche 20px ; les cartes « peek » à droite (viewportFraction).
-            child: Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: PageView.builder(
-                controller: _controller,
-                padEnds: false,
-                onPageChanged: (i) => setState(() => _page = i),
-                itemCount: recipes.length,
-                itemBuilder: (context, i) => Padding(
-                  padding: const EdgeInsets.only(right: 14),
-                  child: _RecipePoster(
-                    recipe: recipes[i],
-                    l10n: widget.l10n,
-                    height: 220,
-                    onTap: () => widget.onTapRecipe(recipes[i].id),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 14),
-          _Dots(count: recipes.length, active: _page),
-        ],
-      ),
-    );
-  }
-}
-
-class _Dots extends StatelessWidget {
-  const _Dots({required this.count, required this.active});
-
-  final int count;
-  final int active;
-
-  @override
-  Widget build(BuildContext context) {
-    // Borne l'affichage à 6 points pour ne pas déborder sur beaucoup de recettes.
-    final shown = count > 6 ? 6 : count;
-    final activeDot = active >= shown ? shown - 1 : active;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        for (var i = 0; i < shown; i++)
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            width: i == activeDot ? 22 : 6,
-            height: 6,
-            decoration: BoxDecoration(
-              color: i == activeDot ? AppColors.primary : const Color(0xFFD6D2C7),
-              borderRadius: BorderRadius.circular(999),
-            ),
-          ),
-      ],
-    );
-  }
-}
-
-/// Carte poster d'une recette (suggestion + slides du carrousel) : photo ou
-/// dégradé de repli, dégradé sombre, badge optionnel, titre + temps/personnes.
+/// Carte poster (hero « à la une ») : photo ou dégradé de repli, dégradé sombre,
+/// badge accent + badge clair optionnels, titre + temps/personnes.
 class _RecipePoster extends StatelessWidget {
   const _RecipePoster({
     required this.recipe,
     required this.l10n,
     required this.height,
     required this.onTap,
-    this.badge,
+    this.accentBadge,
+    this.lightBadge,
   });
 
   final RecipeSummary recipe;
   final AppLocalizations l10n;
   final double height;
-  final String? badge;
+  final String? accentBadge;
+  final String? lightBadge;
   final VoidCallback onTap;
 
   @override
@@ -585,14 +687,14 @@ class _RecipePoster extends StatelessWidget {
       onTap: onTap,
       child: SizedBox(
         height: height,
+        width: double.infinity,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(26),
           child: Stack(
             fit: StackFit.expand,
             children: [
               if (recipe.photoUrl != null)
-                // Poster de carrousel : ~86% de la largeur écran.
-                AppNetworkImage(recipe.photoUrl!, decodeWidth: 360)
+                AppNetworkImage(recipe.photoUrl!, decodeWidth: 720)
               else
                 DecoratedBox(
                   decoration: BoxDecoration(
@@ -610,26 +712,27 @@ class _RecipePoster extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [Color(0x00000000), Color(0xC71F2933)],
-                    stops: [0.36, 1],
+                    colors: [Color(0x00000000), Color(0xD11F2933)],
+                    stops: [0.30, 1],
                   ),
                 ),
               ),
-              if (badge != null)
+              if (accentBadge != null)
                 Positioned(
                   top: 14,
                   left: 14,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: AppColors.accent,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                    child: Text(
-                      badge!,
-                      style: const TextStyle(
-                          fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white),
-                    ),
+                  child: Row(
+                    children: [
+                      _Badge(text: accentBadge!, color: AppColors.accent, textColor: Colors.white),
+                      if (lightBadge != null) ...[
+                        const SizedBox(width: 7),
+                        _Badge(
+                          text: lightBadge!,
+                          color: Colors.white.withValues(alpha: 0.92),
+                          textColor: AppColors.textPrimary,
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               Positioned(
@@ -641,13 +744,13 @@ class _RecipePoster extends StatelessWidget {
                   children: [
                     Text(
                       recipe.name,
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontFamily: AppFonts.display,
                         fontWeight: FontWeight.w700,
-                        fontSize: 21,
-                        letterSpacing: -0.01,
+                        fontSize: 22,
+                        letterSpacing: -0.4,
                         color: Colors.white,
                       ),
                     ),
@@ -671,6 +774,29 @@ class _RecipePoster extends StatelessWidget {
   }
 }
 
+class _Badge extends StatelessWidget {
+  const _Badge({required this.text, required this.color, required this.textColor});
+
+  final String text;
+  final Color color;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 5),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: textColor),
+      ),
+    );
+  }
+}
+
 // --- divers ------------------------------------------------------------------
 
 class _SectionTitle extends StatelessWidget {
@@ -682,6 +808,8 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
       style: const TextStyle(
         fontFamily: AppFonts.display,
         fontWeight: FontWeight.w700,

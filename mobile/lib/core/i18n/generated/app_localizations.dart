@@ -2378,6 +2378,66 @@ abstract class AppLocalizations {
   /// **'Glisse'**
   String get homeFeaturedHint;
 
+  /// Badge de la recette hero de l'accueil Découverte
+  ///
+  /// In fr, this message translates to:
+  /// **'À la une'**
+  String get homeHeroBadge;
+
+  /// No description provided for @homeSeasonBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'De saison'**
+  String get homeSeasonBadge;
+
+  /// No description provided for @homeSeeAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout voir'**
+  String get homeSeeAll;
+
+  /// No description provided for @homeRowSeasonalIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'De saison en {month}'**
+  String homeRowSeasonalIn(String month);
+
+  /// No description provided for @homeRowQuick.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prêt en 30 min'**
+  String get homeRowQuick;
+
+  /// No description provided for @homeRowRecent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récemment ajoutées'**
+  String get homeRowRecent;
+
+  /// No description provided for @homeRowPerson.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour {name}'**
+  String homeRowPerson(String name);
+
+  /// No description provided for @homeRowBase.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tes recettes de base'**
+  String get homeRowBase;
+
+  /// No description provided for @homeRowLarge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour la tablée'**
+  String get homeRowLarge;
+
+  /// No description provided for @homeRowSolo.
+  ///
+  /// In fr, this message translates to:
+  /// **'En solo ou à deux'**
+  String get homeRowSolo;
+
   /// No description provided for @homeEmptyTitle.
   ///
   /// In fr, this message translates to:
