@@ -15,10 +15,12 @@ import '../bloc/recipe_detail_cubit.dart';
 import '../pages/recipe_detail_page.dart';
 import 'add_ingredients_sheet.dart';
 import 'base_recipe_picker_sheet.dart';
+import 'category_assign_sheet.dart';
 import 'quantity_stepper.dart';
 import 'recipe_edit_sheet.dart';
-import 'recipe_organization_section.dart';
+import 'person_assign_sheet.dart';
 import 'share_recipe_sheet.dart';
+import 'tag_assign_sheet.dart';
 import 'steps_content.dart';
 
 const double _kHeroHeight = 300;
@@ -219,6 +221,29 @@ class _Loaded extends StatelessWidget {
           icon: Icons.ios_share_rounded,
           label: l10n.shareRecipeAction,
           onSelected: () => showShareRecipeSheet(menuContext, detail),
+        ),
+        ActionMenuItem(
+          icon: Icons.folder_outlined,
+          label: l10n.recipeMenuAssignFolders,
+          dividerBefore: true,
+          onSelected: () => showCategoryAssignSheet(
+            menuContext,
+            cubit: menuContext.read<RecipeDetailCubit>(),
+          ),
+        ),
+        ActionMenuItem(
+          icon: Icons.sell_outlined,
+          label: l10n.recipeMenuAssignTags,
+          onSelected: () => showTagAssignSheet(
+            menuContext,
+            cubit: menuContext.read<RecipeDetailCubit>(),
+          ),
+        ),
+        ActionMenuItem(
+          icon: Icons.person_add_alt_outlined,
+          label: l10n.recipeMenuAssignPerson,
+          onSelected: () =>
+              showPersonAssignSheet(menuContext, recipeId: detail.id),
         ),
         ActionMenuItem(
           icon: Icons.delete_outline_rounded,
@@ -452,8 +477,6 @@ class _SheetState extends State<_Sheet> {
                   fontSize: 14, height: 1.55, color: AppColors.textSecondary),
             ),
           ],
-          const SizedBox(height: 18),
-          RecipeOrganizationSection(detail: detail),
           const SizedBox(height: 18),
           if (_tab == 0) ...[
             _PortionsCard(

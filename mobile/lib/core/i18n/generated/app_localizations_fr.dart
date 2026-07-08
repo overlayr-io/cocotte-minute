@@ -936,6 +936,26 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucune recette sans dossier. Tout est bien rangé !';
 
   @override
+  String get recipeMenuAssignFolders => 'Associer des dossiers';
+
+  @override
+  String get recipeMenuAssignTags => 'Associer des tags';
+
+  @override
+  String get recipeMenuAssignPerson => 'Associer une personne';
+
+  @override
+  String get recipePeopleSheetTitle => 'Associer une personne';
+
+  @override
+  String get recipePeopleSheetSubtitle =>
+      'Sélectionne les personnes pour qui cette recette est pensée.';
+
+  @override
+  String get recipePeopleSheetEmpty =>
+      'Aucune personne pour l\'instant. Ajoute des membres de ta famille depuis l\'onglet Compte.';
+
+  @override
   String get recipesTitle => 'Recettes';
 
   @override

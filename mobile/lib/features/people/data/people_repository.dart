@@ -122,6 +122,33 @@ class PeopleRepository {
     }
   }
 
+  /// Associe une recette (« ses recettes ») et retourne la personne à jour.
+  Future<Person> addRecipe(String personId, String recipeId) async {
+    try {
+      final res = await _dio.post<Map<String, dynamic>>(
+        '/people/$personId/recipes',
+        data: {'recipeId': recipeId},
+      );
+      await _cache.clear();
+      return Person.fromJson(res.data!);
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'associer la recette.');
+    }
+  }
+
+  /// Retire l'association d'une recette et retourne la personne à jour.
+  Future<Person> removeRecipe(String personId, String recipeId) async {
+    try {
+      final res = await _dio.delete<Map<String, dynamic>>(
+        '/people/$personId/recipes/$recipeId',
+      );
+      await _cache.clear();
+      return Person.fromJson(res.data!);
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de retirer la recette.');
+    }
+  }
+
   PeopleRepositoryException _mapError(DioException e, String fallback) {
     const connectivityErrors = {
       DioExceptionType.connectionError,

@@ -930,6 +930,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'No recipes without a folder. Everything is tidy!';
 
   @override
+  String get recipeMenuAssignFolders => 'Assign folders';
+
+  @override
+  String get recipeMenuAssignTags => 'Assign tags';
+
+  @override
+  String get recipeMenuAssignPerson => 'Assign a person';
+
+  @override
+  String get recipePeopleSheetTitle => 'Assign a person';
+
+  @override
+  String get recipePeopleSheetSubtitle =>
+      'Select the people this recipe is meant for.';
+
+  @override
+  String get recipePeopleSheetEmpty =>
+      'No people yet. Add family members from the Account tab.';
+
+  @override
   String get recipesTitle => 'Recipes';
 
   @override

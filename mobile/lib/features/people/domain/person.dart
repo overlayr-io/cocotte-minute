@@ -11,6 +11,7 @@ class Person extends Equatable {
     this.lastName,
     this.avatarUrl,
     this.tags = const [],
+    this.recipeIds = const [],
   });
 
   final String id;
@@ -18,6 +19,9 @@ class Person extends Equatable {
   final String? lastName;
   final String? avatarUrl;
   final List<Tag> tags;
+
+  /// Recettes associées directement (« ses recettes »).
+  final List<String> recipeIds;
 
   /// Prénom + nom si le nom est renseigné, sinon le prénom seul.
   String get displayName =>
@@ -35,9 +39,12 @@ class Person extends Equatable {
           .cast<Map<String, dynamic>>()
           .map(Tag.fromJson)
           .toList(),
+      recipeIds: (json['recipeIds'] as List<dynamic>? ?? const [])
+          .cast<String>(),
     );
   }
 
   @override
-  List<Object?> get props => [id, firstName, lastName, avatarUrl, tags];
+  List<Object?> get props =>
+      [id, firstName, lastName, avatarUrl, tags, recipeIds];
 }

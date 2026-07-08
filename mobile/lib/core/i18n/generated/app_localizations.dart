@@ -1766,6 +1766,42 @@ abstract class AppLocalizations {
   /// **'Aucune recette sans dossier. Tout est bien rangé !'**
   String get recipesOtherFolderEmpty;
 
+  /// No description provided for @recipeMenuAssignFolders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer des dossiers'**
+  String get recipeMenuAssignFolders;
+
+  /// No description provided for @recipeMenuAssignTags.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer des tags'**
+  String get recipeMenuAssignTags;
+
+  /// No description provided for @recipeMenuAssignPerson.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer une personne'**
+  String get recipeMenuAssignPerson;
+
+  /// No description provided for @recipePeopleSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer une personne'**
+  String get recipePeopleSheetTitle;
+
+  /// No description provided for @recipePeopleSheetSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionne les personnes pour qui cette recette est pensée.'**
+  String get recipePeopleSheetSubtitle;
+
+  /// No description provided for @recipePeopleSheetEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune personne pour l\'instant. Ajoute des membres de ta famille depuis l\'onglet Compte.'**
+  String get recipePeopleSheetEmpty;
+
   /// No description provided for @recipesTitle.
   ///
   /// In fr, this message translates to:
