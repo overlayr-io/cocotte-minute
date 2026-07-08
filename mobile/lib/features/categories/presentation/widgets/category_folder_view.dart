@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../recipes/presentation/pages/recipe_detail_page.dart';
 import '../../../recipes/presentation/widgets/recipe_list_card.dart';
@@ -147,8 +148,7 @@ class CategoryFolderView extends StatelessWidget {
                 ),
               if (isLoaded && canAdd)
                 IconButton(
-                  onPressed: () =>
-                      _create(context, current?.id, all),
+                  onPressed: () => _create(context, current?.id, all),
                   icon: const Icon(Icons.add_rounded),
                   tooltip: l10n.categoryCreateTitle,
                 ),
@@ -157,13 +157,17 @@ class CategoryFolderView extends StatelessWidget {
           ),
           body: switch (state) {
             CategoriesListError(:final message) => ErrorView(
-                message: message,
-                onRetry: () => context
-                    .read<CategoriesListBloc>()
-                    .add(const CategoriesRequested()),
+              message: message,
+              onRetry: () => context.read<CategoriesListBloc>().add(
+                const CategoriesRequested(),
               ),
-            CategoriesListLoaded() =>
-              _buildContent(context, state, current, l10n),
+            ),
+            CategoriesListLoaded() => _buildContent(
+              context,
+              state,
+              current,
+              l10n,
+            ),
             _ => const Center(child: CircularProgressIndicator()),
           },
         );
@@ -205,8 +209,10 @@ class CategoryFolderView extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(2, 2, 2, 8),
                   child: Text(
                     categoryPath(current, state.categories),
-                    style:
-                        const TextStyle(fontSize: 12, color: Color(0xFFA79F8B)),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFFA79F8B),
+                    ),
                   ),
                 ),
                 if (current.isDefault)
@@ -280,52 +286,57 @@ class _CategoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.card,
-      borderRadius: BorderRadius.circular(15),
-      child: InkWell(
-        onTap: onTap,
+    return DecoratedBox(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              _Tile(icon: category.icon),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  category.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 15.5,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+        boxShadow: AppShadows.card,
+      ),
+      child: Material(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(15),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(15),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            child: Row(
+              children: [
+                _Tile(icon: category.icon),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    category.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 15.5,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ),
-              ),
-              if (category.isDefault) ...[
-                _DefaultBadge(label: l10n.categoryDefaultBadge),
-                const SizedBox(width: 10),
-              ],
-              if (category.recipeCount > 0) ...[
-                Text(
-                  l10n.categoriesRecipeCount(category.recipeCount),
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFFA79F8B),
+                if (category.isDefault) ...[
+                  _DefaultBadge(label: l10n.categoryDefaultBadge),
+                  const SizedBox(width: 10),
+                ],
+                if (category.recipeCount > 0) ...[
+                  Text(
+                    l10n.categoriesRecipeCount(category.recipeCount),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: Color(0xFFA79F8B),
+                    ),
                   ),
+                  const SizedBox(width: 10),
+                ],
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  size: 20,
+                  color: Color(0xFFCBC7BB),
                 ),
-                const SizedBox(width: 10),
               ],
-              const Icon(Icons.chevron_right_rounded,
-                  size: 20, color: Color(0xFFCBC7BB)),
-            ],
+            ),
           ),
         ),
       ),
@@ -350,7 +361,11 @@ class _Tile extends StatelessWidget {
       ),
       child: icon != null
           ? Text(icon!, style: const TextStyle(fontSize: 18))
-          : const Icon(Icons.folder_outlined, size: 18, color: AppColors.primary),
+          : const Icon(
+              Icons.folder_outlined,
+              size: 18,
+              color: AppColors.primary,
+            ),
     );
   }
 }
@@ -372,7 +387,11 @@ class _TitleIcon extends StatelessWidget {
       ),
       child: icon != null
           ? Text(icon!, style: const TextStyle(fontSize: 16))
-          : const Icon(Icons.folder_outlined, size: 16, color: AppColors.primary),
+          : const Icon(
+              Icons.folder_outlined,
+              size: 16,
+              color: AppColors.primary,
+            ),
     );
   }
 }
@@ -468,36 +487,39 @@ class _FolderRecipes extends StatelessWidget {
         builder: (context, state) {
           return switch (state) {
             FolderRecipesError(:final message) => SliverToBoxAdapter(
-                child: _RecipesNotice(
-                  message: message,
-                  actionLabel: l10n.commonRetry,
-                  onAction: () =>
-                      context.read<FolderRecipesCubit>().load(categoryId),
-                ),
+              child: _RecipesNotice(
+                message: message,
+                actionLabel: l10n.commonRetry,
+                onAction: () =>
+                    context.read<FolderRecipesCubit>().load(categoryId),
               ),
-            FolderRecipesLoaded(:final recipes) => recipes.isEmpty
-                ? SliverToBoxAdapter(
-                    child: _RecipesNotice(message: l10n.categoriesRecipesEmpty),
-                  )
-                : SliverList.builder(
-                    itemCount: recipes.length,
-                    itemBuilder: (context, index) {
-                      final r = recipes[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 9),
-                        child: RecipeListCard(
-                          recipe: r,
-                          onTap: () => _open(context, r.id),
-                        ),
-                      );
-                    },
-                  ),
+            ),
+            FolderRecipesLoaded(:final recipes) =>
+              recipes.isEmpty
+                  ? SliverToBoxAdapter(
+                      child: _RecipesNotice(
+                        message: l10n.categoriesRecipesEmpty,
+                      ),
+                    )
+                  : SliverList.builder(
+                      itemCount: recipes.length,
+                      itemBuilder: (context, index) {
+                        final r = recipes[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 9),
+                          child: RecipeListCard(
+                            recipe: r,
+                            onTap: () => _open(context, r.id),
+                          ),
+                        );
+                      },
+                    ),
             _ => const SliverToBoxAdapter(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Center(child: CircularProgressIndicator()),
-                ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Center(child: CircularProgressIndicator()),
               ),
+            ),
           };
         },
       ),

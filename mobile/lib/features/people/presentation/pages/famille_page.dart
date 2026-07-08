@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../tags/presentation/widgets/tag_colors.dart';
 import '../../data/people_repository.dart';
@@ -24,8 +25,9 @@ class FamillePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => PeopleListBloc(repository: sl<PeopleRepository>())
-        ..add(const PeopleRequested()),
+      create: (_) =>
+          PeopleListBloc(repository: sl<PeopleRepository>())
+            ..add(const PeopleRequested()),
       child: const _FamilleView(),
     );
   }
@@ -38,14 +40,16 @@ class _FamilleView extends StatelessWidget {
     final bloc = context.read<PeopleListBloc>();
     final draft = await showCreatePersonSheet(context);
     if (draft == null) return;
-    bloc.add(PersonCreated(firstName: draft.firstName, lastName: draft.lastName));
+    bloc.add(
+      PersonCreated(firstName: draft.firstName, lastName: draft.lastName),
+    );
   }
 
   Future<void> _edit(BuildContext context, Person person) async {
     final bloc = context.read<PeopleListBloc>();
-    final changed = await Navigator.of(context).push(
-      PersonEditPage.route(person),
-    );
+    final changed = await Navigator.of(
+      context,
+    ).push(PersonEditPage.route(person));
     if (changed == true) bloc.add(const PeopleRequested());
   }
 
@@ -151,59 +155,72 @@ class _PersonTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Material(
-      color: AppColors.card,
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        onTap: onTap,
+    return DecoratedBox(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              PersonAvatar(name: person.firstName, imageUrl: person.avatarUrl),
-              const SizedBox(width: 13),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      person.displayName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 15.5,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 5),
-                    if (person.tags.isEmpty)
-                      Text(
-                        l10n.personNoTags,
-                        style: const TextStyle(
-                          fontSize: 12.5,
-                          color: Color(0xFFB0AB9B),
-                        ),
-                      )
-                    else
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 6,
-                        children: [
-                          for (final tag in person.tags) _MiniChip(name: tag.name, color: TagColors.parse(tag.color)),
-                        ],
-                      ),
-                  ],
+        boxShadow: AppShadows.card,
+      ),
+      child: Material(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(18),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+            child: Row(
+              children: [
+                PersonAvatar(
+                  name: person.firstName,
+                  imageUrl: person.avatarUrl,
                 ),
-              ),
-              const SizedBox(width: 8),
-              const Icon(Icons.edit_outlined, size: 18, color: Color(0xFFCBC7BB)),
-            ],
+                const SizedBox(width: 13),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        person.displayName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 15.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 5),
+                      if (person.tags.isEmpty)
+                        Text(
+                          l10n.personNoTags,
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            color: Color(0xFFB0AB9B),
+                          ),
+                        )
+                      else
+                        Wrap(
+                          spacing: 6,
+                          runSpacing: 6,
+                          children: [
+                            for (final tag in person.tags)
+                              _MiniChip(
+                                name: tag.name,
+                                color: TagColors.parse(tag.color),
+                              ),
+                          ],
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                const Icon(
+                  Icons.edit_outlined,
+                  size: 18,
+                  color: Color(0xFFCBC7BB),
+                ),
+              ],
+            ),
           ),
         ),
       ),
