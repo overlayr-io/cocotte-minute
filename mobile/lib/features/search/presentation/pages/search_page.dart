@@ -26,9 +26,17 @@ class SearchPage extends StatelessWidget {
   /// Dossier pré-sélectionné (ex: depuis une chip catégorie de l'accueil).
   final Category? initialFolder;
 
+  /// Fondu (pas de glissement) : la barre de recherche étant identique à celle
+  /// de l'accueil, la transition doit se lire comme un « mode » de la même page.
   static Route<void> route({Category? initialFolder}) {
-    return MaterialPageRoute<void>(
-      builder: (_) => SearchPage(initialFolder: initialFolder),
+    return PageRouteBuilder<void>(
+      transitionDuration: const Duration(milliseconds: 220),
+      reverseTransitionDuration: const Duration(milliseconds: 180),
+      pageBuilder: (_, _, _) => SearchPage(initialFolder: initialFolder),
+      transitionsBuilder: (_, animation, _, child) => FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+        child: child,
+      ),
     );
   }
 
@@ -96,6 +104,20 @@ class _SearchView extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: SearchField(state: state),
         ),
+        // Requête en cours : fine barre de progression sous le champ, les
+        // résultats précédents restent affichés (estompés) — pas d'écran plein.
+        if (state.resultsStatus == SearchStatus.loading)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(3),
+              child: LinearProgressIndicator(
+                minHeight: 3,
+                color: AppColors.primary,
+                backgroundColor: AppColors.primary.withValues(alpha: 0.18),
+              ),
+            ),
+          ),
         if (showTriggers)
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
@@ -113,16 +135,20 @@ class _SearchView extends StatelessWidget {
         child: SearchMenu(state: state),
       );
     }
-    if (state.resultsStatus == SearchStatus.loading) {
-      return const Center(child: CircularProgressIndicator());
+    final loading = state.resultsStatus == SearchStatus.loading;
+    if (state.results.isNotEmpty) {
+      // Pendant une nouvelle requête, on garde la liste visible mais estompée
+      // pour ne pas perdre le fil ; la barre de progression signale l'activité.
+      return Opacity(
+        opacity: loading ? 0.45 : 1,
+        child: _Results(state: state, l10n: l10n),
+      );
     }
+    if (loading) return const SizedBox.shrink();
     if (!state.isIdle &&
         state.resultsStatus == SearchStatus.success &&
         state.results.isEmpty) {
       return const _EmptyResults();
-    }
-    if (state.results.isNotEmpty) {
-      return _Results(state: state, l10n: l10n);
     }
     return _IdleHint(l10n: l10n);
   }
