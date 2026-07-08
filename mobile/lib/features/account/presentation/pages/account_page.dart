@@ -10,6 +10,8 @@ import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/widgets/coming_soon_page.dart';
 import '../../../auth/presentation/pages/auth_page.dart';
 import '../../../categories/presentation/pages/categories_page.dart';
+import '../../../help/presentation/pages/contact_page.dart';
+import '../../../help/presentation/pages/help_center_page.dart';
 import '../../../ingredients/presentation/pages/ingredients_page.dart';
 import '../../../people/presentation/pages/famille_page.dart';
 import '../../../tags/presentation/pages/tags_page.dart';
@@ -170,18 +172,14 @@ class AccountPage extends StatelessWidget {
                 iconColor: const Color(0xFF5B6774),
                 iconBackground: const Color(0xFFEDF0F3),
                 label: l10n.accountRowHelpCenter,
-                onTap: () => Navigator.of(
-                  context,
-                ).push(ComingSoonPage.route(l10n.accountRowHelpCenter)),
+                onTap: () => Navigator.of(context).push(HelpCenterPage.route()),
               ),
               AccountTile(
                 icon: Icons.mail_outline_rounded,
                 iconColor: const Color(0xFF5B6774),
                 iconBackground: const Color(0xFFEDF0F3),
                 label: l10n.accountRowContact,
-                onTap: () => Navigator.of(
-                  context,
-                ).push(ComingSoonPage.route(l10n.accountRowContact)),
+                onTap: () => Navigator.of(context).push(ContactPage.route()),
               ),
             ],
           ),

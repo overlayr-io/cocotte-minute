@@ -363,6 +363,49 @@ class AppLocalizationsEn extends AppLocalizations {
       'Account: permanently erased within 30 days · Guest: immediate';
 
   @override
+  String get helpCenterIntro =>
+      'Quickly find an answer to the most common questions.';
+
+  @override
+  String get helpCenterEmpty => 'No questions yet. Check back soon!';
+
+  @override
+  String get helpCenterContactTitle => 'Can\'t find your answer?';
+
+  @override
+  String get helpCenterContactSubtitle => 'Write to us, we reply fast';
+
+  @override
+  String get contactIntro =>
+      'A question, a bug, an idea? Tell us everything, we read every message.';
+
+  @override
+  String get contactSubjectLabel => 'Subject';
+
+  @override
+  String get contactSubjectHint => 'E.g. Problem with my shopping list';
+
+  @override
+  String get contactSubjectError => 'Please enter a subject.';
+
+  @override
+  String get contactMessageLabel => 'Message';
+
+  @override
+  String get contactMessageHint =>
+      'Describe your request as precisely as possible.';
+
+  @override
+  String get contactMessageError => 'Please write your message.';
+
+  @override
+  String get contactSendAction => 'Send';
+
+  @override
+  String get contactSuccess =>
+      'Message sent. Thanks, we\'ll get back to you soon!';
+
+  @override
   String get ingredientsTitle => 'My ingredients';
 
   @override

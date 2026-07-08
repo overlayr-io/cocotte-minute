@@ -764,6 +764,84 @@ abstract class AppLocalizations {
   /// **'Compte : effacement définitif sous 30 jours · Invité : immédiat'**
   String get manageDataDeleteSub;
 
+  /// No description provided for @helpCenterIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trouve rapidement une réponse aux questions les plus fréquentes.'**
+  String get helpCenterIntro;
+
+  /// No description provided for @helpCenterEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune question pour l\'instant. Reviens bientôt !'**
+  String get helpCenterEmpty;
+
+  /// No description provided for @helpCenterContactTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu ne trouves pas ta réponse ?'**
+  String get helpCenterContactTitle;
+
+  /// No description provided for @helpCenterContactSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écris-nous, on te répond vite'**
+  String get helpCenterContactSubtitle;
+
+  /// No description provided for @contactIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une question, un bug, une idée ? Dis-nous tout, on lit chaque message.'**
+  String get contactIntro;
+
+  /// No description provided for @contactSubjectLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sujet'**
+  String get contactSubjectLabel;
+
+  /// No description provided for @contactSubjectHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex : Problème avec ma liste de courses'**
+  String get contactSubjectHint;
+
+  /// No description provided for @contactSubjectError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indique un sujet.'**
+  String get contactSubjectError;
+
+  /// No description provided for @contactMessageLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Message'**
+  String get contactMessageLabel;
+
+  /// No description provided for @contactMessageHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Décris ta demande le plus précisément possible.'**
+  String get contactMessageHint;
+
+  /// No description provided for @contactMessageError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écris ton message.'**
+  String get contactMessageError;
+
+  /// No description provided for @contactSendAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer'**
+  String get contactSendAction;
+
+  /// No description provided for @contactSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Message envoyé. Merci, on te répond au plus vite !'**
+  String get contactSuccess;
+
   /// No description provided for @ingredientsTitle.
   ///
   /// In fr, this message translates to:

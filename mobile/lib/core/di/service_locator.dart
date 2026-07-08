@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import '../../features/account/data/account_repository.dart';
 import '../../features/auth/data/auth_repository.dart';
 import '../../features/categories/data/categories_repository.dart';
+import '../../features/help/data/help_repository.dart';
 import '../../features/ingredients/data/ingredients_repository.dart';
 import '../../features/people/data/people_repository.dart';
 import '../../features/recipe_player/data/recipe_player_storage.dart';
@@ -33,6 +34,9 @@ void setupServiceLocator() {
   );
   sl.registerLazySingleton<IngredientsRepository>(
     () => IngredientsRepository(apiClient: sl<ApiClient>()),
+  );
+  sl.registerLazySingleton<HelpRepository>(
+    () => HelpRepository(apiClient: sl<ApiClient>()),
   );
   // Tags & personnes : cache de lecture simple (mémoire TTL + disque). Le
   // cache personnes est aussi invalidé par les mutations de tags, car les

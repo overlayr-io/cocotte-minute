@@ -121,6 +121,21 @@
   "manageDataDeleteLabel": "Delete my account and data",
   "manageDataDeleteSub": "Account: permanently erased within 30 days · Guest: immediate",
 
+  "helpCenterIntro": "Quickly find an answer to the most common questions.",
+  "helpCenterEmpty": "No questions yet. Check back soon!",
+  "helpCenterContactTitle": "Can't find your answer?",
+  "helpCenterContactSubtitle": "Write to us, we reply fast",
+
+  "contactIntro": "A question, a bug, an idea? Tell us everything, we read every message.",
+  "contactSubjectLabel": "Subject",
+  "contactSubjectHint": "E.g. Problem with my shopping list",
+  "contactSubjectError": "Please enter a subject.",
+  "contactMessageLabel": "Message",
+  "contactMessageHint": "Describe your request as precisely as possible.",
+  "contactMessageError": "Please write your message.",
+  "contactSendAction": "Send",
+  "contactSuccess": "Message sent. Thanks, we'll get back to you soon!",
+
   "ingredientsTitle": "My ingredients",
   "ingredientsTabMine": "My ingredients",
   "ingredientsTabCatalog": "Catalog",

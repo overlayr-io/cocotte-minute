@@ -365,6 +365,50 @@ class AppLocalizationsFr extends AppLocalizations {
       'Compte : effacement définitif sous 30 jours · Invité : immédiat';
 
   @override
+  String get helpCenterIntro =>
+      'Trouve rapidement une réponse aux questions les plus fréquentes.';
+
+  @override
+  String get helpCenterEmpty =>
+      'Aucune question pour l\'instant. Reviens bientôt !';
+
+  @override
+  String get helpCenterContactTitle => 'Tu ne trouves pas ta réponse ?';
+
+  @override
+  String get helpCenterContactSubtitle => 'Écris-nous, on te répond vite';
+
+  @override
+  String get contactIntro =>
+      'Une question, un bug, une idée ? Dis-nous tout, on lit chaque message.';
+
+  @override
+  String get contactSubjectLabel => 'Sujet';
+
+  @override
+  String get contactSubjectHint => 'Ex : Problème avec ma liste de courses';
+
+  @override
+  String get contactSubjectError => 'Indique un sujet.';
+
+  @override
+  String get contactMessageLabel => 'Message';
+
+  @override
+  String get contactMessageHint =>
+      'Décris ta demande le plus précisément possible.';
+
+  @override
+  String get contactMessageError => 'Écris ton message.';
+
+  @override
+  String get contactSendAction => 'Envoyer';
+
+  @override
+  String get contactSuccess =>
+      'Message envoyé. Merci, on te répond au plus vite !';
+
+  @override
   String get ingredientsTitle => 'Mes ingrédients';
 
   @override
