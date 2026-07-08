@@ -66,6 +66,10 @@ class _RecipePlayerPageState extends State<RecipePlayerPage> {
       value: _cubit,
       child: Scaffold(
         body: BlocBuilder<RecipePlayerCubit, RecipePlayerState>(
+          // Le tick par seconde des minuteurs ne doit pas reconstruire la
+          // page : seules les zones minuteur s'y abonnent (timer_zones.dart).
+          buildWhen: (previous, current) =>
+              !onlyTimersChanged(previous, current),
           builder: (context, state) {
             return switch (state) {
               RecipePlayerLoading() =>

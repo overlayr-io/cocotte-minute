@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -274,9 +275,6 @@ class _StepRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDone = step.index < state.currentIndex;
     final isCurrent = step.index == state.currentIndex;
-    final timer = state.timers
-        .where((t) => t.stepId == step.sourceStepId)
-        .fold<RecipeTimer?>(null, (acc, t) => t);
 
     final numberCircle = isDone
         ? Container(
@@ -342,10 +340,19 @@ class _StepRow extends StatelessWidget {
                   ),
                 ),
               ),
-              if (timer != null) ...[
-                const SizedBox(width: 8),
-                _InlineTimerBadge(timer: timer),
-              ],
+              // Zone abonnée au tick : la vue sommaire ignore les changements
+              // de `timers` (buildWhen parent), le badge se met à jour seul.
+              BlocSelector<RecipePlayerCubit, RecipePlayerState, RecipeTimer?>(
+                selector: (s) => s is RecipePlayerLoaded
+                    ? s.timerForStep(step.sourceStepId)
+                    : null,
+                builder: (context, timer) => timer == null
+                    ? const SizedBox.shrink()
+                    : Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: _InlineTimerBadge(timer: timer),
+                      ),
+              ),
             ],
           ),
         ),

@@ -4,15 +4,12 @@ import '../../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/widgets/app_network_image.dart';
 import '../../../../recipes/presentation/widgets/step_banner.dart';
-import '../../../domain/recipe_timer.dart';
 import '../../bloc/recipe_player_cubit.dart';
-import '../shared/add_timer_button.dart';
 import '../shared/quit_dialog.dart';
 import '../shared/round_nav_button.dart';
 import '../shared/step_ingredients_panel.dart';
-import '../shared/step_timer_card.dart';
 import '../shared/sub_recipe_strip.dart';
-import '../shared/timer_chip.dart';
+import '../shared/timer_zones.dart';
 
 /// Étape active en mobile paysage (maquette 10d/10e/10j) : instruction en
 /// grand à gauche, image + minuteur/ingrédients à droite. Bandeau de
@@ -34,12 +31,6 @@ class MobileActiveStepView extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final step = state.currentStep;
     final scale = state.selectedServings / state.detail.summary.servings;
-    final runningTimer = state.runningTimer;
-    final stepTimer = state.timers
-        .where((t) => t.stepId == step.sourceStepId)
-        .fold<RecipeTimer?>(null, (acc, t) => t);
-    final showChipInTopBar =
-        runningTimer != null && runningTimer.stepId != step.sourceStepId;
 
     return SafeArea(
       child: Column(
@@ -48,7 +39,7 @@ class MobileActiveStepView extends StatelessWidget {
           _TopBar(
             cubit: cubit,
             state: state,
-            chipTimer: showChipInTopBar ? runningTimer : null,
+            currentStepId: step.sourceStepId,
           ),
           Expanded(
             child: Row(
@@ -151,14 +142,11 @@ class MobileActiveStepView extends StatelessWidget {
                               ),
                             ),
                           const SizedBox(height: 14),
-                          if (stepTimer != null)
-                            StepTimerCard(cubit: cubit, timer: stepTimer)
-                          else
-                            AddTimerButton(
-                              stepId: step.sourceStepId,
-                              description: step.description,
-                              cubit: cubit,
-                            ),
+                          StepTimerZone(
+                            cubit: cubit,
+                            stepId: step.sourceStepId,
+                            description: step.description,
+                          ),
                           const SizedBox(height: 14),
                           StepIngredientsPanel(
                             ingredients: step.ingredients,
@@ -179,11 +167,15 @@ class MobileActiveStepView extends StatelessWidget {
 }
 
 class _TopBar extends StatelessWidget {
-  const _TopBar({required this.cubit, required this.state, this.chipTimer});
+  const _TopBar({
+    required this.cubit,
+    required this.state,
+    required this.currentStepId,
+  });
 
   final RecipePlayerCubit cubit;
   final RecipePlayerLoaded state;
-  final RecipeTimer? chipTimer;
+  final String currentStepId;
 
   @override
   Widget build(BuildContext context) {
@@ -233,10 +225,11 @@ class _TopBar extends StatelessWidget {
               ),
             ],
           ),
-          if (chipTimer != null) ...[
-            const SizedBox(width: 12),
-            TimerChip(timer: chipTimer!),
-          ],
+          RunningTimerChipZone(
+            cubit: cubit,
+            currentStepId: currentStepId,
+            padding: const EdgeInsets.only(left: 12),
+          ),
           const SizedBox(width: 12),
           RoundNavButton(
             icon: Icons.close_rounded,
