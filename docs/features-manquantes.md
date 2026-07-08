@@ -2,7 +2,7 @@
 
 État des lieux basé sur `PROJECT_CONTEXT.md`, `docs/features/*.md` et le code réel (mobile + server). Dernière révision : **2026-07-08**.
 
-Constat général : le socle v1 est désormais **quasi complet** (auth + compte invité, ingrédients, tags/personnes, catégories, recettes, étapes, mode pas-à-pas, liste de courses, recherche avancée, suppression RGPD, centre d'aide). Le seul vrai chantier non démarré restant est **limites freemium**. Il n'y a plus d'écart réglementaire ouvert (la suppression de compte RGPD est livrée).
+Constat général : le socle v1 est désormais **quasi complet** (auth + compte invité + gestion du compte, ingrédients, tags/personnes, catégories, recettes, étapes, mode pas-à-pas, liste de courses, recherche avancée, Accueil « Découverte », export PDF, suppression RGPD, centre d'aide). Le seul vrai chantier non démarré restant est **limites freemium**. Il n'y a plus d'écart réglementaire ouvert (la suppression de compte RGPD est livrée).
 
 ## ✅ Résolu depuis la dernière édition (2026-07-08)
 
@@ -16,30 +16,27 @@ Ces points étaient listés comme manquants et ont été vérifiés livrés dans
 - **Auth — rappel J+14** : remplacé par une **carte d'invitation permanente** « Créer ton compte » (onglet Compte, visible dès le 1er jour en invité) — tracking temporel J+14 sans objet.
 - **Auth — RGPD suppression de compte** : livrée (endpoints `request-deletion`/`status`/`cancel-deletion`, anonymisation + `pending_deletion` J+30, CRON de purge, `DeleteAccountPage`) et rendue **accessible en mode invité** + via la page « Gérer mes données ». Pages Confidentialité réelles (politique, CGU, gérer mes données).
 - **Centre d'aide & Nous contacter** : livrés ([help.md](../docs/features/help.md)) — FAQ éditoriale (`GET /help/faq` depuis `faq.json`) + formulaire de contact (`POST /help/contact`).
+- **Auth — « Gérer le compte » (connecté)** : livré — page d'édition e-mail + mot de passe via Supabase `updateUser` (`account_manage_page.dart` + `AccountManageCubit`), remplace le placeholder « bientôt ».
+- **Mode pas-à-pas — comportement d'abandon** : tranché et livré — quitter en cours de route (bouton X **ou** retour système via `PopScope`) **conserve** la session et propose « Reprendre » au prochain lancement ; purge uniquement à la fin réelle.
+- **Recettes — vue « Découverte »** : livrée — l'Accueil est un flux Découverte (`GET /discovery/home`) : hero « à la une » + rangées (de saison, prêt en 30 min, récemment ajoutées, par personne, recettes de base, portions). Le « de saison » est **dérivé des ingrédients** via une table de saisonnalité FR, **sans migration** ni champ serveur.
+- **Export PDF — fiche recette** : livré — `RecipePdfService` (packages `pdf`/`printing`), PDF A4 imprimable fidèle à la maquette (hero, ingrédients, étapes + bannières, sous-recettes), partage/impression depuis le menu de la fiche.
 
 ## 🟢 Petit (finition / correctif ciblé)
 
-1. **Auth — « Gérer le compte » (utilisateur connecté)** : la tuile pointe encore vers l'écran « bientôt disponible ». Manque l'édition d'e-mail / mot de passe (via Supabase `updateUser`).
-2. **Aide — enrichir la FAQ** : une seule Q/R dans `server/src/modules/help/data/faq.json` pour l'instant (le reste sera ajouté au fil de l'eau).
-3. **Mode pas-à-pas — comportement d'abandon** ([step-by-step.md](../docs/features/step-by-step.md)) : la persistance de reprise est implémentée (`RecipePlayerStorage` read/write/clear) ; reste à trancher finement le comportement en cas d'abandon avant la fin (purge auto ? proposition de reprise ?).
+1. **Aide — enrichir la FAQ** : une seule Q/R dans `server/src/modules/help/data/faq.json` pour l'instant (le reste sera ajouté au fil de l'eau).
 
 ## 🟡 Petit à moyen
 
-4. **Aide — envoi e-mail réel du message de contact** : `POST /help/contact` **journalise** le message (avec user id + version d'app) mais n'envoie pas encore d'e-mail au support. À brancher (service mail / webhook).
-5. **Auth — OAuth Google/Apple en prod** : câblage Supabase fait, boutons visibles seulement en `kDebugMode` ; il manque la config externe (deep link iOS, Sign in with Apple, redirect URLs) — peu de code mais dépend d'accès à des consoles tierces.
+2. **Aide — envoi e-mail réel du message de contact** : `POST /help/contact` **journalise** le message (avec user id + version d'app) mais n'envoie pas encore d'e-mail au support. À brancher (service mail / webhook).
+3. **Auth — OAuth Google/Apple en prod** : câblage Supabase fait, boutons visibles seulement en `kDebugMode` ; il manque la config externe (deep link iOS, Sign in with Apple, redirect URLs) — peu de code mais dépend d'accès à des consoles tierces.
 
 ## 🟠 Moyen
 
-6. **Limites freemium** ([limite-freemium.md](../docs/features/limite-freemium.md)) : **pas commencée** — seul vrai chantier v1 restant. Nécessite un champ statut premium simple + 3 vérifications serveur (compteur sous-recettes, limite 1 liste active, plafond critères de recherche) + UI d'incitation. La recherche avancée dont ça dépend est livrée ([advanced-search.md](../docs/features/advanced-search.md)) ; reste à trancher le plafond exact de critères cumulés (6 ou 8). Le paiement réel (Stripe/RevenueCat) reste hors scope v1.
-7. **Mode sombre (dark mode)** : différé volontairement en chantier dédié. Le `darkTheme` actuel est un stub (renvoie le thème clair) et ~80 fichiers d'UI utilisent des couleurs figées (`AppColors.*` const ou hex en dur) plutôt que `Theme.of(context)`. Prérequis : tokeniser les couleurs via le thème / un `ThemeExtension`. Les composants récents (`AppShadows`, états vides) sont déjà pensés en tokens.
-
-## ⚫ Gros
-
-8. **Recettes — vue "Découverte"** (maquette 7b : bascule Dossiers/Découverte, hero à la une, rangées par saison/temps/personne) : non construite, décision explicite de différer. Nécessite de nouveaux champs serveur (saison) et de nouvelles requêtes (par personne/temps) + un nouvel écran à plusieurs rangées.
+4. **Limites freemium** ([limite-freemium.md](../docs/features/limite-freemium.md)) : **pas commencée** — seul vrai chantier v1 restant. Nécessite un champ statut premium simple + 3 vérifications serveur (compteur sous-recettes, limite 1 liste active, plafond critères de recherche) + UI d'incitation. La recherche avancée dont ça dépend est livrée ([advanced-search.md](../docs/features/advanced-search.md)) ; reste à trancher le plafond exact de critères cumulés (6 ou 8). Le paiement réel (Stripe/RevenueCat) reste hors scope v1.
+5. **Mode sombre (dark mode)** : différé volontairement en chantier dédié. Le `darkTheme` actuel est un stub (renvoie le thème clair) et ~80 fichiers d'UI utilisent des couleurs figées (`AppColors.*` const ou hex en dur) plutôt que `Theme.of(context)`. Prérequis : tokeniser les couleurs via le thème / un `ThemeExtension`. Les composants récents (`AppShadows`, états vides) sont déjà pensés en tokens.
 
 ## Hors scope v1 (mentionné pour mémoire, aucun doc dédié)
 
-- **Export PDF** : placeholder "à venir" déjà visible dans `export_sheet.dart`. Taille si repris : petit à moyen.
 - **Suggestions intelligentes** : gros (modèle de recommandation).
 - **Marketplace de recettes "chef" + backoffice admin (V2)** : gros (rôles, back-office, modération).
 - **IA locale pour la recherche en langage naturel** : architecture seulement pensée dans `advanced-search.md`, pas de feature à part. Gros si un jour lancée.
