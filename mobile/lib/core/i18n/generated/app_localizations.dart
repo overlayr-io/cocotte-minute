@@ -710,6 +710,24 @@ abstract class AppLocalizations {
   /// **'{count, plural, one{personne} other{personnes}}'**
   String pdfServingsSuffix(int count);
 
+  /// Libellé de la tuile méta (temps de préparation) sur le PDF
+  ///
+  /// In fr, this message translates to:
+  /// **'Préparation'**
+  String get pdfMetaPrep;
+
+  /// No description provided for @pdfMetaCook.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cuisson'**
+  String get pdfMetaCook;
+
+  /// No description provided for @pdfMetaRest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repos'**
+  String get pdfMetaRest;
+
   /// No description provided for @pdfSectionIngredients.
   ///
   /// In fr, this message translates to:
@@ -2029,6 +2047,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Cuisson {min} min'**
   String recipeCookShort(int min);
+
+  /// No description provided for @recipeRestShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repos {min} min'**
+  String recipeRestShort(int min);
+
+  /// Bandeau d'une recette ouverte via un lien de partage (lecture seule)
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette partagée'**
+  String get sharedRecipeBadge;
 
   /// No description provided for @recipeStepsTab.
   ///

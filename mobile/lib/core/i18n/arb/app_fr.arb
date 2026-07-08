@@ -243,6 +243,12 @@
   "@pdfRest": { "placeholders": { "duration": { "type": "String" } } },
   "pdfServingsSuffix": "{count, plural, one{personne} other{personnes}}",
   "@pdfServingsSuffix": { "placeholders": { "count": { "type": "int" } } },
+  "pdfMetaPrep": "Préparation",
+  "@pdfMetaPrep": { "description": "Libellé de la tuile méta (temps de préparation) sur le PDF" },
+  "pdfMetaCook": "Cuisson",
+  "@pdfMetaCook": {},
+  "pdfMetaRest": "Repos",
+  "@pdfMetaRest": {},
   "pdfSectionIngredients": "Ingrédients",
   "@pdfSectionIngredients": {},
   "pdfNoIngredients": "Aucun ingrédient.",
@@ -750,6 +756,14 @@
       "min": { "type": "int" }
     }
   },
+  "recipeRestShort": "Repos {min} min",
+  "@recipeRestShort": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+  "sharedRecipeBadge": "Recette partagée",
+  "@sharedRecipeBadge": { "description": "Bandeau d'une recette ouverte via un lien de partage (lecture seule)" },
 
   "recipeStepsTab": "Étapes",
   "@recipeStepsTab": {},

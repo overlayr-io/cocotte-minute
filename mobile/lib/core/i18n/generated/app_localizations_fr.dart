@@ -337,6 +337,15 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get pdfMetaPrep => 'Préparation';
+
+  @override
+  String get pdfMetaCook => 'Cuisson';
+
+  @override
+  String get pdfMetaRest => 'Repos';
+
+  @override
   String get pdfSectionIngredients => 'Ingrédients';
 
   @override
@@ -1084,6 +1093,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String recipeCookShort(int min) {
     return 'Cuisson $min min';
   }
+
+  @override
+  String recipeRestShort(int min) {
+    return 'Repos $min min';
+  }
+
+  @override
+  String get sharedRecipeBadge => 'Recette partagée';
 
   @override
   String get recipeStepsTab => 'Étapes';

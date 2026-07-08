@@ -110,6 +110,9 @@
   "@pdfRest": { "placeholders": { "duration": { "type": "String" } } },
   "pdfServingsSuffix": "{count, plural, one{person} other{people}}",
   "@pdfServingsSuffix": { "placeholders": { "count": { "type": "int" } } },
+  "pdfMetaPrep": "Prep time",
+  "pdfMetaCook": "Cook time",
+  "pdfMetaRest": "Rest time",
   "pdfSectionIngredients": "Ingredients",
   "pdfNoIngredients": "No ingredients.",
   "pdfSectionSteps": "Steps",
@@ -408,6 +411,13 @@
       "min": { "type": "int" }
     }
   },
+  "recipeRestShort": "Rest {min} min",
+  "@recipeRestShort": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+  "sharedRecipeBadge": "Shared recipe",
 
   "recipeStepsTab": "Steps",
 
