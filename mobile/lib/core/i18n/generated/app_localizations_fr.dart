@@ -1509,6 +1509,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get commonCancel => 'Annuler';
 
   @override
+  String get ingredientVisualEmoji => 'Emoji';
+
+  @override
+  String get ingredientVisualImage => 'Image';
+
+  @override
+  String get ingredientEmojiPick => 'Choisir un emoji';
+
+  @override
+  String get ingredientEmojiSheetTitle => 'Choisir un emoji';
+
+  @override
+  String get ingredientEmojiCustomHint => 'Ou tape le tien 🥕';
+
+  @override
+  String get commonValidate => 'Valider';
+
+  @override
   String get commonSave => 'Enregistrer';
 
   @override

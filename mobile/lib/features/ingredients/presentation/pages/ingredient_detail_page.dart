@@ -9,6 +9,7 @@ import '../../../../core/widgets/error_view.dart';
 import '../../data/ingredients_repository.dart';
 import '../../domain/ingredient.dart';
 import '../bloc/ingredient_detail_bloc.dart';
+import '../widgets/ingredient_visual_field.dart';
 import '../widgets/unit_selector.dart';
 
 /// Détail / édition d'un ingrédient utilisateur. Renvoie `true` si enregistré,
@@ -45,6 +46,8 @@ class _DetailView extends StatefulWidget {
 class _DetailViewState extends State<_DetailView> {
   final _nameController = TextEditingController();
   IngredientUnit _unit = IngredientUnit.gramme;
+  String? _imageUrl;
+  String? _emoji;
   bool _initialized = false;
 
   @override
@@ -57,6 +60,8 @@ class _DetailViewState extends State<_DetailView> {
     if (_initialized) return;
     _nameController.text = ingredient.name;
     _unit = ingredient.unit;
+    _imageUrl = ingredient.imageUrl;
+    _emoji = ingredient.emoji;
     _initialized = true;
   }
 
@@ -69,9 +74,14 @@ class _DetailViewState extends State<_DetailView> {
         ..showSnackBar(SnackBar(content: Text(l10n.ingredientNameRequired)));
       return;
     }
-    context
-        .read<IngredientDetailBloc>()
-        .add(IngredientDetailSaveRequested(name: name, unit: _unit));
+    context.read<IngredientDetailBloc>().add(
+          IngredientDetailSaveRequested(
+            name: name,
+            unit: _unit,
+            emoji: _emoji,
+            imageUrl: _imageUrl,
+          ),
+        );
   }
 
   Future<void> _confirmDelete(BuildContext context) async {
@@ -161,10 +171,21 @@ class _DetailViewState extends State<_DetailView> {
     return AbsorbPointer(
       absorbing: mutating,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
         children: [
-          _HeroImage(imageUrl: detail.ingredient.imageUrl),
-          const SizedBox(height: 16),
+          IngredientVisualField(
+            emoji: _emoji,
+            imageUrl: _imageUrl,
+            onEmojiChanged: (emoji) => setState(() {
+              _emoji = emoji;
+              _imageUrl = null;
+            }),
+            onImageUploaded: (url) => setState(() {
+              _imageUrl = url;
+              _emoji = null;
+            }),
+          ),
+          const SizedBox(height: 20),
           if (detail.ingredient.isImported) ...[
             _SystemNote(text: l10n.ingredientFromSystem),
             const SizedBox(height: 16),
@@ -339,16 +360,7 @@ class _DetailViewState extends State<_DetailView> {
                               side: const BorderSide(color: AppColors.border),
                             ),
                             tileColor: AppColors.card,
-                            leading: Container(
-                              width: 40,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: AppColors.primaryTint,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: const Icon(Icons.eco_outlined,
-                                  size: 18, color: AppColors.primary),
-                            ),
+                            leading: _AltAvatar(ingredient: c, size: 40),
                             title: Text(
                               c.name,
                               style: const TextStyle(fontWeight: FontWeight.w600),
@@ -374,37 +386,30 @@ class _DetailViewState extends State<_DetailView> {
   }
 }
 
-class _HeroImage extends StatelessWidget {
-  const _HeroImage({this.imageUrl});
+/// Vignette d'une alternative : emoji, image, ou icône de repli.
+class _AltAvatar extends StatelessWidget {
+  const _AltAvatar({required this.ingredient, this.size = 26});
 
-  final String? imageUrl;
+  final Ingredient ingredient;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(size >= 36 ? 12 : size);
     return Container(
-      height: 170,
+      width: size,
+      height: size,
+      clipBehavior: Clip.antiAlias,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
-        gradient: imageUrl == null
-            ? const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFFEAE3D3), Color(0xFFDCD3BE)],
-              )
-            : null,
-        image: imageUrl != null
-            ? DecorationImage(
-                // Bandeau pleine largeur : décodage à la largeur écran.
-                image: cachedImageProvider(context, imageUrl!,
-                    logicalWidth: MediaQuery.sizeOf(context).width),
-                fit: BoxFit.cover)
-            : null,
+        color: AppColors.primaryTint,
+        borderRadius: radius,
       ),
-      child: imageUrl == null
-          ? const Center(
-              child: Icon(Icons.eco_outlined, size: 54, color: Color(0xFFA79F8B)),
-            )
-          : null,
+      child: ingredient.imageUrl != null
+          ? AppNetworkImage(ingredient.imageUrl!, decodeWidth: size * 2)
+          : ingredient.emoji != null
+              ? Text(ingredient.emoji!, style: TextStyle(fontSize: size * 0.56))
+              : Icon(Icons.eco_outlined, size: size * 0.58, color: AppColors.primary),
     );
   }
 }
@@ -489,16 +494,7 @@ class _Alternatives extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Container(
-                  width: 26,
-                  height: 26,
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryTint,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.eco_outlined,
-                      size: 15, color: AppColors.primary),
-                ),
+                _AltAvatar(ingredient: alt),
                 const SizedBox(width: 8),
                 Text(
                   alt.name,

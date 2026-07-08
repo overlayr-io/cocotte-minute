@@ -2684,6 +2684,42 @@ abstract class AppLocalizations {
   /// **'Annuler'**
   String get commonCancel;
 
+  /// No description provided for @ingredientVisualEmoji.
+  ///
+  /// In fr, this message translates to:
+  /// **'Emoji'**
+  String get ingredientVisualEmoji;
+
+  /// No description provided for @ingredientVisualImage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Image'**
+  String get ingredientVisualImage;
+
+  /// No description provided for @ingredientEmojiPick.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un emoji'**
+  String get ingredientEmojiPick;
+
+  /// No description provided for @ingredientEmojiSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un emoji'**
+  String get ingredientEmojiSheetTitle;
+
+  /// No description provided for @ingredientEmojiCustomHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ou tape le tien 🥕'**
+  String get ingredientEmojiCustomHint;
+
+  /// No description provided for @commonValidate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get commonValidate;
+
   /// No description provided for @commonSave.
   ///
   /// In fr, this message translates to:

@@ -32,14 +32,20 @@ class IngredientDeleted extends IngredientsListEvent {
   List<Object?> get props => [id];
 }
 
-/// Création d'un ingrédient custom.
+/// Création d'un ingrédient custom (emoji et image exclusifs).
 class IngredientCreated extends IngredientsListEvent {
-  const IngredientCreated({required this.name, required this.unit, this.imageUrl});
+  const IngredientCreated({
+    required this.name,
+    required this.unit,
+    this.imageUrl,
+    this.emoji,
+  });
 
   final String name;
   final IngredientUnit unit;
   final String? imageUrl;
+  final String? emoji;
 
   @override
-  List<Object?> get props => [name, unit, imageUrl];
+  List<Object?> get props => [name, unit, imageUrl, emoji];
 }

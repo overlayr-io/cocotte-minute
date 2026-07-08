@@ -16,20 +16,23 @@ class IngredientDetailRequested extends IngredientDetailEvent {
   List<Object?> get props => [id];
 }
 
-/// Enregistre le nom / l'unité / l'image de l'ingrédient.
+/// Enregistre le nom / l'unité / le visuel (emoji OU image) de l'ingrédient.
+/// [emoji] et [imageUrl] sont envoyés explicitement (null = vidé).
 class IngredientDetailSaveRequested extends IngredientDetailEvent {
   const IngredientDetailSaveRequested({
     required this.name,
     required this.unit,
     this.imageUrl,
+    this.emoji,
   });
 
   final String name;
   final IngredientUnit unit;
   final String? imageUrl;
+  final String? emoji;
 
   @override
-  List<Object?> get props => [name, unit, imageUrl];
+  List<Object?> get props => [name, unit, imageUrl, emoji];
 }
 
 class IngredientAlternativeAdded extends IngredientDetailEvent {

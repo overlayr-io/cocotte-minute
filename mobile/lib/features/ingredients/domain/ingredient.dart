@@ -52,6 +52,7 @@ class Ingredient extends Equatable {
     required this.unit,
     required this.isSystem,
     this.imageUrl,
+    this.emoji,
     this.importedFromId,
     this.alreadyImported = false,
   });
@@ -61,6 +62,9 @@ class Ingredient extends Equatable {
   final IngredientUnit unit;
   final bool isSystem;
   final String? imageUrl;
+
+  /// Emoji illustrant l'ingrédient (alternative à [imageUrl], exclusifs).
+  final String? emoji;
 
   /// Ingrédient système d'origine si cette copie a été importée.
   final String? importedFromId;
@@ -78,6 +82,7 @@ class Ingredient extends Equatable {
       unit: IngredientUnit.fromWire(json['unit'] as String),
       isSystem: json['isSystem'] as bool? ?? false,
       imageUrl: json['imageUrl'] as String?,
+      emoji: json['emoji'] as String?,
       importedFromId: json['importedFromId'] as String?,
       alreadyImported: json['alreadyImported'] as bool? ?? false,
     );
@@ -90,6 +95,7 @@ class Ingredient extends Equatable {
     unit,
     isSystem,
     imageUrl,
+    emoji,
     importedFromId,
     alreadyImported,
   ];
