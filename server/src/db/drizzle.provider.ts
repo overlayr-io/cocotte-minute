@@ -20,7 +20,8 @@ export const drizzleProvider: Provider = {
   useFactory: (config: ConfigService): DrizzleDB => {
     const connectionString = config.getOrThrow<string>('DATABASE_URL');
     // prepare:false requis avec les poolers Supabase en mode transaction.
-    const client = postgres(connectionString, { prepare: false });
+    // ssl:'require' nécessaire pour les connexions sortantes depuis Render vers Supabase.
+    const client = postgres(connectionString, { prepare: false, ssl: 'require' });
     return drizzle(client, { schema });
   },
 };
