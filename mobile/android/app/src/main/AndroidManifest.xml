@@ -39,13 +39,13 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <!-- Partage de recette (feature partage-recette) : App Links vers la
-                 page publique /r/<token>. TODO_DOMAIN à renseigner au déploiement
-                 (identique à PUBLIC_BASE_URL serveur + .well-known/assetlinks.json). -->
+                 page publique /r/<token> (identique à PUBLIC_BASE_URL serveur +
+                 .well-known/assetlinks.json). -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="https" android:host="TODO_DOMAIN" android:pathPrefix="/r/"/>
+                <data android:scheme="https" android:host="cocotte-minute.onrender.com" android:pathPrefix="/r/"/>
             </intent-filter>
             <!-- Scheme custom : repli hors association web (cocotteminute://r/<token>). -->
             <intent-filter>

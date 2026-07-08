@@ -14,7 +14,7 @@
 	-->
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:TODO_DOMAIN</string>
+		<string>applinks:cocotte-minute.onrender.com</string>
 	</array>
 </dict>
 </plist>
