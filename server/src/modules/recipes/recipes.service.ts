@@ -381,6 +381,37 @@ export class RecipesService {
   /** Fiche détail : ingrédients, composants, « utilisée dans », catégories, tags. */
   async getDetail(userId: string, id: string): Promise<RecipeDetailDto> {
     const row = await this.findOwnedOrFail(userId, id);
+    return this.buildDetail(row);
+  }
+
+  /**
+   * Fiche détail publique (lecture seule) : même forme que `getDetail`, mais sans
+   * contrôle de propriété — la recette est hydratée avec les données de son auteur.
+   * Exposé à la feature Partage (lien public résolu depuis un token). N'expose que
+   * des recettes non supprimées.
+   */
+  async getPublicDetail(id: string): Promise<RecipeDetailDto> {
+    const [row] = await this.db
+      .select()
+      .from(recipes)
+      .where(and(eq(recipes.id, id), isNull(recipes.deletedAt)));
+    if (!row) throw new NotFoundException('Recette introuvable');
+    return this.buildDetail(row);
+  }
+
+  /**
+   * Vérifie que la recette appartient à l'utilisateur (sinon 404). Exposé à
+   * SharesService pour n'autoriser que le propriétaire à générer un lien de partage
+   * (isolation des domaines : le module Partage ne touche jamais au schéma recettes).
+   */
+  async assertOwnedRecipe(userId: string, id: string): Promise<void> {
+    await this.findOwnedOrFail(userId, id);
+  }
+
+  /** Corps commun de `getDetail`/`getPublicDetail` : hydratation depuis l'auteur de la recette. */
+  private async buildDetail(row: RecipeRow): Promise<RecipeDetailDto> {
+    const id = row.id;
+    const authorId = row.authorId;
 
     const [ingredientRows, componentRows, categoryRows, tagRows] =
       await Promise.all([
@@ -405,11 +436,11 @@ export class RecipesService {
           .where(eq(recipeTags.recipeId, id)),
       ]);
 
-    const ingredientLines = await this.hydrateIngredients(userId, ingredientRows);
+    const ingredientLines = await this.hydrateIngredients(authorId, ingredientRows);
     const ingredientMap = new Map(ingredientLines.map((l) => [l.id, l]));
     const steps = await this.buildRecipeSteps(id, ingredientMap);
     const components = await this.summariesByIds(
-      userId,
+      authorId,
       componentRows.map((r) => r.baseRecipeId),
     );
 
@@ -421,7 +452,7 @@ export class RecipesService {
         .from(recipeComponents)
         .where(eq(recipeComponents.baseRecipeId, id));
       usedIn = await this.summariesByIds(
-        userId,
+        authorId,
         parents.map((r) => r.parentRecipeId),
       );
     }

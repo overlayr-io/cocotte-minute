@@ -16,6 +16,7 @@ import { IngredientsModule } from './modules/ingredients/ingredients.module';
 import { PeopleModule } from './modules/people/people.module';
 import { RecipesModule } from './modules/recipes/recipes.module';
 import { SearchModule } from './modules/search/search.module';
+import { SharesModule } from './modules/shares/shares.module';
 import { ShoppingListsModule } from './modules/shopping-lists/shopping-lists.module';
 import { TagsModule } from './modules/tags/tags.module';
 
@@ -79,6 +80,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     SearchModule,
     DiscoveryModule,
     ShoppingListsModule,
+    SharesModule,
     AccountModule,
     HelpModule,
   ],
