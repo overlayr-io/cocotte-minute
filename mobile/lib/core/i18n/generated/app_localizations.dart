@@ -1850,6 +1850,30 @@ abstract class AppLocalizations {
   /// **'{count, plural, =0{Ajouter} =1{Ajouter 1 recette} other{Ajouter {count} recettes}}'**
   String personRecipesPickAdd(num count);
 
+  /// No description provided for @recipesViewList.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vue liste'**
+  String get recipesViewList;
+
+  /// No description provided for @recipesViewFolders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vue dossiers'**
+  String get recipesViewFolders;
+
+  /// No description provided for @recipesListFilterHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer les recettes…'**
+  String get recipesListFilterHint;
+
+  /// No description provided for @recipesListEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette ne correspond.'**
+  String get recipesListEmpty;
+
   /// No description provided for @recipesTitle.
   ///
   /// In fr, this message translates to:

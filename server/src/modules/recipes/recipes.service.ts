@@ -199,13 +199,29 @@ export class RecipesService {
     private readonly ingredientsService: IngredientsService,
   ) {}
 
-  /** Mes recettes (les plus récentes d'abord), hors supprimées. */
-  async listMine(userId: string): Promise<RecipeSummaryDto[]> {
-    const rows = await this.db
+  /**
+   * Mes recettes (les plus récentes d'abord), hors supprimées. Options pour la
+   * vue Liste paginée : `q` (filtre texte simple sur le nom), `limit`/`offset`.
+   * Sans option, tout est renvoyé (rétro-compatible).
+   */
+  async listMine(
+    userId: string,
+    options?: { q?: string; limit?: number; offset?: number },
+  ): Promise<RecipeSummaryDto[]> {
+    const conditions = [eq(recipes.authorId, userId), isNull(recipes.deletedAt)];
+    const q = options?.q?.trim();
+    if (q) {
+      conditions.push(ilike(recipes.name, `%${escapeLike(q)}%`));
+    }
+    let query = this.db
       .select()
       .from(recipes)
-      .where(and(eq(recipes.authorId, userId), isNull(recipes.deletedAt)))
-      .orderBy(desc(recipes.createdAt));
+      .where(and(...conditions))
+      .orderBy(desc(recipes.createdAt))
+      .$dynamic();
+    if (options?.limit !== undefined) query = query.limit(options.limit);
+    if (options?.offset !== undefined) query = query.offset(options.offset);
+    const rows = await query;
     return rows.map(toSummary);
   }
 

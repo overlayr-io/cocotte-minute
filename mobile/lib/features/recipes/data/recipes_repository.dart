@@ -21,9 +21,22 @@ class RecipesRepository {
 
   Dio get _dio => _apiClient.raw;
 
-  Future<List<RecipeSummary>> fetchMine() async {
+  /// Mes recettes. [q]/[limit]/[offset] optionnels pour la vue Liste paginée
+  /// (filtre texte simple côté serveur) ; sans paramètre, tout est renvoyé.
+  Future<List<RecipeSummary>> fetchMine({
+    String? q,
+    int? limit,
+    int? offset,
+  }) async {
     try {
-      final res = await _dio.get<List<dynamic>>('/recipes');
+      final res = await _dio.get<List<dynamic>>(
+        '/recipes',
+        queryParameters: {
+          if (q != null && q.trim().isNotEmpty) 'q': q.trim(),
+          'limit': ?limit,
+          'offset': ?offset,
+        },
+      );
       return (res.data ?? const [])
           .cast<Map<String, dynamic>>()
           .map(RecipeSummary.fromJson)

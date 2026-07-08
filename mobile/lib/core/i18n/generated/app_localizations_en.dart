@@ -984,6 +984,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get recipesViewList => 'List view';
+
+  @override
+  String get recipesViewFolders => 'Folder view';
+
+  @override
+  String get recipesListFilterHint => 'Filter recipes…';
+
+  @override
+  String get recipesListEmpty => 'No matching recipes.';
+
+  @override
   String get recipesTitle => 'Recipes';
 
   @override

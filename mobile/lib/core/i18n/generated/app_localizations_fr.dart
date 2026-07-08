@@ -990,6 +990,18 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get recipesViewList => 'Vue liste';
+
+  @override
+  String get recipesViewFolders => 'Vue dossiers';
+
+  @override
+  String get recipesListFilterHint => 'Filtrer les recettes…';
+
+  @override
+  String get recipesListEmpty => 'Aucune recette ne correspond.';
+
+  @override
   String get recipesTitle => 'Recettes';
 
   @override
