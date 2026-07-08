@@ -1822,10 +1822,7 @@ final class $$LocalShoppingListsTableReferences
   _localShoppingItemsRefsTable(_$ShoppingDatabase db) =>
       MultiTypedResultKey.fromTable(
         db.localShoppingItems,
-        aliasName: $_aliasNameGenerator(
-          db.localShoppingLists.id,
-          db.localShoppingItems.listId,
-        ),
+        aliasName: 'local_shopping_lists__id__local_shopping_items__list_id',
       );
 
   $$LocalShoppingItemsTableProcessedTableManager get localShoppingItemsRefs {
@@ -1849,10 +1846,7 @@ final class $$LocalShoppingListsTableReferences
   _localShoppingRecipesRefsTable(_$ShoppingDatabase db) =>
       MultiTypedResultKey.fromTable(
         db.localShoppingRecipes,
-        aliasName: $_aliasNameGenerator(
-          db.localShoppingLists.id,
-          db.localShoppingRecipes.listId,
-        ),
+        aliasName: 'local_shopping_lists__id__local_shopping_recipes__list_id',
       );
 
   $$LocalShoppingRecipesTableProcessedTableManager
@@ -2313,13 +2307,9 @@ final class $$LocalShoppingItemsTableReferences
     super.$_typedResult,
   );
 
-  static $LocalShoppingListsTable _listIdTable(_$ShoppingDatabase db) =>
-      db.localShoppingLists.createAlias(
-        $_aliasNameGenerator(
-          db.localShoppingItems.listId,
-          db.localShoppingLists.id,
-        ),
-      );
+  static $LocalShoppingListsTable _listIdTable(_$ShoppingDatabase db) => db
+      .localShoppingLists
+      .createAlias('local_shopping_items__list_id__local_shopping_lists__id');
 
   $$LocalShoppingListsTableProcessedTableManager get listId {
     final $_column = $_itemColumn<String>('list_id')!;
@@ -2834,13 +2824,9 @@ final class $$LocalShoppingRecipesTableReferences
     super.$_typedResult,
   );
 
-  static $LocalShoppingListsTable _listIdTable(_$ShoppingDatabase db) =>
-      db.localShoppingLists.createAlias(
-        $_aliasNameGenerator(
-          db.localShoppingRecipes.listId,
-          db.localShoppingLists.id,
-        ),
-      );
+  static $LocalShoppingListsTable _listIdTable(_$ShoppingDatabase db) => db
+      .localShoppingLists
+      .createAlias('local_shopping_recipes__list_id__local_shopping_lists__id');
 
   $$LocalShoppingListsTableProcessedTableManager get listId {
     final $_column = $_itemColumn<String>('list_id')!;
