@@ -1020,9 +1020,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeSearchHint => 'Rechercher une recette';
 
   @override
-  String get homeSearchComingSoon => 'Recherche bientôt disponible';
-
-  @override
   String get homeCategoryAll => 'Tout';
 
   @override
@@ -1728,4 +1725,28 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get searchIdleHint =>
       'Tape « / » pour un dossier, « # » pour un tag, « @ » pour une personne.';
+
+  @override
+  String get accountSectionApp => 'Application';
+
+  @override
+  String get accountRowLanguage => 'Langue';
+
+  @override
+  String get languageTitle => 'Langue';
+
+  @override
+  String get languageIntro => 'Choisis la langue de l\'application.';
+
+  @override
+  String get languageSystem => 'Système (automatique)';
+
+  @override
+  String get languageSystemSubtitle => 'Suit la langue de ton téléphone';
+
+  @override
+  String get languageFrench => 'Français';
+
+  @override
+  String get languageEnglish => 'English';
 }

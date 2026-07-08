@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_en.dart';
 import 'app_localizations_fr.dart';
 
 // ignore_for_file: type=lint
@@ -92,7 +93,10 @@ abstract class AppLocalizations {
       ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('fr')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('fr'),
+  ];
 
   /// Nom de l'application
   ///
@@ -1828,12 +1832,6 @@ abstract class AppLocalizations {
   /// **'Rechercher une recette'**
   String get homeSearchHint;
 
-  /// No description provided for @homeSearchComingSoon.
-  ///
-  /// In fr, this message translates to:
-  /// **'Recherche bientôt disponible'**
-  String get homeSearchComingSoon;
-
   /// No description provided for @homeCategoryAll.
   ///
   /// In fr, this message translates to:
@@ -2907,6 +2905,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Tape « / » pour un dossier, « # » pour un tag, « @ » pour une personne.'**
   String get searchIdleHint;
+
+  /// No description provided for @accountSectionApp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Application'**
+  String get accountSectionApp;
+
+  /// No description provided for @accountRowLanguage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Langue'**
+  String get accountRowLanguage;
+
+  /// No description provided for @languageTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Langue'**
+  String get languageTitle;
+
+  /// No description provided for @languageIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisis la langue de l\'application.'**
+  String get languageIntro;
+
+  /// No description provided for @languageSystem.
+  ///
+  /// In fr, this message translates to:
+  /// **'Système (automatique)'**
+  String get languageSystem;
+
+  /// No description provided for @languageSystemSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suit la langue de ton téléphone'**
+  String get languageSystemSubtitle;
+
+  /// No description provided for @languageFrench.
+  ///
+  /// In fr, this message translates to:
+  /// **'Français'**
+  String get languageFrench;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In fr, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
 }
 
 class _AppLocalizationsDelegate
@@ -2920,7 +2966,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['fr'].contains(locale.languageCode);
+      <String>['en', 'fr'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -2929,6 +2975,8 @@ class _AppLocalizationsDelegate
 AppLocalizations lookupAppLocalizations(Locale locale) {
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'en':
+      return AppLocalizationsEn();
     case 'fr':
       return AppLocalizationsFr();
   }

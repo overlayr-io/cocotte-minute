@@ -1,0 +1,695 @@
+{
+  "@@locale": "en",
+  "appTitle": "Cocotte Minute",
+  "commonRetry": "Try again",
+  "commonError": "Something went wrong",
+  "homeWelcome": "Welcome to Cocotte Minute",
+  "homeCreateAccountCta": "Create an account / Sign in",
+  "authCreateTitle": "Create your account",
+  "authCreateSubtitle": "Find your recipes on all your devices.",
+  "authSignInTitle": "Good to see you again",
+  "authSignInSubtitle": "Sign in to find your recipes.",
+  "authEmailLabel": "Email",
+  "authEmailHint": "you@email.com",
+  "authPasswordLabel": "Password",
+  "authPasswordHint": "Your password",
+  "authCreateAction": "Create my account",
+  "authSignInAction": "Sign in",
+  "authDividerOr": "or",
+  "authContinueGoogle": "Continue with Google",
+  "authContinueApple": "Continue with Apple",
+  "authAlreadyHaveAccount": "Already have an account?",
+  "authNoAccountYet": "No account yet?",
+  "authSwitchToSignIn": "Sign in",
+  "authSwitchToCreate": "Create an account",
+  "authEmailInvalid": "Enter a valid email address.",
+  "authPasswordTooShort": "6 characters minimum.",
+  "authLegalPrefix": "By continuing, you accept our ",
+  "authLegalTerms": "Terms of Use",
+  "authLegalAnd": " and our ",
+  "authLegalPrivacy": "Privacy Policy",
+  "authLegalSuffix": ".",
+  "keepDataTitle": "Account created!",
+  "keepDataDescription": "The recipes you created as a guest are ready. What would you like to do with them?",
+  "keepDataKeepTitle": "Keep my recipes",
+  "keepDataKeepSubtitle": "Everything stays linked to this account",
+  "keepDataRecommended": "Recommended",
+  "keepDataResetTitle": "Start from scratch",
+  "keepDataResetSubtitle": "Erase guest data",
+  "keepDataConfirm": "Continue",
+  "keepDataLater": "Later",
+
+  "navHome": "Home",
+  "navRecipes": "Recipes",
+  "navShopping": "Shopping",
+  "navAccount": "Account",
+
+  "comingSoonTitle": "Coming soon",
+  "comingSoonBody": "This feature is coming soon.",
+
+  "accountTitle": "Account",
+  "accountGuestName": "Guest account",
+  "accountGuestSubtitle": "Your data lives on this device",
+  "accountGuestBadge": "Anonymous",
+  "accountReminderTitle": "Your guest account is 2 weeks old",
+  "accountReminderBody": "Create a free account to secure your recipes and find them on all your devices.",
+  "accountReminderCta": "Create an account / Sign in",
+
+  "accountSectionContent": "My content",
+  "accountSectionFamily": "My family",
+  "accountSectionAccount": "Account",
+  "accountSectionHelp": "Help",
+  "accountSectionPrivacy": "Privacy",
+
+  "accountRowIngredients": "My ingredients",
+  "accountRowTags": "Tags",
+  "accountRowFolders": "Folders",
+  "accountRowPersons": "People",
+  "accountRowManage": "Manage account",
+  "accountRowLogout": "Sign out",
+  "accountRowDelete": "Delete my account",
+  "accountRowHelpCenter": "Help center",
+  "accountRowContact": "Contact us",
+  "accountRowPrivacyPolicy": "Privacy Policy",
+  "accountRowTerms": "Terms of Use",
+  "accountRowManageData": "Manage my data",
+
+  "ingredientsTitle": "My ingredients",
+  "ingredientsTabMine": "My ingredients",
+  "ingredientsTabCatalog": "Catalog",
+  "ingredientsSearchHint": "Search an ingredient",
+  "ingredientsCatalogSearchHint": "Search the catalog",
+  "ingredientsEmptyMine": "No ingredients yet. Create one or import from the catalog.",
+  "ingredientsEmptyCatalog": "No ingredients in the catalog.",
+  "ingredientsNoSearchResult": "No results.",
+  "ingredientsCreateCta": "Create an ingredient",
+  "ingredientsImport": "Import",
+  "ingredientsAlreadyImported": "Already imported",
+  "ingredientsImportInfo": "Importing creates a personal copy, freely editable, without touching the system ingredient.",
+  "ingredientBadgeSystem": "system",
+
+  "ingredientImportedToast": "Ingredient imported",
+  "ingredientDeletedToast": "Ingredient deleted",
+  "ingredientCreatedToast": "Ingredient created",
+  "ingredientSavedToast": "Changes saved",
+
+  "ingredientDetailTitle": "Ingredient",
+  "ingredientFieldName": "Name",
+  "ingredientFieldUnit": "Unit of measure",
+  "ingredientFromSystem": "From the system catalog · personal copy",
+  "ingredientSectionAlternatives": "Alternatives",
+  "ingredientAlternativesHint": "symmetric relationship",
+  "ingredientNoAlternatives": "No alternatives yet.",
+  "ingredientAddAlternative": "Add",
+  "ingredientSave": "Save",
+  "ingredientDelete": "Delete ingredient",
+  "ingredientDeleteConfirmTitle": "Delete this ingredient?",
+  "ingredientDeleteConfirmBody": "It will be hidden but kept so it doesn't break the recipes that use it.",
+
+  "ingredientCreateTitle": "New ingredient",
+  "ingredientEditTitle": "Edit ingredient",
+  "ingredientCreateAction": "Create ingredient",
+  "ingredientNameHint": "e.g. Baking powder",
+  "ingredientNameRequired": "Give the ingredient a name.",
+
+  "ingredientPickAlternativeTitle": "Choose an alternative",
+  "ingredientNoCandidate": "No other ingredient available.",
+
+  "unitGramme": "gram",
+  "unitMilligramme": "mg",
+  "unitPiece": "piece",
+  "unitCuillereCafe": "tsp",
+  "unitCuillereSoupe": "tbsp",
+
+  "unitShortGramme": "g",
+  "unitShortMilligramme": "mg",
+  "unitShortPiece": "pc",
+  "unitShortCuillereCafe": "tsp",
+  "unitShortCuillereSoupe": "tbsp",
+
+  "unitDescriptionGramme": "in grams",
+  "unitDescriptionMilligramme": "in milligrams",
+  "unitDescriptionPiece": "by the piece",
+  "unitDescriptionCuillereCafe": "in teaspoons",
+  "unitDescriptionCuillereSoupe": "in tablespoons",
+
+  "tagsTitle": "Tags",
+  "tagsIntro": "Label your recipes, sub-recipes and people. Usable as filters in search.",
+  "tagsEmpty": "No tags yet. Create your first tag to label your recipes.",
+  "tagsCreateCta": "New tag",
+  "tagsRecipeCount": "{count, plural, =0{0 recipes} =1{1 recipe} other{{count} recipes}}",
+  "@tagsRecipeCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "tagCreateTitle": "New tag",
+  "tagEditTitle": "Edit tag",
+  "tagFieldName": "Name",
+  "tagNameHint": "e.g. Spicy",
+  "tagNameRequired": "Give the tag a name.",
+  "tagFieldColor": "Color",
+  "tagPreview": "Preview",
+  "tagPreviewPlaceholder": "Tag name",
+  "tagCreateAction": "Create tag",
+  "tagDeleteConfirmTitle": "Delete this tag?",
+  "tagDeleteConfirmBody": "\"{name}\" will be removed from the associated recipes and people.",
+  "@tagDeleteConfirmBody": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "familleTitle": "Family",
+  "familleIntro": "Associate tags with each person to highlight the recipes that suit them.",
+  "familleEmpty": "No people yet. Add your family members to associate tags with them.",
+  "personCreateCta": "Add a person",
+  "personCreateTitle": "New person",
+  "personEditTitle": "Edit",
+  "personFieldFirstName": "First name",
+  "personFieldLastName": "Last name",
+  "personFirstNameHint": "e.g. Emma",
+  "personLastNameHint": "e.g. Martin",
+  "personFirstNameRequired": "Give the person a first name.",
+  "personTagsLabel": "Associated tags",
+  "personTagsEmptyHint": "Create tags first so you can associate them with this person.",
+  "personNoTags": "No associated tags",
+  "personDelete": "Delete person",
+  "personDeleteConfirmTitle": "Delete this person?",
+  "personDeleteConfirmBody": "{name} and their tag associations will be deleted.",
+  "@personDeleteConfirmBody": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "categoriesTitle": "Categories",
+  "categoriesIntro": "Organize your recipes into folders. Tap a folder to open it.",
+  "categoriesEmpty": "No folders yet.",
+  "categoriesEmptyFolder": "No subfolder here. Add one with the + button.",
+  "categoriesSubfoldersLabel": "Subfolders",
+  "categoriesRecipesLabel": "Recipes in the folder",
+  "categoriesRecipesEmpty": "The recipes stored in this folder will appear here.",
+  "categoriesRecipeCount": "{count, plural, =0{0 recipes} =1{1 recipe} other{{count} recipes}}",
+  "@categoriesRecipeCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "categoriesSubfolderCount": "{count, plural, =1{1 subfolder} other{{count} subfolders}}",
+  "@categoriesSubfolderCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "categoryDefaultBadge": "Default",
+  "categoryCreateTitle": "New folder",
+  "categoryEditTitle": "Edit folder",
+  "categoryFieldIcon": "Emoji",
+  "categoryIconHint": "Tap to open the keyboard and pick an emoji.",
+  "categoryIconClear": "Remove emoji",
+  "categoryFieldName": "Name",
+  "categoryNameHint": "e.g. Pasta",
+  "categoryNameRequired": "Give the folder a name.",
+  "categoryFieldParent": "Parent folder",
+  "categoryParentRoot": "At the root",
+  "categoryDeleteConfirmTitle": "Delete this folder?",
+  "categoryDeleteConfirmBody": "\"{name}\" will be deleted. The recipes it contains are not deleted.",
+  "@categoryDeleteConfirmBody": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "recipesTitle": "Recipes",
+  "recipesEmpty": "You don't have any recipes yet. Tap + to create one.",
+  "recipesSearchHint": "Search your recipes",
+
+  "recipeCreateTitle": "New recipe",
+  "recipeCreateAction": "Create recipe",
+  "recipeFieldName": "Recipe name",
+  "recipeNameHint": "e.g. Homemade lasagna",
+  "recipeNameRequired": "The name is required.",
+  "recipeNameHelper": "The only required field to get started.",
+  "recipePhotoTitle": "Add a photo",
+  "recipePhotoHint": "Optional · can be changed later",
+
+  "recipeBaseToggleTitle": "Base recipe",
+  "recipeBaseToggleSubtitle": "Reusable as a component",
+  "recipeBaseToggleHint": "A béchamel or a shortcrust pastry reused in several recipes.",
+  "recipeBaseBadge": "Base recipe",
+  "recipeBaseLockedHint": "Locked: used as a component.",
+
+  "recipeEditTitle": "Edit recipe",
+  "recipeDeleteAction": "Delete recipe",
+  "recipeDeleteConfirmTitle": "Delete this recipe?",
+  "recipeDeleteConfirmBody": "\"{name}\" will be deleted.",
+  "@recipeDeleteConfirmBody": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+
+  "recipeFieldDescription": "Description",
+  "recipeDescriptionHint": "A few words about this recipe…",
+  "recipeFieldPrep": "Prep (min)",
+  "recipeFieldCook": "Cook (min)",
+  "recipeFieldRest": "Rest (min)",
+  "recipeFieldServings": "Servings",
+
+  "recipeIngredientsSection": "Ingredients",
+  "recipeIngredientsEmpty": "No ingredients yet.",
+  "recipeComponentsSection": "Sub-recipes used",
+  "recipeUsedInSection": "Used in",
+
+  "recipeComponentsAddCta": "Add a sub-recipe",
+  "recipeComponentRemove": "Remove sub-recipe",
+
+  "recipeTagsSection": "Tags",
+  "recipeTagsNone": "No tags",
+  "recipeTagsEdit": "Edit tags",
+  "recipeTagsSheetTitle": "Label the recipe",
+  "recipeTagsSheetSubtitle": "Choose the tags to associate with this recipe.",
+  "recipeTagsSheetEmpty": "You don't have any tags yet. Create some from Account → Tags.",
+
+  "recipeFoldersSection": "Folders",
+  "recipeFoldersNone": "In no folder",
+  "recipeFoldersEdit": "Store in a folder",
+  "recipeFoldersSheetTitle": "Store the recipe",
+  "recipeFoldersSheetSubtitle": "Choose one or more folders.",
+  "recipeFoldersSheetEmpty": "No folders. Create some from Account → Categories.",
+
+  "recipeCreatorLabel": "Recipe by",
+  "recipeCreatorSelf": "You",
+  "recipeServingsShort": "{count, plural, =1{1 serving} other{{count} servings}}",
+  "@recipeServingsShort": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "recipePrepShort": "Prep {min} min",
+  "@recipePrepShort": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+  "recipeCookShort": "Cook {min} min",
+  "@recipeCookShort": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+
+  "recipeStepsTab": "Steps",
+
+  "recipeStepsEmptyTitle": "No steps yet",
+  "recipeStepsEmptyBody": "Describe how your recipe unfolds. Paste text all at once, or add steps one by one.",
+  "recipeStepsPasteTitle": "Paste text",
+  "recipeStepsPasteSubtitle": "Each paragraph becomes a step",
+  "recipeStepsOneByOneTitle": "Add one by one",
+  "recipeStepsOneByOneSubtitle": "Compose each step, with a banner or sub-recipe",
+  "recipeStepsAddCta": "Add a step",
+  "recipeStepIngredientsChip": "{count, plural, =1{1 ingredient} other{{count} ingredients}}",
+  "@recipeStepIngredientsChip": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "recipeStepBaseRefLabel": "{name} · base recipe",
+  "@recipeStepBaseRefLabel": {
+    "placeholders": { "name": { "type": "String" } }
+  },
+  "recipeStepFrozenNote": "Steps frozen, editable from their recipe",
+  "recipeStepRemoveRef": "Remove reference",
+
+  "recipeStepsImportTitle": "Import steps",
+  "recipeStepsImportHint": "Separate each step with a blank line. This mode only creates text steps (no sub-recipe).",
+  "recipeStepsImportPlaceholder": "Paste your text here…",
+  "recipeStepsDetected": "{count, plural, =0{No step detected} =1{1 step detected} other{{count} steps detected}}",
+  "@recipeStepsDetected": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "recipeStepsImportCta": "{count, plural, =0{Create steps} =1{Create 1 step} other{Create {count} steps}}",
+  "@recipeStepsImportCta": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "recipeStepAddTitle": "Step {number}",
+  "@recipeStepAddTitle": {
+    "placeholders": { "number": { "type": "int" } }
+  },
+  "recipeStepEditTitle": "Edit step {number}",
+  "@recipeStepEditTitle": {
+    "placeholders": { "number": { "type": "int" } }
+  },
+  "recipeStepAlreadyAdded": "{count, plural, =0{No step added} =1{1 step already added} other{{count} steps already added}}",
+  "@recipeStepAlreadyAdded": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "recipeStepFieldDescription": "Description",
+  "recipeStepDescriptionHint": "Describe this step…",
+  "recipeStepAddOptional": "Add (optional)",
+  "recipeStepBannerOption": "A banner",
+  "recipeStepBannerOptionHint": "Warning, info, danger or learn",
+  "recipeStepBaseRefOption": "A base recipe",
+  "recipeStepBaseRefOptionHint": "Inserts its steps by reference",
+  "recipeStepBannerLabel": "Banner",
+  "recipeStepBannerRemove": "Remove",
+  "recipeStepBannerTextHint": "Banner text",
+  "recipeStepBaseRefUnavailableLabel": "Base recipe reference",
+  "recipeStepBaseRefUnavailable": "unavailable with a banner",
+  "recipeStepIngredientsSectionLabel": "Step ingredients",
+  "recipeStepSelect": "Select",
+  "recipeStepAddNext": "Add and next",
+  "recipeStepFinish": "Finish",
+  "recipeStepDelete": "Delete step",
+  "recipeStepDescriptionRequired": "Describe the step before adding it.",
+
+  "stepBannerWarning": "Warning",
+  "stepBannerInfo": "Info",
+  "stepBannerDanger": "Danger",
+  "stepBannerLearn": "Learn",
+
+  "recipeStepIngredientsTitle": "Step ingredients",
+  "recipeStepIngredientsSubtitle": "Among those of the recipe",
+  "recipeStepIngredientsInfo": "Select only the ingredients used at this step.",
+  "recipeStepIngredientsEmpty": "Add ingredients to the recipe first.",
+  "recipeStepIngredientsValidate": "{count, plural, =0{Confirm} =1{Confirm · 1 selected} other{Confirm · {count} selected}}",
+  "@recipeStepIngredientsValidate": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "recipeStepBasePickerTitle": "Base recipe",
+  "recipeStepBasePickerSubtitle": "Its steps will be inserted by reference",
+  "recipeStepBasePickerEmpty": "No base recipe available.",
+
+  "commonClose": "Close",
+  "recipeServingsSectionTitle": "Servings",
+  "recipeServingsScaleHint": "Quantities adapt",
+  "recipeIngredientsAddCta": "Add ingredients",
+  "recipeIngredientQuantityTitle": "Quantity",
+  "recipeIngredientRemove": "Remove from recipe",
+  "recipeIngredientAddedToast": "{count, plural, =1{1 ingredient added} other{{count} ingredients added}}",
+  "@recipeIngredientAddedToast": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "addIngredientsTitle": "Add ingredients",
+  "addIngredientsSearchHint": "Search an ingredient",
+  "addIngredientsTabCatalog": "System catalog",
+  "addIngredientsCreateCta": "Create a new ingredient",
+  "addIngredientsCatalogInfo": "Import a system ingredient to add it to your ingredients, then to the recipe.",
+  "addIngredientsEmptyMine": "No ingredients. Create or import one from the catalog.",
+  "addIngredientsCta": "{count, plural, =0{Select an ingredient} =1{Add 1 ingredient} other{Add {count} ingredients}}",
+  "@addIngredientsCta": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "homeGreetingQuestion": "What would you like to cook today?",
+  "homeSearchHint": "Search a recipe",
+  "homeCategoryAll": "All",
+  "homeSuggestionTitle": "Suggestion of the day",
+  "homeSuggestionBadge": "Suggestion",
+  "homeFeaturedTitle": "Featured",
+  "homeFeaturedHint": "Swipe",
+  "homeEmptyTitle": "Nothing to cook… yet",
+  "homeEmptyBody": "Create your first recipe with the + button.",
+
+  "commonCancel": "Cancel",
+  "commonSave": "Save",
+  "commonDelete": "Delete",
+
+  "shoppingTabEyebrow": "Shopping",
+  "shoppingTabTitle": "My shopping",
+  "shoppingFreeBadge": "Free · 1/1",
+  "shoppingDefaultListName": "This week's list",
+  "shoppingCreateFromRecipes": "Create from my recipes",
+  "shoppingLockedSectionTitle": "History & multiple lists",
+  "shoppingPremiumKicker": "Cocotte Premium",
+  "shoppingPremiumTitle": "Unlimited lists + history",
+  "shoppingPremiumBody": "Create as many lists as you want and find all the previous ones.",
+  "shoppingPremiumCta": "Unlock Premium",
+  "shoppingEmptyTitle": "No list in progress",
+  "shoppingEmptyBody": "Generate your shopping list from your recipes.",
+  "shoppingLoadError": "Couldn't load your shopping.",
+  "shoppingItemsCount": "{count, plural, =0{No items} =1{1 item} other{{count} items}}",
+  "@shoppingItemsCount": { "placeholders": { "count": { "type": "int" } } },
+  "shoppingRecipesCount": "{count, plural, =0{No recipes} =1{1 recipe} other{{count} recipes}}",
+  "@shoppingRecipesCount": { "placeholders": { "count": { "type": "int" } } },
+  "shoppingServingsCount": "{count, plural, =1{1 serving} other{{count} servings}}",
+  "@shoppingServingsCount": { "placeholders": { "count": { "type": "int" } } },
+  "shoppingListSummary": "{items} · {recipes} · {servings} servings",
+  "@shoppingListSummary": { "placeholders": { "items": { "type": "String" }, "recipes": { "type": "String" }, "servings": { "type": "int" } } },
+
+  "shoppingStepLabel": "Step {current} / {total}",
+  "@shoppingStepLabel": { "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } } },
+  "shoppingStep1Title": "Which recipes are you cooking?",
+  "shoppingStep1Subtitle": "We'll assemble the shopping list from your selection.",
+  "shoppingSearchRecipe": "Search a recipe",
+  "shoppingContinue": "Continue",
+  "shoppingContinueWithCount": "{count, plural, =1{Continue · 1 recipe} other{Continue · {count} recipes}}",
+  "@shoppingContinueWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "shoppingStep2Title": "For how many servings?",
+  "shoppingStep2Subtitle": "We multiply each recipe's ingredients accordingly.",
+  "shoppingBaseServings": "Base recipe: {count} servings",
+  "@shoppingBaseServings": { "placeholders": { "count": { "type": "int" } } },
+  "shoppingTotalServings": "Total: {parts} servings across {recipes} recipes.",
+  "@shoppingTotalServings": { "placeholders": { "parts": { "type": "int" }, "recipes": { "type": "int" } } },
+  "shoppingStep3Title": "What do you already have at home?",
+  "shoppingStep3Subtitle": "Check the ingredients you already have.",
+  "shoppingInStock": "In stock",
+  "shoppingGenerateWithCount": "{count, plural, =0{Generate my list} =1{Generate my list · 1 item} other{Generate my list · {count} items}}",
+  "@shoppingGenerateWithCount": { "placeholders": { "count": { "type": "int" } } },
+  "shoppingNoRecipesTitle": "No recipes",
+  "shoppingNoRecipesBody": "Create a recipe first to generate a list.",
+  "shoppingGenerateOfflineError": "Generating a list requires a connection.",
+
+  "shoppingListEyebrow": "Auto list",
+  "shoppingViewByRecipe": "By recipe",
+  "shoppingViewByAisle": "By aisle",
+  "shoppingViewAz": "A–Z",
+  "shoppingOtherItems": "Other items",
+  "shoppingOtherItemsSubtitle": "Added manually · not from a recipe",
+  "shoppingRecipeMeta": "{servings} servings · {items}",
+  "@shoppingRecipeMeta": { "placeholders": { "servings": { "type": "int" }, "items": { "type": "String" } } },
+  "shoppingAddItem": "Add an item",
+  "shoppingAddItemTitle": "New item",
+  "shoppingAddItemHint": "Item name",
+  "shoppingAddItemQtyHint": "Quantity (optional)",
+  "shoppingAltAvailable": "alt. available",
+  "shoppingRename": "Rename list",
+  "shoppingClear": "Clear list",
+  "shoppingClearConfirmTitle": "Clear this list?",
+  "shoppingClearConfirmBody": "The list will be deleted. On the free plan, history is not kept.",
+  "shoppingProgress": "{checked}/{total}",
+  "@shoppingProgress": { "placeholders": { "checked": { "type": "int" }, "total": { "type": "int" } } },
+  "shoppingDetailSummary": "{items} · {recipes} · {added} added",
+  "@shoppingDetailSummary": { "placeholders": { "items": { "type": "String" }, "recipes": { "type": "String" }, "added": { "type": "int" } } },
+
+  "shoppingExportTitle": "Export",
+  "shoppingExportSection": "Export",
+  "shoppingExportPdf": "Export as PDF",
+  "shoppingExportPdfSubtitle": "Print-ready list",
+  "shoppingExportNote": "Convert to note",
+  "shoppingExportNoteSubtitle": "Copy the list as text",
+  "shoppingExportHint": "Checked items (already in stock) don't appear in the export.",
+  "shoppingExportCopied": "List copied to the clipboard.",
+  "shoppingExportPdfSoon": "PDF export is coming soon.",
+
+  "shoppingAltTitle": "Not found in store?",
+  "shoppingAltSubtitle": "Replace {name} with an alternative. Your recipe is not modified.",
+  "@shoppingAltSubtitle": { "placeholders": { "name": { "type": "String" } } },
+  "shoppingAltSection": "Defined alternatives",
+  "shoppingAltNote": "The replacement only applies to this shopping list.",
+  "shoppingAltConfirm": "Replace in the list",
+  "shoppingAltKeepOriginal": "Keep the original",
+  "shoppingAltReset": "Revert to the original",
+  "shoppingAltNone": "No alternative defined for this ingredient.",
+  "shoppingAltNoneHint": "Add alternatives from the ingredient page.",
+  "shoppingAltOffline": "Connection required to load the alternatives.",
+
+  "shoppingPremiumBadge": "Premium",
+  "shoppingPremiumNewList": "New list from my recipes",
+  "shoppingPremiumActiveLists": "Active lists",
+  "shoppingPremiumUnlimited": "Unlimited",
+  "shoppingPremiumHistory": "History",
+  "shoppingPremiumReopen": "Reopen",
+  "shoppingPremiumPreviewBanner": "Premium preview — not active on the free plan.",
+
+  "shoppingAisleFruitsLegumes": "Fruits & vegetables",
+  "shoppingAisleFrais": "Dairy & fresh",
+  "shoppingAisleViandesPoissons": "Meat & fish",
+  "shoppingAisleEpicerieSalee": "Savory groceries",
+  "shoppingAisleEpicerieSucree": "Sweet groceries",
+  "shoppingAisleBoulangerie": "Bakery",
+  "shoppingAisleBoissons": "Drinks",
+  "shoppingAisleSurgeles": "Frozen",
+  "shoppingAisleMaison": "Home & cleaning",
+  "shoppingAisleAutres": "Other",
+
+  "playerModeLabel": "Cooking mode",
+  "playerReadyTitle": "Ready to cook?",
+  "playerStepsBadge": "{count, plural, =0{0 steps} =1{1 step} other{{count} steps}}",
+  "@playerStepsBadge": { "placeholders": { "count": { "type": "int" } } },
+  "playerSubRecipesBadge": "{count, plural, =0{0 sub-recipes} =1{1 sub-recipe} other{{count} sub-recipes}}",
+  "@playerSubRecipesBadge": { "placeholders": { "count": { "type": "int" } } },
+  "playerTimersBadge": "{count, plural, =0{0 timers} =1{1 timer} other{{count} timers}}",
+  "@playerTimersBadge": { "placeholders": { "count": { "type": "int" } } },
+  "playerServingsQuestion": "For how many people?",
+  "playerServingsHint": "Recipe planned for {base} — quantities are recalculated automatically.",
+  "@playerServingsHint": { "placeholders": { "base": { "type": "int" } } },
+  "playerServingsUnit": "people",
+  "playerStartCta": "Start cooking",
+  "playerWakelockNotice": "The screen will stay on during the whole cooking session.",
+
+  "playerStepProgress": "Step {current} / {total}",
+  "@playerStepProgress": {
+    "placeholders": { "current": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "playerNextStep": "Next step",
+  "playerNext": "Next",
+  "playerAddTimerCta": "Add a timer",
+  "playerNoTimerDetected": "No timer detected on this step",
+  "playerTimerDetectedHint": "Timer detected: \"{text}\"",
+  "@playerTimerDetectedHint": { "placeholders": { "text": { "type": "String" } } },
+  "playerIngredientsTitle": "Step ingredients",
+  "playerForServings": "for {count} servings",
+  "@playerForServings": { "placeholders": { "count": { "type": "int" } } },
+  "playerSubRecipeContext": "In: {name}",
+  "@playerSubRecipeContext": { "placeholders": { "name": { "type": "String" } } },
+  "playerSubRecipeBadge": "SUB-RECIPE · {index} / {total}",
+  "@playerSubRecipeBadge": {
+    "placeholders": { "index": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "playerSubRecipeLabel": "SUB-RECIPE",
+  "playerTimerLabel": "Timer",
+  "playerTimerStart": "Start",
+  "playerTimerReset": "Reset",
+  "playerTimerDetectedAdjustable": "Detected in the step · adjustable",
+
+  "playerTimerSheetTitle": "Set the timer",
+  "playerTimerSheetDetected": "Detected in the step: \"{text}\"",
+  "@playerTimerSheetDetected": { "placeholders": { "text": { "type": "String" } } },
+  "playerTimerSheetCancel": "Cancel",
+  "playerTimerSheetStart": "Start the timer",
+
+  "playerFinishTitle": "It's ready!",
+  "playerFinishSubtitle": "{name} · {steps, plural, =1{1 step} other{{steps} steps}} in {minutes} min. Enjoy your meal!",
+  "@playerFinishSubtitle": {
+    "placeholders": {
+      "name": { "type": "String" },
+      "steps": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "playerFinishBackToRecipe": "Back to the recipe",
+  "playerFinishRedo": "Redo",
+
+  "playerResumeTitle": "Resume cooking?",
+  "playerResumeBody": "You stopped at step {step} of {total}, {minutes} min ago.",
+  "@playerResumeBody": {
+    "placeholders": {
+      "step": { "type": "int" },
+      "total": { "type": "int" },
+      "minutes": { "type": "int" }
+    }
+  },
+  "playerResumeRestart": "Restart",
+  "playerResumeContinue": "Resume at step {step}",
+  "@playerResumeContinue": { "placeholders": { "step": { "type": "int" } } },
+
+  "playerQuitTitle": "Quit cooking mode?",
+  "playerQuitBody": "Your progress (step {step} / {total}) and the running timer will be lost.",
+  "@playerQuitBody": {
+    "placeholders": { "step": { "type": "int" }, "total": { "type": "int" } }
+  },
+  "playerQuitContinue": "Continue cooking",
+  "playerQuitConfirm": "Quit",
+
+  "playerSwitchTitle": "Another recipe is in progress",
+  "playerSwitchBody": "{name}, step {step} — quit it and start this one?",
+  "@playerSwitchBody": {
+    "placeholders": { "name": { "type": "String" }, "step": { "type": "int" } }
+  },
+  "playerSwitchCancel": "Cancel",
+  "playerSwitchConfirm": "Continue",
+
+  "playerSummaryTitle": "All steps",
+  "playerSummaryHint": "tap to skip",
+  "playerResumeStepCta": "Resume step {step}",
+  "@playerResumeStepCta": { "placeholders": { "step": { "type": "int" } } },
+  "playerProgressLabel": "Progress",
+
+  "recipePlayCta": "Cook this recipe",
+
+  "deleteAccountTitle": "Delete my account",
+  "deleteAccountGuestHeading": "Permanently delete this guest account?",
+  "deleteAccountGuestBody": "All your data (recipes, ingredients, tags, people, lists) will be permanently and immediately deleted. This action is irreversible. A new blank guest account will be created.",
+  "deleteAccountFullHeading": "Delete my account?",
+  "deleteAccountFullBody": "Your account is immediately anonymized, then permanently deleted after a 30-day period. During this period, you can cancel the deletion and recover your account by signing in again. You will be signed out.",
+  "deleteAccountConfirm": "Delete my account",
+  "deleteAccountCancel": "Cancel",
+  "deleteAccountGuestDone": "Your account has been deleted. New guest account created.",
+  "deleteAccountPendingDone": "Deletion recorded. You have 30 days to cancel it by signing in again.",
+
+  "cancelDeletionBannerTitle": "Account deletion pending",
+  "cancelDeletionBannerBody": "Your account will be permanently deleted at the end of the 30-day period. You can still cancel it.",
+  "cancelDeletionBannerCta": "Cancel deletion",
+  "cancelDeletionSuccess": "Deletion cancelled. Your account is active again.",
+
+  "guestReminderDialogDismiss": "Later",
+
+  "searchHint": "Search…",
+  "searchTriggerFolder": "Folder",
+  "searchTriggerTag": "Tag",
+  "searchTriggerPerson": "Person",
+  "searchSectionFolders": "Folders",
+  "searchSectionTags": "Tags",
+  "searchSectionPeople": "Family",
+  "searchCreateTag": "Create tag \"{name}\"",
+  "@searchCreateTag": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "searchManageFamily": "Manage family members",
+  "searchClearAll": "Clear all",
+  "searchResultsCount": "{count, plural, =1{1 result} other{{count} results}}",
+  "@searchResultsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "searchFolderRecipes": "{count, plural, =0{No recipes} =1{1 recipe} other{{count} recipes}}",
+  "@searchFolderRecipes": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "searchFolderSubfolders": "{count, plural, =1{1 subfolder} other{{count} subfolders}}",
+  "@searchFolderSubfolders": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "searchMinutesShort": "{min} min",
+  "@searchMinutesShort": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+  "searchEmptyTitle": "No recipes",
+  "searchNoSuggestion": "No suggestion",
+  "searchIdleHint": "Type \"/\" for a folder, \"#\" for a tag, \"@\" for a person.",
+
+  "accountSectionApp": "Application",
+  "accountRowLanguage": "Language",
+  "languageTitle": "Language",
+  "languageIntro": "Choose the app language.",
+  "languageSystem": "System (automatic)",
+  "languageSystemSubtitle": "Follows your phone's language",
+  "languageFrench": "Français",
+  "languageEnglish": "English"
+}

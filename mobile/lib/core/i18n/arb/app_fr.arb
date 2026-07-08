@@ -708,8 +708,6 @@
   "@homeGreetingQuestion": {},
   "homeSearchHint": "Rechercher une recette",
   "@homeSearchHint": {},
-  "homeSearchComingSoon": "Recherche bientôt disponible",
-  "@homeSearchComingSoon": {},
   "homeCategoryAll": "Tout",
   "@homeCategoryAll": {},
   "homeSuggestionTitle": "Suggestion du jour",
@@ -1132,5 +1130,22 @@
   "searchNoSuggestion": "Aucune proposition",
   "@searchNoSuggestion": {},
   "searchIdleHint": "Tape « / » pour un dossier, « # » pour un tag, « @ » pour une personne.",
-  "@searchIdleHint": {}
+  "@searchIdleHint": {},
+
+  "accountSectionApp": "Application",
+  "@accountSectionApp": {},
+  "accountRowLanguage": "Langue",
+  "@accountRowLanguage": {},
+  "languageTitle": "Langue",
+  "@languageTitle": {},
+  "languageIntro": "Choisis la langue de l'application.",
+  "@languageIntro": {},
+  "languageSystem": "Système (automatique)",
+  "@languageSystem": {},
+  "languageSystemSubtitle": "Suit la langue de ton téléphone",
+  "@languageSystemSubtitle": {},
+  "languageFrench": "Français",
+  "@languageFrench": {},
+  "languageEnglish": "English",
+  "@languageEnglish": {}
 }

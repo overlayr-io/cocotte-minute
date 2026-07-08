@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/auth/auth_bloc.dart';
 import 'core/i18n/generated/app_localizations.dart';
+import 'core/i18n/locale_cubit.dart';
 import 'core/navigation/main_shell.dart';
 import 'core/theme/app_theme.dart';
 import 'core/widgets/error_view.dart';
@@ -13,16 +14,25 @@ class CocotteApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => AuthBloc()..add(const AuthStarted()),
-      child: MaterialApp(
-        onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light,
-        darkTheme: AppTheme.dark,
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const _AuthGate(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => AuthBloc()..add(const AuthStarted())),
+        BlocProvider(create: (_) => LocaleCubit()..load()),
+      ],
+      child: BlocBuilder<LocaleCubit, Locale?>(
+        builder: (context, locale) {
+          return MaterialApp(
+            onGenerateTitle: (context) => AppLocalizations.of(context).appTitle,
+            debugShowCheckedModeBanner: false,
+            theme: AppTheme.light,
+            darkTheme: AppTheme.dark,
+            // `null` = suit la langue de l'appareil (option « Système »).
+            locale: locale,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: const _AuthGate(),
+          );
+        },
       ),
     );
   }

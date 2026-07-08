@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/auth/auth_bloc.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
+import '../../../../core/i18n/locale_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/coming_soon_page.dart';
 import '../../../auth/presentation/pages/auth_page.dart';
@@ -12,6 +13,7 @@ import '../../../people/presentation/pages/famille_page.dart';
 import '../../../tags/presentation/pages/tags_page.dart';
 import '../widgets/account_section.dart';
 import 'delete_account_page.dart';
+import 'language_page.dart';
 
 /// Onglet Compte : profil invité/connecté + accès au contenu, à la famille,
 /// à la gestion du compte, à l'aide et à la confidentialité.
@@ -32,6 +34,9 @@ class AccountPage extends StatelessWidget {
     final showReminder = isGuest &&
         createdAt != null &&
         DateTime.now().difference(createdAt) >= const Duration(days: 14);
+
+    // Écoute la langue courante pour rafraîchir le sous-titre de la tuile.
+    context.watch<LocaleCubit>();
 
     return SafeArea(
       bottom: false,
@@ -86,6 +91,25 @@ class AccountPage extends StatelessWidget {
                 icon: Icons.groups_outlined,
                 label: l10n.accountRowPersons,
                 onTap: () => Navigator.of(context).push(FamillePage.route()),
+              ),
+            ],
+          ),
+
+          // Application — préférences transverses (langue…)
+          AccountSection(
+            title: l10n.accountSectionApp,
+            tiles: [
+              AccountTile(
+                icon: Icons.translate_rounded,
+                iconColor: const Color(0xFF5B6774),
+                iconBackground: const Color(0xFFEDF0F3),
+                label: l10n.accountRowLanguage,
+                trailing: Text(
+                  _currentLanguageLabel(context, l10n),
+                  style: const TextStyle(
+                      fontSize: 13.5, color: AppColors.textMuted),
+                ),
+                onTap: () => Navigator.of(context).push(LanguagePage.route()),
               ),
             ],
           ),
@@ -180,6 +204,16 @@ class AccountPage extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Libellé de la langue actuellement sélectionnée (pour le sous-titre de la tuile).
+String _currentLanguageLabel(BuildContext context, AppLocalizations l10n) {
+  final locale = context.read<LocaleCubit>().state;
+  return switch (locale?.languageCode) {
+    'fr' => l10n.languageFrench,
+    'en' => l10n.languageEnglish,
+    _ => l10n.languageSystem,
+  };
 }
 
 class _ProfileCard extends StatelessWidget {
