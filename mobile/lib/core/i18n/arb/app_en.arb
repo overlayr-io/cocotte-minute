@@ -675,7 +675,7 @@
   "@playerResumeContinue": { "placeholders": { "step": { "type": "int" } } },
 
   "playerQuitTitle": "Quit cooking mode?",
-  "playerQuitBody": "Your progress (step {step} / {total}) and the running timer will be lost.",
+  "playerQuitBody": "Your progress (step {step} / {total}) will be saved: you can pick this recipe back up right where you left off.",
   "@playerQuitBody": {
     "placeholders": { "step": { "type": "int" }, "total": { "type": "int" } }
   },

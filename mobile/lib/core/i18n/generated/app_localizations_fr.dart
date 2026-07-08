@@ -1790,7 +1790,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String playerQuitBody(int step, int total) {
-    return 'Ta progression (étape $step / $total) et le minuteur en cours seront perdus.';
+    return 'Ta progression (étape $step / $total) sera enregistrée : tu pourras reprendre cette recette là où tu t\'es arrêté.';
   }
 
   @override

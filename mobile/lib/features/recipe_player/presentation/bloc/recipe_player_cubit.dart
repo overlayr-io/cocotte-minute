@@ -330,15 +330,16 @@ class RecipePlayerCubit extends Cubit<RecipePlayerState> {
     await _storage.clear();
   }
 
-  /// Confirmation de quitter (10i) : annule les minuteurs programmés et
-  /// efface l'état de reprise (la page se referme juste après, côté widget).
+  /// Abandon en cours de route (10i) : on **conserve** l'état de reprise pour
+  /// le proposer au prochain lancement, et on **garde** les minuteurs
+  /// programmés (un minuteur en cours continue de notifier même hors de l'app).
+  /// La purge n'a lieu qu'à la fin réelle ([finishSession]) ou quand une autre
+  /// recette écrase la session ([confirmSwitchRecipe]). La page se referme
+  /// juste après, côté widget.
   Future<void> quitSession() async {
     final current = state;
     if (current is! RecipePlayerLoaded) return;
-    for (final t in current.timers) {
-      await _notifications.cancel(_notificationId(t.id));
-    }
-    await _storage.clear();
+    await _persist();
   }
 
   // --- persistance ------------------------------------------------------

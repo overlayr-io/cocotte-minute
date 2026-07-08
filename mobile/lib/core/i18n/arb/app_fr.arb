@@ -1155,7 +1155,7 @@
 
   "playerQuitTitle": "Quitter le mode cuisine ?",
   "@playerQuitTitle": {},
-  "playerQuitBody": "Ta progression (étape {step} / {total}) et le minuteur en cours seront perdus.",
+  "playerQuitBody": "Ta progression (étape {step} / {total}) sera enregistrée : tu pourras reprendre cette recette là où tu t'es arrêté.",
   "@playerQuitBody": {
     "placeholders": { "step": { "type": "int" }, "total": { "type": "int" } }
   },

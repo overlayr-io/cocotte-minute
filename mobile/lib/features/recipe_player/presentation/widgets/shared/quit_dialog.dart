@@ -25,12 +25,12 @@ Future<bool> showQuitDialog(
               width: 60,
               height: 60,
               decoration: BoxDecoration(
-                color: const Color(0xFFFDF1EF),
+                color: AppColors.primaryTint,
                 borderRadius: BorderRadius.circular(18),
               ),
               child: const Icon(
-                Icons.warning_amber_rounded,
-                color: Color(0xFFE0554A),
+                Icons.bookmark_added_rounded,
+                color: AppColors.primary,
                 size: 30,
               ),
             ),

@@ -3059,7 +3059,7 @@ abstract class AppLocalizations {
   /// No description provided for @playerQuitBody.
   ///
   /// In fr, this message translates to:
-  /// **'Ta progression (étape {step} / {total}) et le minuteur en cours seront perdus.'**
+  /// **'Ta progression (étape {step} / {total}) sera enregistrée : tu pourras reprendre cette recette là où tu t\'es arrêté.'**
   String playerQuitBody(int step, int total);
 
   /// No description provided for @playerQuitContinue.

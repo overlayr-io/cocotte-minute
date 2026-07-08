@@ -1782,7 +1782,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String playerQuitBody(int step, int total) {
-    return 'Your progress (step $step / $total) and the running timer will be lost.';
+    return 'Your progress (step $step / $total) will be saved: you can pick this recipe back up right where you left off.';
   }
 
   @override

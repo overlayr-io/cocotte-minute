@@ -287,16 +287,42 @@ void main() {
   });
 
   group('quitSession', () {
-    test('cancels timer notifications and clears storage', () async {
+    test('keeps the resume state (no purge) so it can be resumed later', () async {
       final cubit = await playingCubit();
       await cubit.startTimer('s1', const Duration(minutes: 15));
 
       await cubit.quitSession();
 
-      verify(() => notifications.cancel(any())).called(greaterThanOrEqualTo(1));
-      verify(() => storage.clear()).called(greaterThanOrEqualTo(1));
+      // Abandon en cours de route : on conserve l'état (pas de clear) et on
+      // garde les minuteurs programmés (pas de cancel).
+      verifyNever(() => storage.clear());
+      verify(() => storage.write(any())).called(greaterThanOrEqualTo(1));
 
       await cubit.close();
+    });
+
+    test('a fresh load after quitting offers to resume', () async {
+      // La session persistée par le quit est relue au prochain lancement.
+      ResumeState? persisted;
+      when(() => storage.write(any())).thenAnswer((invocation) async {
+        persisted = invocation.positionalArguments.first as ResumeState;
+      });
+      final cubit = await playingCubit();
+      cubit.nextStep();
+      await cubit.quitSession();
+      expect(persisted, isNotNull);
+
+      when(() => storage.read()).thenAnswer((_) async => persisted);
+      final reopened = buildCubit();
+      await reopened.load();
+
+      final loaded = reopened.state as RecipePlayerLoaded;
+      expect(loaded.phase, PlayerPhase.launch);
+      expect(loaded.pendingResume, isNotNull);
+      expect(loaded.pendingResume!.currentIndex, persisted!.currentIndex);
+
+      await cubit.close();
+      await reopened.close();
     });
   });
 
