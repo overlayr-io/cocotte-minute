@@ -8,8 +8,15 @@ sealed class CategoriesListEvent extends Equatable {
 }
 
 /// Charge (ou recharge) toute l'arborescence des dossiers du compte.
+/// [forceRefresh] contourne le cache (après une mutation faite ailleurs,
+/// ex. rangement d'une recette depuis sa fiche).
 class CategoriesRequested extends CategoriesListEvent {
-  const CategoriesRequested();
+  const CategoriesRequested({this.forceRefresh = false});
+
+  final bool forceRefresh;
+
+  @override
+  List<Object?> get props => [forceRefresh];
 }
 
 /// Création d'un dossier (racine si `parentCategoryId` est null).

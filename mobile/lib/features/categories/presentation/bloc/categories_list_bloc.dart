@@ -26,12 +26,16 @@ class CategoriesListBloc extends Bloc<CategoriesListEvent, CategoriesListState> 
     CategoriesRequested event,
     Emitter<CategoriesListState> emit,
   ) async {
-    emit(const CategoriesListLoading());
+    // Ne montre le spinner qu'au premier chargement : un refresh garde la
+    // liste affichée (cache-first + données re-émises à l'arrivée).
+    if (state is! CategoriesListLoaded) emit(const CategoriesListLoading());
     try {
-      final categories = await _repository.fetchMine();
+      final categories = await _repository.fetchMine(
+        forceRefresh: event.forceRefresh,
+      );
       emit(CategoriesListLoaded(categories: categories));
     } on CategoriesRepositoryException catch (e) {
-      emit(CategoriesListError(e.message));
+      if (state is! CategoriesListLoaded) emit(CategoriesListError(e.message));
     }
   }
 

@@ -77,7 +77,7 @@ class _RecipesViewState extends State<_RecipesView> {
     }
     // Rafraîchit les compteurs de recettes des dossiers au retour, ainsi que le
     // dossier virtuel « Autres » (une recette neuve n'est rangée nulle part).
-    bloc.add(const CategoriesRequested());
+    bloc.add(const CategoriesRequested(forceRefresh: true));
     await uncategorized.load();
   }
 
