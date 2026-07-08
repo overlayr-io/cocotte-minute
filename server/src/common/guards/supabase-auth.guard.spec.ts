@@ -31,7 +31,10 @@ describe('SupabaseAuthGuard', () => {
   let guard: SupabaseAuthGuard;
 
   beforeEach(() => {
-    const config = { getOrThrow: () => JWT_SECRET } as unknown as ConfigService;
+    const config = {
+      getOrThrow: (key: string) =>
+        key === 'SUPABASE_URL' ? 'https://project.supabase.co' : JWT_SECRET,
+    } as unknown as ConfigService;
     guard = new SupabaseAuthGuard(config);
   });
 

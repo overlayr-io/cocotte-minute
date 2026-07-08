@@ -1,0 +1,1 @@
+ALTER TABLE "recipe_ingredients" ADD COLUMN "quantity" numeric(10, 2) DEFAULT 1 NOT NULL;

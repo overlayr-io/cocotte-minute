@@ -1,12 +1,60 @@
 ---
 feature: recette-base
-status: planned     # planned | in-progress | done
+status: done        # planned | in-progress | done
 scope: v1           # v1 | v2 | later
 depends_on: [auth, ingredients, tags-personnes, categories]
 order: 5
 ---
 
 # Recette (CRUD de base)
+
+> **État de livraison (v1).** Écrans dérivés des maquettes 1d (création),
+> 2d (fiche détail) et **8a/8b/8c (ajout d'ingrédient)** — une seule page pour
+> recette normale et de base, sections conditionnelles sur `isBase`. Fiche détail
+> avec **photo fixe en fond et corps qui remonte au scroll** (photo `Positioned` +
+> contenu en `CustomScrollView`).
+>
+> **Ingrédients dans les recettes (livré).** `recipe_ingredients` porte une
+> **quantité** (`quantity numeric(10,2)`, migration `0006`) ; l'unité n'est jamais
+> stockée sur la ligne, toujours **lue depuis `ingredients.unit`**. Ajout depuis le
+> mobile branché (feuilles 8a/8b/8c : sélection multiple, import système, création
+> auto-sélectionnée), édition de quantité et retrait sur la fiche. Saisie de
+> quantité par stepper (pas dépendant de l'unité) + clavier décimal. Le serveur
+> fait un **upsert** à l'ajout (`PATCH …/ingredients/:id` pour la quantité seule).
+>
+> **Segment Ingrédients | Étapes (livré).** Vraie bascule sur la fiche : l'onglet
+> **Étapes** est actif (feature `recette-etapes`, écrans 9b-9h) — liste
+> réordonnable en drag & drop, étapes texte/bannière et références de recette de
+> base dépliées récursivement. Voir `docs/features/recipe-steps.md`.
+>
+> **Portions.** Le stepper Portions fait varier les quantités **affichées**
+> (`quantité × portions / servings`) : **scaling d'affichage local et éphémère,
+> jamais persisté** ; repart de `servings` (défaut **1**) à chaque ouverture.
+>
+> **Toujours hors périmètre (features dédiées) :** bouton Play / mode pas-à-pas,
+> galerie, note ⭐, bouton Suivre.
+>
+> **Pivots dette branchés :** `recipe_categories` et `recipe_tags` créés ; les
+> `recipeCount` réels sont désormais renvoyés par Tags et Catégories (via
+> `RecipesService`, dépendance à sens unique). L'assignation catégorie/tag ↔
+> recette existe côté serveur (endpoints) mais son UI mobile est différée.
+>
+> **Onglet Recettes = vue Dossiers (livré, maquette 7b).** L'onglet Recettes
+> n'affiche plus une liste plate : c'est désormais la vue **Dossiers** de la
+> feature `categories` (titre, recherche **placeholder visuel** non branchée,
+> cartes de dossiers racines « N recettes · M sous-dossiers », bouton « Nouveau
+> dossier », FAB corail pour créer une recette). Ouvrir un dossier liste ses
+> recettes via le nouvel endpoint `GET /categories/:id/recipes`
+> (`RecipesService.listByCategory`, pivot `recipe_categories`, tri récent) —
+> chargement non bloquant (`FolderRecipesCubit`), carte partagée
+> `RecipeListCard`. Compte → Catégories reste accessible séparément (création
+> de sous-dossiers). La vue **Découverte** du 7b (bascule Dossiers/Découverte,
+> hero à la une, rangées par saison/temps/personne) n'a **pas** été construite :
+> aucune donnée serveur pour l'alimenter (pas de champ saison, pas de requête
+> par personne) — différée, décision explicite.
+>
+> **Différé (non bloquant) :** ajout de **composant / sous-recette** depuis le
+> mobile (picker) — l'endpoint serveur existe déjà ; upload de photo réel.
 
 ## Problème résolu
 Domaine métier central de l'application : permettre la création et la gestion
@@ -106,14 +154,15 @@ recette de base dès la création.
   avec ce qui a été acté dans `PROJECT_CONTEXT.md`.
 
 ## Hors scope pour cette feature
-- Les étapes détaillées (feature séparée `recette-etapes`).
-- La quantité précise par ingrédient dans une recette (mentionné mais pas
-  détaillé ici — à clarifier : montant + unité par ligne d'ingrédient).
+- ~~Les étapes détaillées~~ → **livré** (feature `recette-etapes`, écrans 9b-9h) :
+  onglet Étapes actif, texte/bannière/référence de base, drag & drop.
+- ~~La quantité précise par ingrédient~~ → **livré** : `recipe_ingredients.quantity`
+  (`numeric(10,2)`), unité toujours lue depuis l'ingrédient. Voir l'en-tête.
 - Le mode pas-à-pas d'exécution (feature séparée `mode-pas-a-pas`).
 
-## Questions ouvertes / à trancher
-- Nombre de personnes par défaut à 0 semble étrange pour une recette utilisable
-  — confirmer si 0 est vraiment voulu ou si un défaut plus réaliste (ex: 1 ou 4)
-  est préférable.
-- Une recette peut-elle exister sans aucun ingrédient/étape (brouillon), ou
-  y a-t-il un minimum requis pour la considérer "complète" ?
+## Questions tranchées
+- **Nombre de personnes par défaut = 1** (`DEFAULT_SERVINGS` serveur ≡
+  `kDefaultServings` mobile). Une recette est utilisable dès sa création.
+- **Une recette peut exister sans ingrédient ni étape** (brouillon) : aucune
+  contrainte de complétude en v1 — on crée avec juste un nom puis on complète
+  sur la fiche.

@@ -1,12 +1,45 @@
 ---
 feature: recette-etapes
-status: planned     # planned | in-progress | done
+status: done        # planned | in-progress | done
 scope: v1           # v1 | v2 | later
 depends_on: [recette-base]
 order: 6
 ---
 
 # Étapes de recette
+
+> **État de livraison (v1).** Onglet **Étapes** sur la fiche recette (le segment
+> Ingrédients | Étapes est une vraie bascule). Écrans dérivés des maquettes
+> **9b** (liste), 9c (vide, 2 entrées), 9d (import texte), 9e (composer une par
+> une), 9f (édition + bannière), 9g (ingrédients de l'étape), 9h (modale de
+> consultation). Pas de module serveur séparé : tout dans `RecipesService` /
+> `RecipesController` et dans la feature mobile `recipes/`.
+>
+> **Modèle retenu.** Une étape est **texte** (`description` + bannière + ingrédients
+> optionnels) **ou** une **référence de base** (`base_recipe_ref_id` seul) —
+> exclusif, validé serveur. **Bannière = préréglage + texte** : `banner_type`
+> (enum `warning|info|danger|learn`) + `banner_text` ; la couleur et l'icône sont
+> dérivées du type côté client (**pas de `banner_color`**). Bannière affichée
+> pleine largeur.
+>
+> **Dépliage récursif = côté serveur.** `GET /recipes/:id` renvoie `steps` déjà
+> aplati : les blocs référence portent leurs sous-étapes dépliées récursivement,
+> **anti-cycle**, une **référence dont la base est soft-deleted est omise** (ni
+> recette ni étapes). Listes petites → pas de pagination. La numérotation globale
+> continue est recalculée à l'affichage côté mobile (résiste au drag & drop).
+>
+> **Drag & drop livré.** Réordonnancement des étapes de premier niveau
+> (`ReorderableListView`, poignée dédiée) ; le bloc référence se déplace comme une
+> étape, mais **ses sous-étapes internes restent figées** (jamais réordonnées ni
+> éditées depuis la recette parente).
+>
+> **Tables :** `recipe_steps` (position, description?, banner_type, banner_text?,
+> base_recipe_ref_id?) + `step_ingredients` (step_id, ingredient_id — la table
+> `recipe_ingredients` n'ayant pas d'id propre) ; migration `0007`.
+>
+> **Endpoints :** `POST /recipes/:id/steps`, `POST …/steps/import`,
+> `PATCH …/steps/:stepId`, `DELETE …/steps/:stepId`, `PUT …/steps/order`,
+> `PUT …/steps/:stepId/ingredients`.
 
 ## Problème résolu
 Permettre de décrire le déroulé d'une recette étape par étape, tout en évitant
@@ -93,8 +126,9 @@ référencées et affichées au bon endroit.
 - Gestion du cas où la recette de base référencée est supprimée/soft-deleted
   (comportement d'affichage non précisé ici).
 
-## Questions ouvertes / à trancher
-- Que se passe-t-il à l'affichage si la recette de base référencée dans une
-  étape a été soft-deleted entre-temps ?
-- La résolution récursive des étapes imbriquées se fait-elle côté server
-  (une seule requête, réponse déjà dépliée) ou côté mobile (appels successifs) ?
+## Questions ouvertes / à trancher (tranchées)
+- **Réf. de base soft-deleted** → le bloc de référence est **omis** de l'affichage
+  (ni recette ni étapes ; la numérotation saute), la ligne `recipe_steps` reste en
+  base (réapparaît si la base est restaurée). L'utilisateur peut la retirer.
+- **Résolution récursive** → **côté serveur** : `GET /recipes/:id` renvoie l'arbre
+  déjà déplié et numéroté (une seule requête), pas d'appels successifs mobile.

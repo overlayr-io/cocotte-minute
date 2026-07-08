@@ -1,6 +1,6 @@
 ---
 feature: ingredients
-status: planned     # planned | in-progress | done
+status: done        # planned | in-progress | done
 scope: v1           # v1 | v2 | later
 depends_on: [auth]
 order: 2
@@ -77,7 +77,11 @@ permettant une personnalisation complète une fois importé.
 ## Hors scope pour cette feature
 - Le cas "un ingrédient peut être une recette de base (ex: béchamel)" —
   explicitement mentionné comme évolution future, pas dans cette feature.
-- Liaison ingrédient ↔ recette/étape — sera traité dans la feature recette.
+- Liaison ingrédient ↔ recette — **livré** dans `recipes` : pivot
+  `recipe_ingredients` avec **quantité** (`quantity numeric(10,2)`), l'unité étant
+  toujours lue depuis l'ingrédient. Ajout mobile via les écrans 8a/8b/8c (import
+  système et création réutilisent les endpoints de cette feature). Liaison
+  ingrédient ↔ **étape** : à venir avec `recette-etapes`.
 - Interface d'administration pour gérer le catalogue système d'ingrédients
   (comment le système lui-même crée ses ingrédients de base n'est pas définie ici).
 
@@ -86,3 +90,34 @@ permettant une personnalisation complète une fois importé.
   (seed manuel, script, interface admin future) ?
 - Stockage de la symétrie des alternatives : lignes dupliquées (A→B et B→A)
   ou déduction à la lecture (une seule ligne, requête bidirectionnelle) ?
+
+## Réalisation (fait)
+
+Questions ouvertes tranchées à l'implémentation :
+- **Catalogue système** : seedé via un **script** (`npm run db:seed:ingredients`
+  → `server/scripts/seed-ingredients.ts`) à partir d'un fichier JSON. Pas
+  d'interface admin (hors scope confirmé).
+- **Symétrie des alternatives** : **une seule ligne canonique** par paire
+  (`low_id < high_id` + index unique), symétrie déduite à la lecture (requête
+  bidirectionnelle). Pas de doublon A→B / B→A.
+
+### Backend
+- Table `ingredients` (`owner_id` nullable = système vs copie user, `imported_from_id`,
+  `unit` enum, `deleted_at` soft delete) + pivot `ingredient_alternatives`.
+- Endpoints : `GET /ingredients`, `GET /ingredients/system` (annoté
+  `alreadyImported`), `GET /ingredients/:id` (avec alternatives),
+  `POST /ingredients`, `POST /ingredients/:id/import` (409 si déjà importé),
+  `PATCH /ingredients/:id`, `DELETE /ingredients/:id` (soft delete),
+  `POST`/`DELETE /ingredients/:id/alternatives[/:altId]`.
+- Un ingrédient système est non modifiable/supprimable par un user (403). Purge
+  branchée dans le « repartir de zéro ».
+
+### Mobile
+- Écran `IngredientsPage` : onglets « Mes ingrédients » / « Catalogue système »
+  (avec import + badge « déjà importé ») + recherche. Page détail avec édition
+  nom/unité, gestion des alternatives (picker), suppression. Bottom-sheet de
+  création (nom + unité).
+
+### Gap connu
+- **Image** : le champ `imageUrl` existe (URL externe) mais **l'upload réel
+  d'image n'est pas branché** (pas de widget d'upload) — à faire ultérieurement.

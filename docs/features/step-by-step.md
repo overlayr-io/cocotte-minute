@@ -1,6 +1,6 @@
 ---
 feature: mode-pas-a-pas
-status: planned     # planned | in-progress | done
+status: done        # planned | in-progress | done
 scope: v1           # v1 | v2 | later
 depends_on: [recette-base, recette-etapes]
 order: 7
