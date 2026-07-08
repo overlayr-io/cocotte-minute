@@ -1019,6 +1019,8 @@
   "@ingredientEmojiCustomHint": {},
   "commonValidate": "Valider",
   "@commonValidate": {},
+  "recipeStepIngredientsAutoHint": "Détectés depuis ton texte",
+  "@recipeStepIngredientsAutoHint": {},
   "commonSave": "Enregistrer",
   "@commonSave": {},
   "commonDelete": "Supprimer",

@@ -1520,6 +1520,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonValidate => 'Confirm';
 
   @override
+  String get recipeStepIngredientsAutoHint => 'Detected from your text';
+
+  @override
   String get commonSave => 'Save';
 
   @override

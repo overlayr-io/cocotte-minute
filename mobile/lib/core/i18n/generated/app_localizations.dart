@@ -2720,6 +2720,12 @@ abstract class AppLocalizations {
   /// **'Valider'**
   String get commonValidate;
 
+  /// No description provided for @recipeStepIngredientsAutoHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détectés depuis ton texte'**
+  String get recipeStepIngredientsAutoHint;
+
   /// No description provided for @commonSave.
   ///
   /// In fr, this message translates to:

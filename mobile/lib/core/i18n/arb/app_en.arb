@@ -601,6 +601,8 @@
   "@ingredientEmojiCustomHint": {},
   "commonValidate": "Confirm",
   "@commonValidate": {},
+  "recipeStepIngredientsAutoHint": "Detected from your text",
+  "@recipeStepIngredientsAutoHint": {},
   "commonSave": "Save",
   "commonDelete": "Delete",
   "commonEdit": "Edit",

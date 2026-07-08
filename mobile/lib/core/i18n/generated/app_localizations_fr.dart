@@ -1527,6 +1527,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get commonValidate => 'Valider';
 
   @override
+  String get recipeStepIngredientsAutoHint => 'Détectés depuis ton texte';
+
+  @override
   String get commonSave => 'Enregistrer';
 
   @override
