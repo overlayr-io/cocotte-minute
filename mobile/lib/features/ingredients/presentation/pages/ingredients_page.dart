@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_network_image.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../data/ingredients_repository.dart';
 import '../../domain/ingredient.dart';
@@ -145,34 +146,40 @@ class _IngredientsViewState extends State<_IngredientsView> {
                           ? l10n.ingredientsEmptyMine
                           : l10n.ingredientsEmptyCatalog),
                 )
-              : ListView(
+              // Builder : seules les tuiles visibles sont construites (le
+              // catalogue peut être long, chaque tuile porte une image).
+              : ListView.builder(
                   padding: const EdgeInsets.fromLTRB(20, 6, 20, 28),
-                  children: [
-                    for (final item in items)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: isMine
-                            ? _MineTile(
-                                ingredient: item,
-                                onTap: () => _openDetail(item.id),
-                              )
-                            : _SystemTile(
-                                ingredient: item,
-                                busy: state.busyId == item.id,
-                                onImport: () => context
-                                    .read<IngredientsListBloc>()
-                                    .add(IngredientSystemImported(item.id)),
+                  itemCount: items.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == items.length) {
+                      return isMine
+                          ? Padding(
+                              padding: const EdgeInsets.only(top: 2),
+                              child: _DashedButton(
+                                label: l10n.ingredientsCreateCta,
+                                onTap: _create,
                               ),
-                      ),
-                    if (isMine) ...[
-                      const SizedBox(height: 2),
-                      _DashedButton(
-                        label: l10n.ingredientsCreateCta,
-                        onTap: _create,
-                      ),
-                    ] else
-                      _ImportInfo(text: l10n.ingredientsImportInfo),
-                  ],
+                            )
+                          : _ImportInfo(text: l10n.ingredientsImportInfo);
+                    }
+                    final item = items[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: isMine
+                          ? _MineTile(
+                              ingredient: item,
+                              onTap: () => _openDetail(item.id),
+                            )
+                          : _SystemTile(
+                              ingredient: item,
+                              busy: state.busyId == item.id,
+                              onImport: () => context
+                                  .read<IngredientsListBloc>()
+                                  .add(IngredientSystemImported(item.id)),
+                            ),
+                    );
+                  },
                 ),
         ),
         if (isMine && items.isEmpty)
@@ -201,7 +208,9 @@ class _IngredientAvatar extends StatelessWidget {
         color: AppColors.primaryTint,
         borderRadius: BorderRadius.circular(14),
         image: imageUrl != null
-            ? DecorationImage(image: NetworkImage(imageUrl!), fit: BoxFit.cover)
+            ? DecorationImage(
+                image: cachedImageProvider(context, imageUrl!, logicalWidth: 52),
+                fit: BoxFit.cover)
             : null,
       ),
       child: imageUrl == null

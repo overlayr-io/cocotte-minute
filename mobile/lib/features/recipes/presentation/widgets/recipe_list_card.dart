@@ -2,17 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
+import '../../../../core/widgets/app_network_image.dart';
 import '../../domain/recipe.dart';
 
 /// Carte d'une recette en liste (onglet Recettes, recettes d'un dossier) :
 /// vignette (photo ou dégradé de repli selon `isBase`), nom + badge « Base »,
 /// ligne « N pers. · Prépa M min », chevron. Style maquette 7b.
 class RecipeListCard extends StatelessWidget {
-  const RecipeListCard({
-    super.key,
-    required this.recipe,
-    required this.onTap,
-  });
+  const RecipeListCard({super.key, required this.recipe, required this.onTap});
 
   final RecipeSummary recipe;
   final VoidCallback onTap;
@@ -20,74 +18,83 @@ class RecipeListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Material(
-      color: AppColors.card,
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        onTap: onTap,
+    return DecoratedBox(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18),
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.border),
-          ),
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            children: [
-              _Thumb(recipe: recipe),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            recipe.name,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontFamily: AppFonts.display,
-                              fontSize: 16.5,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        ),
-                        if (recipe.isBase) ...[
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
-                            decoration: BoxDecoration(
-                              color: AppColors.primaryTint,
-                              borderRadius: BorderRadius.circular(999),
-                            ),
+        boxShadow: AppShadows.card,
+      ),
+      child: Material(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(18),
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              children: [
+                _Thumb(recipe: recipe),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Flexible(
                             child: Text(
-                              l10n.recipeBaseBadge,
+                              recipe.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                fontSize: 10.5,
+                                fontFamily: AppFonts.display,
+                                fontSize: 16.5,
                                 fontWeight: FontWeight.w700,
-                                color: AppColors.primary,
+                                color: AppColors.textPrimary,
                               ),
                             ),
                           ),
+                          if (recipe.isBase) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryTint,
+                                borderRadius: BorderRadius.circular(999),
+                              ),
+                              child: Text(
+                                l10n.recipeBaseBadge,
+                                style: const TextStyle(
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                            ),
+                          ],
                         ],
-                      ],
-                    ),
-                    const SizedBox(height: 5),
-                    Text(
-                      '${l10n.recipeServingsShort(recipe.servings)} · ${l10n.recipePrepShort(recipe.prepTime)}',
-                      style: const TextStyle(
-                          fontSize: 13, color: AppColors.textMuted),
-                    ),
-                  ],
+                      ),
+                      const SizedBox(height: 5),
+                      Text(
+                        '${l10n.recipeServingsShort(recipe.servings)} · ${l10n.recipePrepShort(recipe.prepTime)}',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const Icon(Icons.chevron_right_rounded,
-                  size: 20, color: Color(0xFFCBC7BB)),
-            ],
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  size: 20,
+                  color: Color(0xFFCBC7BB),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -119,7 +126,7 @@ class _Thumb extends StatelessWidget {
             : null,
       ),
       child: recipe.photoUrl != null
-          ? Image.network(recipe.photoUrl!, fit: BoxFit.cover)
+          ? AppNetworkImage(recipe.photoUrl!, width: 64, height: 64)
           : const Icon(Icons.restaurant_rounded, color: Colors.white, size: 24),
     );
   }

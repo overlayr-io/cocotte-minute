@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'app.dart';
@@ -10,7 +12,6 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   setupServiceLocator();
-  await LocalNotificationsService.instance.init();
 
   // Supabase n'est initialisé que si les clés sont fournies via --dart-define,
   // pour éviter un crash au tout premier lancement sans configuration.
@@ -24,4 +25,9 @@ Future<void> main() async {
   }
 
   runApp(const CocotteApp());
+
+  // Init non bloquante APRÈS runApp (timezone incluse) : ne retarde plus le
+  // premier frame. Aucune notification n'est programmée avant d'entrer dans
+  // le lecteur de recette, bien après la fin de cette init.
+  unawaited(LocalNotificationsService.instance.init());
 }

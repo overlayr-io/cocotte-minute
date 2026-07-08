@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/app_network_image.dart';
 import '../../../../recipes/presentation/widgets/step_banner.dart';
-import '../../../domain/recipe_timer.dart';
 import '../../bloc/recipe_player_cubit.dart';
-import '../shared/add_timer_button.dart';
 import '../shared/quit_dialog.dart';
 import '../shared/round_nav_button.dart';
 import '../shared/step_ingredients_panel.dart';
-import '../shared/step_timer_card.dart';
 import '../shared/sub_recipe_strip.dart';
-import '../shared/timer_chip.dart';
+import '../shared/timer_zones.dart';
 
 /// Étape active tablette (maquette 10b) : instruction en grand à gauche,
 /// image + minuteur/ingrédients à droite. Le bouton « Étapes » (au centre de
@@ -33,12 +31,6 @@ class TabletActiveStepView extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final step = state.currentStep;
     final scale = state.selectedServings / state.detail.summary.servings;
-    final runningTimer = state.runningTimer;
-    final stepTimer = state.timers
-        .where((t) => t.stepId == step.sourceStepId)
-        .fold<RecipeTimer?>(null, (acc, t) => t);
-    final showChipInTopBar =
-        runningTimer != null && runningTimer.stepId != step.sourceStepId;
 
     return Column(
       children: [
@@ -47,7 +39,7 @@ class TabletActiveStepView extends StatelessWidget {
           cubit: cubit,
           state: state,
           onOpenSummary: onOpenSummary,
-          chipTimer: showChipInTopBar ? runningTimer : null,
+          currentStepId: step.sourceStepId,
         ),
         Expanded(
           child: Row(
@@ -146,21 +138,18 @@ class TabletActiveStepView extends StatelessWidget {
                         if (state.detail.summary.photoUrl != null)
                           ClipRRect(
                             borderRadius: BorderRadius.circular(20),
-                            child: Image.network(
+                            child: AppNetworkImage(
                               state.detail.summary.photoUrl!,
                               height: 200,
-                              fit: BoxFit.cover,
+                              decodeWidth: 500,
                             ),
                           ),
                         const SizedBox(height: 20),
-                        if (stepTimer != null)
-                          StepTimerCard(cubit: cubit, timer: stepTimer)
-                        else
-                          AddTimerButton(
-                            stepId: step.sourceStepId,
-                            description: step.description,
-                            cubit: cubit,
-                          ),
+                        StepTimerZone(
+                          cubit: cubit,
+                          stepId: step.sourceStepId,
+                          description: step.description,
+                        ),
                         const SizedBox(height: 20),
                         StepIngredientsPanel(
                           ingredients: step.ingredients,
@@ -184,13 +173,13 @@ class _TopBar extends StatelessWidget {
     required this.cubit,
     required this.state,
     required this.onOpenSummary,
-    this.chipTimer,
+    required this.currentStepId,
   });
 
   final RecipePlayerCubit cubit;
   final RecipePlayerLoaded state;
   final VoidCallback onOpenSummary;
-  final RecipeTimer? chipTimer;
+  final String currentStepId;
 
   @override
   Widget build(BuildContext context) {
@@ -262,10 +251,11 @@ class _TopBar extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 12),
-          if (chipTimer != null) ...[
-            TimerChip(timer: chipTimer!),
-            const SizedBox(width: 12),
-          ],
+          RunningTimerChipZone(
+            cubit: cubit,
+            currentStepId: currentStepId,
+            padding: const EdgeInsets.only(right: 12),
+          ),
           RoundNavButton(
             icon: Icons.close_rounded,
             onTap: () async {

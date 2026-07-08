@@ -28,6 +28,12 @@ class ShoppingListRepository {
   final ShoppingListApi _api;
   bool _syncing = false;
 
+  /// Cache de parsing de `sourcesJson`, clé = chaîne JSON brute. Les sources
+  /// d'un article sont immuables après génération ; sans cache, chaque
+  /// émission des `watch()` (ex. cocher UN article) re-jsonDecode les sources
+  /// de TOUS les articles sur le main isolate.
+  final _sourcesCache = <String, List<ShoppingItemSource>>{};
+
   // --- lectures réactives (local) ---------------------------------------
 
   /// Listes actives (non vidées), les plus récentes d'abord.
@@ -212,19 +218,26 @@ class ShoppingListRepository {
     await syncPending();
     try {
       final lists = await _api.fetchLists();
+      // Détails récupérés en parallèle (au lieu de N requêtes séquentielles).
+      final details = await Future.wait(
+        lists.map((l) => _api.fetchDetail(l.id)),
+      );
       final serverIds = lists.map((l) => l.id).toSet();
-      final localLists = await _db.select(_db.localShoppingLists).get();
-      for (final l in localLists) {
-        if (!serverIds.contains(l.id) && l.syncState == SyncState.synced) {
-          await (_db.delete(_db.localShoppingLists)
-                ..where((t) => t.id.equals(l.id)))
-              .go();
+      // Une seule transaction : les watch() ne ré-émettent qu'une fois à la
+      // fin, au lieu d'une cascade de rebuilds par liste fusionnée.
+      await _db.transaction(() async {
+        final localLists = await _db.select(_db.localShoppingLists).get();
+        for (final l in localLists) {
+          if (!serverIds.contains(l.id) && l.syncState == SyncState.synced) {
+            await (_db.delete(_db.localShoppingLists)
+                  ..where((t) => t.id.equals(l.id)))
+                .go();
+          }
         }
-      }
-      for (final l in lists) {
-        final detail = await _api.fetchDetail(l.id);
-        await _mergeServerList(detail);
-      }
+        for (final detail in details) {
+          await _mergeServerList(detail);
+        }
+      });
     } on ShoppingListApiException {
       // Hors ligne : on garde l'état local, la sync reprendra plus tard.
     }
@@ -460,13 +473,21 @@ class ShoppingListRepository {
     isChecked: r.isChecked,
     replacedByAlternativeId: r.replacedByAlternativeId,
     replacementName: r.replacementName,
-    sources: (jsonDecode(r.sourcesJson) as List<dynamic>)
-        .cast<Map<String, dynamic>>()
-        .map(ShoppingItemSource.fromJson)
-        .toList(),
+    sources: _parseSources(r.sourcesJson),
     position: r.position,
     clientUpdatedAt: r.clientUpdatedAt,
   );
+
+  List<ShoppingItemSource> _parseSources(String json) {
+    final cached = _sourcesCache[json];
+    if (cached != null) return cached;
+    // Garde-fou : borne la mémoire si l'utilisateur accumule des listes.
+    if (_sourcesCache.length > 500) _sourcesCache.clear();
+    return _sourcesCache[json] = (jsonDecode(json) as List<dynamic>)
+        .cast<Map<String, dynamic>>()
+        .map(ShoppingItemSource.fromJson)
+        .toList(growable: false);
+  }
 
   ShoppingRecipe _recipeToDomain(LocalShoppingRecipe r) => ShoppingRecipe(
     recipeId: r.recipeId,

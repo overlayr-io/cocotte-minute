@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/app_network_image.dart';
 import '../../../../recipes/domain/recipe.dart';
 import '../../../domain/timer_detector.dart';
 import '../../bloc/recipe_player_cubit.dart';
@@ -32,7 +33,8 @@ class TabletLaunchView extends StatelessWidget {
             children: [
               if (detail.summary.photoUrl != null)
                 Positioned.fill(
-                  child: Image.network(detail.summary.photoUrl!, fit: BoxFit.cover),
+                  child: AppNetworkImage(detail.summary.photoUrl!,
+                      decodeWidth: MediaQuery.sizeOf(context).width),
                 )
               else
                 const Positioned.fill(

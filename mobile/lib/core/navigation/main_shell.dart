@@ -8,6 +8,7 @@ import '../../features/account/presentation/widgets/cancel_deletion_banner.dart'
 import '../../features/auth/presentation/pages/auth_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/recipes/presentation/pages/recipes_page.dart';
+import '../../features/shopping_list/data/shopping_sync_service.dart';
 import '../../features/shopping_list/presentation/pages/shopping_page.dart';
 import '../auth/auth_bloc.dart';
 import '../di/service_locator.dart';
@@ -33,6 +34,10 @@ class _MainShellState extends State<MainShell> {
   @override
   void initState() {
     super.initState();
+    // La sync des courses au retour réseau doit vivre dès le boot, même si
+    // l'onglet Courses (désormais chargé à la première visite) n'est jamais
+    // ouvert. Idempotent — l'appel de shopping_page reste sans effet.
+    sl<ShoppingSyncService>().start();
     // Rappel J+14 (informatif, jamais bloquant) : à chaque lancement, si le
     // compte anonyme a plus de 2 semaines, on invite à créer un compte.
     WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowGuestReminder());
@@ -92,7 +97,7 @@ class _MainShellState extends State<MainShell> {
         body: Column(
           children: [
             const CancelDeletionBanner(),
-            Expanded(child: IndexedStack(index: _index, children: tabs)),
+            Expanded(child: _LazyIndexedStack(index: _index, children: tabs)),
           ],
         ),
         bottomNavigationBar: _CocotteNavBar(
@@ -100,6 +105,36 @@ class _MainShellState extends State<MainShell> {
           onTap: (i) => setState(() => _index = i),
         ),
       ),
+    );
+  }
+}
+
+/// IndexedStack paresseux : un onglet n'est construit (et son cubit chargé)
+/// qu'à sa première visite, puis reste monté comme avec un IndexedStack
+/// classique. Évite 4 chargements réseau/DB simultanés au premier frame.
+class _LazyIndexedStack extends StatefulWidget {
+  const _LazyIndexedStack({required this.index, required this.children});
+
+  final int index;
+  final List<Widget> children;
+
+  @override
+  State<_LazyIndexedStack> createState() => _LazyIndexedStackState();
+}
+
+class _LazyIndexedStackState extends State<_LazyIndexedStack> {
+  late final List<bool> _visited =
+      List<bool>.filled(widget.children.length, false);
+
+  @override
+  Widget build(BuildContext context) {
+    _visited[widget.index] = true;
+    return IndexedStack(
+      index: widget.index,
+      children: [
+        for (var i = 0; i < widget.children.length; i++)
+          _visited[i] ? widget.children[i] : const SizedBox.shrink(),
+      ],
     );
   }
 }

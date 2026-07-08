@@ -61,14 +61,20 @@ class LanguagePage extends StatelessWidget {
                     onTap: () => cubit.setLocale(null),
                   ),
                   const Divider(
-                      height: 1, thickness: 1, color: Color(0xFFF1EEE7)),
+                    height: 1,
+                    thickness: 1,
+                    color: Color(0xFFF1EEE7),
+                  ),
                   _LanguageOption(
                     label: l10n.languageFrench,
                     selected: current?.languageCode == 'fr',
                     onTap: () => cubit.setLocale(const Locale('fr')),
                   ),
                   const Divider(
-                      height: 1, thickness: 1, color: Color(0xFFF1EEE7)),
+                    height: 1,
+                    thickness: 1,
+                    color: Color(0xFFF1EEE7),
+                  ),
                   _LanguageOption(
                     label: l10n.languageEnglish,
                     selected: current?.languageCode == 'en',
@@ -122,15 +128,20 @@ class _LanguageOption extends StatelessWidget {
                     Text(
                       subtitle!,
                       style: const TextStyle(
-                          fontSize: 12.5, color: AppColors.textMuted),
+                        fontSize: 12.5,
+                        color: AppColors.textMuted,
+                      ),
                     ),
                   ],
                 ],
               ),
             ),
             if (selected)
-              const Icon(Icons.check_rounded,
-                  size: 22, color: AppColors.primary),
+              const Icon(
+                Icons.check_rounded,
+                size: 22,
+                color: AppColors.primary,
+              ),
           ],
         ),
       ),

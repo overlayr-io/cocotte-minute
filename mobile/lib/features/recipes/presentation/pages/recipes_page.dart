@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../categories/data/categories_repository.dart';
 import '../../../categories/domain/category.dart';
@@ -25,8 +26,9 @@ class RecipesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => CategoriesListBloc(repository: sl<CategoriesRepository>())
-        ..add(const CategoriesRequested()),
+      create: (_) =>
+          CategoriesListBloc(repository: sl<CategoriesRepository>())
+            ..add(const CategoriesRequested()),
       child: const _RecipesView(),
     );
   }
@@ -56,10 +58,7 @@ class _RecipesView extends StatelessWidget {
     );
   }
 
-  Future<void> _newFolder(
-    BuildContext context,
-    List<Category> all,
-  ) async {
+  Future<void> _newFolder(BuildContext context, List<Category> all) async {
     final bloc = context.read<CategoriesListBloc>();
     final result = await showCategoryFormSheet(
       context,
@@ -102,11 +101,11 @@ class _RecipesView extends StatelessWidget {
               builder: (context, state) {
                 return switch (state) {
                   CategoriesListError(:final message) => ErrorView(
-                      message: message,
-                      onRetry: () => context
-                          .read<CategoriesListBloc>()
-                          .add(const CategoriesRequested()),
+                    message: message,
+                    onRetry: () => context.read<CategoriesListBloc>().add(
+                      const CategoriesRequested(),
                     ),
+                  ),
                   CategoriesListLoaded() => _content(context, state, l10n),
                   _ => const Center(child: CircularProgressIndicator()),
                 };
@@ -208,49 +207,56 @@ class _FolderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.card,
-      borderRadius: BorderRadius.circular(20),
-      child: InkWell(
-        onTap: onTap,
+    return DecoratedBox(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              _FolderTile(icon: category.icon),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      category.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontFamily: AppFonts.display,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 17,
-                        color: AppColors.textPrimary,
+        boxShadow: AppShadows.card,
+      ),
+      child: Material(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                _FolderTile(icon: category.icon),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        category.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: AppFonts.display,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 17,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      _subtitle(),
-                      style: const TextStyle(
-                          fontSize: 13, color: AppColors.textMuted),
-                    ),
-                  ],
+                      const SizedBox(height: 3),
+                      Text(
+                        _subtitle(),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const Icon(Icons.chevron_right_rounded,
-                  size: 20, color: Color(0xFFCBC7BB)),
-            ],
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  size: 20,
+                  color: Color(0xFFCBC7BB),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -275,7 +281,11 @@ class _FolderTile extends StatelessWidget {
       ),
       child: icon != null
           ? Text(icon!, style: const TextStyle(fontSize: 26))
-          : const Icon(Icons.folder_rounded, size: 24, color: AppColors.primary),
+          : const Icon(
+              Icons.folder_rounded,
+              size: 24,
+              color: AppColors.primary,
+            ),
     );
   }
 }
@@ -296,10 +306,7 @@ class _NewFolderButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(
-            color: const Color(0xFFC4BEAD),
-            width: 1.5,
-          ),
+          border: Border.all(color: const Color(0xFFC4BEAD), width: 1.5),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -353,14 +360,19 @@ class _SearchBar extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const Icon(Icons.search_rounded,
-                  color: AppColors.textMuted, size: 22),
+              const Icon(
+                Icons.search_rounded,
+                color: AppColors.textMuted,
+                size: 22,
+              ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   hint,
-                  style:
-                      const TextStyle(fontSize: 15, color: AppColors.textMuted),
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: AppColors.textMuted,
+                  ),
                 ),
               ),
               Container(
@@ -370,8 +382,11 @@ class _SearchBar extends StatelessWidget {
                   color: AppColors.pill,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.tune_rounded,
-                    color: AppColors.primary, size: 19),
+                child: const Icon(
+                  Icons.tune_rounded,
+                  color: AppColors.primary,
+                  size: 19,
+                ),
               ),
             ],
           ),

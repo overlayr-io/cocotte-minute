@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../data/tags_repository.dart';
 import '../../domain/tag.dart';
@@ -22,8 +23,9 @@ class TagsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => TagsListBloc(repository: sl<TagsRepository>())
-        ..add(const TagsRequested()),
+      create: (_) =>
+          TagsListBloc(repository: sl<TagsRepository>())
+            ..add(const TagsRequested()),
       child: const _TagsView(),
     );
   }
@@ -146,7 +148,7 @@ class _TagsView extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.card,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.border),
+            boxShadow: AppShadows.card,
           ),
           child: Column(
             children: [
@@ -230,8 +232,11 @@ class _TagRow extends StatelessWidget {
                       height: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Icon(Icons.edit_outlined,
-                      size: 18, color: Color(0xFFCBC7BB)),
+                  : const Icon(
+                      Icons.edit_outlined,
+                      size: 18,
+                      color: Color(0xFFCBC7BB),
+                    ),
             ],
           ),
         ),

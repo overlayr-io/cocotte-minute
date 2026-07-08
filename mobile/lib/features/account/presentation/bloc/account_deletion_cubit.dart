@@ -16,9 +16,9 @@ class AccountDeletionCubit extends Cubit<AccountDeletionState> {
   AccountDeletionCubit({
     required AccountRepository accountRepository,
     required AuthRepository authRepository,
-  })  : _accountRepository = accountRepository,
-        _authRepository = authRepository,
-        super(const AccountDeletionInitial());
+  }) : _accountRepository = accountRepository,
+       _authRepository = authRepository,
+       super(const AccountDeletionInitial());
 
   final AccountRepository _accountRepository;
   final AuthRepository _authRepository;
@@ -34,9 +34,11 @@ class AccountDeletionCubit extends Cubit<AccountDeletionState> {
       } else {
         // Compte complet : anonymisé + délai de 30 jours → on déconnecte.
         await _authRepository.signOut();
-        emit(AccountDeletionPending(
-          deletionScheduledAt: result.deletionScheduledAt,
-        ));
+        emit(
+          AccountDeletionPending(
+            deletionScheduledAt: result.deletionScheduledAt,
+          ),
+        );
       }
     } on AccountRepositoryException catch (e) {
       emit(AccountDeletionFailure(e.message));

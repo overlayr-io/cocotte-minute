@@ -215,6 +215,197 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountRowManageData => 'Manage my data';
 
   @override
+  String get accountGuestCtaTitle => 'Keep your recipes forever';
+
+  @override
+  String get accountGuestCtaBody =>
+      'Create a free account to save your recipes and find them on all your devices.';
+
+  @override
+  String get accountGuestCtaButton => 'Create your account';
+
+  @override
+  String get accountGuestLogoutTitle => 'Sign out?';
+
+  @override
+  String get accountGuestLogoutBody =>
+      'You\'re using a guest account: after signing out you won\'t be able to get your recipes and lists back. Create an account first to keep them.';
+
+  @override
+  String get accountGuestLogoutConfirm => 'Sign out anyway';
+
+  @override
+  String get accountGuestLogoutSublabel => 'As a guest: your data will be lost';
+
+  @override
+  String get accountRowDeleteGuest => 'Delete my data';
+
+  @override
+  String get accountGuestDeleteSublabel => 'Immediate and permanent deletion';
+
+  @override
+  String get privacyPolicyIntro =>
+      'Cocotte Minute respects your data. Here is, simply put, what the app collects and why.';
+
+  @override
+  String get privacyPolicyS1Title => 'What we collect';
+
+  @override
+  String get privacyPolicyS1Body =>
+      'Your recipes, folders, tags, people and shopping lists, plus your account email if you created one. As a guest, only an anonymous technical identifier is used.';
+
+  @override
+  String get privacyPolicyS2Title => 'Why we use it';
+
+  @override
+  String get privacyPolicyS2Body =>
+      'Only to make the app work: saving your content, syncing it across your devices and generating your shopping lists. No data resale, no targeted advertising.';
+
+  @override
+  String get privacyPolicyS3Title => 'Where it is stored';
+
+  @override
+  String get privacyPolicyS3Body =>
+      'On secure servers hosted in the European Union. Your shopping lists are also kept on your device to work offline.';
+
+  @override
+  String get privacyPolicyS4Title => 'For how long';
+
+  @override
+  String get privacyPolicyS4Body =>
+      'As long as your account exists. If you delete your account, your data is anonymised immediately then permanently erased within 30 days. For a guest account, deletion is immediate.';
+
+  @override
+  String get privacyPolicyS5Title => 'Your rights';
+
+  @override
+  String get privacyPolicyS5Body =>
+      'You can view, correct or delete your data at any time from the app (Account → Manage my data). For any question, write to us via \"Contact us\".';
+
+  @override
+  String get termsIntro =>
+      'By using Cocotte Minute, you agree to these few common-sense rules.';
+
+  @override
+  String get termsS1Title => 'The service';
+
+  @override
+  String get termsS1Body =>
+      'Cocotte Minute lets you create, organise and cook your recipes, and generate shopping lists. The service evolves regularly; some features may change.';
+
+  @override
+  String get termsS2Title => 'Your content';
+
+  @override
+  String get termsS2Body =>
+      'Your recipes belong to you. You simply allow us to store and display them to provide the service — nothing else.';
+
+  @override
+  String get termsS3Title => 'Guest account';
+
+  @override
+  String get termsS3Body =>
+      'Without an account, your data is tied to this device. Create an account at any time to secure it: everything is kept during the conversion.';
+
+  @override
+  String get termsS4Title => 'Acceptable use';
+
+  @override
+  String get termsS4Body =>
+      'Don\'t use the app to publish illegal content or infringe the rights of others, and don\'t attempt to disrupt the service.';
+
+  @override
+  String get termsS5Title => 'Deletion';
+
+  @override
+  String get termsS5Body =>
+      'You can delete your account and data at any time from Account → Manage my data.';
+
+  @override
+  String get termsS6Title => 'Liability';
+
+  @override
+  String get termsS6Body =>
+      'The service is provided \"as is\". We do our best to keep it reliable, without being able to guarantee permanent availability.';
+
+  @override
+  String get manageDataStoredSection => 'What Cocotte keeps';
+
+  @override
+  String get manageDataStoredRecipes => 'Recipes, folders and tags';
+
+  @override
+  String get manageDataStoredRecipesSub =>
+      'Stored on our secure servers (European Union)';
+
+  @override
+  String get manageDataStoredShopping => 'Shopping lists';
+
+  @override
+  String get manageDataStoredShoppingSub =>
+      'On this device, synced with your account';
+
+  @override
+  String get manageDataStoredAccount => 'Account';
+
+  @override
+  String get manageDataStoredAccountSub =>
+      'Your email if you created an account, an anonymous identifier otherwise';
+
+  @override
+  String get manageDataRightsSection => 'Your rights';
+
+  @override
+  String get manageDataDeleteLabel => 'Delete my account and data';
+
+  @override
+  String get manageDataDeleteSub =>
+      'Account: permanently erased within 30 days · Guest: immediate';
+
+  @override
+  String get helpCenterIntro =>
+      'Quickly find an answer to the most common questions.';
+
+  @override
+  String get helpCenterEmpty => 'No questions yet. Check back soon!';
+
+  @override
+  String get helpCenterContactTitle => 'Can\'t find your answer?';
+
+  @override
+  String get helpCenterContactSubtitle => 'Write to us, we reply fast';
+
+  @override
+  String get contactIntro =>
+      'A question, a bug, an idea? Tell us everything, we read every message.';
+
+  @override
+  String get contactSubjectLabel => 'Subject';
+
+  @override
+  String get contactSubjectHint => 'E.g. Problem with my shopping list';
+
+  @override
+  String get contactSubjectError => 'Please enter a subject.';
+
+  @override
+  String get contactMessageLabel => 'Message';
+
+  @override
+  String get contactMessageHint =>
+      'Describe your request as precisely as possible.';
+
+  @override
+  String get contactMessageError => 'Please write your message.';
+
+  @override
+  String get contactSendAction => 'Send';
+
+  @override
+  String get contactSuccess =>
+      'Message sent. Thanks, we\'ll get back to you soon!';
+
+  @override
   String get ingredientsTitle => 'My ingredients';
 
   @override

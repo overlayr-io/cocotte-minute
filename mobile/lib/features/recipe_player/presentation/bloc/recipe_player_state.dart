@@ -93,6 +93,16 @@ class RecipePlayerLoaded extends RecipePlayerState {
     return null;
   }
 
+  /// Minuteur rattaché à une étape (le dernier créé pour ce `stepId`), sinon
+  /// null. Même sémantique que l'ancien `where(...).fold(...)` des vues.
+  RecipeTimer? timerForStep(String stepId) {
+    RecipeTimer? found;
+    for (final t in timers) {
+      if (t.stepId == stepId) found = t;
+    }
+    return found;
+  }
+
   RecipePlayerLoaded copyWith({
     RecipeDetail? detail,
     List<PlayableStep>? steps,
@@ -134,4 +144,15 @@ class RecipePlayerLoaded extends RecipePlayerState {
         pendingResume,
         pendingSwitchWarning,
       ];
+}
+
+/// true quand SEULE la liste des minuteurs diffère entre deux états chargés.
+/// Utilisé par les `buildWhen` des vues du lecteur pour ignorer le tick par
+/// seconde du chrono : seules les zones minuteur (abonnées via BlocSelector)
+/// se reconstruisent, pas la vue entière.
+bool onlyTimersChanged(RecipePlayerState previous, RecipePlayerState current) {
+  if (previous is! RecipePlayerLoaded || current is! RecipePlayerLoaded) {
+    return false;
+  }
+  return previous.copyWith(timers: current.timers) == current;
 }

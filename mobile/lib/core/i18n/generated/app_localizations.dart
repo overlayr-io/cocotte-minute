@@ -506,6 +506,342 @@ abstract class AppLocalizations {
   /// **'Gérer mes données'**
   String get accountRowManageData;
 
+  /// Titre de la carte permanente invitant un invité à créer un compte
+  ///
+  /// In fr, this message translates to:
+  /// **'Garde tes recettes pour toujours'**
+  String get accountGuestCtaTitle;
+
+  /// No description provided for @accountGuestCtaBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Crée un compte gratuit pour sauvegarder tes recettes et les retrouver sur tous tes appareils.'**
+  String get accountGuestCtaBody;
+
+  /// No description provided for @accountGuestCtaButton.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer ton compte'**
+  String get accountGuestCtaButton;
+
+  /// Titre du dialogue d'avertissement de déconnexion en compte invité
+  ///
+  /// In fr, this message translates to:
+  /// **'Se déconnecter ?'**
+  String get accountGuestLogoutTitle;
+
+  /// No description provided for @accountGuestLogoutBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu es en compte invité : après déconnexion, tu ne pourras plus retrouver tes recettes ni tes listes. Crée d\'abord un compte pour les conserver.'**
+  String get accountGuestLogoutBody;
+
+  /// No description provided for @accountGuestLogoutConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Se déconnecter quand même'**
+  String get accountGuestLogoutConfirm;
+
+  /// No description provided for @accountGuestLogoutSublabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'En invité : tes données seront perdues'**
+  String get accountGuestLogoutSublabel;
+
+  /// No description provided for @accountRowDeleteGuest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer mes données'**
+  String get accountRowDeleteGuest;
+
+  /// No description provided for @accountGuestDeleteSublabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Effacement immédiat et définitif'**
+  String get accountGuestDeleteSublabel;
+
+  /// No description provided for @privacyPolicyIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cocotte Minute respecte tes données. Voici, simplement, ce que l\'app collecte et pourquoi.'**
+  String get privacyPolicyIntro;
+
+  /// No description provided for @privacyPolicyS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce que nous collectons'**
+  String get privacyPolicyS1Title;
+
+  /// No description provided for @privacyPolicyS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tes recettes, dossiers, tags, personnes et listes de courses, ainsi que l\'adresse e-mail de ton compte si tu en as créé un. En compte invité, seul un identifiant technique anonyme est utilisé.'**
+  String get privacyPolicyS1Body;
+
+  /// No description provided for @privacyPolicyS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pourquoi nous les utilisons'**
+  String get privacyPolicyS2Title;
+
+  /// No description provided for @privacyPolicyS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Uniquement pour faire fonctionner l\'app : sauvegarder ton contenu, le synchroniser entre tes appareils et générer tes listes de courses. Aucune revente de données, aucune publicité ciblée.'**
+  String get privacyPolicyS2Body;
+
+  /// No description provided for @privacyPolicyS3Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Où elles sont stockées'**
+  String get privacyPolicyS3Title;
+
+  /// No description provided for @privacyPolicyS3Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur des serveurs sécurisés hébergés dans l\'Union européenne. Tes listes de courses sont aussi conservées sur ton appareil pour fonctionner hors connexion.'**
+  String get privacyPolicyS3Body;
+
+  /// No description provided for @privacyPolicyS4Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Combien de temps'**
+  String get privacyPolicyS4Title;
+
+  /// No description provided for @privacyPolicyS4Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tant que ton compte existe. Si tu supprimes ton compte, tes données sont anonymisées immédiatement puis définitivement effacées sous 30 jours. Pour un compte invité, l\'effacement est immédiat.'**
+  String get privacyPolicyS4Body;
+
+  /// No description provided for @privacyPolicyS5Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tes droits'**
+  String get privacyPolicyS5Title;
+
+  /// No description provided for @privacyPolicyS5Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu peux consulter, corriger ou supprimer tes données à tout moment depuis l\'app (Compte → Gérer mes données). Pour toute question, écris-nous via « Nous contacter ».'**
+  String get privacyPolicyS5Body;
+
+  /// No description provided for @termsIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'En utilisant Cocotte Minute, tu acceptes ces quelques règles de bon sens.'**
+  String get termsIntro;
+
+  /// No description provided for @termsS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le service'**
+  String get termsS1Title;
+
+  /// No description provided for @termsS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cocotte Minute te permet de créer, organiser et cuisiner tes recettes, et de générer des listes de courses. Le service évolue régulièrement ; certaines fonctionnalités peuvent changer.'**
+  String get termsS1Body;
+
+  /// No description provided for @termsS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ton contenu'**
+  String get termsS2Title;
+
+  /// No description provided for @termsS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tes recettes t\'appartiennent. Tu nous autorises simplement à les stocker et à les afficher pour te fournir le service — rien d\'autre.'**
+  String get termsS2Body;
+
+  /// No description provided for @termsS3Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte invité'**
+  String get termsS3Title;
+
+  /// No description provided for @termsS3Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sans compte, tes données sont liées à cet appareil. Crée un compte à tout moment pour les sécuriser : tout est conservé lors de la conversion.'**
+  String get termsS3Body;
+
+  /// No description provided for @termsS4Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Usage acceptable'**
+  String get termsS4Title;
+
+  /// No description provided for @termsS4Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'N\'utilise pas l\'app pour publier des contenus illégaux ou porter atteinte aux droits d\'autrui, et ne tente pas de perturber le service.'**
+  String get termsS4Body;
+
+  /// No description provided for @termsS5Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suppression'**
+  String get termsS5Title;
+
+  /// No description provided for @termsS5Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu peux supprimer ton compte et tes données à tout moment depuis Compte → Gérer mes données.'**
+  String get termsS5Body;
+
+  /// No description provided for @termsS6Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Responsabilité'**
+  String get termsS6Title;
+
+  /// No description provided for @termsS6Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le service est fourni « en l\'état ». Nous faisons le maximum pour qu\'il soit fiable, sans pouvoir garantir une disponibilité permanente.'**
+  String get termsS6Body;
+
+  /// No description provided for @manageDataStoredSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce que Cocotte conserve'**
+  String get manageDataStoredSection;
+
+  /// No description provided for @manageDataStoredRecipes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recettes, dossiers et tags'**
+  String get manageDataStoredRecipes;
+
+  /// No description provided for @manageDataStoredRecipesSub.
+  ///
+  /// In fr, this message translates to:
+  /// **'Stockés sur nos serveurs sécurisés (Union européenne)'**
+  String get manageDataStoredRecipesSub;
+
+  /// No description provided for @manageDataStoredShopping.
+  ///
+  /// In fr, this message translates to:
+  /// **'Listes de courses'**
+  String get manageDataStoredShopping;
+
+  /// No description provided for @manageDataStoredShoppingSub.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sur cet appareil, synchronisées avec ton compte'**
+  String get manageDataStoredShoppingSub;
+
+  /// No description provided for @manageDataStoredAccount.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte'**
+  String get manageDataStoredAccount;
+
+  /// No description provided for @manageDataStoredAccountSub.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ton e-mail si tu as créé un compte, un identifiant anonyme sinon'**
+  String get manageDataStoredAccountSub;
+
+  /// No description provided for @manageDataRightsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tes droits'**
+  String get manageDataRightsSection;
+
+  /// No description provided for @manageDataDeleteLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer mon compte et mes données'**
+  String get manageDataDeleteLabel;
+
+  /// No description provided for @manageDataDeleteSub.
+  ///
+  /// In fr, this message translates to:
+  /// **'Compte : effacement définitif sous 30 jours · Invité : immédiat'**
+  String get manageDataDeleteSub;
+
+  /// No description provided for @helpCenterIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trouve rapidement une réponse aux questions les plus fréquentes.'**
+  String get helpCenterIntro;
+
+  /// No description provided for @helpCenterEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune question pour l\'instant. Reviens bientôt !'**
+  String get helpCenterEmpty;
+
+  /// No description provided for @helpCenterContactTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu ne trouves pas ta réponse ?'**
+  String get helpCenterContactTitle;
+
+  /// No description provided for @helpCenterContactSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écris-nous, on te répond vite'**
+  String get helpCenterContactSubtitle;
+
+  /// No description provided for @contactIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une question, un bug, une idée ? Dis-nous tout, on lit chaque message.'**
+  String get contactIntro;
+
+  /// No description provided for @contactSubjectLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sujet'**
+  String get contactSubjectLabel;
+
+  /// No description provided for @contactSubjectHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex : Problème avec ma liste de courses'**
+  String get contactSubjectHint;
+
+  /// No description provided for @contactSubjectError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indique un sujet.'**
+  String get contactSubjectError;
+
+  /// No description provided for @contactMessageLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Message'**
+  String get contactMessageLabel;
+
+  /// No description provided for @contactMessageHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Décris ta demande le plus précisément possible.'**
+  String get contactMessageHint;
+
+  /// No description provided for @contactMessageError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écris ton message.'**
+  String get contactMessageError;
+
+  /// No description provided for @contactSendAction.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer'**
+  String get contactSendAction;
+
+  /// No description provided for @contactSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Message envoyé. Merci, on te répond au plus vite !'**
+  String get contactSuccess;
+
   /// No description provided for @ingredientsTitle.
   ///
   /// In fr, this message translates to:

@@ -28,6 +28,9 @@ class _TabletPlayerViewState extends State<TabletPlayerView> {
   Widget build(BuildContext context) {
     return BlocConsumer<RecipePlayerCubit, RecipePlayerState>(
       bloc: widget.cubit,
+      // Le tick par seconde des minuteurs ne reconstruit pas la vue : seules
+      // les zones minuteur s'y abonnent (timer_zones.dart).
+      buildWhen: (previous, current) => !onlyTimersChanged(previous, current),
       listenWhen: (previous, current) {
         if (current is! RecipePlayerLoaded) return false;
         final hadPending = previous is RecipePlayerLoaded &&

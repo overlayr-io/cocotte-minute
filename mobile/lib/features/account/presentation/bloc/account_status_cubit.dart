@@ -15,8 +15,8 @@ part 'account_status_state.dart';
 /// d'erreur).
 class AccountStatusCubit extends Cubit<AccountStatusState> {
   AccountStatusCubit({required AccountRepository accountRepository})
-      : _accountRepository = accountRepository,
-        super(const AccountStatusHidden());
+    : _accountRepository = accountRepository,
+      super(const AccountStatusHidden());
 
   final AccountRepository _accountRepository;
 
@@ -25,9 +25,9 @@ class AccountStatusCubit extends Cubit<AccountStatusState> {
     try {
       final result = await _accountRepository.getStatus();
       if (result.status == AccountStatus.pendingDeletion) {
-        emit(AccountStatusPending(
-          deletionScheduledAt: result.deletionScheduledAt,
-        ));
+        emit(
+          AccountStatusPending(deletionScheduledAt: result.deletionScheduledAt),
+        );
       } else {
         emit(const AccountStatusHidden());
       }

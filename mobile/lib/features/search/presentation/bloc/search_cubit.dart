@@ -40,7 +40,7 @@ class SearchCubit extends Cubit<SearchState> {
 
   Timer? _debounce;
 
-  static const Duration _debounceDelay = Duration(milliseconds: 300);
+  static const Duration _debounceDelay = Duration(milliseconds: 500);
 
   /// Charge l'autocomplétion (dossiers + tags + personnes du compte) en une
   /// passe. Échec = blocage de l'écran (les menus en dépendent) → statut error

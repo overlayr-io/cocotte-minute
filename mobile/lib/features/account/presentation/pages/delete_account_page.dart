@@ -99,8 +99,8 @@ class _DeleteAccountView extends StatelessWidget {
                         ? l10n.deleteAccountGuestHeading
                         : l10n.deleteAccountFullHeading,
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -121,13 +121,14 @@ class _DeleteAccountView extends StatelessWidget {
                       onPressed: busy
                           ? null
                           : () => context
-                              .read<AccountDeletionCubit>()
-                              .requestDeletion(),
+                                .read<AccountDeletionCubit>()
+                                .requestDeletion(),
                       style: FilledButton.styleFrom(
                         backgroundColor: const Color(0xFFE0554A),
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor:
-                            const Color(0xFFE0554A).withValues(alpha: 0.6),
+                        disabledBackgroundColor: const Color(
+                          0xFFE0554A,
+                        ).withValues(alpha: 0.6),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(16),
                         ),
@@ -155,8 +156,9 @@ class _DeleteAccountView extends StatelessWidget {
                     height: 50,
                     width: double.infinity,
                     child: TextButton(
-                      onPressed:
-                          busy ? null : () => Navigator.of(context).maybePop(),
+                      onPressed: busy
+                          ? null
+                          : () => Navigator.of(context).maybePop(),
                       child: Text(
                         l10n.deleteAccountCancel,
                         style: const TextStyle(

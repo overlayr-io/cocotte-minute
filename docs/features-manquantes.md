@@ -12,7 +12,7 @@ Constat général : le socle v1 (auth de base, ingrédients, tags/personnes, cat
 5. **Tags & Personnes — upload avatar réel** : avatar dérivé par défaut, pas de vrai upload.
 6. **Recettes — upload de photo réel** : même pattern que l'ingrédient, non branché.
 7. **Recettes — picker composant/sous-recette côté mobile** : endpoint serveur déjà prêt, juste l'UI de sélection manque.
-8. **Auth — rappel J+14** : carte statique existe, pas de tracking réel de la date de création du compte ni de déclenchement temporel.
+8. **Auth — rappel J+14** : ~~carte statique~~ **résolu autrement (2026-07-08)** — remplacé par une **carte d'invitation permanente** « Créer ton compte » sur l'onglet Compte (visible dès le 1er jour en mode invité), rendant le tracking temporel J+14 sans objet. Cf. [auth.md](../docs/features/auth.md).
 
 ## 🟡 Petit à moyen
 
@@ -21,7 +21,7 @@ Constat général : le socle v1 (auth de base, ingrédients, tags/personnes, cat
 
 ## 🟠 Moyen
 
-11. **Auth — RGPD suppression de compte (délai 30 jours)** : **seul écart de conformité réglementaire**, explicitement requis par `docs/ENGINEERING_CONSTRAINTS.md` mais totalement absent du code (pas de champ `account_status`/`deletion_requested_at`, pas d'endpoint, pas de job CRON, écran "bientôt disponible"). Périmètre clair : migration DB + 2 endpoints + `@nestjs/schedule` + écran mobile + anonymisation.
+11. **Auth — RGPD suppression de compte (délai 30 jours)** : **implémentée** (module `account/` : endpoints `request-deletion`/`status`/`cancel-deletion`, anonymisation + `pending_deletion` J+30, job CRON de purge, `DeleteAccountPage` mobile). Rendue **accessible en mode invité** et depuis la nouvelle page « Gérer mes données » au 2026-07-08 ; les 3 pages Confidentialité (politique, CGU, gérer mes données) ne pointent plus vers « bientôt disponible ». Reste : « Gérer le compte » (édition e-mail/mot de passe) encore en placeholder.
 12. **Limites freemium** ([limite-freemium.md](../docs/features/limite-freemium.md)) : pas commencée. Nécessite un champ statut premium simple + 3 vérifications serveur (compteur sous-recettes, limite 1 liste active, plafond critères de recherche) + UI d'incitation. La recherche avancée dont ça dépend est désormais livrée ([advanced-search.md](../docs/features/advanced-search.md)) ; reste à trancher le plafond exact de critères cumulés (6 ou 8). Le paiement réel (Stripe/RevenueCat) reste hors scope v1.
 
 ## ⚫ Gros

@@ -119,9 +119,7 @@ class RecipePlayerCubit extends Cubit<RecipePlayerState> {
         clearPendingResume: true,
       ),
     );
-    if (timers.any((t) => t.status == TimerStatus.running)) {
-      _startTickerIfNeeded();
-    }
+    _syncTicker();
     await _persist();
   }
 
@@ -224,7 +222,7 @@ class RecipePlayerCubit extends Cubit<RecipePlayerState> {
     }
 
     emit(current.copyWith(timers: [...others, newTimer]));
-    _startTickerIfNeeded();
+    _syncTicker();
     await _notifications.schedule(
       id: _notificationId(newTimer.id),
       title: 'Minuteur terminé',
@@ -250,6 +248,7 @@ class RecipePlayerCubit extends Cubit<RecipePlayerState> {
       );
     }).toList();
     emit(current.copyWith(timers: updated));
+    _syncTicker();
     await _notifications.cancel(_notificationId(timerId));
     await _persist();
   }
@@ -266,6 +265,7 @@ class RecipePlayerCubit extends Cubit<RecipePlayerState> {
       );
     }).toList();
     emit(current.copyWith(timers: updated));
+    _syncTicker();
     await _notifications.cancel(_notificationId(timerId));
     await _persist();
   }
@@ -275,12 +275,24 @@ class RecipePlayerCubit extends Cubit<RecipePlayerState> {
     if (current is! RecipePlayerLoaded) return;
     final updated = current.timers.where((t) => t.id != timerId).toList();
     emit(current.copyWith(timers: updated));
+    _syncTicker();
     await _notifications.cancel(_notificationId(timerId));
     await _persist();
   }
 
-  void _startTickerIfNeeded() {
-    _ticker ??= Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+  /// Démarre le ticker si au moins un minuteur tourne, l'arrête sinon.
+  /// Évite un Timer.periodic qui vit (et émet potentiellement) pour rien
+  /// quand tous les minuteurs sont idle/paused/done.
+  void _syncTicker() {
+    final current = state;
+    final hasRunning = current is RecipePlayerLoaded &&
+        current.timers.any((t) => t.status == TimerStatus.running);
+    if (hasRunning) {
+      _ticker ??= Timer.periodic(const Duration(seconds: 1), (_) => _tick());
+    } else {
+      _ticker?.cancel();
+      _ticker = null;
+    }
   }
 
   void _tick() {
@@ -304,6 +316,7 @@ class RecipePlayerCubit extends Cubit<RecipePlayerState> {
 
     emit(current.copyWith(timers: updated));
     if (statusChanged) {
+      _syncTicker();
       unawaited(_persist());
     }
   }

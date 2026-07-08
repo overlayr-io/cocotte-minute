@@ -26,9 +26,17 @@ class SearchPage extends StatelessWidget {
   /// Dossier pré-sélectionné (ex: depuis une chip catégorie de l'accueil).
   final Category? initialFolder;
 
+  /// Fondu (pas de glissement) : la barre de recherche étant identique à celle
+  /// de l'accueil, la transition doit se lire comme un « mode » de la même page.
   static Route<void> route({Category? initialFolder}) {
-    return MaterialPageRoute<void>(
-      builder: (_) => SearchPage(initialFolder: initialFolder),
+    return PageRouteBuilder<void>(
+      transitionDuration: const Duration(milliseconds: 220),
+      reverseTransitionDuration: const Duration(milliseconds: 180),
+      pageBuilder: (_, _, _) => SearchPage(initialFolder: initialFolder),
+      transitionsBuilder: (_, animation, _, child) => FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+        child: child,
+      ),
     );
   }
 
@@ -86,7 +94,11 @@ class _SearchView extends StatelessWidget {
     );
   }
 
-  Widget _content(BuildContext context, SearchState state, AppLocalizations l10n) {
+  Widget _content(
+    BuildContext context,
+    SearchState state,
+    AppLocalizations l10n,
+  ) {
     final showTriggers = state.openMenu != null || state.isIdle;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,6 +108,20 @@ class _SearchView extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: SearchField(state: state),
         ),
+        // Requête en cours : fine barre de progression sous le champ, les
+        // résultats précédents restent affichés (estompés) — pas d'écran plein.
+        if (state.resultsStatus == SearchStatus.loading)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(3),
+              child: LinearProgressIndicator(
+                minHeight: 3,
+                color: AppColors.primary,
+                backgroundColor: AppColors.primary.withValues(alpha: 0.18),
+              ),
+            ),
+          ),
         if (showTriggers)
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
@@ -113,16 +139,20 @@ class _SearchView extends StatelessWidget {
         child: SearchMenu(state: state),
       );
     }
-    if (state.resultsStatus == SearchStatus.loading) {
-      return const Center(child: CircularProgressIndicator());
+    final loading = state.resultsStatus == SearchStatus.loading;
+    if (state.results.isNotEmpty) {
+      // Pendant une nouvelle requête, on garde la liste visible mais estompée
+      // pour ne pas perdre le fil ; la barre de progression signale l'activité.
+      return Opacity(
+        opacity: loading ? 0.45 : 1,
+        child: _Results(state: state, l10n: l10n),
+      );
     }
+    if (loading) return const SizedBox.shrink();
     if (!state.isIdle &&
         state.resultsStatus == SearchStatus.success &&
         state.results.isEmpty) {
       return const _EmptyResults();
-    }
-    if (state.results.isNotEmpty) {
-      return _Results(state: state, l10n: l10n);
     }
     return _IdleHint(l10n: l10n);
   }
@@ -139,7 +169,10 @@ class _Header extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => Navigator.of(context).maybePop(),
-            icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: AppColors.textPrimary,
+            ),
             splashRadius: 22,
           ),
           Text(
@@ -188,7 +221,11 @@ class _Results extends StatelessWidget {
                 behavior: HitTestBehavior.opaque,
                 child: Row(
                   children: [
-                    const Icon(Icons.tune_rounded, size: 15, color: SearchColors.sectionLabel),
+                    const Icon(
+                      Icons.tune_rounded,
+                      size: 15,
+                      color: SearchColors.sectionLabel,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       l10n.searchClearAll,
@@ -213,8 +250,9 @@ class _Results extends StatelessWidget {
               final recipe = state.results[i];
               return SearchResultCard(
                 recipe: recipe,
-                onTap: () =>
-                    Navigator.of(context).push(RecipeDetailPage.route(recipe.id)),
+                onTap: () => Navigator.of(
+                  context,
+                ).push(RecipeDetailPage.route(recipe.id)),
               );
             },
           ),
@@ -236,17 +274,12 @@ class _EmptyResults extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 96,
-              height: 96,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: AppColors.panelBackground,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: const Icon(Icons.search_off_rounded, size: 46, color: Color(0xFFC4BEAD)),
+            const Icon(
+              Icons.search_off_rounded,
+              size: 52,
+              color: Color(0xFFC4BEAD),
             ),
-            const SizedBox(height: 22),
+            const SizedBox(height: 18),
             Text(
               l10n.searchEmptyTitle,
               style: const TextStyle(

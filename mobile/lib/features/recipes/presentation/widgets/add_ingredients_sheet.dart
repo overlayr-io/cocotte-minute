@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_network_image.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../ingredients/data/ingredients_repository.dart';
 import '../../../ingredients/domain/ingredient.dart';
@@ -548,7 +549,9 @@ class _Avatar extends StatelessWidget {
         color: AppColors.primaryTint,
         borderRadius: BorderRadius.circular(13),
         image: imageUrl != null
-            ? DecorationImage(image: NetworkImage(imageUrl!), fit: BoxFit.cover)
+            ? DecorationImage(
+                image: cachedImageProvider(context, imageUrl!, logicalWidth: 44),
+                fit: BoxFit.cover)
             : null,
       ),
       child: imageUrl == null

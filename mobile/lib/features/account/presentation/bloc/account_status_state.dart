@@ -24,9 +24,9 @@ class AccountStatusPending extends AccountStatusState {
   final bool cancelling;
 
   AccountStatusPending copyWith({bool? cancelling}) => AccountStatusPending(
-        deletionScheduledAt: deletionScheduledAt,
-        cancelling: cancelling ?? this.cancelling,
-      );
+    deletionScheduledAt: deletionScheduledAt,
+    cancelling: cancelling ?? this.cancelling,
+  );
 
   @override
   List<Object?> get props => [deletionScheduledAt, cancelling];

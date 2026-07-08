@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/app_network_image.dart';
 import '../../../../ingredients/domain/ingredient.dart';
 import '../../../../ingredients/presentation/widgets/unit_selector.dart';
 import '../../../../recipes/domain/recipe.dart';
@@ -85,7 +86,7 @@ class _StepIngredientRow extends StatelessWidget {
             ),
             clipBehavior: Clip.antiAlias,
             child: ingredient.imageUrl != null
-                ? Image.network(ingredient.imageUrl!, fit: BoxFit.cover)
+                ? AppNetworkImage(ingredient.imageUrl!, width: 38, height: 38)
                 : const Icon(
                     Icons.egg_alt_outlined,
                     size: 18,

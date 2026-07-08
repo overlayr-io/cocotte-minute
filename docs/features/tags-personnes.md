@@ -100,3 +100,17 @@ au plan initial, validés avec le PO :
   feature recettes. En conséquence, le **compteur de recettes par tag
   (`recipeCount`) renvoie 0 en dur** pour l'instant (l'UI l'affiche déjà).
 - Filtrage/recherche par tag : toujours hors scope (usage futur).
+
+### Cache de lecture (2026-07-08)
+Les tags et personnes étaient re-téléchargés à chaque ouverture d'écran/sheet
+(aucun cache). Ajout d'un **cache de lecture simple** (mécanisme n°1 de la
+stratégie de données locales, cf. `mobile/CLAUDE.md`), sans toucher au serveur :
+- `core/network/json_list_cache.dart` : mémoire avec **TTL 5 min** (sert la copie
+  sans re-fetch pendant la session) + **`shared_preferences`** (clé scopée à
+  l'`userId`) en **repli hors connexion**, y compris après redémarrage.
+- Read-only et passif : **toute mutation invalide le cache**. Les mutations de
+  **tags** invalident aussi le cache **personnes** (une personne embarque ses
+  tags via `person.tags`).
+- `TagsRepository.fetchMine` / `PeopleRepository.fetchMine` acceptent un
+  `forceRefresh`. Drift reste réservé à la liste de courses (offline-first) —
+  non étendu ici.

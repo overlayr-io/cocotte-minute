@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_network_image.dart';
 import '../../../ingredients/domain/ingredient.dart';
 import '../../../ingredients/presentation/widgets/unit_selector.dart';
 import '../../domain/recipe.dart';
@@ -199,7 +200,9 @@ class _SelectableIngredientRow extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                   image: ingredient.imageUrl != null
                       ? DecorationImage(
-                          image: NetworkImage(ingredient.imageUrl!),
+                          image: cachedImageProvider(
+                              context, ingredient.imageUrl!,
+                              logicalWidth: 40),
                           fit: BoxFit.cover)
                       : null,
                 ),
@@ -410,7 +413,9 @@ class _ReadonlyIngredientRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(11),
               image: ingredient.imageUrl != null
                   ? DecorationImage(
-                      image: NetworkImage(ingredient.imageUrl!), fit: BoxFit.cover)
+                      image: cachedImageProvider(context, ingredient.imageUrl!,
+                          logicalWidth: 38),
+                      fit: BoxFit.cover)
                   : null,
             ),
             child: ingredient.imageUrl == null

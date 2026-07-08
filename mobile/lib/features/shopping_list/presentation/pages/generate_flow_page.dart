@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_network_image.dart';
 import '../../../recipes/data/recipes_repository.dart';
 import '../../../recipes/domain/recipe.dart';
 import '../../data/shopping_list_repository.dart';
@@ -87,7 +88,10 @@ class _Wizard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<GenerateShoppingListCubit>();
-    final state = context.watch<GenerateShoppingListCubit>().state;
+    // Le squelette (header + barre d'étapes) ne dépend que de l'étape : les
+    // sélections/frappes ne reconstruisent que le _Step* concerné.
+    final step =
+        context.select<GenerateShoppingListCubit, int>((c) => c.state.step);
     return Column(
       children: [
         Padding(
@@ -99,13 +103,13 @@ class _Wizard extends StatelessWidget {
                 children: [
                   _SquareButton(
                     icon: Icons.chevron_left_rounded,
-                    onTap: () => state.step > 1
+                    onTap: () => step > 1
                         ? cubit.back()
                         : Navigator.of(context).pop(),
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    l10n.shoppingStepLabel(state.step, 3),
+                    l10n.shoppingStepLabel(step, 3),
                     style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
@@ -116,12 +120,12 @@ class _Wizard extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 14),
-              _StepBar(step: state.step),
+              _StepBar(step: step),
             ],
           ),
         ),
         Expanded(
-          child: switch (state.step) {
+          child: switch (step) {
             1 => _StepRecipes(l10n: l10n, hasActive: hasActive),
             2 => _StepServings(l10n: l10n),
             _ => _StepPantry(l10n: l10n),
@@ -172,33 +176,42 @@ class _StepRecipes extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: ListView(
+          // Builder : seules les tuiles visibles sont construites.
+          child: ListView.builder(
             padding: const EdgeInsets.fromLTRB(22, 16, 22, 20),
-            children: [
-              Text(
-                l10n.shoppingStep1Title,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                l10n.shoppingStep1Subtitle,
-                style: const TextStyle(
-                  fontSize: 13.5,
-                  color: AppColors.textMuted,
-                ),
-              ),
-              const SizedBox(height: 16),
-              for (final recipe in state.recipes) ...[
-                _RecipeSelectTile(
+            itemCount: state.recipes.length + 1,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.shoppingStep1Title,
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.shoppingStep1Subtitle,
+                      style: const TextStyle(
+                        fontSize: 13.5,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                );
+              }
+              final recipe = state.recipes[index - 1];
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: _RecipeSelectTile(
                   recipe: recipe,
                   selected: state.selectedIds.contains(recipe.id),
                   onTap: () => cubit.toggleRecipe(recipe),
                 ),
-                const SizedBox(height: 10),
-              ],
-            ],
+              );
+            },
           ),
         ),
         _BottomBar(
@@ -492,29 +505,38 @@ class _StepPantry extends StatelessWidget {
     return Column(
       children: [
         Expanded(
-          child: ListView(
+          // Builder : la liste agrégée des ingrédients peut être longue.
+          child: ListView.builder(
             padding: const EdgeInsets.fromLTRB(22, 16, 22, 20),
-            children: [
-              Text(
-                l10n.shoppingStep3Title,
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                l10n.shoppingStep3Subtitle,
-                style: const TextStyle(fontSize: 13.5, color: AppColors.textMuted),
-              ),
-              const SizedBox(height: 10),
-              for (final ing in state.ingredients)
-                _PantryRow(
-                  ingredient: ing,
-                  inStock: state.pantryIds.contains(ing.id),
-                  onTap: () => cubit.togglePantry(ing.id),
-                  l10n: l10n,
-                ),
-            ],
+            itemCount: state.ingredients.length + 1,
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.shoppingStep3Title,
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.shoppingStep3Subtitle,
+                      style: const TextStyle(
+                          fontSize: 13.5, color: AppColors.textMuted),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                );
+              }
+              final ing = state.ingredients[index - 1];
+              return _PantryRow(
+                ingredient: ing,
+                inStock: state.pantryIds.contains(ing.id),
+                onTap: () => cubit.togglePantry(ing.id),
+                l10n: l10n,
+              );
+            },
           ),
         ),
         _BottomBar(
@@ -650,13 +672,7 @@ class _RecipeThumb extends StatelessWidget {
     if (photoUrl != null && photoUrl!.isNotEmpty) {
       return ClipRRect(
         borderRadius: radius,
-        child: Image.network(
-          photoUrl!,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-          errorBuilder: (_, _, _) => _placeholder(radius),
-        ),
+        child: AppNetworkImage(photoUrl!, width: size, height: size),
       );
     }
     return _placeholder(radius);

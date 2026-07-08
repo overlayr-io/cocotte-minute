@@ -93,6 +93,9 @@ class _SearchFieldState extends State<SearchField> {
                 child: TextField(
                   controller: _controller,
                   focusNode: _focusNode,
+                  // Clavier ouvert dès l'arrivée sur l'écran : la recherche
+                  // s'utilise au doigt levé, sans tap supplémentaire.
+                  autofocus: true,
                   onChanged: cubit.queryChanged,
                   cursorColor: SearchColors.folder,
                   style: TextStyle(
@@ -113,6 +116,16 @@ class _SearchFieldState extends State<SearchField> {
                       fontWeight: FontWeight.w400,
                     ),
                   ),
+                ),
+              ),
+              // Icône filtre commune avec la barre de l'accueil (fond
+              // transparent) : ramène simplement le focus sur le champ.
+              GestureDetector(
+                onTap: _focusNode.requestFocus,
+                behavior: HitTestBehavior.opaque,
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4),
+                  child: Icon(Icons.tune_rounded, size: 20, color: AppColors.primary),
                 ),
               ),
             ],
