@@ -11,11 +11,7 @@ import 'step_ingredients_sheet.dart';
 
 /// Contenu de l'onglet « Étapes » : état vide (9c) ou liste réordonnable (9b).
 class StepsContent extends StatefulWidget {
-  const StepsContent({
-    super.key,
-    required this.detail,
-    required this.cubit,
-  });
+  const StepsContent({super.key, required this.detail, required this.cubit});
 
   final RecipeDetail detail;
   final RecipeDetailCubit cubit;
@@ -40,8 +36,8 @@ class _StepsContentState extends State<StepsContent> {
 
   /// Nombre d'étapes « feuilles » affichées (texte + sous-étapes des références).
   int get _leafCount => _steps.fold(0, (acc, s) {
-        return acc + (s is RecipeBaseRefStep ? s.steps.length : 1);
-      });
+    return acc + (s is RecipeBaseRefStep ? s.steps.length : 1);
+  });
 
   Future<void> _import() async {
     final descriptions = await showImportStepsSheet(context);
@@ -145,12 +141,16 @@ class _StepsContentState extends State<StepsContent> {
           child: OutlinedButton.icon(
             onPressed: _addOneByOne,
             icon: const Icon(Icons.add_rounded, size: 18),
-            label: Text(l10n.recipeStepsAddCta,
-                style: const TextStyle(fontWeight: FontWeight.w700)),
+            label: Text(
+              l10n.recipeStepsAddCta,
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
               side: const BorderSide(color: Color(0xFFC4BEAD), width: 1.5),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
             ),
           ),
         ),
@@ -189,18 +189,23 @@ class _StepItem extends StatelessWidget {
           _textStep(context, s)
         else if (s is RecipeBaseRefStep)
           _baseRefStep(context, s),
-        if (!isLast) const Divider(height: 1, thickness: 1, color: Color(0xFFEEEAE0)),
+        if (!isLast)
+          const Divider(height: 1, thickness: 1, color: Color(0xFFEEEAE0)),
       ],
     );
   }
 
   Widget _grip() => ReorderableDragStartListener(
-        index: index,
-        child: const Padding(
-          padding: EdgeInsets.only(left: 6, top: 2),
-          child: Icon(Icons.drag_indicator_rounded, size: 20, color: Color(0xFFCBC7BB)),
-        ),
-      );
+    index: index,
+    child: const Padding(
+      padding: EdgeInsets.only(left: 6, top: 2),
+      child: Icon(
+        Icons.drag_indicator_rounded,
+        size: 20,
+        color: Color(0xFFCBC7BB),
+      ),
+    ),
+  );
 
   Widget _textStep(BuildContext context, RecipeTextStep step) {
     final l10n = AppLocalizations.of(context);
@@ -220,7 +225,10 @@ class _StepItem extends StatelessWidget {
                   Text(
                     step.description,
                     style: const TextStyle(
-                        fontSize: 14.5, height: 1.5, color: Color(0xFF33404B)),
+                      fontSize: 14.5,
+                      height: 1.5,
+                      color: Color(0xFF33404B),
+                    ),
                   ),
                   if (step.banner != null) StepBannerBox(banner: step.banner!),
                   if (step.ingredients.isNotEmpty)
@@ -231,11 +239,16 @@ class _StepItem extends StatelessWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.shopping_basket_outlined,
-                                size: 15, color: AppColors.primary),
+                            const Icon(
+                              Icons.shopping_basket_outlined,
+                              size: 15,
+                              color: AppColors.primary,
+                            ),
                             const SizedBox(width: 6),
                             Text(
-                              l10n.recipeStepIngredientsChip(step.ingredients.length),
+                              l10n.recipeStepIngredientsChip(
+                                step.ingredients.length,
+                              ),
                               style: const TextStyle(
                                 fontSize: 12.5,
                                 fontWeight: FontWeight.w600,
@@ -267,7 +280,11 @@ class _StepItem extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.link_rounded, size: 15, color: Color(0xFF5C7A4C)),
+              const Icon(
+                Icons.link_rounded,
+                size: 15,
+                color: Color(0xFF5C7A4C),
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: GestureDetector(
@@ -303,9 +320,13 @@ class _StepItem extends StatelessWidget {
                         Text(
                           sub.description,
                           style: const TextStyle(
-                              fontSize: 14, height: 1.5, color: Color(0xFF3F4E37)),
+                            fontSize: 14,
+                            height: 1.5,
+                            color: Color(0xFF3F4E37),
+                          ),
                         ),
-                        if (sub.banner != null) StepBannerBox(banner: sub.banner!),
+                        if (sub.banner != null)
+                          StepBannerBox(banner: sub.banner!),
                       ],
                     ),
                   ),
@@ -315,7 +336,11 @@ class _StepItem extends StatelessWidget {
           ],
           Row(
             children: [
-              const Icon(Icons.lock_outline_rounded, size: 12, color: Color(0xFFA9B79A)),
+              const Icon(
+                Icons.lock_outline_rounded,
+                size: 12,
+                color: Color(0xFFA9B79A),
+              ),
               const SizedBox(width: 6),
               Flexible(
                 child: Text(
@@ -373,15 +398,10 @@ class _EmptyState extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(4, 20, 4, 8),
       child: Column(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: const Color(0xFFEFEBE0),
-              borderRadius: BorderRadius.circular(18),
-            ),
-            child: const Icon(Icons.receipt_long_outlined,
-                size: 26, color: Color(0xFFA79F8B)),
+          const Icon(
+            Icons.receipt_long_outlined,
+            size: 40,
+            color: Color(0xFFA79F8B),
           ),
           const SizedBox(height: 18),
           Text(
@@ -397,7 +417,11 @@ class _EmptyState extends StatelessWidget {
           Text(
             l10n.recipeStepsEmptyBody,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 14, height: 1.5, color: AppColors.textMuted),
+            style: const TextStyle(
+              fontSize: 14,
+              height: 1.5,
+              color: AppColors.textMuted,
+            ),
           ),
           const SizedBox(height: 24),
           _EntryButton(
@@ -439,7 +463,9 @@ class _EntryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final titleColor = filled ? Colors.white : AppColors.textPrimary;
-    final subColor = filled ? Colors.white.withValues(alpha: 0.85) : AppColors.textMuted;
+    final subColor = filled
+        ? Colors.white.withValues(alpha: 0.85)
+        : AppColors.textMuted;
     return Material(
       color: filled ? AppColors.accent : AppColors.card,
       borderRadius: BorderRadius.circular(18),
@@ -463,8 +489,11 @@ class _EntryButton extends StatelessWidget {
                       : const Color(0xFFEAF0E4),
                   borderRadius: BorderRadius.circular(13),
                 ),
-                child: Icon(icon,
-                    size: 20, color: filled ? Colors.white : const Color(0xFF5C7A4C)),
+                child: Icon(
+                  icon,
+                  size: 20,
+                  color: filled ? Colors.white : const Color(0xFF5C7A4C),
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -487,8 +516,11 @@ class _EntryButton extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.chevron_right_rounded,
-                  size: 20, color: filled ? Colors.white : const Color(0xFFCBC7BB)),
+              Icon(
+                Icons.chevron_right_rounded,
+                size: 20,
+                color: filled ? Colors.white : const Color(0xFFCBC7BB),
+              ),
             ],
           ),
         ),
@@ -536,14 +568,18 @@ class _RemoveRefSheet extends StatelessWidget {
                 backgroundColor: AppColors.danger,
                 foregroundColor: Colors.white,
                 minimumSize: const Size.fromHeight(50),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
               ),
             ),
             const SizedBox(height: 8),
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.commonCancel,
-                  style: const TextStyle(color: AppColors.textSecondary)),
+              child: Text(
+                l10n.commonCancel,
+                style: const TextStyle(color: AppColors.textSecondary),
+              ),
             ),
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_shadows.dart';
 import '../../data/shopping_list_repository.dart';
 import '../../data/shopping_sync_service.dart';
 import '../../domain/shopping_list.dart';
@@ -149,75 +150,78 @@ class _ActiveListCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Material(
-      color: AppColors.card,
-      borderRadius: BorderRadius.circular(20),
-      child: InkWell(
+    return DecoratedBox(
+      decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        onTap: () => Navigator.of(
-          context,
-        ).push(ShoppingListDetailPage.route(list.id)),
-        child: Container(
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryTint,
-                  borderRadius: BorderRadius.circular(15),
+        boxShadow: AppShadows.card,
+      ),
+      child: Material(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(20),
+          onTap: () =>
+              Navigator.of(context).push(ShoppingListDetailPage.route(list.id)),
+          child: Padding(
+            padding: const EdgeInsets.all(15),
+            child: Row(
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryTint,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: const Icon(
+                    Icons.shopping_cart_rounded,
+                    color: AppColors.primary,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.shopping_cart_rounded,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      list.name,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        list.name,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w700),
                       ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      l10n.shoppingListSummary(
-                        l10n.shoppingItemsCount(list.itemCount),
-                        l10n.shoppingRecipesCount(list.recipeCount),
-                        0,
-                      ),
-                      style: const TextStyle(
-                        fontSize: 12.5,
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                    const SizedBox(height: 9),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(999),
-                      child: LinearProgressIndicator(
-                        value: list.progress,
-                        minHeight: 6,
-                        backgroundColor: AppColors.pill,
-                        valueColor: const AlwaysStoppedAnimation(
-                          AppColors.primary,
+                      const SizedBox(height: 3),
+                      Text(
+                        l10n.shoppingListSummary(
+                          l10n.shoppingItemsCount(list.itemCount),
+                          l10n.shoppingRecipesCount(list.recipeCount),
+                          0,
+                        ),
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          color: AppColors.textMuted,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 9),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(999),
+                        child: LinearProgressIndicator(
+                          value: list.progress,
+                          minHeight: 6,
+                          backgroundColor: AppColors.pill,
+                          valueColor: const AlwaysStoppedAnimation(
+                            AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(width: 8),
-              const Icon(Icons.chevron_right_rounded, color: Color(0xFFC4BEAD)),
-            ],
+                const SizedBox(width: 8),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: Color(0xFFC4BEAD),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -244,8 +248,9 @@ class _CreateButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
           ),
         ),
-        onPressed: () =>
-            Navigator.of(context).push(GenerateFlowPage.route(hasActive: hasActive)),
+        onPressed: () => Navigator.of(
+          context,
+        ).push(GenerateFlowPage.route(hasActive: hasActive)),
         icon: const Icon(Icons.add_rounded, size: 20),
         label: Text(
           l10n.shoppingCreateFromRecipes,
@@ -263,14 +268,9 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
+    // Pas de carte blanche : l'état vide se fond dans la page.
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-      decoration: BoxDecoration(
-        color: AppColors.card,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
-      ),
       child: Column(
         children: [
           Container(
@@ -296,7 +296,10 @@ class _EmptyState extends StatelessWidget {
           Text(
             l10n.shoppingEmptyBody,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: AppColors.textSecondary, fontSize: 13.5),
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 13.5,
+            ),
           ),
         ],
       ),
@@ -316,7 +319,11 @@ class _LockedHistory extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(Icons.lock_outline_rounded, size: 16, color: Color(0xFFB0AB9B)),
+            const Icon(
+              Icons.lock_outline_rounded,
+              size: 16,
+              color: Color(0xFFB0AB9B),
+            ),
             const SizedBox(width: 8),
             Text(
               l10n.shoppingLockedSectionTitle,

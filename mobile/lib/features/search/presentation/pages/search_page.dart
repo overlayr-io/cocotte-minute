@@ -94,7 +94,11 @@ class _SearchView extends StatelessWidget {
     );
   }
 
-  Widget _content(BuildContext context, SearchState state, AppLocalizations l10n) {
+  Widget _content(
+    BuildContext context,
+    SearchState state,
+    AppLocalizations l10n,
+  ) {
     final showTriggers = state.openMenu != null || state.isIdle;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,7 +169,10 @@ class _Header extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => Navigator.of(context).maybePop(),
-            icon: const Icon(Icons.arrow_back_rounded, color: AppColors.textPrimary),
+            icon: const Icon(
+              Icons.arrow_back_rounded,
+              color: AppColors.textPrimary,
+            ),
             splashRadius: 22,
           ),
           Text(
@@ -214,7 +221,11 @@ class _Results extends StatelessWidget {
                 behavior: HitTestBehavior.opaque,
                 child: Row(
                   children: [
-                    const Icon(Icons.tune_rounded, size: 15, color: SearchColors.sectionLabel),
+                    const Icon(
+                      Icons.tune_rounded,
+                      size: 15,
+                      color: SearchColors.sectionLabel,
+                    ),
                     const SizedBox(width: 6),
                     Text(
                       l10n.searchClearAll,
@@ -239,8 +250,9 @@ class _Results extends StatelessWidget {
               final recipe = state.results[i];
               return SearchResultCard(
                 recipe: recipe,
-                onTap: () =>
-                    Navigator.of(context).push(RecipeDetailPage.route(recipe.id)),
+                onTap: () => Navigator.of(
+                  context,
+                ).push(RecipeDetailPage.route(recipe.id)),
               );
             },
           ),
@@ -262,17 +274,12 @@ class _EmptyResults extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 96,
-              height: 96,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: AppColors.panelBackground,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: const Icon(Icons.search_off_rounded, size: 46, color: Color(0xFFC4BEAD)),
+            const Icon(
+              Icons.search_off_rounded,
+              size: 52,
+              color: Color(0xFFC4BEAD),
             ),
-            const SizedBox(height: 22),
+            const SizedBox(height: 18),
             Text(
               l10n.searchEmptyTitle,
               style: const TextStyle(
