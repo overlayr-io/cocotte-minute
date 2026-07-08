@@ -221,11 +221,6 @@ class _Loaded extends StatelessWidget {
           onSelected: () => showShareRecipeSheet(menuContext, detail),
         ),
         ActionMenuItem(
-          icon: Icons.download_rounded,
-          label: l10n.recipeMenuDownloadPdf,
-          onSelected: () => downloadRecipePdf(menuContext, detail),
-        ),
-        ActionMenuItem(
           icon: Icons.delete_outline_rounded,
           label: l10n.commonDelete,
           style: ActionMenuStyle.destructive,
