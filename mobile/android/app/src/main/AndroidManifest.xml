@@ -55,6 +55,11 @@
                 <data android:scheme="cocotteminute" android:host="r"/>
             </intent-filter>
         </activity>
+        <!-- Recadrage d'image (image_cropper) : activité uCrop requise. -->
+        <activity
+            android:name="com.yalantis.ucrop.UCropActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

@@ -78,6 +78,7 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
             shape: ImageUploadShape.card,
             size: 172,
             borderRadius: 22,
+            cropAspect: ImageCropAspect.ratio4x3,
             initialUrl: _photoUrl,
             onUploaded: (url) => setState(() => _photoUrl = url),
             placeholder: _PhotoPicker(l10n: l10n),

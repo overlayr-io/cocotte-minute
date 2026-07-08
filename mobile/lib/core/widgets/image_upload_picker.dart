@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app_network_image.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../di/service_locator.dart';
@@ -9,6 +10,9 @@ import '../theme/app_colors.dart';
 
 /// Forme visuelle du sélecteur : rond (avatar/ingrédient) ou carte (photo recette).
 enum ImageUploadShape { circle, card }
+
+/// Ratio de recadrage proposé/imposé avant l'envoi.
+enum ImageCropAspect { square, ratio4x3, free }
 
 /// Zone tactile partagée « choisir une image » : ouvre la galerie, envoie le
 /// fichier via [ImageUploadService] et affiche un aperçu. Rend [placeholder]
@@ -24,6 +28,7 @@ class ImageUploadPicker extends StatefulWidget {
     this.shape = ImageUploadShape.circle,
     this.size = 82,
     this.borderRadius = 22,
+    this.cropAspect = ImageCropAspect.square,
   });
 
   /// Sous-dossier Storage (ex. « ingredients », « avatars », « recipes »).
@@ -44,6 +49,9 @@ class ImageUploadPicker extends StatefulWidget {
   /// Rayon des coins pour la forme [ImageUploadShape.card].
   final double borderRadius;
 
+  /// Cadre de recadrage proposé (carré par défaut, adapté aux avatars/vignettes).
+  final ImageCropAspect cropAspect;
+
   @override
   State<ImageUploadPicker> createState() => _ImageUploadPickerState();
 }
@@ -61,17 +69,44 @@ class _ImageUploadPickerState extends State<ImageUploadPicker> {
 
   Future<void> _pick() async {
     if (_uploading) return;
-    final XFile? file = await _picker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 1280,
-      imageQuality: 82,
-    );
+    final XFile? file = await _picker.pickImage(source: ImageSource.gallery);
     if (file == null) return;
+
+    // Recadrage + compression natifs (uCrop/TOCropViewController) : sortie JPEG
+    // bornée à 1600px et qualité 82 → poids réduit sans perte visible.
+    final CroppedFile? cropped = await ImageCropper().cropImage(
+      sourcePath: file.path,
+      compressFormat: ImageCompressFormat.jpg,
+      compressQuality: 82,
+      maxWidth: 1600,
+      maxHeight: 1600,
+      aspectRatio: switch (widget.cropAspect) {
+        ImageCropAspect.square => const CropAspectRatio(ratioX: 1, ratioY: 1),
+        ImageCropAspect.ratio4x3 => const CropAspectRatio(ratioX: 4, ratioY: 3),
+        ImageCropAspect.free => null,
+      },
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Recadrer',
+          toolbarColor: AppColors.primary,
+          toolbarWidgetColor: Colors.white,
+          activeControlsWidgetColor: AppColors.primary,
+          lockAspectRatio: widget.cropAspect != ImageCropAspect.free,
+          hideBottomControls: widget.cropAspect != ImageCropAspect.free,
+        ),
+        IOSUiSettings(
+          title: 'Recadrer',
+          aspectRatioLockEnabled: widget.cropAspect != ImageCropAspect.free,
+          resetAspectRatioEnabled: widget.cropAspect == ImageCropAspect.free,
+        ),
+      ],
+    );
+    if (cropped == null) return;
 
     setState(() => _uploading = true);
     try {
-      final url =
-          await sl<ImageUploadService>().upload(file, folder: widget.folder);
+      final url = await sl<ImageUploadService>()
+          .upload(XFile(cropped.path), folder: widget.folder);
       if (!mounted) return;
       setState(() {
         _previewUrl = url;
