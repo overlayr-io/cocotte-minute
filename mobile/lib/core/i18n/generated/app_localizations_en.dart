@@ -264,6 +264,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shareRecipeAction => 'Share';
 
   @override
+  String get recipeMenuAddToShopping => 'Add to shopping list';
+
+  @override
+  String get recipeMenuDownloadPdf => 'Download as PDF';
+
+  @override
   String get shareRecipeTitle => 'Share recipe';
 
   @override
@@ -1412,6 +1418,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonDelete => 'Delete';
 
   @override
+  String get commonEdit => 'Edit';
+
+  @override
+  String get commonRename => 'Rename';
+
+  @override
   String get shoppingTabEyebrow => 'Shopping';
 
   @override
@@ -1620,6 +1632,22 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get shoppingClearConfirmBody =>
       'The list will be deleted. On the free plan, history is not kept.';
+
+  @override
+  String get shoppingShareList => 'Share list';
+
+  @override
+  String get shoppingClearChecked => 'Clear checked items';
+
+  @override
+  String get shoppingClearCheckedConfirmTitle => 'Clear checked items?';
+
+  @override
+  String get shoppingClearCheckedConfirmBody =>
+      'Checked items will be removed from the list. The rest are kept.';
+
+  @override
+  String get shoppingClearCheckedEmpty => 'No checked items to remove.';
 
   @override
   String shoppingProgress(int checked, int total) {

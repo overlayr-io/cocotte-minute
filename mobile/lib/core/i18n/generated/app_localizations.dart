@@ -596,6 +596,18 @@ abstract class AppLocalizations {
   /// **'Partager'**
   String get shareRecipeAction;
 
+  /// Entrée de menu de la fiche : ajoute la recette à une liste de courses
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter aux courses'**
+  String get recipeMenuAddToShopping;
+
+  /// Entrée de menu de la fiche : export PDF direct
+  ///
+  /// In fr, this message translates to:
+  /// **'Télécharger en PDF'**
+  String get recipeMenuDownloadPdf;
+
   /// No description provided for @shareRecipeTitle.
   ///
   /// In fr, this message translates to:
@@ -2534,6 +2546,18 @@ abstract class AppLocalizations {
   /// **'Supprimer'**
   String get commonDelete;
 
+  /// No description provided for @commonEdit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get commonEdit;
+
+  /// No description provided for @commonRename.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renommer'**
+  String get commonRename;
+
   /// No description provided for @shoppingTabEyebrow.
   ///
   /// In fr, this message translates to:
@@ -2833,6 +2857,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'La liste sera supprimée. En gratuit, l\'historique n\'est pas conservé.'**
   String get shoppingClearConfirmBody;
+
+  /// No description provided for @shoppingShareList.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager la liste'**
+  String get shoppingShareList;
+
+  /// No description provided for @shoppingClearChecked.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vider les cochés'**
+  String get shoppingClearChecked;
+
+  /// No description provided for @shoppingClearCheckedConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vider les articles cochés ?'**
+  String get shoppingClearCheckedConfirmTitle;
+
+  /// No description provided for @shoppingClearCheckedConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les articles déjà cochés seront retirés de la liste. Les autres sont conservés.'**
+  String get shoppingClearCheckedConfirmBody;
+
+  /// No description provided for @shoppingClearCheckedEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun article coché à retirer.'**
+  String get shoppingClearCheckedEmpty;
 
   /// No description provided for @shoppingProgress.
   ///

@@ -266,6 +266,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get shareRecipeAction => 'Partager';
 
   @override
+  String get recipeMenuAddToShopping => 'Ajouter aux courses';
+
+  @override
+  String get recipeMenuDownloadPdf => 'Télécharger en PDF';
+
+  @override
   String get shareRecipeTitle => 'Partager la recette';
 
   @override
@@ -1419,6 +1425,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get commonDelete => 'Supprimer';
 
   @override
+  String get commonEdit => 'Modifier';
+
+  @override
+  String get commonRename => 'Renommer';
+
+  @override
   String get shoppingTabEyebrow => 'Courses';
 
   @override
@@ -1627,6 +1639,22 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get shoppingClearConfirmBody =>
       'La liste sera supprimée. En gratuit, l\'historique n\'est pas conservé.';
+
+  @override
+  String get shoppingShareList => 'Partager la liste';
+
+  @override
+  String get shoppingClearChecked => 'Vider les cochés';
+
+  @override
+  String get shoppingClearCheckedConfirmTitle => 'Vider les articles cochés ?';
+
+  @override
+  String get shoppingClearCheckedConfirmBody =>
+      'Les articles déjà cochés seront retirés de la liste. Les autres sont conservés.';
+
+  @override
+  String get shoppingClearCheckedEmpty => 'Aucun article coché à retirer.';
 
   @override
   String shoppingProgress(int checked, int total) {
