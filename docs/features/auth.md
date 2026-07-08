@@ -143,9 +143,9 @@ utilisateur réel, pour permettre plus tard un passage fluide vers un compte com
   invité au moment de la conversion. N'affiche pas de compteur de recettes
   (pas de table métier en v1, cf. écart ci-dessous) — wording générique.
 - Point d'entrée : **onglet Compte** (`features/account/`), désormais en place —
-  carte profil invité/connecté + rappel invité avec CTA « Créer un compte /
-  Se connecter » qui ouvre l'écran d'auth. (L'ancien CTA temporaire sur
-  `HomePage` n'est plus le point d'entrée.)
+  carte profil invité/connecté + **carte d'invitation permanente** « Créer ton
+  compte » (invité) qui ouvre l'écran d'auth. (L'ancien CTA temporaire sur
+  `HomePage` n'est plus le point d'entrée ; cf. section « Compte invité » ci-dessous.)
 - Thème global aligné sur la maquette (`AppColors` : vert `#6B8E5A` + corail
   `#FF6F61` sur fond crème `#F7F6F2`) et polices bundlées (Bricolage
   Grotesque / Hanken Grotesk) — appliqué à toute l'app, pas seulement à l'auth.
@@ -171,11 +171,31 @@ utilisateur réel, pour permettre plus tard un passage fluide vers un compte com
   compléter quand OAuth sera activé en production.
 
 ### Reste à faire (raison du statut `in-progress`)
-- **Rappel J+14 automatique** : seule une carte de rappel statique existe sur
-  l'onglet Compte ; pas de suivi de la date de création du compte anonyme ni de
-  déclenchement temporel à J+14.
-- **Suppression de compte RGPD (délai 30 jours)** : non implémentée — pas de
-  `account_status` / `deletion_requested_at`, pas d'anonymisation, pas de job
-  CRON, et les entrées « Gérer le compte » / « Supprimer mon compte » de
-  l'onglet Compte pointent encore vers un écran « bientôt disponible ».
 - **OAuth en production** : boutons Google/Apple limités au `kDebugMode`.
+- **« Gérer le compte » (utilisateur connecté)** : la tuile pointe encore vers
+  l'écran « bientôt disponible » (édition d'e-mail/mot de passe non faite).
+
+## Compte invité, déconnexion & confidentialité (2026-07-08)
+
+Retours PO sur l'accessibilité des actions de compte en mode invité, corrigés
+côté mobile (le circuit serveur de suppression RGPD existait déjà) :
+
+- **Rappel J+14 remplacé par une invitation permanente** : la carte de rappel
+  conditionnée à ≥ 14 jours est retirée au profit d'une **carte verte
+  permanente** en tête de l'onglet Compte (titre + sous-titre + **un seul
+  bouton « Créer ton compte »**), toujours visible pour un invité. Plus de
+  dépendance à la date de création — l'invité peut convertir son compte dès le
+  premier jour. (Le tracking temporel J+14 devient donc sans objet.)
+- **Déconnexion visible en invité** : auparavant masquée par `if (!isGuest)`.
+  Désormais affichée, avec un **dialogue d'avertissement** (perte des données
+  locales) proposant « Créer ton compte » en action mise en avant.
+- **Suppression des données visible en invité** : la tuile mène à
+  `DeleteAccountPage` (branche anonyme = purge immédiate côté serveur, déjà
+  codée). Libellé adapté (« Supprimer mes données »).
+- **Pages Confidentialité réelles** : Politique de confidentialité et
+  Conditions d'utilisation (composant `LegalPage` partagé) + **Gérer mes
+  données** (`ManageDataPage` : ce qui est conservé + droit de suppression),
+  ne pointent plus vers « bientôt disponible ». Contrainte PO : **wording sans
+  jargon technique** (pas de mention d'un fournisseur cloud), et pas d'export
+  de données dans « Gérer mes données ». Les liens CGU/Confidentialité de
+  l'écran d'auth (`LegalNotice`) sont désormais cliquables.

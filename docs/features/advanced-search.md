@@ -117,3 +117,24 @@ initialement dans ce document.
 - Tests unitaires server sur `SearchService` (résolution des critères
   transverses) ; pas de tests mobile (hors périmètre v1, cf.
   `ENGINEERING_CONSTRAINTS.md`).
+
+## Finitions UX (2026-07-08)
+
+Retours PO sur le ressenti de la recherche, corrigés côté mobile (aucun impact
+server) :
+- **Ouverture en fondu** : la route `SearchPage` passe d'un `MaterialPageRoute`
+  (glissement plateforme) à une `FadeTransition` (~220 ms). Comme la barre de
+  l'accueil est désormais visuellement identique au vrai champ, l'entrée en
+  recherche se lit comme un simple changement de mode, pas une navigation.
+- **Focus automatique** : le champ prend le focus à l'arrivée (clavier ouvert
+  immédiatement) — auparavant il fallait toucher le champ.
+- **Chargement non bloquant** : pendant une requête, les résultats précédents
+  restent affichés (estompés) sous une fine barre de progression, au lieu d'un
+  spinner plein écran qui faisait « perdre le fil ». Débounce du texte libre
+  porté à 500 ms.
+- **Barres unifiées** : la barre décorative de l'accueil et le champ de la page
+  recherche partagent rayon, bordure, ombre, tailles d'icônes et hint ; l'icône
+  filtre est un `tune` sur fond transparent des deux côtés.
+- **Cache dossiers/tags/personnes** : le chargement initial de l'autocomplétion
+  profite désormais du cache de lecture des tags/personnes (cf.
+  `tags-personnes.md`), réduisant l'écran de chargement à l'ouverture.
