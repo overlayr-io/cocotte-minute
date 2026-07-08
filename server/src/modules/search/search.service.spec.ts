@@ -24,8 +24,15 @@ function make() {
   const categories = { expandWithDescendants: jest.fn() } as unknown as jest.Mocked<
     Pick<CategoriesService, 'expandWithDescendants'>
   >;
-  const people = { tagIdsForPeople: jest.fn() } as unknown as jest.Mocked<
-    Pick<PeopleService, 'tagIdsForPeople'>
+  const people = {
+    tagIdsForPeople: jest.fn(),
+    recipeIdsForPeople: jest.fn(),
+    allAssociatedRecipeIds: jest.fn(),
+  } as unknown as jest.Mocked<
+    Pick<
+      PeopleService,
+      'tagIdsForPeople' | 'recipeIdsForPeople' | 'allAssociatedRecipeIds'
+    >
   >;
   const service = new SearchService(
     recipes as unknown as RecipesService,
@@ -49,7 +56,7 @@ describe('SearchService', () => {
       q: 'poulet',
       categoryIds: undefined,
       allTagIds: undefined,
-      anyTagIds: undefined,
+      person: undefined,
     });
   });
 
@@ -67,28 +74,44 @@ describe('SearchService', () => {
     );
   });
 
-  it('traduit les personnes en union de leurs tags (anyTagIds, logique OU)', async () => {
+  it('traduit les personnes en filtre résolu (recettes directes + tags + associées)', async () => {
     const { service, recipes, people } = make();
     people.tagIdsForPeople.mockResolvedValue(['t1', 't2']);
+    people.recipeIdsForPeople.mockResolvedValue(['r1']);
+    people.allAssociatedRecipeIds.mockResolvedValue(['r1', 'r9']);
     recipes.search.mockResolvedValue([summary('x')]);
 
     await service.searchRecipes(USER, { personIds: ['p1', 'p2'] });
 
     expect(people.tagIdsForPeople).toHaveBeenCalledWith(USER, ['p1', 'p2']);
+    expect(people.recipeIdsForPeople).toHaveBeenCalledWith(USER, ['p1', 'p2']);
     expect(recipes.search).toHaveBeenCalledWith(
       USER,
-      expect.objectContaining({ anyTagIds: ['t1', 't2'] }),
+      expect.objectContaining({
+        person: {
+          recipeIds: ['r1'],
+          tagIds: ['t1', 't2'],
+          associatedRecipeIds: ['r1', 'r9'],
+        },
+      }),
     );
   });
 
-  it('court-circuite en résultat vide si une personne sélectionnée n’a aucun tag', async () => {
+  it('interroge quand même les recettes si la personne n’a ni tag ni recette (orphelines incluses)', async () => {
     const { service, recipes, people } = make();
     people.tagIdsForPeople.mockResolvedValue([]);
+    people.recipeIdsForPeople.mockResolvedValue([]);
+    people.allAssociatedRecipeIds.mockResolvedValue([]);
+    recipes.search.mockResolvedValue([]);
 
-    const res = await service.searchRecipes(USER, { personIds: ['p1'] });
+    await service.searchRecipes(USER, { personIds: ['p1'] });
 
-    expect(res).toEqual([]);
-    expect(recipes.search).not.toHaveBeenCalled();
+    expect(recipes.search).toHaveBeenCalledWith(
+      USER,
+      expect.objectContaining({
+        person: { recipeIds: [], tagIds: [], associatedRecipeIds: [] },
+      }),
+    );
   });
 
   it('passe les tags explicites en allTagIds (logique ET)', async () => {

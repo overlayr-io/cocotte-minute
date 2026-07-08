@@ -14,6 +14,8 @@ export interface DiscoveryPersonDto {
   avatarUrl: string | null;
   /** Tags de la personne : une recette lui « correspond » si elle en porte un. */
   tagIds: string[];
+  /** Recettes associées directement (« ses recettes »). */
+  recipeIds: string[];
 }
 
 /** Dossier allégé pour la rangée « Par dossier » (roots = depth 1). */
@@ -66,6 +68,7 @@ export class DiscoveryService {
         firstName: p.firstName,
         avatarUrl: p.avatarUrl,
         tagIds: p.tags.map((t) => t.id),
+        recipeIds: p.recipeIds,
       })),
       categories: categories.map((c) => ({
         id: c.id,

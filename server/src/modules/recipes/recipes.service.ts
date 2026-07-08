@@ -6,7 +6,18 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { and, asc, desc, eq, ilike, inArray, isNull, sql } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  isNull,
+  notInArray,
+  or,
+  sql,
+} from 'drizzle-orm';
 
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import {
@@ -45,6 +56,17 @@ export interface RecipeSearchFilters {
   allTagIds?: string[];
   /** Tags dérivés des personnes : la recette porte AU MOINS UN de ces tags (OU). */
   anyTagIds?: string[];
+  /**
+   * Filtre « personnes » résolu par SearchService. Une recette correspond si :
+   * associée directement à une des personnes (recipeIds), OU porte un de leurs
+   * tags (tagIds), OU n'est associée à rien (aucun tag ET aucune personne —
+   * associatedRecipeIds = toutes les recettes liées à au moins une personne).
+   */
+  person?: {
+    recipeIds: string[];
+    tagIds: string[];
+    associatedRecipeIds: string[];
+  };
 }
 
 /** Ligne de liste / carte (sans les relations lourdes). */
@@ -188,6 +210,26 @@ export class RecipesService {
   }
 
   /**
+   * Résumés d'un ensemble de recettes possédées (non supprimées), les plus
+   * récentes d'abord. Les ids inconnus ou étrangers sont ignorés silencieusement.
+   */
+  async listByIds(userId: string, ids: string[]): Promise<RecipeSummaryDto[]> {
+    if (ids.length === 0) return [];
+    const rows = await this.db
+      .select()
+      .from(recipes)
+      .where(
+        and(
+          inArray(recipes.id, [...new Set(ids)]),
+          eq(recipes.authorId, userId),
+          isNull(recipes.deletedAt),
+        ),
+      )
+      .orderBy(desc(recipes.createdAt));
+    return rows.map(toSummary);
+  }
+
+  /**
    * Recettes rangées dans un dossier donné (pivot `recipe_categories`), les
    * plus récentes d'abord, hors supprimées. Ne renvoie que les recettes de
    * l'utilisateur — l'appartenance du dossier est vérifiée en amont par
@@ -254,6 +296,37 @@ export class RecipesService {
             .where(inArray(recipeTags.tagId, filters.anyTagIds)),
         ),
       );
+    }
+
+    if (filters.person) {
+      const { recipeIds, tagIds, associatedRecipeIds } = filters.person;
+      const alternatives = [];
+      if (recipeIds.length > 0) {
+        alternatives.push(inArray(recipes.id, recipeIds));
+      }
+      if (tagIds.length > 0) {
+        alternatives.push(
+          inArray(
+            recipes.id,
+            this.db
+              .select({ id: recipeTags.recipeId })
+              .from(recipeTags)
+              .where(inArray(recipeTags.tagId, tagIds)),
+          ),
+        );
+      }
+      // « Associée à rien » : aucun tag et liée à aucune personne.
+      const orphanParts = [
+        notInArray(
+          recipes.id,
+          this.db.select({ id: recipeTags.recipeId }).from(recipeTags),
+        ),
+      ];
+      if (associatedRecipeIds.length > 0) {
+        orphanParts.push(notInArray(recipes.id, associatedRecipeIds));
+      }
+      alternatives.push(and(...orphanParts)!);
+      conditions.push(or(...alternatives)!);
     }
 
     if (filters.allTagIds && filters.allTagIds.length > 0) {

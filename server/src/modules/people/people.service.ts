@@ -3,7 +3,12 @@ import { and, eq, inArray, isNull } from 'drizzle-orm';
 
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import { people, type PersonRow } from '../../db/schema/people.schema';
+import { personRecipes } from '../../db/schema/person-recipes.schema';
 import { personTags } from '../../db/schema/person-tags.schema';
+import {
+  RecipesService,
+  type RecipeSummaryDto,
+} from '../recipes/recipes.service';
 import { TagDto, TagsService } from '../tags/tags.service';
 import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
@@ -15,16 +20,19 @@ export interface PersonDto {
   lastName: string | null;
   avatarUrl: string | null;
   tags: TagDto[];
+  /** Recettes associées directement (« ses recettes »). */
+  recipeIds: string[];
   createdAt: string;
 }
 
-function toDto(row: PersonRow, tags: TagDto[]): PersonDto {
+function toDto(row: PersonRow, tags: TagDto[], recipeIds: string[]): PersonDto {
   return {
     id: row.id,
     firstName: row.firstName,
     lastName: row.lastName,
     avatarUrl: row.avatarUrl,
     tags,
+    recipeIds,
     createdAt: row.createdAt.toISOString(),
   };
 }
@@ -36,6 +44,7 @@ export class PeopleService {
   constructor(
     @Inject(DRIZZLE) private readonly db: DrizzleDB,
     private readonly tagsService: TagsService,
+    private readonly recipesService: RecipesService,
   ) {}
 
   /** Personnes de l'utilisateur (hors supprimées), tags associés inclus. */
@@ -47,12 +56,18 @@ export class PeopleService {
       .orderBy(people.firstName);
     if (rows.length === 0) return [];
 
-    // Une seule requête pivot + une seule hydratation des tags (pas de N+1).
+    // Une seule requête par pivot + une seule hydratation des tags (pas de N+1).
     const personIds = rows.map((r) => r.id);
-    const links = await this.db
-      .select()
-      .from(personTags)
-      .where(inArray(personTags.personId, personIds));
+    const [links, recipeLinks] = await Promise.all([
+      this.db
+        .select()
+        .from(personTags)
+        .where(inArray(personTags.personId, personIds)),
+      this.db
+        .select()
+        .from(personRecipes)
+        .where(inArray(personRecipes.personId, personIds)),
+    ]);
     const tagIds = [...new Set(links.map((l) => l.tagId))];
     const tagsById = new Map(
       (await this.tagsService.listByIds(userId, tagIds)).map((t) => [t.id, t]),
@@ -65,6 +80,9 @@ export class PeopleService {
           .filter((l) => l.personId === row.id)
           .map((l) => tagsById.get(l.tagId))
           .filter((t): t is TagDto => t !== undefined),
+        recipeLinks
+          .filter((l) => l.personId === row.id)
+          .map((l) => l.recipeId),
       ),
     );
   }
@@ -111,7 +129,7 @@ export class PeopleService {
       })
       .returning();
     // À la création, aucune association de tag (règle métier tags-personnes.md).
-    return toDto(row, []);
+    return toDto(row, [], []);
   }
 
   async update(userId: string, id: string, dto: UpdatePersonDto): Promise<PersonDto> {
@@ -158,6 +176,93 @@ export class PeopleService {
     return this.hydrate(userId, person);
   }
 
+  /** Associe une recette à une personne (idempotent). Retourne la personne à jour. */
+  async addRecipe(
+    userId: string,
+    personId: string,
+    recipeId: string,
+  ): Promise<PersonDto> {
+    const person = await this.findOwnedOrFail(userId, personId);
+    await this.recipesService.assertOwnedRecipe(userId, recipeId);
+    await this.db
+      .insert(personRecipes)
+      .values({ personId, recipeId })
+      .onConflictDoNothing();
+    return this.hydrate(userId, person);
+  }
+
+  /** Retire l'association d'une recette. Retourne la personne à jour. */
+  async removeRecipe(
+    userId: string,
+    personId: string,
+    recipeId: string,
+  ): Promise<PersonDto> {
+    const person = await this.findOwnedOrFail(userId, personId);
+    await this.db
+      .delete(personRecipes)
+      .where(
+        and(
+          eq(personRecipes.personId, personId),
+          eq(personRecipes.recipeId, recipeId),
+        ),
+      );
+    return this.hydrate(userId, person);
+  }
+
+  /** « Ses recettes » : résumés des recettes associées directement à la personne. */
+  async listRecipes(userId: string, personId: string): Promise<RecipeSummaryDto[]> {
+    await this.findOwnedOrFail(userId, personId);
+    const links = await this.db
+      .select({ recipeId: personRecipes.recipeId })
+      .from(personRecipes)
+      .where(eq(personRecipes.personId, personId));
+    return this.recipesService.listByIds(
+      userId,
+      links.map((l) => l.recipeId),
+    );
+  }
+
+  /**
+   * Union des recettes associées directement à un ensemble de personnes
+   * possédées (recherche avancée). Lève si un id n'appartient pas à l'utilisateur.
+   */
+  async recipeIdsForPeople(userId: string, personIds: string[]): Promise<string[]> {
+    if (personIds.length === 0) return [];
+    const uniqueIds = [...new Set(personIds)];
+    const owned = await this.db
+      .select({ id: people.id })
+      .from(people)
+      .where(
+        and(
+          eq(people.ownerId, userId),
+          isNull(people.deletedAt),
+          inArray(people.id, uniqueIds),
+        ),
+      );
+    if (owned.length !== uniqueIds.length) {
+      throw new NotFoundException('Personne introuvable');
+    }
+    const links = await this.db
+      .select({ recipeId: personRecipes.recipeId })
+      .from(personRecipes)
+      .where(inArray(personRecipes.personId, uniqueIds));
+    return [...new Set(links.map((l) => l.recipeId))];
+  }
+
+  /**
+   * Toutes les recettes associées à AU MOINS une personne (non supprimée) de
+   * l'utilisateur — sert à déterminer les recettes « associées à rien » dans la
+   * recherche.
+   */
+  async allAssociatedRecipeIds(userId: string): Promise<string[]> {
+    const links = await this.db
+      .select({ recipeId: personRecipes.recipeId })
+      .from(personRecipes)
+      .innerJoin(people, eq(people.id, personRecipes.personId))
+      .where(and(eq(people.ownerId, userId), isNull(people.deletedAt)));
+    return [...new Set(links.map((l) => l.recipeId))];
+  }
+
   /**
    * Hard delete de toutes les personnes d'un utilisateur ("repartir de zéro").
    * Les liaisons person_tags partent en cascade (FK onDelete: cascade). Exposé
@@ -170,17 +275,23 @@ export class PeopleService {
 
   // --- privé -------------------------------------------------------------
 
-  /** Recharge les tags associés à une personne et construit son DTO. */
+  /** Recharge tags et recettes associés à une personne et construit son DTO. */
   private async hydrate(userId: string, row: PersonRow): Promise<PersonDto> {
-    const links = await this.db
-      .select({ tagId: personTags.tagId })
-      .from(personTags)
-      .where(eq(personTags.personId, row.id));
+    const [links, recipeLinks] = await Promise.all([
+      this.db
+        .select({ tagId: personTags.tagId })
+        .from(personTags)
+        .where(eq(personTags.personId, row.id)),
+      this.db
+        .select({ recipeId: personRecipes.recipeId })
+        .from(personRecipes)
+        .where(eq(personRecipes.personId, row.id)),
+    ]);
     const tags = await this.tagsService.listByIds(
       userId,
       links.map((l) => l.tagId),
     );
-    return toDto(row, tags);
+    return toDto(row, tags, recipeLinks.map((l) => l.recipeId));
   }
 
   /** Vérifie que le tag appartient à l'utilisateur, ou lève (via TagsService). */

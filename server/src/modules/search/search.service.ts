@@ -16,7 +16,8 @@ import { SearchRecipesDto } from './dto/search-recipes.dto';
  *
  * Résolution des critères transverses avant délégation à RecipesService :
  * - dossiers → dépliés en incluant leurs descendants (CategoriesService) ;
- * - personnes → traduites en l'union de leurs tags (PeopleService) ;
+ * - personnes → associations directes + union de leurs tags + recettes sans
+ *   aucune association (PeopleService) ;
  * - tags explicites → passés tels quels (logique ET) ;
  * - texte → passé tel quel (LIKE nom).
  */
@@ -40,19 +41,26 @@ export class SearchService {
           )
         : undefined;
 
-    let anyTagIds: string[] | undefined;
+    // Filtre personnes : une recette correspond si elle est associée directement
+    // à une des personnes, OU porte un de leurs tags, OU n'est associée à rien
+    // (ni tag, ni personne) — « vide = compté dedans ».
+    let person:
+      | { recipeIds: string[]; tagIds: string[]; associatedRecipeIds: string[] }
+      | undefined;
     if (dto.personIds && dto.personIds.length > 0) {
-      anyTagIds = await this.peopleService.tagIdsForPeople(userId, dto.personIds);
-      // Personnes sélectionnées mais sans aucun tag : aucune recette ne peut être
-      // « compatible » → résultat vide sans interroger les recettes.
-      if (anyTagIds.length === 0) return [];
+      const [tagIds, recipeIds, associatedRecipeIds] = await Promise.all([
+        this.peopleService.tagIdsForPeople(userId, dto.personIds),
+        this.peopleService.recipeIdsForPeople(userId, dto.personIds),
+        this.peopleService.allAssociatedRecipeIds(userId),
+      ]);
+      person = { recipeIds, tagIds, associatedRecipeIds };
     }
 
     return this.recipesService.search(userId, {
       q: dto.q,
       categoryIds,
       allTagIds: dto.tagIds,
-      anyTagIds,
+      person,
     });
   }
 }
