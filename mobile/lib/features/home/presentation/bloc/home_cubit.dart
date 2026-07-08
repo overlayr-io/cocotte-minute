@@ -178,11 +178,17 @@ class HomeCubit extends Cubit<HomeState> {
     );
     addRow(DiscoverySectionKind.recent, editorial);
     for (final person in data.people) {
-      if (person.tagIds.isEmpty) continue;
+      // « Pour {prénom} » : recettes associées directement OU portant un des
+      // tags de la personne.
+      if (person.tagIds.isEmpty && person.recipeIds.isEmpty) continue;
       final tagSet = person.tagIds.toSet();
+      final directSet = person.recipeIds.toSet();
       addRow(
         DiscoverySectionKind.person,
-        editorial.where((r) => r.tagIds.any(tagSet.contains)),
+        editorial.where(
+          (r) =>
+              directSet.contains(r.summary.id) || r.tagIds.any(tagSet.contains),
+        ),
         personName: person.firstName,
         avatarUrl: person.avatarUrl,
       );
