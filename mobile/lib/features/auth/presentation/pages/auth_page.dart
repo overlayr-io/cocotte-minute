@@ -253,20 +253,10 @@ class _AppIconPlaceholder extends StatelessWidget {
           style: BorderStyle.solid,
         ),
       ),
-      child: const Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.image_outlined, size: 22, color: Color(0xFFB7B2A4)),
-          SizedBox(height: 2),
-          Text(
-            'Logo app',
-            style: TextStyle(
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFFB7B2A4),
-            ),
-          ),
-        ],
+      clipBehavior: Clip.antiAlias,
+      child: Image.asset(
+        'assets/branding/app_icon.png',
+        fit: BoxFit.cover,
       ),
     );
   }
