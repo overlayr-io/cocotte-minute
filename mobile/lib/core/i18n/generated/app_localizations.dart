@@ -506,6 +506,282 @@ abstract class AppLocalizations {
   /// **'Gérer mes données'**
   String get accountRowManageData;
 
+  /// Titre de la page de gestion du compte connecté
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer le compte'**
+  String get accountManageTitle;
+
+  /// No description provided for @accountManageEmailSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail'**
+  String get accountManageEmailSection;
+
+  /// No description provided for @accountManageEmailHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un e-mail de confirmation te sera envoyé pour valider le changement.'**
+  String get accountManageEmailHelp;
+
+  /// No description provided for @accountManageEmailUnchanged.
+  ///
+  /// In fr, this message translates to:
+  /// **'C\'est déjà ton adresse e-mail actuelle.'**
+  String get accountManageEmailUnchanged;
+
+  /// No description provided for @accountManageEmailSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'E-mail de confirmation envoyé. Vérifie ta boîte de réception.'**
+  String get accountManageEmailSent;
+
+  /// No description provided for @accountManagePasswordSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get accountManagePasswordSection;
+
+  /// No description provided for @accountManagePasswordHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisis un nouveau mot de passe d\'au moins 6 caractères.'**
+  String get accountManagePasswordHelp;
+
+  /// No description provided for @accountManageNewPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau mot de passe'**
+  String get accountManageNewPassword;
+
+  /// No description provided for @accountManageConfirmPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer le mot de passe'**
+  String get accountManageConfirmPassword;
+
+  /// No description provided for @accountManageConfirmPasswordHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retape ton mot de passe'**
+  String get accountManageConfirmPasswordHint;
+
+  /// No description provided for @accountManagePasswordMismatch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les deux mots de passe ne correspondent pas.'**
+  String get accountManagePasswordMismatch;
+
+  /// No description provided for @accountManagePasswordUpdated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe modifié.'**
+  String get accountManagePasswordUpdated;
+
+  /// Entrée de menu pour exporter la fiche recette en PDF
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter en PDF'**
+  String get pdfExportAction;
+
+  /// No description provided for @pdfExportError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de générer le PDF.'**
+  String get pdfExportError;
+
+  /// Entrée de menu de la fiche : ouvre la feuille de partage
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager'**
+  String get shareRecipeAction;
+
+  /// Entrée de menu de la fiche : ajoute la recette à une liste de courses
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter aux courses'**
+  String get recipeMenuAddToShopping;
+
+  /// Entrée de menu de la fiche : export PDF direct
+  ///
+  /// In fr, this message translates to:
+  /// **'Télécharger en PDF'**
+  String get recipeMenuDownloadPdf;
+
+  /// No description provided for @shareRecipeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager la recette'**
+  String get shareRecipeTitle;
+
+  /// No description provided for @shareSectionExport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter'**
+  String get shareSectionExport;
+
+  /// No description provided for @shareSectionShare.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager'**
+  String get shareSectionShare;
+
+  /// No description provided for @shareExportPdfSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Feuille A4, prête à imprimer'**
+  String get shareExportPdfSubtitle;
+
+  /// No description provided for @shareCopyLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier le lien'**
+  String get shareCopyLink;
+
+  /// No description provided for @shareCopyLinkSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lien de partage vers la recette'**
+  String get shareCopyLinkSubtitle;
+
+  /// No description provided for @shareCopyLinkDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lien copié dans le presse-papiers.'**
+  String get shareCopyLinkDone;
+
+  /// No description provided for @shareVia.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager…'**
+  String get shareVia;
+
+  /// No description provided for @shareViaSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer le lien via une autre app'**
+  String get shareViaSubtitle;
+
+  /// No description provided for @shareLinkError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de générer le lien de partage.'**
+  String get shareLinkError;
+
+  /// No description provided for @pdfRecipeBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette'**
+  String get pdfRecipeBadge;
+
+  /// No description provided for @pdfBaseBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette de base'**
+  String get pdfBaseBadge;
+
+  /// No description provided for @pdfRefBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'référence'**
+  String get pdfRefBadge;
+
+  /// No description provided for @pdfPrep.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prépa {duration}'**
+  String pdfPrep(String duration);
+
+  /// No description provided for @pdfCook.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cuisson {duration}'**
+  String pdfCook(String duration);
+
+  /// No description provided for @pdfRest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repos {duration}'**
+  String pdfRest(String duration);
+
+  /// No description provided for @pdfServingsSuffix.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, one{personne} other{personnes}}'**
+  String pdfServingsSuffix(int count);
+
+  /// Libellé de la tuile méta (temps de préparation) sur le PDF
+  ///
+  /// In fr, this message translates to:
+  /// **'Préparation'**
+  String get pdfMetaPrep;
+
+  /// No description provided for @pdfMetaCook.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cuisson'**
+  String get pdfMetaCook;
+
+  /// No description provided for @pdfMetaRest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repos'**
+  String get pdfMetaRest;
+
+  /// No description provided for @pdfSectionIngredients.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ingrédients'**
+  String get pdfSectionIngredients;
+
+  /// No description provided for @pdfNoIngredients.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun ingrédient.'**
+  String get pdfNoIngredients;
+
+  /// No description provided for @pdfSectionSteps.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étapes'**
+  String get pdfSectionSteps;
+
+  /// No description provided for @pdfNoSteps.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune étape.'**
+  String get pdfNoSteps;
+
+  /// No description provided for @pdfSectionSubRecipes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sous-recettes utilisées'**
+  String get pdfSectionSubRecipes;
+
+  /// No description provided for @pdfBannerTip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Astuce'**
+  String get pdfBannerTip;
+
+  /// No description provided for @pdfBannerWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Attention'**
+  String get pdfBannerWarning;
+
+  /// No description provided for @pdfBannerDanger.
+  ///
+  /// In fr, this message translates to:
+  /// **'Attention'**
+  String get pdfBannerDanger;
+
+  /// No description provided for @pdfBannerLearn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Référence'**
+  String get pdfBannerLearn;
+
   /// Titre de la carte permanente invitant un invité à créer un compte
   ///
   /// In fr, this message translates to:
@@ -1772,6 +2048,18 @@ abstract class AppLocalizations {
   /// **'Cuisson {min} min'**
   String recipeCookShort(int min);
 
+  /// No description provided for @recipeRestShort.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repos {min} min'**
+  String recipeRestShort(int min);
+
+  /// Bandeau d'une recette ouverte via un lien de partage (lecture seule)
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette partagée'**
+  String get sharedRecipeBadge;
+
   /// No description provided for @recipeStepsTab.
   ///
   /// In fr, this message translates to:
@@ -2198,6 +2486,66 @@ abstract class AppLocalizations {
   /// **'Glisse'**
   String get homeFeaturedHint;
 
+  /// Badge de la recette hero de l'accueil Découverte
+  ///
+  /// In fr, this message translates to:
+  /// **'À la une'**
+  String get homeHeroBadge;
+
+  /// No description provided for @homeSeasonBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'De saison'**
+  String get homeSeasonBadge;
+
+  /// No description provided for @homeSeeAll.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tout voir'**
+  String get homeSeeAll;
+
+  /// No description provided for @homeRowSeasonalIn.
+  ///
+  /// In fr, this message translates to:
+  /// **'De saison en {month}'**
+  String homeRowSeasonalIn(String month);
+
+  /// No description provided for @homeRowQuick.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prêt en 30 min'**
+  String get homeRowQuick;
+
+  /// No description provided for @homeRowRecent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récemment ajoutées'**
+  String get homeRowRecent;
+
+  /// No description provided for @homeRowPerson.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour {name}'**
+  String homeRowPerson(String name);
+
+  /// No description provided for @homeRowBase.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tes recettes de base'**
+  String get homeRowBase;
+
+  /// No description provided for @homeRowLarge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour la tablée'**
+  String get homeRowLarge;
+
+  /// No description provided for @homeRowSolo.
+  ///
+  /// In fr, this message translates to:
+  /// **'En solo ou à deux'**
+  String get homeRowSolo;
+
   /// No description provided for @homeEmptyTitle.
   ///
   /// In fr, this message translates to:
@@ -2227,6 +2575,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Supprimer'**
   String get commonDelete;
+
+  /// No description provided for @commonEdit.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier'**
+  String get commonEdit;
+
+  /// No description provided for @commonRename.
+  ///
+  /// In fr, this message translates to:
+  /// **'Renommer'**
+  String get commonRename;
 
   /// No description provided for @shoppingTabEyebrow.
   ///
@@ -2527,6 +2887,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'La liste sera supprimée. En gratuit, l\'historique n\'est pas conservé.'**
   String get shoppingClearConfirmBody;
+
+  /// No description provided for @shoppingShareList.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager la liste'**
+  String get shoppingShareList;
+
+  /// No description provided for @shoppingClearChecked.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vider les cochés'**
+  String get shoppingClearChecked;
+
+  /// No description provided for @shoppingClearCheckedConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vider les articles cochés ?'**
+  String get shoppingClearCheckedConfirmTitle;
+
+  /// No description provided for @shoppingClearCheckedConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les articles déjà cochés seront retirés de la liste. Les autres sont conservés.'**
+  String get shoppingClearCheckedConfirmBody;
+
+  /// No description provided for @shoppingClearCheckedEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun article coché à retirer.'**
+  String get shoppingClearCheckedEmpty;
 
   /// No description provided for @shoppingProgress.
   ///
@@ -2987,7 +3377,7 @@ abstract class AppLocalizations {
   /// No description provided for @playerQuitBody.
   ///
   /// In fr, this message translates to:
-  /// **'Ta progression (étape {step} / {total}) et le minuteur en cours seront perdus.'**
+  /// **'Ta progression (étape {step} / {total}) sera enregistrée : tu pourras reprendre cette recette là où tu t\'es arrêté.'**
   String playerQuitBody(int step, int total);
 
   /// No description provided for @playerQuitContinue.

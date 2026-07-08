@@ -19,6 +19,14 @@ export class EnvironmentVariables {
   @IsString()
   SUPABASE_JWT_SECRET!: string;
 
+  /**
+   * URL publique de base du serveur (feature partage-recette) : sert à construire
+   * les liens de partage (`/r/:token`) et doit correspondre au domaine déclaré dans
+   * les fichiers de deep link (.well-known). Défaut local pour le dev.
+   */
+  @IsUrl({ require_tld: false })
+  PUBLIC_BASE_URL = 'http://localhost:3000';
+
   @Type(() => Number)
   @IsInt()
   @Min(1)

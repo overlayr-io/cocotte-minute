@@ -68,5 +68,20 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<!-- Partage de recette : scheme custom (cocotteminute://r/<token>). Les
+		     universal links (https) passent par Runner.entitlements + AASA serveur. -->
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>com.cocotteminute.share</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>cocotteminute</string>
+				</array>
+			</dict>
+		</array>
 	</dict>
 </plist>

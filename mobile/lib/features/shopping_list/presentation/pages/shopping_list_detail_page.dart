@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/action_menu.dart';
 import '../../../../core/widgets/app_network_image.dart';
 import '../../data/shopping_list_repository.dart';
 import '../../domain/shopping_list.dart';
 import '../bloc/shopping_list_cubit.dart';
 import '../widgets/add_free_item_sheet.dart';
 import '../widgets/alternative_sheet.dart';
-import '../widgets/export_sheet.dart';
 import '../widgets/shopping_aisle.dart';
 import '../widgets/shopping_format.dart';
 
@@ -95,13 +96,19 @@ class _Loaded extends StatelessWidget {
                     icon: const Icon(Icons.chevron_left_rounded),
                   ),
                   const Spacer(),
-                  IconButton(
-                    tooltip: l10n.shoppingExportTitle,
-                    onPressed: () => showExportSheet(context, detail),
-                    icon: const Icon(Icons.ios_share_rounded,
-                        color: AppColors.primary, size: 22),
+                  Builder(
+                    builder: (menuContext) => IconButton(
+                      icon: const Icon(Icons.more_horiz_rounded,
+                          color: AppColors.textPrimary),
+                      onPressed: () => _openMenu(
+                        menuContext,
+                        l10n,
+                        cubit,
+                        detail,
+                        checked,
+                      ),
+                    ),
                   ),
-                  _OverflowMenu(l10n: l10n, cubit: cubit, list: list),
                 ],
               ),
             ),
@@ -301,70 +308,117 @@ class _Loaded extends StatelessWidget {
       await cubit.rename(name);
     }
   }
-}
 
-class _OverflowMenu extends StatelessWidget {
-  const _OverflowMenu({required this.l10n, required this.cubit, required this.list});
-
-  final AppLocalizations l10n;
-  final ShoppingListCubit cubit;
-  final ShoppingList list;
-
-  @override
-  Widget build(BuildContext context) {
-    return PopupMenuButton<String>(
-      icon: const Icon(Icons.more_horiz_rounded, color: AppColors.textPrimary),
-      onSelected: (value) async {
-        if (value == 'rename') {
-          // délégué au tap sur le titre via un dialogue local
-          final controller = TextEditingController(text: list.name);
-          final name = await showDialog<String>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              backgroundColor: AppColors.surface,
-              title: Text(l10n.shoppingRename),
-              content: TextField(controller: controller, autofocus: true),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(),
-                  child: Text(l10n.commonCancel),
-                ),
-                FilledButton(
-                  onPressed: () => Navigator.of(ctx).pop(controller.text.trim()),
-                  child: Text(l10n.commonSave),
-                ),
-              ],
-            ),
-          );
-          if (name != null && name.isNotEmpty) await cubit.rename(name);
-        } else if (value == 'clear') {
-          final ok = await showDialog<bool>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              backgroundColor: AppColors.surface,
-              title: Text(l10n.shoppingClearConfirmTitle),
-              content: Text(l10n.shoppingClearConfirmBody),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(ctx).pop(false),
-                  child: Text(l10n.commonCancel),
-                ),
-                FilledButton(
-                  style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
-                  onPressed: () => Navigator.of(ctx).pop(true),
-                  child: Text(l10n.commonDelete),
-                ),
-              ],
-            ),
-          );
-          if (ok == true) await cubit.clear();
-        }
-      },
-      itemBuilder: (_) => [
-        PopupMenuItem(value: 'rename', child: Text(l10n.shoppingRename)),
-        PopupMenuItem(value: 'clear', child: Text(l10n.shoppingClear)),
+  /// Menu « … » de la liste (13b) : Partager (vert), Renommer, Vider les cochés,
+  /// puis Vider la liste (corail, isolé). [menuContext] est celui du bouton.
+  void _openMenu(
+    BuildContext menuContext,
+    AppLocalizations l10n,
+    ShoppingListCubit cubit,
+    ShoppingListDetail detail,
+    int checked,
+  ) {
+    showActionMenu(
+      context: menuContext,
+      items: [
+        ActionMenuItem(
+          icon: Icons.ios_share_rounded,
+          label: l10n.shoppingShareList,
+          style: ActionMenuStyle.primary,
+          onSelected: () => _shareList(l10n, detail),
+        ),
+        ActionMenuItem(
+          icon: Icons.edit_outlined,
+          label: l10n.commonRename,
+          onSelected: () => _renameDialog(menuContext, cubit, detail.list.name),
+        ),
+        ActionMenuItem(
+          icon: Icons.remove_done_rounded,
+          label: l10n.shoppingClearChecked,
+          onSelected: () => _clearChecked(menuContext, l10n, cubit, checked),
+        ),
+        ActionMenuItem(
+          icon: Icons.delete_outline_rounded,
+          label: l10n.shoppingClear,
+          style: ActionMenuStyle.destructive,
+          dividerBefore: true,
+          onSelected: () => _clearList(menuContext, l10n, cubit),
+        ),
       ],
     );
+  }
+
+  /// Partage natif de la liste (texte : articles restant à acheter).
+  Future<void> _shareList(
+    AppLocalizations l10n,
+    ShoppingListDetail detail,
+  ) async {
+    await SharePlus.instance.share(
+      ShareParams(
+        text: shoppingListShareText(l10n, detail),
+        subject: detail.list.name,
+      ),
+    );
+  }
+
+  Future<void> _clearChecked(
+    BuildContext context,
+    AppLocalizations l10n,
+    ShoppingListCubit cubit,
+    int checked,
+  ) async {
+    if (checked == 0) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(l10n.shoppingClearCheckedEmpty)));
+      return;
+    }
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: Text(l10n.shoppingClearCheckedConfirmTitle),
+        content: Text(l10n.shoppingClearCheckedConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.commonDelete),
+          ),
+        ],
+      ),
+    );
+    if (ok == true) await cubit.clearChecked();
+  }
+
+  Future<void> _clearList(
+    BuildContext context,
+    AppLocalizations l10n,
+    ShoppingListCubit cubit,
+  ) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.surface,
+        title: Text(l10n.shoppingClearConfirmTitle),
+        content: Text(l10n.shoppingClearConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.commonCancel),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.commonDelete),
+          ),
+        ],
+      ),
+    );
+    if (ok == true) await cubit.clear();
   }
 }
 

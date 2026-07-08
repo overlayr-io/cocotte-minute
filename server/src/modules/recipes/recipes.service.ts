@@ -22,6 +22,7 @@ import {
   type RecipeStepRow,
 } from '../../db/schema/recipes.schema';
 import { IngredientsService } from '../ingredients/ingredients.service';
+import { isSeasonal } from './data/seasonality';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import {
   CreateRecipeStepDto,
@@ -57,6 +58,17 @@ export interface RecipeSummaryDto {
   restTime: number;
   servings: number;
   createdAt: string;
+}
+
+/**
+ * Résumé enrichi pour la vue Découverte (Accueil) : ajoute le flag « de saison »
+ * (dérivé des ingrédients + mois courant) et les pivots tags/dossiers, pour
+ * permettre au client de composer toutes les rangées sans requête par section.
+ */
+export interface RecipeDiscoveryDto extends RecipeSummaryDto {
+  seasonal: boolean;
+  tagIds: string[];
+  categoryIds: string[];
 }
 
 /**
@@ -272,6 +284,82 @@ export class RecipesService {
     return rows.map(toSummary);
   }
 
+  /**
+   * Toutes mes recettes (non supprimées, plus récentes d'abord) enrichies pour
+   * la vue Découverte : flag « de saison » (via ingrédients + `month`), tags et
+   * dossiers. Une seule passe : recettes + pivots batchés, noms d'ingrédients
+   * hydratés via IngredientsService (isolation des domaines). Exposé à
+   * DiscoveryService.
+   */
+  async listMineForDiscovery(
+    userId: string,
+    month: number,
+  ): Promise<RecipeDiscoveryDto[]> {
+    const rows = await this.db
+      .select()
+      .from(recipes)
+      .where(and(eq(recipes.authorId, userId), isNull(recipes.deletedAt)))
+      .orderBy(desc(recipes.createdAt));
+    if (rows.length === 0) return [];
+
+    const ids = rows.map((r) => r.id);
+    const [ingRows, tagRows, catRows] = await Promise.all([
+      this.db
+        .select({
+          recipeId: recipeIngredients.recipeId,
+          ingredientId: recipeIngredients.ingredientId,
+        })
+        .from(recipeIngredients)
+        .where(inArray(recipeIngredients.recipeId, ids)),
+      this.db
+        .select({ recipeId: recipeTags.recipeId, tagId: recipeTags.tagId })
+        .from(recipeTags)
+        .where(inArray(recipeTags.recipeId, ids)),
+      this.db
+        .select({
+          recipeId: recipeCategories.recipeId,
+          categoryId: recipeCategories.categoryId,
+        })
+        .from(recipeCategories)
+        .where(inArray(recipeCategories.recipeId, ids)),
+    ]);
+
+    const allIngredientIds = [...new Set(ingRows.map((r) => r.ingredientId))];
+    const owned = await this.ingredientsService.listByIds(
+      userId,
+      allIngredientIds,
+    );
+    const nameById = new Map(owned.map((i) => [i.id, i.name]));
+
+    const namesByRecipe = new Map<string, string[]>();
+    for (const r of ingRows) {
+      const name = nameById.get(r.ingredientId);
+      if (!name) continue;
+      const arr = namesByRecipe.get(r.recipeId);
+      if (arr) arr.push(name);
+      else namesByRecipe.set(r.recipeId, [name]);
+    }
+    const tagsByRecipe = new Map<string, string[]>();
+    for (const r of tagRows) {
+      const arr = tagsByRecipe.get(r.recipeId);
+      if (arr) arr.push(r.tagId);
+      else tagsByRecipe.set(r.recipeId, [r.tagId]);
+    }
+    const catsByRecipe = new Map<string, string[]>();
+    for (const r of catRows) {
+      const arr = catsByRecipe.get(r.recipeId);
+      if (arr) arr.push(r.categoryId);
+      else catsByRecipe.set(r.recipeId, [r.categoryId]);
+    }
+
+    return rows.map((row) => ({
+      ...toSummary(row),
+      seasonal: isSeasonal(namesByRecipe.get(row.id) ?? [], month),
+      tagIds: tagsByRecipe.get(row.id) ?? [],
+      categoryIds: catsByRecipe.get(row.id) ?? [],
+    }));
+  }
+
   async create(userId: string, dto: CreateRecipeDto): Promise<RecipeSummaryDto> {
     const [row] = await this.db
       .insert(recipes)
@@ -293,6 +381,37 @@ export class RecipesService {
   /** Fiche détail : ingrédients, composants, « utilisée dans », catégories, tags. */
   async getDetail(userId: string, id: string): Promise<RecipeDetailDto> {
     const row = await this.findOwnedOrFail(userId, id);
+    return this.buildDetail(row);
+  }
+
+  /**
+   * Fiche détail publique (lecture seule) : même forme que `getDetail`, mais sans
+   * contrôle de propriété — la recette est hydratée avec les données de son auteur.
+   * Exposé à la feature Partage (lien public résolu depuis un token). N'expose que
+   * des recettes non supprimées.
+   */
+  async getPublicDetail(id: string): Promise<RecipeDetailDto> {
+    const [row] = await this.db
+      .select()
+      .from(recipes)
+      .where(and(eq(recipes.id, id), isNull(recipes.deletedAt)));
+    if (!row) throw new NotFoundException('Recette introuvable');
+    return this.buildDetail(row);
+  }
+
+  /**
+   * Vérifie que la recette appartient à l'utilisateur (sinon 404). Exposé à
+   * SharesService pour n'autoriser que le propriétaire à générer un lien de partage
+   * (isolation des domaines : le module Partage ne touche jamais au schéma recettes).
+   */
+  async assertOwnedRecipe(userId: string, id: string): Promise<void> {
+    await this.findOwnedOrFail(userId, id);
+  }
+
+  /** Corps commun de `getDetail`/`getPublicDetail` : hydratation depuis l'auteur de la recette. */
+  private async buildDetail(row: RecipeRow): Promise<RecipeDetailDto> {
+    const id = row.id;
+    const authorId = row.authorId;
 
     const [ingredientRows, componentRows, categoryRows, tagRows] =
       await Promise.all([
@@ -317,11 +436,11 @@ export class RecipesService {
           .where(eq(recipeTags.recipeId, id)),
       ]);
 
-    const ingredientLines = await this.hydrateIngredients(userId, ingredientRows);
+    const ingredientLines = await this.hydrateIngredients(authorId, ingredientRows);
     const ingredientMap = new Map(ingredientLines.map((l) => [l.id, l]));
     const steps = await this.buildRecipeSteps(id, ingredientMap);
     const components = await this.summariesByIds(
-      userId,
+      authorId,
       componentRows.map((r) => r.baseRecipeId),
     );
 
@@ -333,7 +452,7 @@ export class RecipesService {
         .from(recipeComponents)
         .where(eq(recipeComponents.baseRecipeId, id));
       usedIn = await this.summariesByIds(
-        userId,
+        authorId,
         parents.map((r) => r.parentRecipeId),
       );
     }

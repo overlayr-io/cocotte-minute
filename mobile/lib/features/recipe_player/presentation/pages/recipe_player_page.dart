@@ -9,6 +9,7 @@ import '../../../../core/notifications/local_notifications_service.dart';
 import '../../../recipes/data/recipes_repository.dart';
 import '../../data/recipe_player_storage.dart';
 import '../bloc/recipe_player_cubit.dart';
+import '../widgets/shared/quit_dialog.dart';
 import '../widgets/mobile/mobile_player_view.dart';
 import '../widgets/tablet/tablet_player_view.dart';
 
@@ -60,12 +61,38 @@ class _RecipePlayerPageState extends State<RecipePlayerPage> {
     super.dispose();
   }
 
+  /// Retour système (geste iOS / bouton Android) : même comportement que le
+  /// bouton X. En pleine cuisson, on confirme puis on quitte en conservant la
+  /// reprise ; sinon (écran de lancement ou fin), sortie directe.
+  Future<void> _handleSystemBack(BuildContext context) async {
+    final navigator = Navigator.of(context);
+    final state = _cubit.state;
+    if (state is! RecipePlayerLoaded || state.phase != PlayerPhase.playing) {
+      navigator.pop();
+      return;
+    }
+    final confirmed = await showQuitDialog(
+      context,
+      stepIndex: state.currentIndex,
+      totalSteps: state.totalSteps,
+    );
+    if (!confirmed) return;
+    await _cubit.quitSession();
+    navigator.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
       value: _cubit,
-      child: Scaffold(
-        body: BlocBuilder<RecipePlayerCubit, RecipePlayerState>(
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (didPop) return;
+          _handleSystemBack(context);
+        },
+        child: Scaffold(
+          body: BlocBuilder<RecipePlayerCubit, RecipePlayerState>(
           // Le tick par seconde des minuteurs ne doit pas reconstruire la
           // page : seules les zones minuteur s'y abonnent (timer_zones.dart).
           buildWhen: (previous, current) =>
@@ -84,6 +111,7 @@ class _RecipePlayerPageState extends State<RecipePlayerPage> {
                   : MobilePlayerView(cubit: _cubit),
             };
           },
+          ),
         ),
       ),
     );

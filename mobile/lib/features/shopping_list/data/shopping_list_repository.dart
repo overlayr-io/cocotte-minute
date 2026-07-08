@@ -198,6 +198,36 @@ class ShoppingListRepository {
     _kickSync();
   }
 
+  /// Retire de la liste les articles cochés (garde la liste et le reste).
+  /// Mêmes règles offline-first que [removeItem], en une transaction.
+  Future<void> clearChecked(String listId) async {
+    await _db.transaction(() async {
+      final rows = await (_db.select(_db.localShoppingItems)
+            ..where((t) =>
+                t.listId.equals(listId) &
+                t.isChecked.equals(true) &
+                t.deleted.equals(false)))
+          .get();
+      for (final row in rows) {
+        if (row.syncState == SyncState.pendingCreate) {
+          await (_db.delete(_db.localShoppingItems)
+                ..where((t) => t.id.equals(row.id)))
+              .go();
+        } else {
+          await (_db.update(_db.localShoppingItems)
+                ..where((t) => t.id.equals(row.id)))
+              .write(
+            const LocalShoppingItemsCompanion(
+              deleted: Value(true),
+              syncState: Value(SyncState.pendingDelete),
+            ),
+          );
+        }
+      }
+    });
+    _kickSync();
+  }
+
   /// « Vide » une liste (soft delete local + propagation).
   Future<void> clear(String listId) async {
     await (_db.update(_db.localShoppingLists)..where((t) => t.id.equals(listId)))

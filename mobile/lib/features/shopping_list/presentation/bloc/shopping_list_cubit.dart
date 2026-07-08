@@ -84,6 +84,8 @@ class ShoppingListCubit extends Cubit<ShoppingListDetailState> {
 
   Future<void> clear() => _repository.clear(listId);
 
+  Future<void> clearChecked() => _repository.clearChecked(listId);
+
   @override
   Future<void> close() async {
     await _sub?.cancel();

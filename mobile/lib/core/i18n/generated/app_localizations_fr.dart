@@ -216,6 +216,163 @@ class AppLocalizationsFr extends AppLocalizations {
   String get accountRowManageData => 'Gérer mes données';
 
   @override
+  String get accountManageTitle => 'Gérer le compte';
+
+  @override
+  String get accountManageEmailSection => 'Adresse e-mail';
+
+  @override
+  String get accountManageEmailHelp =>
+      'Un e-mail de confirmation te sera envoyé pour valider le changement.';
+
+  @override
+  String get accountManageEmailUnchanged =>
+      'C\'est déjà ton adresse e-mail actuelle.';
+
+  @override
+  String get accountManageEmailSent =>
+      'E-mail de confirmation envoyé. Vérifie ta boîte de réception.';
+
+  @override
+  String get accountManagePasswordSection => 'Mot de passe';
+
+  @override
+  String get accountManagePasswordHelp =>
+      'Choisis un nouveau mot de passe d\'au moins 6 caractères.';
+
+  @override
+  String get accountManageNewPassword => 'Nouveau mot de passe';
+
+  @override
+  String get accountManageConfirmPassword => 'Confirmer le mot de passe';
+
+  @override
+  String get accountManageConfirmPasswordHint => 'Retape ton mot de passe';
+
+  @override
+  String get accountManagePasswordMismatch =>
+      'Les deux mots de passe ne correspondent pas.';
+
+  @override
+  String get accountManagePasswordUpdated => 'Mot de passe modifié.';
+
+  @override
+  String get pdfExportAction => 'Exporter en PDF';
+
+  @override
+  String get pdfExportError => 'Impossible de générer le PDF.';
+
+  @override
+  String get shareRecipeAction => 'Partager';
+
+  @override
+  String get recipeMenuAddToShopping => 'Ajouter aux courses';
+
+  @override
+  String get recipeMenuDownloadPdf => 'Télécharger en PDF';
+
+  @override
+  String get shareRecipeTitle => 'Partager la recette';
+
+  @override
+  String get shareSectionExport => 'Exporter';
+
+  @override
+  String get shareSectionShare => 'Partager';
+
+  @override
+  String get shareExportPdfSubtitle => 'Feuille A4, prête à imprimer';
+
+  @override
+  String get shareCopyLink => 'Copier le lien';
+
+  @override
+  String get shareCopyLinkSubtitle => 'Lien de partage vers la recette';
+
+  @override
+  String get shareCopyLinkDone => 'Lien copié dans le presse-papiers.';
+
+  @override
+  String get shareVia => 'Partager…';
+
+  @override
+  String get shareViaSubtitle => 'Envoyer le lien via une autre app';
+
+  @override
+  String get shareLinkError => 'Impossible de générer le lien de partage.';
+
+  @override
+  String get pdfRecipeBadge => 'Recette';
+
+  @override
+  String get pdfBaseBadge => 'Recette de base';
+
+  @override
+  String get pdfRefBadge => 'référence';
+
+  @override
+  String pdfPrep(String duration) {
+    return 'Prépa $duration';
+  }
+
+  @override
+  String pdfCook(String duration) {
+    return 'Cuisson $duration';
+  }
+
+  @override
+  String pdfRest(String duration) {
+    return 'Repos $duration';
+  }
+
+  @override
+  String pdfServingsSuffix(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'personnes',
+      one: 'personne',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pdfMetaPrep => 'Préparation';
+
+  @override
+  String get pdfMetaCook => 'Cuisson';
+
+  @override
+  String get pdfMetaRest => 'Repos';
+
+  @override
+  String get pdfSectionIngredients => 'Ingrédients';
+
+  @override
+  String get pdfNoIngredients => 'Aucun ingrédient.';
+
+  @override
+  String get pdfSectionSteps => 'Étapes';
+
+  @override
+  String get pdfNoSteps => 'Aucune étape.';
+
+  @override
+  String get pdfSectionSubRecipes => 'Sous-recettes utilisées';
+
+  @override
+  String get pdfBannerTip => 'Astuce';
+
+  @override
+  String get pdfBannerWarning => 'Attention';
+
+  @override
+  String get pdfBannerDanger => 'Attention';
+
+  @override
+  String get pdfBannerLearn => 'Référence';
+
+  @override
   String get accountGuestCtaTitle => 'Garde tes recettes pour toujours';
 
   @override
@@ -938,6 +1095,14 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String recipeRestShort(int min) {
+    return 'Repos $min min';
+  }
+
+  @override
+  String get sharedRecipeBadge => 'Recette partagée';
+
+  @override
   String get recipeStepsTab => 'Étapes';
 
   @override
@@ -1228,6 +1393,40 @@ class AppLocalizationsFr extends AppLocalizations {
   String get homeFeaturedHint => 'Glisse';
 
   @override
+  String get homeHeroBadge => 'À la une';
+
+  @override
+  String get homeSeasonBadge => 'De saison';
+
+  @override
+  String get homeSeeAll => 'Tout voir';
+
+  @override
+  String homeRowSeasonalIn(String month) {
+    return 'De saison en $month';
+  }
+
+  @override
+  String get homeRowQuick => 'Prêt en 30 min';
+
+  @override
+  String get homeRowRecent => 'Récemment ajoutées';
+
+  @override
+  String homeRowPerson(String name) {
+    return 'Pour $name';
+  }
+
+  @override
+  String get homeRowBase => 'Tes recettes de base';
+
+  @override
+  String get homeRowLarge => 'Pour la tablée';
+
+  @override
+  String get homeRowSolo => 'En solo ou à deux';
+
+  @override
   String get homeEmptyTitle => 'Rien à cuisiner… pour l\'instant';
 
   @override
@@ -1241,6 +1440,12 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get commonDelete => 'Supprimer';
+
+  @override
+  String get commonEdit => 'Modifier';
+
+  @override
+  String get commonRename => 'Renommer';
 
   @override
   String get shoppingTabEyebrow => 'Courses';
@@ -1451,6 +1656,22 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get shoppingClearConfirmBody =>
       'La liste sera supprimée. En gratuit, l\'historique n\'est pas conservé.';
+
+  @override
+  String get shoppingShareList => 'Partager la liste';
+
+  @override
+  String get shoppingClearChecked => 'Vider les cochés';
+
+  @override
+  String get shoppingClearCheckedConfirmTitle => 'Vider les articles cochés ?';
+
+  @override
+  String get shoppingClearCheckedConfirmBody =>
+      'Les articles déjà cochés seront retirés de la liste. Les autres sont conservés.';
+
+  @override
+  String get shoppingClearCheckedEmpty => 'Aucun article coché à retirer.';
 
   @override
   String shoppingProgress(int checked, int total) {
@@ -1749,7 +1970,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String playerQuitBody(int step, int total) {
-    return 'Ta progression (étape $step / $total) et le minuteur en cours seront perdus.';
+    return 'Ta progression (étape $step / $total) sera enregistrée : tu pourras reprendre cette recette là où tu t\'es arrêté.';
   }
 
   @override

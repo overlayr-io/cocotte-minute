@@ -9,12 +9,14 @@ import { validateEnv } from './config/env.validation';
 import { DbModule } from './db/db.module';
 import { AccountModule } from './modules/account/account.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { DiscoveryModule } from './modules/discovery/discovery.module';
 import { HealthModule } from './modules/health/health.module';
 import { HelpModule } from './modules/help/help.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
 import { PeopleModule } from './modules/people/people.module';
 import { RecipesModule } from './modules/recipes/recipes.module';
 import { SearchModule } from './modules/search/search.module';
+import { SharesModule } from './modules/shares/shares.module';
 import { ShoppingListsModule } from './modules/shopping-lists/shopping-lists.module';
 import { TagsModule } from './modules/tags/tags.module';
 
@@ -76,7 +78,9 @@ const isProduction = process.env.NODE_ENV === 'production';
     CategoriesModule,
     RecipesModule,
     SearchModule,
+    DiscoveryModule,
     ShoppingListsModule,
+    SharesModule,
     AccountModule,
     HelpModule,
   ],

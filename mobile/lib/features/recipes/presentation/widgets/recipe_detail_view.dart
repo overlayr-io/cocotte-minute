@@ -3,11 +3,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/action_menu.dart';
 import '../../../../core/widgets/app_network_image.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../ingredients/domain/ingredient.dart';
 import '../../../ingredients/presentation/widgets/unit_selector.dart';
 import '../../../recipe_player/presentation/pages/recipe_player_page.dart';
+import '../../../shopping_list/presentation/pages/generate_flow_page.dart';
 import '../../domain/recipe.dart';
 import '../bloc/recipe_detail_cubit.dart';
 import '../pages/recipe_detail_page.dart';
@@ -16,6 +18,7 @@ import 'base_recipe_picker_sheet.dart';
 import 'quantity_stepper.dart';
 import 'recipe_edit_sheet.dart';
 import 'recipe_organization_section.dart';
+import 'share_recipe_sheet.dart';
 import 'steps_content.dart';
 
 const double _kHeroHeight = 300;
@@ -172,9 +175,11 @@ class _Loaded extends StatelessWidget {
                       icon: Icons.chevron_left_rounded,
                       onTap: () => Navigator.of(context).maybePop(true),
                     ),
-                    _RoundIconButton(
-                      icon: Icons.more_vert_rounded,
-                      onTap: busy ? null : () => _showMenu(context),
+                    Builder(
+                      builder: (menuContext) => _RoundIconButton(
+                        icon: Icons.more_vert_rounded,
+                        onTap: busy ? null : () => _openMenu(menuContext),
+                      ),
                     ),
                   ],
                 ),
@@ -193,44 +198,44 @@ class _Loaded extends StatelessWidget {
     );
   }
 
-  void _showMenu(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (sheetContext) => SafeArea(
-        child: Container(
-          margin: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.edit_outlined, color: AppColors.primary),
-                title: Text(l10n.recipeEditTitle),
-                onTap: () {
-                  Navigator.of(sheetContext).pop();
-                  _edit(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.delete_outline_rounded,
-                    color: AppColors.danger),
-                title: Text(
-                  l10n.recipeDeleteAction,
-                  style: const TextStyle(color: AppColors.danger),
-                ),
-                onTap: () {
-                  Navigator.of(sheetContext).pop();
-                  _delete(context);
-                },
-              ),
-            ],
-          ),
+  /// Menu « … » de la fiche (13b) : action principale en vert, action
+  /// destructive isolée en bas. [menuContext] est celui du bouton (ancrage).
+  void _openMenu(BuildContext menuContext) {
+    showActionMenu(
+      context: menuContext,
+      items: [
+        ActionMenuItem(
+          icon: Icons.shopping_cart_outlined,
+          label: l10n.recipeMenuAddToShopping,
+          style: ActionMenuStyle.primary,
+          onSelected: () => _addToShopping(menuContext),
         ),
-      ),
+        ActionMenuItem(
+          icon: Icons.edit_outlined,
+          label: l10n.commonEdit,
+          onSelected: () => _edit(menuContext),
+        ),
+        ActionMenuItem(
+          icon: Icons.ios_share_rounded,
+          label: l10n.shareRecipeAction,
+          onSelected: () => showShareRecipeSheet(menuContext, detail),
+        ),
+        ActionMenuItem(
+          icon: Icons.delete_outline_rounded,
+          label: l10n.commonDelete,
+          style: ActionMenuStyle.destructive,
+          dividerBefore: true,
+          onSelected: () => _delete(menuContext),
+        ),
+      ],
+    );
+  }
+
+  /// Ouvre le flux de génération d'une liste de courses, cette recette
+  /// pré-sélectionnée.
+  void _addToShopping(BuildContext context) {
+    Navigator.of(context).push(
+      GenerateFlowPage.route(initialRecipeId: detail.id),
     );
   }
 }
