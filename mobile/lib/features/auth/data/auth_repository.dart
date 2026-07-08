@@ -29,6 +29,37 @@ class AuthRepository {
   /// L'utilisateur courant est-il un compte anonyme (invité) ?
   bool get isAnonymous => _auth.currentUser?.isAnonymous ?? false;
 
+  /// E-mail du compte courant (null en invité ou session absente).
+  String? get currentEmail => _auth.currentUser?.email;
+
+  /// Met à jour l'adresse e-mail du compte connecté.
+  ///
+  /// Supabase envoie un e-mail de confirmation : le changement n'est effectif
+  /// qu'après validation du lien (selon la config du projet). On enveloppe
+  /// l'`AuthException` en message exploitable pour l'UI.
+  Future<void> updateEmail(String email) async {
+    try {
+      await _auth.updateUser(UserAttributes(email: email));
+    } on AuthException catch (e) {
+      throw AuthRepositoryException(e.message);
+    } catch (_) {
+      throw const AuthRepositoryException("Impossible de modifier l'e-mail.");
+    }
+  }
+
+  /// Met à jour le mot de passe du compte connecté.
+  Future<void> updatePassword(String password) async {
+    try {
+      await _auth.updateUser(UserAttributes(password: password));
+    } on AuthException catch (e) {
+      throw AuthRepositoryException(e.message);
+    } catch (_) {
+      throw const AuthRepositoryException(
+        'Impossible de modifier le mot de passe.',
+      );
+    }
+  }
+
   /// Crée un compte email/mot de passe.
   ///
   /// Si l'utilisateur est déjà anonyme (cas nominal), on **convertit** le

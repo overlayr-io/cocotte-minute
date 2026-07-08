@@ -506,6 +506,78 @@ abstract class AppLocalizations {
   /// **'Gérer mes données'**
   String get accountRowManageData;
 
+  /// Titre de la page de gestion du compte connecté
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer le compte'**
+  String get accountManageTitle;
+
+  /// No description provided for @accountManageEmailSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Adresse e-mail'**
+  String get accountManageEmailSection;
+
+  /// No description provided for @accountManageEmailHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un e-mail de confirmation te sera envoyé pour valider le changement.'**
+  String get accountManageEmailHelp;
+
+  /// No description provided for @accountManageEmailUnchanged.
+  ///
+  /// In fr, this message translates to:
+  /// **'C\'est déjà ton adresse e-mail actuelle.'**
+  String get accountManageEmailUnchanged;
+
+  /// No description provided for @accountManageEmailSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'E-mail de confirmation envoyé. Vérifie ta boîte de réception.'**
+  String get accountManageEmailSent;
+
+  /// No description provided for @accountManagePasswordSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe'**
+  String get accountManagePasswordSection;
+
+  /// No description provided for @accountManagePasswordHelp.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisis un nouveau mot de passe d\'au moins 6 caractères.'**
+  String get accountManagePasswordHelp;
+
+  /// No description provided for @accountManageNewPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau mot de passe'**
+  String get accountManageNewPassword;
+
+  /// No description provided for @accountManageConfirmPassword.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confirmer le mot de passe'**
+  String get accountManageConfirmPassword;
+
+  /// No description provided for @accountManageConfirmPasswordHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retape ton mot de passe'**
+  String get accountManageConfirmPasswordHint;
+
+  /// No description provided for @accountManagePasswordMismatch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les deux mots de passe ne correspondent pas.'**
+  String get accountManagePasswordMismatch;
+
+  /// No description provided for @accountManagePasswordUpdated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mot de passe modifié.'**
+  String get accountManagePasswordUpdated;
+
   /// Titre de la carte permanente invitant un invité à créer un compte
   ///
   /// In fr, this message translates to:

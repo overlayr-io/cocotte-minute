@@ -7,7 +7,6 @@ import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/i18n/locale_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_shadows.dart';
-import '../../../../core/widgets/coming_soon_page.dart';
 import '../../../auth/presentation/pages/auth_page.dart';
 import '../../../categories/presentation/pages/categories_page.dart';
 import '../../../help/presentation/pages/contact_page.dart';
@@ -16,6 +15,7 @@ import '../../../ingredients/presentation/pages/ingredients_page.dart';
 import '../../../people/presentation/pages/famille_page.dart';
 import '../../../tags/presentation/pages/tags_page.dart';
 import '../widgets/account_section.dart';
+import 'account_manage_page.dart';
 import 'delete_account_page.dart';
 import 'language_page.dart';
 import 'manage_data_page.dart';
@@ -135,9 +135,8 @@ class AccountPage extends StatelessWidget {
                   iconColor: const Color(0xFF5B6774),
                   iconBackground: const Color(0xFFEDF0F3),
                   label: l10n.accountRowManage,
-                  onTap: () => Navigator.of(
-                    context,
-                  ).push(ComingSoonPage.route(l10n.accountRowManage)),
+                  onTap: () =>
+                      Navigator.of(context).push(AccountManagePage.route()),
                 ),
               AccountTile(
                 icon: Icons.logout_rounded,

@@ -215,6 +215,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountRowManageData => 'Manage my data';
 
   @override
+  String get accountManageTitle => 'Manage account';
+
+  @override
+  String get accountManageEmailSection => 'Email address';
+
+  @override
+  String get accountManageEmailHelp =>
+      'A confirmation email will be sent to validate the change.';
+
+  @override
+  String get accountManageEmailUnchanged =>
+      'That\'s already your current email address.';
+
+  @override
+  String get accountManageEmailSent =>
+      'Confirmation email sent. Check your inbox.';
+
+  @override
+  String get accountManagePasswordSection => 'Password';
+
+  @override
+  String get accountManagePasswordHelp =>
+      'Choose a new password of at least 6 characters.';
+
+  @override
+  String get accountManageNewPassword => 'New password';
+
+  @override
+  String get accountManageConfirmPassword => 'Confirm password';
+
+  @override
+  String get accountManageConfirmPasswordHint => 'Re-type your password';
+
+  @override
+  String get accountManagePasswordMismatch => 'The two passwords don\'t match.';
+
+  @override
+  String get accountManagePasswordUpdated => 'Password updated.';
+
+  @override
   String get accountGuestCtaTitle => 'Keep your recipes forever';
 
   @override
