@@ -10,6 +10,7 @@ import '../../../categories/domain/category.dart';
 import '../../../categories/presentation/bloc/categories_list_bloc.dart';
 import '../../../categories/presentation/pages/category_folder_page.dart';
 import '../../../categories/presentation/widgets/category_form_sheet.dart';
+import '../../../search/presentation/pages/search_page.dart';
 import 'recipe_create_page.dart';
 import 'recipe_detail_page.dart';
 
@@ -17,7 +18,7 @@ import 'recipe_detail_page.dart';
 /// de dossiers (racines) et bouton « Nouveau dossier ». Toucher un dossier
 /// l'ouvre pour voir ses recettes ; le FAB corail crée une recette. La vue est
 /// alimentée par le bloc Catégories (dossiers = catégories rangeant les
-/// recettes) ; la recherche est un placeholder visuel (non branchée).
+/// recettes) ; la barre de recherche ouvre l'écran de recherche avancée.
 class RecipesPage extends StatelessWidget {
   const RecipesPage({super.key});
 
@@ -148,7 +149,7 @@ class _RecipesView extends StatelessWidget {
         ),
         _SearchBar(
           hint: l10n.recipesSearchHint,
-          onTap: () => _comingSoon(context, l10n.homeSearchComingSoon),
+          onTap: () => Navigator.of(context).push(SearchPage.route()),
         ),
         const SizedBox(height: 18),
         if (folders.isEmpty)
@@ -320,7 +321,7 @@ class _NewFolderButton extends StatelessWidget {
   }
 }
 
-/// Barre de recherche (placeholder visuel, non branchée) — même style que
+/// Barre de recherche (ouvre l'écran de recherche avancée) — même style que
 /// l'Accueil : champ blanc, icône loupe, pastille filtre.
 class _SearchBar extends StatelessWidget {
   const _SearchBar({required this.hint, required this.onTap});
