@@ -56,6 +56,17 @@ class RecipesRepository {
     }
   }
 
+  /// Génère (ou réutilise) un lien de partage public pour la recette et renvoie
+  /// son URL (page web + universal/app link). Réservé au propriétaire côté serveur.
+  Future<String> createShareLink(String id) async {
+    try {
+      final res = await _dio.post<Map<String, dynamic>>('/recipes/$id/share');
+      return res.data!['url'] as String;
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de générer le lien de partage.');
+    }
+  }
+
   Future<RecipeSummary> create({
     required String name,
     String? photoUrl,

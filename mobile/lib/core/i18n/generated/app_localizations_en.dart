@@ -261,6 +261,39 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pdfExportError => 'Couldn\'t generate the PDF.';
 
   @override
+  String get shareRecipeAction => 'Share';
+
+  @override
+  String get shareRecipeTitle => 'Share recipe';
+
+  @override
+  String get shareSectionExport => 'Export';
+
+  @override
+  String get shareSectionShare => 'Share';
+
+  @override
+  String get shareExportPdfSubtitle => 'A4 sheet, ready to print';
+
+  @override
+  String get shareCopyLink => 'Copy link';
+
+  @override
+  String get shareCopyLinkSubtitle => 'Share link to the recipe';
+
+  @override
+  String get shareCopyLinkDone => 'Link copied to the clipboard.';
+
+  @override
+  String get shareVia => 'Share…';
+
+  @override
+  String get shareViaSubtitle => 'Send the link via another app';
+
+  @override
+  String get shareLinkError => 'Couldn\'t generate the share link.';
+
+  @override
   String get pdfRecipeBadge => 'Recipe';
 
   @override

@@ -590,6 +590,72 @@ abstract class AppLocalizations {
   /// **'Impossible de générer le PDF.'**
   String get pdfExportError;
 
+  /// Entrée de menu de la fiche : ouvre la feuille de partage
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager'**
+  String get shareRecipeAction;
+
+  /// No description provided for @shareRecipeTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager la recette'**
+  String get shareRecipeTitle;
+
+  /// No description provided for @shareSectionExport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter'**
+  String get shareSectionExport;
+
+  /// No description provided for @shareSectionShare.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager'**
+  String get shareSectionShare;
+
+  /// No description provided for @shareExportPdfSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Feuille A4, prête à imprimer'**
+  String get shareExportPdfSubtitle;
+
+  /// No description provided for @shareCopyLink.
+  ///
+  /// In fr, this message translates to:
+  /// **'Copier le lien'**
+  String get shareCopyLink;
+
+  /// No description provided for @shareCopyLinkSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lien de partage vers la recette'**
+  String get shareCopyLinkSubtitle;
+
+  /// No description provided for @shareCopyLinkDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lien copié dans le presse-papiers.'**
+  String get shareCopyLinkDone;
+
+  /// No description provided for @shareVia.
+  ///
+  /// In fr, this message translates to:
+  /// **'Partager…'**
+  String get shareVia;
+
+  /// No description provided for @shareViaSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Envoyer le lien via une autre app'**
+  String get shareViaSubtitle;
+
+  /// No description provided for @shareLinkError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de générer le lien de partage.'**
+  String get shareLinkError;
+
   /// No description provided for @pdfRecipeBadge.
   ///
   /// In fr, this message translates to:

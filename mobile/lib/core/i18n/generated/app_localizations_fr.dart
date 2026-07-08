@@ -263,6 +263,39 @@ class AppLocalizationsFr extends AppLocalizations {
   String get pdfExportError => 'Impossible de générer le PDF.';
 
   @override
+  String get shareRecipeAction => 'Partager';
+
+  @override
+  String get shareRecipeTitle => 'Partager la recette';
+
+  @override
+  String get shareSectionExport => 'Exporter';
+
+  @override
+  String get shareSectionShare => 'Partager';
+
+  @override
+  String get shareExportPdfSubtitle => 'Feuille A4, prête à imprimer';
+
+  @override
+  String get shareCopyLink => 'Copier le lien';
+
+  @override
+  String get shareCopyLinkSubtitle => 'Lien de partage vers la recette';
+
+  @override
+  String get shareCopyLinkDone => 'Lien copié dans le presse-papiers.';
+
+  @override
+  String get shareVia => 'Partager…';
+
+  @override
+  String get shareViaSubtitle => 'Envoyer le lien via une autre app';
+
+  @override
+  String get shareLinkError => 'Impossible de générer le lien de partage.';
+
+  @override
   String get pdfRecipeBadge => 'Recette';
 
   @override

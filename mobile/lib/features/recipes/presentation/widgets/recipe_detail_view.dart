@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:printing/printing.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -10,7 +9,6 @@ import '../../../ingredients/domain/ingredient.dart';
 import '../../../ingredients/presentation/widgets/unit_selector.dart';
 import '../../../recipe_player/presentation/pages/recipe_player_page.dart';
 import '../../domain/recipe.dart';
-import '../../data/recipe_pdf_service.dart';
 import '../bloc/recipe_detail_cubit.dart';
 import '../pages/recipe_detail_page.dart';
 import 'add_ingredients_sheet.dart';
@@ -18,6 +16,7 @@ import 'base_recipe_picker_sheet.dart';
 import 'quantity_stepper.dart';
 import 'recipe_edit_sheet.dart';
 import 'recipe_organization_section.dart';
+import 'share_recipe_sheet.dart';
 import 'steps_content.dart';
 
 const double _kHeroHeight = 300;
@@ -218,12 +217,12 @@ class _Loaded extends StatelessWidget {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.picture_as_pdf_outlined,
+                leading: const Icon(Icons.ios_share_rounded,
                     color: AppColors.primary),
-                title: Text(l10n.pdfExportAction),
+                title: Text(l10n.shareRecipeAction),
                 onTap: () {
                   Navigator.of(sheetContext).pop();
-                  _exportPdf(context);
+                  showShareRecipeSheet(context, detail);
                 },
               ),
               ListTile(
@@ -245,21 +244,6 @@ class _Loaded extends StatelessWidget {
     );
   }
 
-  /// Génère et partage un PDF imprimable de la fiche (partage OS = envoi,
-  /// enregistrement, impression). Le `detail` est déjà entièrement chargé.
-  Future<void> _exportPdf(BuildContext context) async {
-    final l10n = AppLocalizations.of(context);
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      final bytes = await RecipePdfService().build(detail, l10n);
-      final safeName = detail.name.replaceAll(RegExp(r'[^\w\s-]'), ' ').trim();
-      await Printing.sharePdf(bytes: bytes, filename: 'Cocotte Minute - $safeName.pdf');
-    } catch (_) {
-      messenger
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(l10n.pdfExportError)));
-    }
-  }
 }
 
 class _HeroImage extends StatelessWidget {
