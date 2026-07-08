@@ -67,6 +67,17 @@ class RecipesRepository {
     }
   }
 
+  /// Charge une recette partagée via son token public (route non authentifiée
+  /// côté serveur). Utilisé à l'ouverture d'un lien de partage (deep link).
+  Future<RecipeDetail> fetchByShareToken(String token) async {
+    try {
+      final res = await _dio.get<Map<String, dynamic>>('/share/$token');
+      return RecipeDetail.fromJson(res.data!);
+    } on DioException catch (e) {
+      throw _mapError(e, 'Ce lien de partage est introuvable ou expiré.');
+    }
+  }
+
   Future<RecipeSummary> create({
     required String name,
     String? photoUrl,

@@ -10,6 +10,26 @@ import '../../data/recipe_pdf_service.dart';
 import '../../data/recipes_repository.dart';
 import '../../domain/recipe.dart';
 
+/// Génère puis partage un PDF imprimable de la fiche (partage OS = envoi,
+/// enregistrement, impression). Utilisé par l'entrée « Télécharger en PDF » du
+/// menu « … » ; le [context] doit rester monté pendant l'appel.
+Future<void> downloadRecipePdf(BuildContext context, RecipeDetail detail) async {
+  final l10n = AppLocalizations.of(context);
+  final messenger = ScaffoldMessenger.of(context);
+  try {
+    final bytes = await RecipePdfService().build(detail, l10n);
+    final safeName = detail.name.replaceAll(RegExp(r'[^\w\s-]'), ' ').trim();
+    await Printing.sharePdf(
+      bytes: bytes,
+      filename: 'Cocotte Minute - $safeName.pdf',
+    );
+  } catch (_) {
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(l10n.pdfExportError)));
+  }
+}
+
 /// Ouvre la feuille modale « Partager la recette » (export PDF A4, copie du lien
 /// de partage public, partage du lien via la feuille OS). Fidèle au design validé.
 Future<void> showShareRecipeSheet(BuildContext context, RecipeDetail detail) {

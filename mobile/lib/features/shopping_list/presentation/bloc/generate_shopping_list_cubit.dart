@@ -122,6 +122,7 @@ class GenerateShoppingListCubit extends Cubit<GenerateState> {
   GenerateShoppingListCubit({
     required RecipesRepository recipesRepository,
     required ShoppingListRepository shoppingRepository,
+    this.initialRecipeId,
   }) : _recipes = recipesRepository,
        _shopping = shoppingRepository,
        super(const GenerateState()) {
@@ -131,11 +132,32 @@ class GenerateShoppingListCubit extends Cubit<GenerateState> {
   final RecipesRepository _recipes;
   final ShoppingListRepository _shopping;
 
+  /// Recette à pré-sélectionner au chargement (entrée « Ajouter aux courses »
+  /// depuis une fiche recette). Null pour le flux normal depuis l'onglet Courses.
+  final String? initialRecipeId;
+
   Future<void> _loadRecipes() async {
     emit(state.copyWith(phase: GeneratePhase.loadingRecipes));
     try {
       final recipes = await _recipes.fetchMine();
-      emit(state.copyWith(phase: GeneratePhase.ready, recipes: recipes));
+      final initial = initialRecipeId;
+      RecipeSummary? preselect;
+      if (initial != null) {
+        for (final r in recipes) {
+          if (r.id == initial) {
+            preselect = r;
+            break;
+          }
+        }
+      }
+      emit(state.copyWith(
+        phase: GeneratePhase.ready,
+        recipes: recipes,
+        selectedIds: preselect == null ? null : {preselect.id},
+        servings: preselect == null
+            ? null
+            : {preselect.id: preselect.servings < 1 ? 1 : preselect.servings},
+      ));
     } on RecipesRepositoryException catch (e) {
       emit(state.copyWith(phase: GeneratePhase.error, errorMessage: e.message));
     }

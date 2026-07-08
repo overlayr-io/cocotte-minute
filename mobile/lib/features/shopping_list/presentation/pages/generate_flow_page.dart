@@ -14,13 +14,24 @@ import 'shopping_list_detail_page.dart';
 
 /// Assistant de génération d'une liste de courses (écrans 5b → 5d).
 class GenerateFlowPage extends StatelessWidget {
-  const GenerateFlowPage({super.key, this.hasActive = false});
+  const GenerateFlowPage({
+    super.key,
+    this.hasActive = false,
+    this.initialRecipeId,
+  });
 
   final bool hasActive;
 
-  static Route<void> route({bool hasActive = false}) => MaterialPageRoute<void>(
-    builder: (_) => GenerateFlowPage(hasActive: hasActive),
-  );
+  /// Recette pré-sélectionnée (entrée « Ajouter aux courses » d'une fiche).
+  final String? initialRecipeId;
+
+  static Route<void> route({bool hasActive = false, String? initialRecipeId}) =>
+      MaterialPageRoute<void>(
+        builder: (_) => GenerateFlowPage(
+          hasActive: hasActive,
+          initialRecipeId: initialRecipeId,
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +39,7 @@ class GenerateFlowPage extends StatelessWidget {
       create: (_) => GenerateShoppingListCubit(
         recipesRepository: sl<RecipesRepository>(),
         shoppingRepository: sl<ShoppingListRepository>(),
+        initialRecipeId: initialRecipeId,
       ),
       child: _GenerateView(hasActive: hasActive),
     );
