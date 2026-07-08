@@ -101,7 +101,11 @@ class HomeCubit extends Cubit<HomeState> {
   static const _rowCap = 12;
 
   Future<void> load() async {
-    emit(const HomeLoading());
+    // Ne montre le spinner plein écran qu'au premier chargement : un refresh
+    // (ex. retour d'une fiche recette) ne doit pas effacer le flux déjà affiché.
+    if (state is! HomeLoaded) {
+      emit(const HomeLoading());
+    }
     try {
       final results = await Future.wait([
         _discovery.fetchHome(),

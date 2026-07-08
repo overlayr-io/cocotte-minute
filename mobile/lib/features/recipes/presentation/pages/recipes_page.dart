@@ -340,21 +340,22 @@ class _SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(17),
       elevation: 0,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(17),
         child: Container(
-          height: 50,
-          padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+          height: 52,
+          padding: const EdgeInsets.fromLTRB(13, 0, 9, 0),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(17),
+            border: Border.all(color: const Color(0xFFE4DFD4)),
             boxShadow: [
               BoxShadow(
-                color: AppColors.textPrimary.withValues(alpha: 0.10),
-                blurRadius: 14,
-                offset: const Offset(0, 4),
+                color: AppColors.textPrimary.withValues(alpha: 0.09),
+                blurRadius: 18,
+                offset: const Offset(0, 6),
               ),
             ],
           ),
@@ -363,29 +364,24 @@ class _SearchBar extends StatelessWidget {
               const Icon(
                 Icons.search_rounded,
                 color: AppColors.textMuted,
-                size: 22,
+                size: 19,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 9),
               Expanded(
                 child: Text(
                   hint,
                   style: const TextStyle(
                     fontSize: 15,
-                    color: AppColors.textMuted,
+                    color: Color(0xFFB0AA9A),
                   ),
                 ),
               ),
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  color: AppColors.pill,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4),
+                child: Icon(
                   Icons.tune_rounded,
                   color: AppColors.primary,
-                  size: 19,
+                  size: 20,
                 ),
               ),
             ],

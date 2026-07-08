@@ -190,54 +190,60 @@ class _TagRow extends StatelessWidget {
             ? const Border(bottom: BorderSide(color: Color(0xFFF1EEE7)))
             : null,
       ),
-      child: InkWell(
-        onTap: busy ? null : onEdit,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Row(
-            children: [
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Text(
-                  tag.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: busy ? null : onEdit,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            child: Row(
+              children: [
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                l10n.tagsRecipeCount(tag.recipeCount),
-                style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFFA79F8B),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Container(width: 1, height: 20, color: const Color(0xFFF1EEE7)),
-              const SizedBox(width: 12),
-              busy
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(
-                      Icons.edit_outlined,
-                      size: 18,
-                      color: Color(0xFFCBC7BB),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Text(
+                    tag.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
                     ),
-            ],
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  l10n.tagsRecipeCount(tag.recipeCount),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFFA79F8B),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Container(width: 1, height: 20, color: const Color(0xFFF1EEE7)),
+                const SizedBox(width: 12),
+                busy
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(
+                        Icons.edit_outlined,
+                        size: 18,
+                        color: Color(0xFFCBC7BB),
+                      ),
+              ],
+            ),
           ),
         ),
       ),

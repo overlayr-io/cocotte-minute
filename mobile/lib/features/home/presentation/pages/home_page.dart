@@ -104,6 +104,7 @@ class _HomeView extends StatelessWidget {
           pinned: true,
           delegate: _StickyHeader(
             extent: 186,
+            background: state.isEmpty ? null : AppColors.surface,
             child: _SearchAndChips(
               categories: state.categories,
               l10n: l10n,
@@ -115,7 +116,8 @@ class _HomeView extends StatelessWidget {
         ),
         SliverToBoxAdapter(
           child: Container(
-            color: AppColors.surface,
+            // Pas de fond blanc pour l'état vide : on laisse le crème du fond.
+            color: state.isEmpty ? null : AppColors.surface,
             padding: const EdgeInsets.only(bottom: 150),
             child: state.isEmpty
                 ? _EmptyBody(l10n: l10n, onCreate: () => _create(context))
@@ -641,10 +643,13 @@ class _CategoryChip extends StatelessWidget {
 /// Header collant à extent fixe (recherche + chips ne se replient pas ; seule la
 /// salutation, sliver précédent, défile au-dessus).
 class _StickyHeader extends SliverPersistentHeaderDelegate {
-  _StickyHeader({required this.child, required this.extent});
+  _StickyHeader({required this.child, required this.extent, this.background});
 
   final Widget child;
   final double extent;
+
+  /// Peint derrière le bandeau pour révéler ses coins arrondis du bas.
+  final Color? background;
 
   @override
   double get minExtent => extent;
@@ -654,12 +659,17 @@ class _StickyHeader extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return SizedBox.expand(child: child);
+    return ColoredBox(
+      color: background ?? Colors.transparent,
+      child: SizedBox.expand(child: child),
+    );
   }
 
   @override
   bool shouldRebuild(_StickyHeader oldDelegate) =>
-      oldDelegate.child != child || oldDelegate.extent != extent;
+      oldDelegate.child != child ||
+      oldDelegate.extent != extent ||
+      oldDelegate.background != background;
 }
 
 /// Carte poster (hero « à la une ») : photo ou dégradé de repli, dégradé sombre,
