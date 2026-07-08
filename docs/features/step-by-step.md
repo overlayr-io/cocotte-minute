@@ -72,8 +72,11 @@ purement logicielle — pas de matériel connecté.
   pour le v1.
 - Toute connexion à du matériel physique (four connecté, balance, etc.).
 
-## Questions ouvertes / à trancher
-- Format exact de persistance locale de l'état d'exécution (juste l'étape N +
-  minuteur restant, ou snapshot complet) — à trancher à l'implémentation mobile.
-- Que se passe-t-il si l'utilisateur quitte le mode pas-à-pas avant la fin :
-  reprise automatique proposée au prochain lancement, ou reset silencieux ?
+## Décisions livrées
+- Persistance locale de l'état d'exécution : snapshot complet (étape courante,
+  portions, minuteurs avec échéances absolues) via `RecipePlayerStorage` /
+  `ResumeState`.
+- Abandon avant la fin : quitter en cours de route (bouton X **ou** retour
+  système via `PopScope`) **conserve** la session et propose « Reprendre » au
+  prochain lancement ; la purge n'a lieu qu'à la fin réelle (ou quand une autre
+  recette écrase la session).

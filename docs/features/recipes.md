@@ -48,10 +48,12 @@ order: 5
 > (`RecipesService.listByCategory`, pivot `recipe_categories`, tri récent) —
 > chargement non bloquant (`FolderRecipesCubit`), carte partagée
 > `RecipeListCard`. Compte → Catégories reste accessible séparément (création
-> de sous-dossiers). La vue **Découverte** du 7b (bascule Dossiers/Découverte,
-> hero à la une, rangées par saison/temps/personne) n'a **pas** été construite :
-> aucune donnée serveur pour l'alimenter (pas de champ saison, pas de requête
-> par personne) — différée, décision explicite.
+> de sous-dossiers). La vue **Découverte** est livrée sous forme de **flux
+> d'Accueil** (`GET /discovery/home`) : hero « à la une » + rangées éditoriales
+> (de saison, prêt en 30 min, récemment ajoutées, par personne, recettes de
+> base, portions). Le « de saison » est **dérivé des ingrédients** (table de
+> saisonnalité FR, sans champ ni migration serveur) ; les rangées par personne
+> passent par les tags.
 >
 > **Différé (non bloquant) :** ajout de **composant / sous-recette** depuis le
 > mobile (picker) — l'endpoint serveur existe déjà ; upload de photo réel.
