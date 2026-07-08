@@ -257,6 +257,74 @@ class AppLocalizationsFr extends AppLocalizations {
   String get accountManagePasswordUpdated => 'Mot de passe modifié.';
 
   @override
+  String get pdfExportAction => 'Exporter en PDF';
+
+  @override
+  String get pdfExportError => 'Impossible de générer le PDF.';
+
+  @override
+  String get pdfRecipeBadge => 'Recette';
+
+  @override
+  String get pdfBaseBadge => 'Recette de base';
+
+  @override
+  String get pdfRefBadge => 'référence';
+
+  @override
+  String pdfPrep(String duration) {
+    return 'Prépa $duration';
+  }
+
+  @override
+  String pdfCook(String duration) {
+    return 'Cuisson $duration';
+  }
+
+  @override
+  String pdfRest(String duration) {
+    return 'Repos $duration';
+  }
+
+  @override
+  String pdfServingsSuffix(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'personnes',
+      one: 'personne',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pdfSectionIngredients => 'Ingrédients';
+
+  @override
+  String get pdfNoIngredients => 'Aucun ingrédient.';
+
+  @override
+  String get pdfSectionSteps => 'Étapes';
+
+  @override
+  String get pdfNoSteps => 'Aucune étape.';
+
+  @override
+  String get pdfSectionSubRecipes => 'Sous-recettes utilisées';
+
+  @override
+  String get pdfBannerTip => 'Astuce';
+
+  @override
+  String get pdfBannerWarning => 'Attention';
+
+  @override
+  String get pdfBannerDanger => 'Attention';
+
+  @override
+  String get pdfBannerLearn => 'Référence';
+
+  @override
   String get accountGuestCtaTitle => 'Garde tes recettes pour toujours';
 
   @override

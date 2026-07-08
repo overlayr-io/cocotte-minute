@@ -578,6 +578,114 @@ abstract class AppLocalizations {
   /// **'Mot de passe modifié.'**
   String get accountManagePasswordUpdated;
 
+  /// Entrée de menu pour exporter la fiche recette en PDF
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter en PDF'**
+  String get pdfExportAction;
+
+  /// No description provided for @pdfExportError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de générer le PDF.'**
+  String get pdfExportError;
+
+  /// No description provided for @pdfRecipeBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette'**
+  String get pdfRecipeBadge;
+
+  /// No description provided for @pdfBaseBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette de base'**
+  String get pdfBaseBadge;
+
+  /// No description provided for @pdfRefBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'référence'**
+  String get pdfRefBadge;
+
+  /// No description provided for @pdfPrep.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prépa {duration}'**
+  String pdfPrep(String duration);
+
+  /// No description provided for @pdfCook.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cuisson {duration}'**
+  String pdfCook(String duration);
+
+  /// No description provided for @pdfRest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repos {duration}'**
+  String pdfRest(String duration);
+
+  /// No description provided for @pdfServingsSuffix.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, one{personne} other{personnes}}'**
+  String pdfServingsSuffix(int count);
+
+  /// No description provided for @pdfSectionIngredients.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ingrédients'**
+  String get pdfSectionIngredients;
+
+  /// No description provided for @pdfNoIngredients.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun ingrédient.'**
+  String get pdfNoIngredients;
+
+  /// No description provided for @pdfSectionSteps.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étapes'**
+  String get pdfSectionSteps;
+
+  /// No description provided for @pdfNoSteps.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune étape.'**
+  String get pdfNoSteps;
+
+  /// No description provided for @pdfSectionSubRecipes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sous-recettes utilisées'**
+  String get pdfSectionSubRecipes;
+
+  /// No description provided for @pdfBannerTip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Astuce'**
+  String get pdfBannerTip;
+
+  /// No description provided for @pdfBannerWarning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Attention'**
+  String get pdfBannerWarning;
+
+  /// No description provided for @pdfBannerDanger.
+  ///
+  /// In fr, this message translates to:
+  /// **'Attention'**
+  String get pdfBannerDanger;
+
+  /// No description provided for @pdfBannerLearn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Référence'**
+  String get pdfBannerLearn;
+
   /// Titre de la carte permanente invitant un invité à créer un compte
   ///
   /// In fr, this message translates to:

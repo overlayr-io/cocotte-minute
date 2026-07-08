@@ -255,6 +255,74 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountManagePasswordUpdated => 'Password updated.';
 
   @override
+  String get pdfExportAction => 'Export to PDF';
+
+  @override
+  String get pdfExportError => 'Couldn\'t generate the PDF.';
+
+  @override
+  String get pdfRecipeBadge => 'Recipe';
+
+  @override
+  String get pdfBaseBadge => 'Base recipe';
+
+  @override
+  String get pdfRefBadge => 'reference';
+
+  @override
+  String pdfPrep(String duration) {
+    return 'Prep $duration';
+  }
+
+  @override
+  String pdfCook(String duration) {
+    return 'Cook $duration';
+  }
+
+  @override
+  String pdfRest(String duration) {
+    return 'Rest $duration';
+  }
+
+  @override
+  String pdfServingsSuffix(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'people',
+      one: 'person',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get pdfSectionIngredients => 'Ingredients';
+
+  @override
+  String get pdfNoIngredients => 'No ingredients.';
+
+  @override
+  String get pdfSectionSteps => 'Steps';
+
+  @override
+  String get pdfNoSteps => 'No steps.';
+
+  @override
+  String get pdfSectionSubRecipes => 'Base recipes used';
+
+  @override
+  String get pdfBannerTip => 'Tip';
+
+  @override
+  String get pdfBannerWarning => 'Careful';
+
+  @override
+  String get pdfBannerDanger => 'Warning';
+
+  @override
+  String get pdfBannerLearn => 'Reference';
+
+  @override
   String get accountGuestCtaTitle => 'Keep your recipes forever';
 
   @override
