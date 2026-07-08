@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "updatedAt": "2026-07-08",
+  "entries": [
+    {
+      "id": "generate-shopping-list",
+      "category": "shopping",
+      "order": 1,
+      "published": true,
+      "question": "Comment générer une liste de courses depuis mes recettes ?",
+      "answer": "Ouvre l'onglet Courses puis touche « Générer une liste ». Choisis les recettes à cuisiner et le nombre de portions : Cocotte additionne automatiquement les ingrédients et prépare ta liste, que tu peux ensuite cocher au fur et à mesure de tes achats."
+    }
+  ]
+}
