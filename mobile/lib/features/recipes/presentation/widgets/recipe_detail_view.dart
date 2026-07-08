@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_network_image.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../ingredients/domain/ingredient.dart';
 import '../../../ingredients/presentation/widgets/unit_selector.dart';
@@ -249,7 +250,10 @@ class _HeroImage extends StatelessWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (photo != null) Image.network(photo, fit: BoxFit.cover),
+          // Héro plein écran : décodage à la largeur de l'écran.
+          if (photo != null)
+            AppNetworkImage(photo,
+                decodeWidth: MediaQuery.sizeOf(context).width),
           const DecoratedBox(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -959,7 +963,7 @@ class _IngredientRow extends StatelessWidget {
               ),
               clipBehavior: Clip.antiAlias,
               child: ingredient.imageUrl != null
-                  ? Image.network(ingredient.imageUrl!, fit: BoxFit.cover)
+                  ? AppNetworkImage(ingredient.imageUrl!, width: 40, height: 40)
                   : const Icon(Icons.egg_alt_outlined,
                       size: 20, color: AppColors.primary),
             ),

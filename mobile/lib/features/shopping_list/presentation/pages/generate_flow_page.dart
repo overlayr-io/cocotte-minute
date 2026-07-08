@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_network_image.dart';
 import '../../../recipes/data/recipes_repository.dart';
 import '../../../recipes/domain/recipe.dart';
 import '../../data/shopping_list_repository.dart';
@@ -650,13 +651,7 @@ class _RecipeThumb extends StatelessWidget {
     if (photoUrl != null && photoUrl!.isNotEmpty) {
       return ClipRRect(
         borderRadius: radius,
-        child: Image.network(
-          photoUrl!,
-          width: size,
-          height: size,
-          fit: BoxFit.cover,
-          errorBuilder: (_, _, _) => _placeholder(radius),
-        ),
+        child: AppNetworkImage(photoUrl!, width: size, height: size),
       );
     }
     return _placeholder(radius);

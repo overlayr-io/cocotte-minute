@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+
+import 'app_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../di/service_locator.dart';
@@ -104,7 +106,12 @@ class _ImageUploadPickerState extends State<ImageUploadPicker> {
                   ? widget.placeholder
                   : ClipRRect(
                       borderRadius: radius,
-                      child: Image.network(_previewUrl!, fit: BoxFit.cover),
+                      child: AppNetworkImage(
+                        _previewUrl!,
+                        decodeWidth: isCircle
+                            ? widget.size
+                            : MediaQuery.sizeOf(context).width,
+                      ),
                     ),
             ),
             if (_uploading)

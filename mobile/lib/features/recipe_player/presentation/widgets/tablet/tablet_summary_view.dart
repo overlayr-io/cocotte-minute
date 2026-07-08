@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/app_network_image.dart';
 import '../../../../recipes/domain/recipe.dart';
 import '../../../domain/playable_step.dart';
 import '../../../domain/recipe_timer.dart';
@@ -47,11 +48,10 @@ class TabletSummaryView extends StatelessWidget {
               if (detail.summary.photoUrl != null)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20),
-                  child: Image.network(
+                  child: AppNetworkImage(
                     detail.summary.photoUrl!,
                     height: 170,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
+                    decodeWidth: 340,
                   ),
                 ),
               const SizedBox(height: 18),

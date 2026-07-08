@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_network_image.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../categories/data/categories_repository.dart';
 import '../../../categories/domain/category.dart';
@@ -591,7 +592,8 @@ class _RecipePoster extends StatelessWidget {
             fit: StackFit.expand,
             children: [
               if (recipe.photoUrl != null)
-                Image.network(recipe.photoUrl!, fit: BoxFit.cover)
+                // Poster de carrousel : ~86% de la largeur écran.
+                AppNetworkImage(recipe.photoUrl!, decodeWidth: 360)
               else
                 DecoratedBox(
                   decoration: BoxDecoration(

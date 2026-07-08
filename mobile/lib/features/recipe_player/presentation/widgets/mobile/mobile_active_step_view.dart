@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/app_network_image.dart';
 import '../../../../recipes/presentation/widgets/step_banner.dart';
 import '../../../domain/recipe_timer.dart';
 import '../../bloc/recipe_player_cubit.dart';
@@ -143,10 +144,10 @@ class MobileActiveStepView extends StatelessWidget {
                           if (state.detail.summary.photoUrl != null)
                             ClipRRect(
                               borderRadius: BorderRadius.circular(18),
-                              child: Image.network(
+                              child: AppNetworkImage(
                                 state.detail.summary.photoUrl!,
                                 height: 140,
-                                fit: BoxFit.cover,
+                                decodeWidth: 400,
                               ),
                             ),
                           const SizedBox(height: 14),

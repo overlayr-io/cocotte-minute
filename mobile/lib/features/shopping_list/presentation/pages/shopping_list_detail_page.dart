@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_network_image.dart';
 import '../../data/shopping_list_repository.dart';
 import '../../domain/shopping_list.dart';
 import '../bloc/shopping_list_cubit.dart';
@@ -718,13 +719,7 @@ class _RecipeDot extends StatelessWidget {
     if (photoUrl != null && photoUrl!.isNotEmpty) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(11),
-        child: Image.network(
-          photoUrl!,
-          width: 38,
-          height: 38,
-          fit: BoxFit.cover,
-          errorBuilder: (_, _, _) => _fallback(),
-        ),
+        child: AppNetworkImage(photoUrl!, width: 38, height: 38),
       );
     }
     return _fallback();

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/app_network_image.dart';
+
 /// Avatar d'une personne. Si aucune image n'est fournie, on dérive un avatar par
 /// défaut : initiale du prénom sur une couleur stable choisie d'après le nom.
 /// (L'upload d'image réel sera branché plus tard.)
@@ -43,7 +45,7 @@ class PersonAvatar extends StatelessWidget {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           image: DecorationImage(
-            image: NetworkImage(imageUrl!),
+            image: cachedImageProvider(context, imageUrl!, logicalWidth: size),
             fit: BoxFit.cover,
           ),
         ),

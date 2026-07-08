@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_network_image.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../data/ingredients_repository.dart';
 import '../../domain/ingredient.dart';
@@ -201,7 +202,9 @@ class _IngredientAvatar extends StatelessWidget {
         color: AppColors.primaryTint,
         borderRadius: BorderRadius.circular(14),
         image: imageUrl != null
-            ? DecorationImage(image: NetworkImage(imageUrl!), fit: BoxFit.cover)
+            ? DecorationImage(
+                image: cachedImageProvider(context, imageUrl!, logicalWidth: 52),
+                fit: BoxFit.cover)
             : null,
       ),
       child: imageUrl == null

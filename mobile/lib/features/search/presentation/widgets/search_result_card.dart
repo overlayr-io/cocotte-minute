@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_network_image.dart';
 import '../../../recipes/domain/recipe.dart';
 
 /// Carte d'un résultat de recherche : vignette (photo ou dégradé de repli),
@@ -88,7 +89,7 @@ class _Thumb extends StatelessWidget {
         width: 60,
         height: 60,
         child: recipe.photoUrl != null
-            ? Image.network(recipe.photoUrl!, fit: BoxFit.cover)
+            ? AppNetworkImage(recipe.photoUrl!, width: 60, height: 60)
             : DecoratedBox(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(

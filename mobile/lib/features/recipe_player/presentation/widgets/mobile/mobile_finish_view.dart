@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/widgets/app_network_image.dart';
 import '../../bloc/recipe_player_cubit.dart';
 
 /// Écran de fin (maquette 10g) : confirmation + résumé (étapes, durée),
@@ -24,7 +25,8 @@ class MobileFinishView extends StatelessWidget {
       fit: StackFit.expand,
       children: [
         if (state.detail.summary.photoUrl != null)
-          Image.network(state.detail.summary.photoUrl!, fit: BoxFit.cover),
+          AppNetworkImage(state.detail.summary.photoUrl!,
+              decodeWidth: MediaQuery.sizeOf(context).width),
         DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(

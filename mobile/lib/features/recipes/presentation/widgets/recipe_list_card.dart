@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_network_image.dart';
 import '../../domain/recipe.dart';
 
 /// Carte d'une recette en liste (onglet Recettes, recettes d'un dossier) :
@@ -119,7 +120,7 @@ class _Thumb extends StatelessWidget {
             : null,
       ),
       child: recipe.photoUrl != null
-          ? Image.network(recipe.photoUrl!, fit: BoxFit.cover)
+          ? AppNetworkImage(recipe.photoUrl!, width: 64, height: 64)
           : const Icon(Icons.restaurant_rounded, color: Colors.white, size: 24),
     );
   }
