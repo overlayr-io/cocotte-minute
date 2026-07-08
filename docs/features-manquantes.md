@@ -2,7 +2,7 @@
 
 État des lieux basé sur `PROJECT_CONTEXT.md`, `docs/features/*.md` et le code réel (mobile + server). Dernière révision : **2026-07-08**.
 
-Constat général : le socle v1 est désormais **quasi complet** (auth + compte invité + gestion du compte, ingrédients, tags/personnes, catégories, recettes, étapes, mode pas-à-pas, liste de courses, recherche avancée, Accueil « Découverte », export PDF, suppression RGPD, centre d'aide). Le seul vrai chantier non démarré restant est **limites freemium**. Il n'y a plus d'écart réglementaire ouvert (la suppression de compte RGPD est livrée).
+Constat général : le socle v1 est désormais **quasi complet** (auth + compte invité + gestion du compte, ingrédients, tags/personnes, catégories, recettes, étapes, mode pas-à-pas, liste de courses, recherche avancée, Accueil « Découverte », export PDF, **partage de recette + deep links**, suppression RGPD, centre d'aide). Le seul vrai chantier non démarré restant est **limites freemium**. Il n'y a plus d'écart réglementaire ouvert (la suppression de compte RGPD est livrée).
 
 ## ✅ Résolu depuis la dernière édition (2026-07-08)
 
@@ -19,7 +19,8 @@ Ces points étaient listés comme manquants et ont été vérifiés livrés dans
 - **Auth — « Gérer le compte » (connecté)** : livré — page d'édition e-mail + mot de passe via Supabase `updateUser` (`account_manage_page.dart` + `AccountManageCubit`), remplace le placeholder « bientôt ».
 - **Mode pas-à-pas — comportement d'abandon** : tranché et livré — quitter en cours de route (bouton X **ou** retour système via `PopScope`) **conserve** la session et propose « Reprendre » au prochain lancement ; purge uniquement à la fin réelle.
 - **Recettes — vue « Découverte »** : livrée — l'Accueil est un flux Découverte (`GET /discovery/home`) : hero « à la une » + rangées (de saison, prêt en 30 min, récemment ajoutées, par personne, recettes de base, portions). Le « de saison » est **dérivé des ingrédients** via une table de saisonnalité FR, **sans migration** ni champ serveur.
-- **Export PDF — fiche recette** : livré — `RecipePdfService` (packages `pdf`/`printing`), PDF A4 imprimable fidèle à la maquette (hero, ingrédients, étapes + bannières, sous-recettes), partage/impression depuis le menu de la fiche.
+- **Export PDF — fiche recette** : livré — `RecipePdfService` (packages `pdf`/`printing`), PDF A4 imprimable **2 colonnes** fidèle à la maquette « Recette Web » (en-tête titre + photo, bandeau méta, ingrédients à gauche, préparation à droite, sous-recettes), partage/impression depuis le menu de la fiche.
+- **Partage de recette + deep links** : livré ([partage-recette.md](features/partage-recette.md)) — module serveur `shares` (table `recipe_shares`, `POST /recipes/:id/share`, `GET /share/:token` JSON, `GET /r/:token` page web responsive, fichiers `.well-known`), feuille mobile « Partager » (copier le lien via `share_plus`), et deep linking (`app_links` : universal/app links + scheme `cocotteminute://`, `SharedRecipePage` en lecture seule, bascule vers la fiche complète si propriétaire). **Prérequis déploiement** : domaine public + TeamID iOS + SHA256 Android (placeholders `TODO_*`).
 
 ## 🟢 Petit (finition / correctif ciblé)
 
