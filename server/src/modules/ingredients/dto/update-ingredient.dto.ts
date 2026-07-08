@@ -13,7 +13,8 @@ import { INGREDIENT_UNITS, type IngredientUnit } from '../../../db/schema/ingred
 
 /**
  * Édition d'un ingrédient utilisateur. Tous les champs sont optionnels (patch
- * partiel). `imageUrl: null` explicite permet de retirer l'image.
+ * partiel). `imageUrl: null` / `emoji: null` explicite permet de retirer l'un
+ * ou l'autre ; renseigner l'un vide l'autre (exclusivité, côté service).
  */
 export class UpdateIngredientDto {
   @IsOptional()
@@ -32,4 +33,10 @@ export class UpdateIngredientDto {
   @IsUrl({ require_tld: false })
   @MaxLength(2048)
   imageUrl?: string | null;
+
+  @IsOptional()
+  @ValidateIf((o: UpdateIngredientDto) => o.emoji !== null)
+  @IsString()
+  @MaxLength(16)
+  emoji?: string | null;
 }
