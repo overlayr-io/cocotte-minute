@@ -54,6 +54,14 @@ export class RecipesController {
     return this.recipesService.create(user.id, dto);
   }
 
+  /** Recettes rangées dans aucun dossier (dossier virtuel « Autres »). */
+  @Get('uncategorized')
+  listUncategorized(
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<RecipeSummaryDto[]> {
+    return this.recipesService.listUncategorized(user.id);
+  }
+
   @Get(':id')
   detail(
     @CurrentUser() user: AuthenticatedUser,

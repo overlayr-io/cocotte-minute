@@ -633,6 +633,10 @@
     }
   },
 
+  "recipesOtherFolderTitle": "Autres",
+  "@recipesOtherFolderTitle": {},
+  "recipesOtherFolderEmpty": "Aucune recette sans dossier. Tout est bien rangé !",
+  "@recipesOtherFolderEmpty": {},
   "recipesTitle": "Recettes",
   "@recipesTitle": {},
   "recipesEmpty": "Tu n'as pas encore de recette. Appuie sur + pour en créer une.",

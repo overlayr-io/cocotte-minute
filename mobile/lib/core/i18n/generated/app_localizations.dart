@@ -1754,6 +1754,18 @@ abstract class AppLocalizations {
   /// **'« {name} » sera supprimé. Les recettes qu\'il contient ne sont pas supprimées.'**
   String categoryDeleteConfirmBody(String name);
 
+  /// No description provided for @recipesOtherFolderTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autres'**
+  String get recipesOtherFolderTitle;
+
+  /// No description provided for @recipesOtherFolderEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette sans dossier. Tout est bien rangé !'**
+  String get recipesOtherFolderEmpty;
+
   /// No description provided for @recipesTitle.
   ///
   /// In fr, this message translates to:

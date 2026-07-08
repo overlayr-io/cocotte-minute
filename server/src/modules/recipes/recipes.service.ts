@@ -210,6 +210,30 @@ export class RecipesService {
   }
 
   /**
+   * Recettes rangées dans aucun dossier (non supprimées, plus récentes d'abord)
+   * — alimente le dossier virtuel « Autres » de la page Recettes.
+   */
+  async listUncategorized(userId: string): Promise<RecipeSummaryDto[]> {
+    const rows = await this.db
+      .select()
+      .from(recipes)
+      .where(
+        and(
+          eq(recipes.authorId, userId),
+          isNull(recipes.deletedAt),
+          notInArray(
+            recipes.id,
+            this.db
+              .select({ id: recipeCategories.recipeId })
+              .from(recipeCategories),
+          ),
+        ),
+      )
+      .orderBy(desc(recipes.createdAt));
+    return rows.map(toSummary);
+  }
+
+  /**
    * Résumés d'un ensemble de recettes possédées (non supprimées), les plus
    * récentes d'abord. Les ids inconnus ou étrangers sont ignorés silencieusement.
    */

@@ -923,6 +923,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get recipesOtherFolderTitle => 'Other';
+
+  @override
+  String get recipesOtherFolderEmpty =>
+      'No recipes without a folder. Everything is tidy!';
+
+  @override
   String get recipesTitle => 'Recipes';
 
   @override

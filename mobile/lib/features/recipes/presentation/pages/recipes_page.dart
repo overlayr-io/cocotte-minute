@@ -12,8 +12,11 @@ import '../../../categories/presentation/bloc/categories_list_bloc.dart';
 import '../../../categories/presentation/pages/category_folder_page.dart';
 import '../../../categories/presentation/widgets/category_form_sheet.dart';
 import '../../../search/presentation/pages/search_page.dart';
+import '../../data/recipes_repository.dart';
+import '../bloc/uncategorized_recipes_cubit.dart';
 import 'recipe_create_page.dart';
 import 'recipe_detail_page.dart';
+import 'uncategorized_folder_page.dart';
 
 /// Onglet « Recettes » (maquette 7b — vue Dossiers) : titre, recherche, cartes
 /// de dossiers (racines) et bouton « Nouveau dossier ». Toucher un dossier
@@ -25,10 +28,19 @@ class RecipesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) =>
-          CategoriesListBloc(repository: sl<CategoriesRepository>())
-            ..add(const CategoriesRequested()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              CategoriesListBloc(repository: sl<CategoriesRepository>())
+                ..add(const CategoriesRequested()),
+        ),
+        BlocProvider(
+          create: (_) =>
+              UncategorizedRecipesCubit(repository: sl<RecipesRepository>())
+                ..load(),
+        ),
+      ],
       child: const _RecipesView(),
     );
   }
@@ -39,14 +51,24 @@ class _RecipesView extends StatelessWidget {
 
   Future<void> _create(BuildContext context) async {
     final bloc = context.read<CategoriesListBloc>();
+    final uncategorized = context.read<UncategorizedRecipesCubit>();
     final created = await Navigator.of(context).push(RecipeCreatePage.route());
     if (created == null) return;
     // Redirection automatique vers la fiche de la recette créée (cf. recipes.md).
     if (context.mounted) {
       await Navigator.of(context).push(RecipeDetailPage.route(created.id));
     }
-    // Rafraîchit les compteurs de recettes des dossiers au retour.
+    // Rafraîchit les compteurs de recettes des dossiers au retour, ainsi que le
+    // dossier virtuel « Autres » (une recette neuve n'est rangée nulle part).
     bloc.add(const CategoriesRequested());
+    await uncategorized.load();
+  }
+
+  Future<void> _openOtherFolder(BuildContext context) async {
+    final cubit = context.read<UncategorizedRecipesCubit>();
+    await Navigator.of(context).push(UncategorizedFolderPage.route());
+    // Des recettes ont pu être rangées/créées : rafraîchit le compteur.
+    await cubit.load();
   }
 
   void _openFolder(BuildContext context, Category category) {
@@ -174,6 +196,26 @@ class _RecipesView extends StatelessWidget {
                 onTap: () => _openFolder(context, folder),
               ),
             ),
+        // Dossier virtuel « Autres » : recettes rangées nulle part (sinon
+        // invisibles dans la vue Dossiers).
+        BlocBuilder<UncategorizedRecipesCubit, UncategorizedRecipesState>(
+          builder: (context, uncategorized) {
+            if (uncategorized is! UncategorizedRecipesLoaded ||
+                uncategorized.recipes.isEmpty) {
+              return const SizedBox.shrink();
+            }
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 11),
+              child: _OtherFolderCard(
+                title: l10n.recipesOtherFolderTitle,
+                subtitle: l10n.categoriesRecipeCount(
+                  uncategorized.recipes.length,
+                ),
+                onTap: () => _openOtherFolder(context),
+              ),
+            );
+          },
+        ),
         const SizedBox(height: 3),
         _NewFolderButton(
           label: l10n.categoryCreateTitle,
@@ -242,6 +284,91 @@ class _FolderCard extends StatelessWidget {
                       const SizedBox(height: 3),
                       Text(
                         _subtitle(),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  size: 20,
+                  color: Color(0xFFCBC7BB),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Carte du dossier virtuel « Autres » — même gabarit que [_FolderCard], avec
+/// une pastille neutre (pas d'emoji, pas de sous-dossiers).
+class _OtherFolderCard extends StatelessWidget {
+  const _OtherFolderCard({
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: AppShadows.card,
+      ),
+      child: Material(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(20),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(20),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: AppColors.pill,
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: const Icon(
+                    Icons.folder_open_rounded,
+                    size: 24,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: AppFonts.display,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 17,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        subtitle,
                         style: const TextStyle(
                           fontSize: 13,
                           color: AppColors.textMuted,

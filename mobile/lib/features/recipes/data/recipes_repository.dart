@@ -47,6 +47,19 @@ class RecipesRepository {
     }
   }
 
+  /// Recettes rangées dans aucun dossier (dossier virtuel « Autres »).
+  Future<List<RecipeSummary>> fetchUncategorized() async {
+    try {
+      final res = await _dio.get<List<dynamic>>('/recipes/uncategorized');
+      return (res.data ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(RecipeSummary.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de charger les recettes du dossier.');
+    }
+  }
+
   Future<RecipeDetail> fetchDetail(String id) async {
     try {
       final res = await _dio.get<Map<String, dynamic>>('/recipes/$id');
