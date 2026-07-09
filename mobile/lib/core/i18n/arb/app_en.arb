@@ -732,9 +732,10 @@
   "playerNextStep": "Next step",
   "playerNext": "Next",
   "playerAddTimerCta": "Add a timer",
-  "playerNoTimerDetected": "No timer detected on this step",
-  "playerTimerDetectedHint": "Timer detected: \"{text}\"",
-  "@playerTimerDetectedHint": { "placeholders": { "text": { "type": "String" } } },
+  "playerTimerDetectedMinutes": "Timer for {minutes, plural, =1{1 minute} other{{minutes} minutes}}",
+  "@playerTimerDetectedMinutes": {
+    "placeholders": { "minutes": { "type": "int" } }
+  },
   "playerIngredientsTitle": "Step ingredients",
   "playerForServings": "for {count} servings",
   "@playerForServings": { "placeholders": { "count": { "type": "int" } } },
@@ -747,6 +748,7 @@
   "playerSubRecipeLabel": "SUB-RECIPE",
   "playerTimerLabel": "Timer",
   "playerTimerStart": "Start",
+  "playerTimerRestart": "Restart",
   "playerTimerReset": "Reset",
   "playerTimerDetectedAdjustable": "Detected in the step · adjustable",
 

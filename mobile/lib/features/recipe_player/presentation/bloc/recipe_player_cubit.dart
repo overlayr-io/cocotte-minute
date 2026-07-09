@@ -216,6 +216,10 @@ class RecipePlayerCubit extends Cubit<RecipePlayerState> {
             clearEndTime: true,
           ),
         );
+      } else if (t.stepId == stepId && t.status == TimerStatus.done) {
+        // Un minuteur terminé de la même étape est remplacé par le nouveau
+        // (relance) : pas besoin de le garder, il ne serait plus affiché.
+        continue;
       } else {
         others.add(t);
       }

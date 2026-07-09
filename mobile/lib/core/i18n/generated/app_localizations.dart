@@ -3344,17 +3344,11 @@ abstract class AppLocalizations {
   /// **'Ajouter un minuteur'**
   String get playerAddTimerCta;
 
-  /// No description provided for @playerNoTimerDetected.
+  /// No description provided for @playerTimerDetectedMinutes.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun minuteur détecté sur cette étape'**
-  String get playerNoTimerDetected;
-
-  /// No description provided for @playerTimerDetectedHint.
-  ///
-  /// In fr, this message translates to:
-  /// **'Minuteur détecté : « {text} »'**
-  String playerTimerDetectedHint(String text);
+  /// **'Minuteur de {minutes, plural, =1{1 minute} other{{minutes} minutes}}'**
+  String playerTimerDetectedMinutes(int minutes);
 
   /// No description provided for @playerIngredientsTitle.
   ///
@@ -3397,6 +3391,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Démarrer'**
   String get playerTimerStart;
+
+  /// No description provided for @playerTimerRestart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Relancer'**
+  String get playerTimerRestart;
 
   /// No description provided for @playerTimerReset.
   ///

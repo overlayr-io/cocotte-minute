@@ -1933,11 +1933,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get playerAddTimerCta => 'Add a timer';
 
   @override
-  String get playerNoTimerDetected => 'No timer detected on this step';
-
-  @override
-  String playerTimerDetectedHint(String text) {
-    return 'Timer detected: \"$text\"';
+  String playerTimerDetectedMinutes(int minutes) {
+    String _temp0 = intl.Intl.pluralLogic(
+      minutes,
+      locale: localeName,
+      other: '$minutes minutes',
+      one: '1 minute',
+    );
+    return 'Timer for $_temp0';
   }
 
   @override
@@ -1966,6 +1969,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get playerTimerStart => 'Start';
+
+  @override
+  String get playerTimerRestart => 'Restart';
 
   @override
   String get playerTimerReset => 'Reset';

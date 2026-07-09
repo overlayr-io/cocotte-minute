@@ -66,14 +66,13 @@ class AddTimerButton extends StatelessWidget {
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  Text(
-                    detected == null
-                        ? l10n.playerNoTimerDetected
-                        : l10n.playerTimerDetectedHint(description),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
-                  ),
+                  if (detected != null)
+                    Text(
+                      l10n.playerTimerDetectedMinutes(detected.inMinutes),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
+                    ),
                 ],
               ),
             ),

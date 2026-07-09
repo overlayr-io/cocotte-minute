@@ -1237,10 +1237,10 @@
   "@playerNext": {},
   "playerAddTimerCta": "Ajouter un minuteur",
   "@playerAddTimerCta": {},
-  "playerNoTimerDetected": "Aucun minuteur détecté sur cette étape",
-  "@playerNoTimerDetected": {},
-  "playerTimerDetectedHint": "Minuteur détecté : « {text} »",
-  "@playerTimerDetectedHint": { "placeholders": { "text": { "type": "String" } } },
+  "playerTimerDetectedMinutes": "Minuteur de {minutes, plural, =1{1 minute} other{{minutes} minutes}}",
+  "@playerTimerDetectedMinutes": {
+    "placeholders": { "minutes": { "type": "int" } }
+  },
   "playerIngredientsTitle": "Ingrédients de l'étape",
   "@playerIngredientsTitle": {},
   "playerForServings": "pour {count} pers.",
@@ -1257,6 +1257,8 @@
   "@playerTimerLabel": {},
   "playerTimerStart": "Démarrer",
   "@playerTimerStart": {},
+  "playerTimerRestart": "Relancer",
+  "@playerTimerRestart": {},
   "playerTimerReset": "Réinitialiser",
   "@playerTimerReset": {},
   "playerTimerDetectedAdjustable": "Détecté dans l'étape · ajustable",
