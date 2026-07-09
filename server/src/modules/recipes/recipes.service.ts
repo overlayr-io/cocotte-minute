@@ -13,6 +13,7 @@ import {
   eq,
   ilike,
   inArray,
+  isNotNull,
   isNull,
   notInArray,
   or,
@@ -560,7 +561,7 @@ export class RecipesService {
     const id = row.id;
     const authorId = row.authorId;
 
-    const [ingredientRows, componentRows, categoryRows, tagRows] =
+    const [ingredientRows, componentRows, stepBaseRefRows, categoryRows, tagRows] =
       await Promise.all([
         this.db
           .select({
@@ -573,6 +574,15 @@ export class RecipesService {
           .select({ baseRecipeId: recipeComponents.baseRecipeId })
           .from(recipeComponents)
           .where(eq(recipeComponents.parentRecipeId, id)),
+        // Une recette de base référencée par une étape (base_ref) est aussi
+        // une « sous-recette utilisée », même si elle n'a jamais été ajoutée
+        // explicitement via l'onglet Ingrédients (recipe_components).
+        this.db
+          .select({ baseRecipeId: recipeSteps.baseRecipeRefId })
+          .from(recipeSteps)
+          .where(
+            and(eq(recipeSteps.recipeId, id), isNotNull(recipeSteps.baseRecipeRefId)),
+          ),
         this.db
           .select({ categoryId: recipeCategories.categoryId })
           .from(recipeCategories)
@@ -586,10 +596,11 @@ export class RecipesService {
     const ingredientLines = await this.hydrateIngredients(authorId, ingredientRows);
     const ingredientMap = new Map(ingredientLines.map((l) => [l.id, l]));
     const steps = await this.buildRecipeSteps(id, ingredientMap);
-    const components = await this.summariesByIds(
-      authorId,
-      componentRows.map((r) => r.baseRecipeId),
-    );
+    const componentIds = new Set([
+      ...componentRows.map((r) => r.baseRecipeId),
+      ...stepBaseRefRows.map((r) => r.baseRecipeId!),
+    ]);
+    const components = await this.summariesByIds(authorId, [...componentIds]);
 
     // « Utilisée dans » : relation inverse, pertinente uniquement pour une base.
     let usedIn: RecipeSummaryDto[] = [];

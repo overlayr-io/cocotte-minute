@@ -1084,7 +1084,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recipeIngredientsEmpty => 'No ingredients yet.';
 
   @override
-  String get recipeComponentsSection => 'Sub-recipes used';
+  String get recipeComponentsSection => 'Base recipes used';
 
   @override
   String get recipeUsedInSection => 'Used in';

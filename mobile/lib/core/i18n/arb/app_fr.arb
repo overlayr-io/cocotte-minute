@@ -738,7 +738,7 @@
   "@recipeIngredientsSection": {},
   "recipeIngredientsEmpty": "Aucun ingrédient pour l'instant.",
   "@recipeIngredientsEmpty": {},
-  "recipeComponentsSection": "Sous-recettes utilisées",
+  "recipeComponentsSection": "Recettes de base utilisées",
   "@recipeComponentsSection": {},
   "recipeUsedInSection": "Utilisée dans",
   "@recipeUsedInSection": {},

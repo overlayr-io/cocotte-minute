@@ -411,7 +411,7 @@
 
   "recipeIngredientsSection": "Ingredients",
   "recipeIngredientsEmpty": "No ingredients yet.",
-  "recipeComponentsSection": "Sub-recipes used",
+  "recipeComponentsSection": "Base recipes used",
   "recipeUsedInSection": "Used in",
 
   "recipeComponentsAddCta": "Add a sub-recipe",

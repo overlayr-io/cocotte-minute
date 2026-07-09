@@ -2045,7 +2045,7 @@ abstract class AppLocalizations {
   /// No description provided for @recipeComponentsSection.
   ///
   /// In fr, this message translates to:
-  /// **'Sous-recettes utilisées'**
+  /// **'Recettes de base utilisées'**
   String get recipeComponentsSection;
 
   /// No description provided for @recipeUsedInSection.
