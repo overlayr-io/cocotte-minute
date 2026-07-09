@@ -1,13 +1,18 @@
 import 'package:dio/dio.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/premium/premium_limit_error.dart';
 import '../../recipes/domain/recipe.dart';
 
 /// Erreur portant un message exploitable pour l'UI (snackbar/page d'erreur).
 class SearchRepositoryException implements Exception {
-  const SearchRepositoryException(this.message);
+  const SearchRepositoryException(this.message, {this.premiumLimit});
 
   final String message;
+
+  /// Limite freemium (403 `PREMIUM_LIMIT_SEARCH_CRITERIA`) : l'UI ouvre la
+  /// feuille d'upsell au lieu d'afficher le message brut.
+  final PremiumLimitError? premiumLimit;
 
   @override
   String toString() => 'SearchRepositoryException($message)';
@@ -54,8 +59,17 @@ class SearchRepository {
     final status = e.response?.statusCode;
     if (status == 400 || status == 403 || status == 404 || status == 409) {
       final data = e.response?.data;
+      // 403 structuré { code: PREMIUM_LIMIT_*, limit, current } : porté par
+      // l'exception pour que l'UI ouvre l'upsell adapté.
+      final premiumLimit = PremiumLimitError.fromResponseData(data);
       if (data is Map && data['message'] is String) {
-        return SearchRepositoryException(data['message'] as String);
+        return SearchRepositoryException(
+          data['message'] as String,
+          premiumLimit: premiumLimit,
+        );
+      }
+      if (premiumLimit != null) {
+        return SearchRepositoryException(fallback, premiumLimit: premiumLimit);
       }
     }
     const connectivityErrors = {

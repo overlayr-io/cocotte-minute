@@ -58,6 +58,9 @@ dependencies:
   printing: ^5.15.0
   share_plus: ^13.2.0
   app_links: ^6.3.0
+  # Abonnement premium (RevenueCat) — les deux versions doivent rester alignées.
+  purchases_flutter: ^10.4.1
+  purchases_ui_flutter: ^10.4.1
 
 dev_dependencies:
   flutter_test:

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/auth/auth_bloc.dart';
+import 'core/di/service_locator.dart';
 import 'core/i18n/generated/app_localizations.dart';
 import 'core/i18n/locale_cubit.dart';
+import 'core/premium/premium_cubit.dart';
+import 'core/premium/premium_repository.dart';
 import 'core/navigation/app_navigator.dart';
 import 'core/navigation/deep_link_service.dart';
 import 'core/navigation/main_shell.dart';
@@ -40,6 +43,15 @@ class _CocotteAppState extends State<CocotteApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => AuthBloc()..add(const AuthStarted())),
+        // lazy: false — doit écouter l'AuthBloc dès le démarrage pour
+        // synchroniser logIn/logOut RevenueCat sans attendre une lecture.
+        BlocProvider(
+          lazy: false,
+          create: (context) => PremiumCubit(
+            repository: sl<PremiumRepository>(),
+            authBloc: context.read<AuthBloc>(),
+          )..init(),
+        ),
         BlocProvider(create: (_) => LocaleCubit()..load()),
       ],
       child: BlocBuilder<LocaleCubit, Locale?>(

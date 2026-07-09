@@ -26,7 +26,9 @@ android {
         applicationId = "com.cocotteminute.cocotte_minute"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        // purchases_ui_flutter (RevenueCat Customer Center) exige Android 7.0
+        // (API 24) minimum — on ne fait que relever, jamais abaisser.
+        minSdk = maxOf(flutter.minSdkVersion, 24)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
