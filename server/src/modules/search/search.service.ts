@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { PremiumLimitException } from '../../common/errors/premium-limit.exception';
+import { PremiumService } from '../billing/premium.service';
 import { CategoriesService } from '../categories/categories.service';
 import { PeopleService } from '../people/people.service';
 import {
@@ -27,12 +29,35 @@ export class SearchService {
     private readonly recipesService: RecipesService,
     private readonly categoriesService: CategoriesService,
     private readonly peopleService: PeopleService,
+    private readonly premiumService: PremiumService,
   ) {}
+
+  /** Limite du plan gratuit : critères cumulés max, tous types confondus. */
+  private static readonly FREE_CRITERIA_LIMIT = 6;
 
   async searchRecipes(
     userId: string,
     dto: SearchRecipesDto,
   ): Promise<RecipeSummaryDto[]> {
+    // Garde freemium : total de critères cumulés (texte + dossiers + tags +
+    // personnes) plafonné en gratuit. Comptage AVANT le check premium pour ne
+    // payer la lecture DB que dans le cas rare où le plafond est dépassé.
+    const criteriaCount =
+      (dto.q?.trim() ? 1 : 0) +
+      (dto.categoryIds?.length ?? 0) +
+      (dto.tagIds?.length ?? 0) +
+      (dto.personIds?.length ?? 0);
+    if (
+      criteriaCount > SearchService.FREE_CRITERIA_LIMIT &&
+      !(await this.premiumService.isPremium(userId))
+    ) {
+      throw new PremiumLimitException(
+        'PREMIUM_LIMIT_SEARCH_CRITERIA',
+        SearchService.FREE_CRITERIA_LIMIT,
+        criteriaCount,
+        `Limite gratuite atteinte : ${SearchService.FREE_CRITERIA_LIMIT} critères de recherche maximum. Passe en Pro pour combiner sans limite.`,
+      );
+    }
     const categoryIds =
       dto.categoryIds && dto.categoryIds.length > 0
         ? await this.categoriesService.expandWithDescendants(

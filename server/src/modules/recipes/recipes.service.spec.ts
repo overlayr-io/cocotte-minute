@@ -4,7 +4,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
+import { PremiumLimitException } from '../../common/errors/premium-limit.exception';
 import { DrizzleDB } from '../../db/drizzle.provider';
+import { PremiumService } from '../billing/premium.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { RecipesService } from './recipes.service';
 
@@ -66,6 +68,10 @@ const recipeRow = (over: Partial<Record<string, unknown>> = {}) => ({
 
 const ingredientsStub = {} as IngredientsService;
 
+/** Stub premium : gratuit par défaut (les gardes freemium s'appliquent). */
+const premiumStub = (isPremium = false) =>
+  ({ isPremium: jest.fn().mockResolvedValue(isPremium) }) as unknown as PremiumService;
+
 const ingredientDto = (over: Partial<Record<string, unknown>> = {}) => ({
   id: 'ing-1',
   name: 'Tomate',
@@ -81,7 +87,7 @@ describe('RecipesService', () => {
   describe('create', () => {
     it('insère et renvoie un résumé', async () => {
       const { db } = makeDb([[recipeRow()]]);
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       const dto = await service.create(USER, { name: 'Pâtes à la sauce tomate' });
       expect(dto.id).toBe('rec-1');
       expect(dto.isBase).toBe(false);
@@ -93,7 +99,7 @@ describe('RecipesService', () => {
     it('mappe les lignes jointes du pivot en résumés', async () => {
       // select().from(recipeCategories).innerJoin(recipes) → [{ recipe }]
       const { db } = makeDb([[{ recipe: recipeRow() }]]);
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
 
       const result = await service.listByCategory(USER, 'cat-1');
 
@@ -105,7 +111,7 @@ describe('RecipesService', () => {
   describe('softDelete', () => {
     it('lève NotFound si la recette n’appartient pas à l’utilisateur', async () => {
       const { db } = makeDb([[recipeRow({ authorId: 'someone-else' })]]);
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       await expect(service.softDelete(USER, 'rec-1')).rejects.toBeInstanceOf(
         NotFoundException,
       );
@@ -119,7 +125,7 @@ describe('RecipesService', () => {
         [recipeRow({ isBase: true })],
         [{ parentRecipeId: 'rec-2' }],
       ]);
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       await expect(
         service.update(USER, 'rec-1', { isBase: false }),
       ).rejects.toBeInstanceOf(ConflictException);
@@ -131,7 +137,7 @@ describe('RecipesService', () => {
         [], // isUsedAsComponent → aucune
         [recipeRow({ isBase: false })], // update returning
       ]);
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       const dto = await service.update(USER, 'rec-1', { isBase: false });
       expect(dto.isBase).toBe(false);
     });
@@ -140,7 +146,7 @@ describe('RecipesService', () => {
   describe('addComponent', () => {
     it('refuse l’auto-référence', async () => {
       const { db } = makeDb([]);
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       await expect(
         service.addComponent(USER, 'rec-1', 'rec-1'),
       ).rejects.toBeInstanceOf(ConflictException);
@@ -152,7 +158,7 @@ describe('RecipesService', () => {
         [recipeRow()],
         [recipeRow({ id: 'rec-2', isBase: false })],
       ]);
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       await expect(
         service.addComponent(USER, 'rec-1', 'rec-2'),
       ).rejects.toBeInstanceOf(ConflictException);
@@ -164,7 +170,7 @@ describe('RecipesService', () => {
         [recipeRow({ id: 'rec-2', isBase: true })], // base
         undefined, // insert
       ]);
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       await service.addComponent(USER, 'rec-1', 'rec-2');
       expect(calls.some((c) => c.op === 'insert')).toBe(true);
     });
@@ -176,7 +182,7 @@ describe('RecipesService', () => {
       const ingredients = {
         listByIds: jest.fn().mockResolvedValue([]),
       } as unknown as IngredientsService;
-      const service = new RecipesService(db, ingredients);
+      const service = new RecipesService(db, ingredients, premiumStub());
       await expect(
         service.addIngredient(USER, 'rec-1', 'ing-1', 120),
       ).rejects.toBeInstanceOf(NotFoundException);
@@ -190,7 +196,7 @@ describe('RecipesService', () => {
       const ingredients = {
         listByIds: jest.fn().mockResolvedValue([ingredientDto()]),
       } as unknown as IngredientsService;
-      const service = new RecipesService(db, ingredients);
+      const service = new RecipesService(db, ingredients, premiumStub());
       await service.addIngredient(USER, 'rec-1', 'ing-1', 2.5);
       expect(calls.some((c) => c.op === 'insert')).toBe(true);
     });
@@ -202,7 +208,7 @@ describe('RecipesService', () => {
         [recipeRow()], // findOwnedOrFail
         [], // update returning → aucune ligne
       ]);
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       await expect(
         service.updateIngredientQuantity(USER, 'rec-1', 'ing-1', 80),
       ).rejects.toBeInstanceOf(NotFoundException);
@@ -213,16 +219,92 @@ describe('RecipesService', () => {
         [recipeRow()], // findOwnedOrFail
         [{ ingredientId: 'ing-1' }], // update returning
       ]);
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       await service.updateIngredientQuantity(USER, 'rec-1', 'ing-1', 80);
       expect(calls.some((c) => c.op === 'update')).toBe(true);
+    });
+  });
+
+  describe('garde freemium — 5 recettes de base max', () => {
+    it('refuse la 6e recette de base en gratuit (403 structuré)', async () => {
+      const { db } = makeDb([[{ n: 5 }]]); // count(is_base) = 5
+      const service = new RecipesService(db, ingredientsStub, premiumStub(false));
+
+      const err = await service
+        .create(USER, { name: 'Fond de veau', isBase: true })
+        .catch((e: PremiumLimitException) => e);
+
+      expect(err).toBeInstanceOf(PremiumLimitException);
+      expect((err as PremiumLimitException).getResponse()).toMatchObject({
+        code: 'PREMIUM_LIMIT_BASE_RECIPES',
+        limit: 5,
+        current: 5,
+      });
+    });
+
+    it('autorise la création de base sous la limite sans lire le statut premium', async () => {
+      const { db } = makeDb([
+        [{ n: 4 }], // count
+        [recipeRow({ isBase: true })], // insert returning
+      ]);
+      const premium = premiumStub(false);
+      const service = new RecipesService(db, ingredientsStub, premium);
+
+      const dto = await service.create(USER, { name: 'Fond de veau', isBase: true });
+
+      expect(dto.isBase).toBe(true);
+      expect((premium as unknown as { isPremium: jest.Mock }).isPremium).not.toHaveBeenCalled();
+    });
+
+    it('ne compte pas les recettes normales (pas de garde sans isBase)', async () => {
+      const { db, calls } = makeDb([[recipeRow()]]); // insert direct
+      const service = new RecipesService(db, ingredientsStub, premiumStub(false));
+
+      await service.create(USER, { name: 'Pâtes' });
+
+      // Aucun select de comptage : premier appel = insert.
+      expect(calls[0]).toEqual({ op: 'insert' });
+    });
+
+    it('laisse passer au-delà de la limite en premium', async () => {
+      const { db } = makeDb([
+        [{ n: 12 }], // count
+        [recipeRow({ isBase: true })], // insert returning
+      ]);
+      const service = new RecipesService(db, ingredientsStub, premiumStub(true));
+
+      const dto = await service.create(USER, { name: 'Fond de veau', isBase: true });
+      expect(dto.isBase).toBe(true);
+    });
+
+    it('applique la garde sur la bascule normale→base (update)', async () => {
+      const { db } = makeDb([
+        [recipeRow({ isBase: false })], // findOwnedOrFail
+        [{ n: 5 }], // count
+      ]);
+      const service = new RecipesService(db, ingredientsStub, premiumStub(false));
+
+      await expect(service.update(USER, 'rec-1', { isBase: true })).rejects.toBeInstanceOf(
+        PremiumLimitException,
+      );
+    });
+
+    it('ignore la garde quand la recette est déjà de base (update sans bascule)', async () => {
+      const { db } = makeDb([
+        [recipeRow({ isBase: true })], // findOwnedOrFail
+        [recipeRow({ isBase: true, name: 'Renommée' })], // update returning
+      ]);
+      const service = new RecipesService(db, ingredientsStub, premiumStub(false));
+
+      const dto = await service.update(USER, 'rec-1', { isBase: true, name: 'Renommée' });
+      expect(dto.isBase).toBe(true);
     });
   });
 
   describe('addStep', () => {
     it('refuse une référence de base avec une description', async () => {
       const { db } = makeDb([[recipeRow()]]); // findOwnedOrFail
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       await expect(
         service.addStep(USER, 'rec-1', {
           baseRecipeRefId: 'rec-2',
@@ -233,7 +315,7 @@ describe('RecipesService', () => {
 
     it('refuse l’auto-référence en étape', async () => {
       const { db } = makeDb([[recipeRow()]]); // findOwnedOrFail
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       await expect(
         service.addStep(USER, 'rec-1', { baseRecipeRefId: 'rec-1' }),
       ).rejects.toBeInstanceOf(ConflictException);
@@ -241,7 +323,7 @@ describe('RecipesService', () => {
 
     it('refuse une étape texte sans description', async () => {
       const { db } = makeDb([[recipeRow()]]); // findOwnedOrFail
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       await expect(
         service.addStep(USER, 'rec-1', { description: '   ' }),
       ).rejects.toBeInstanceOf(BadRequestException);
@@ -254,7 +336,7 @@ describe('RecipesService', () => {
         [recipeRow()], // findOwnedOrFail
         [{ id: 'step-1', recipeId: 'rec-1', baseRecipeRefId: 'rec-2' }], // findStepOrFail
       ]);
-      const service = new RecipesService(db, ingredientsStub);
+      const service = new RecipesService(db, ingredientsStub, premiumStub());
       await expect(
         service.updateStep(USER, 'rec-1', 'step-1', { description: 'x' }),
       ).rejects.toBeInstanceOf(BadRequestException);

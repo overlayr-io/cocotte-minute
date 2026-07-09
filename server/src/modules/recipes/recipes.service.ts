@@ -19,6 +19,7 @@ import {
   sql,
 } from 'drizzle-orm';
 
+import { PremiumLimitException } from '../../common/errors/premium-limit.exception';
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import {
   DEFAULT_INGREDIENT_QUANTITY,
@@ -32,6 +33,7 @@ import {
   type RecipeRow,
   type RecipeStepRow,
 } from '../../db/schema/recipes.schema';
+import { PremiumService } from '../billing/premium.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { isSeasonal } from './data/seasonality';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
@@ -197,7 +199,38 @@ export class RecipesService {
     // Isolation des domaines : Recipes hydrate/valide les ingrédients via le
     // service Ingredients, jamais en accédant à son schéma.
     private readonly ingredientsService: IngredientsService,
+    private readonly premiumService: PremiumService,
   ) {}
+
+  /** Limite du plan gratuit : nombre max de recettes de base (cf. premium-version.md). */
+  private static readonly FREE_BASE_RECIPES_LIMIT = 5;
+
+  /**
+   * Garde freemium : bloque la création/bascule d'une recette de base au-delà
+   * de la limite gratuite. Vérifiée serveur (jamais uniquement UI), ignorée
+   * pour les comptes premium.
+   */
+  private async assertBaseRecipeQuota(userId: string): Promise<void> {
+    const [row] = await this.db
+      .select({ n: sql<number>`count(*)::int` })
+      .from(recipes)
+      .where(
+        and(
+          eq(recipes.authorId, userId),
+          eq(recipes.isBase, true),
+          isNull(recipes.deletedAt),
+        ),
+      );
+    const current = row?.n ?? 0;
+    if (current < RecipesService.FREE_BASE_RECIPES_LIMIT) return;
+    if (await this.premiumService.isPremium(userId)) return;
+    throw new PremiumLimitException(
+      'PREMIUM_LIMIT_BASE_RECIPES',
+      RecipesService.FREE_BASE_RECIPES_LIMIT,
+      current,
+      `Limite gratuite atteinte : ${RecipesService.FREE_BASE_RECIPES_LIMIT} recettes de base maximum. Passe en Pro pour en créer sans limite.`,
+    );
+  }
 
   /**
    * Mes recettes (les plus récentes d'abord), hors supprimées. Options pour la
@@ -474,6 +507,7 @@ export class RecipesService {
   }
 
   async create(userId: string, dto: CreateRecipeDto): Promise<RecipeSummaryDto> {
+    if (dto.isBase === true) await this.assertBaseRecipeQuota(userId);
     const [row] = await this.db
       .insert(recipes)
       .values({
@@ -663,6 +697,11 @@ export class RecipesService {
       throw new ConflictException(
         'Cette recette de base est utilisée comme composant : impossible de la repasser en recette normale',
       );
+    }
+
+    // Garde freemium : la bascule normale→base compte comme une création de base.
+    if (dto.isBase === true && !current.isBase) {
+      await this.assertBaseRecipeQuota(userId);
     }
 
     const patch: Partial<RecipeRow> = {};

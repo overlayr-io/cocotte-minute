@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Inject,
   Injectable,
   Logger,
@@ -8,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { and, desc, eq, inArray, isNull, sql } from 'drizzle-orm';
 
+import { PremiumLimitException } from '../../common/errors/premium-limit.exception';
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import {
   shoppingListItems,
@@ -17,6 +17,7 @@ import {
   type ShoppingListItemRow,
   type ShoppingListRow,
 } from '../../db/schema/shopping-lists.schema';
+import { PremiumService } from '../billing/premium.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { RecipesService } from '../recipes/recipes.service';
 import { CreateShoppingListDto } from './dto/create-shopping-list.dto';
@@ -93,6 +94,7 @@ export class ShoppingListsService {
     // alternatives via le service Ingredients — jamais d'accès à leur schéma.
     private readonly recipesService: RecipesService,
     private readonly ingredientsService: IngredientsService,
+    private readonly premiumService: PremiumService,
   ) {}
 
   /** Mes listes actives (non supprimées), les plus récentes d'abord. */
@@ -171,7 +173,10 @@ export class ShoppingListsService {
    * gratuit (il faut vider l'actuelle avant d'en créer une nouvelle).
    */
   async generate(userId: string, dto: CreateShoppingListDto): Promise<ShoppingListDetailDto> {
-    await this.assertNoActiveList(userId);
+    // Garde freemium : levée pour les comptes premium (listes multiples).
+    if (!(await this.premiumService.isPremium(userId))) {
+      await this.assertNoActiveList(userId);
+    }
 
     const selections = dto.recipes;
     const recipeData = await this.recipesService.listForShoppingList(
@@ -453,8 +458,11 @@ export class ShoppingListsService {
       )
       .limit(1);
     if (active) {
-      throw new ConflictException(
-        'Tu as déjà une liste active : vide-la avant d’en créer une nouvelle (plusieurs listes = Premium).',
+      throw new PremiumLimitException(
+        'PREMIUM_LIMIT_SHOPPING_LISTS',
+        1,
+        1,
+        'Tu as déjà une liste active : vide-la avant d’en créer une nouvelle (plusieurs listes = Pro).',
       );
     }
   }
