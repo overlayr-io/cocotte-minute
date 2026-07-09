@@ -1,10 +1,16 @@
 ---
 feature: premium-version
-status: planned
+status: in-progress
 scope: v1 (application réelle des limites freemium + intégration paiement RevenueCat + écran d'offre)
 depends_on: [auth, limite-freemium, recette-base, liste-courses-auto, recherche-avancee]
 order: 11
 ---
+
+> **État 2026-07-09** : code server + mobile livré et testé (migration 0013,
+> webhook, limites, PremiumCubit, paywall, upsells). Reste : config dashboard
+> RevenueCat (entitlement `pro`, produits, webhook), produits App Store
+> Connect / Play Console, `npx drizzle-kit push`, env serveur
+> (`REVENUECAT_WEBHOOK_SECRET`), tests d'achat sur device. → `done` après ça.
 
 # Version premium — abonnement, écran d'offre et application des limites
 
