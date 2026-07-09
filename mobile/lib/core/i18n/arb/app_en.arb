@@ -38,6 +38,7 @@
   "keepDataResetSubtitle": "Erase guest data",
   "keepDataConfirm": "Continue",
   "keepDataLater": "Later",
+  "authGuestDataResetSuccess": "Data reset.",
 
   "navHome": "Home",
   "navRecipes": "Recipes",

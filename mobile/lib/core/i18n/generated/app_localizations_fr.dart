@@ -125,6 +125,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get keepDataLater => 'Plus tard';
 
   @override
+  String get authGuestDataResetSuccess => 'Données réinitialisées.';
+
+  @override
   String get navHome => 'Accueil';
 
   @override

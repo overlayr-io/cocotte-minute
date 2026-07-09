@@ -124,6 +124,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get keepDataLater => 'Later';
 
   @override
+  String get authGuestDataResetSuccess => 'Data reset.';
+
+  @override
   String get navHome => 'Home';
 
   @override

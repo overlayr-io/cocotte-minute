@@ -106,6 +106,8 @@
   "@keepDataConfirm": {},
   "keepDataLater": "Plus tard",
   "@keepDataLater": {},
+  "authGuestDataResetSuccess": "Données réinitialisées.",
+  "@authGuestDataResetSuccess": {},
 
   "navHome": "Accueil",
   "@navHome": { "description": "Onglet de navigation Accueil" },

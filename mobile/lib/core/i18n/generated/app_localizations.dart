@@ -326,6 +326,12 @@ abstract class AppLocalizations {
   /// **'Plus tard'**
   String get keepDataLater;
 
+  /// No description provided for @authGuestDataResetSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données réinitialisées.'**
+  String get authGuestDataResetSuccess;
+
   /// Onglet de navigation Accueil
   ///
   /// In fr, this message translates to:
