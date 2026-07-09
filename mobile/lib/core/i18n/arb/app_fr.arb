@@ -826,10 +826,6 @@
   "@recipeStepIngredientsChip": {
     "placeholders": { "count": { "type": "int" } }
   },
-  "recipeStepBaseRefLabel": "{name} · recette de base",
-  "@recipeStepBaseRefLabel": {
-    "placeholders": { "name": { "type": "String" } }
-  },
   "recipeStepFrozenNote": "Étapes figées, modifiables depuis leur recette",
   "@recipeStepFrozenNote": {},
   "recipeStepRemoveRef": "Retirer la référence",

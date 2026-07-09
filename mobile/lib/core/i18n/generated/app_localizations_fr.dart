@@ -1213,11 +1213,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String recipeStepBaseRefLabel(String name) {
-    return '$name · recette de base';
-  }
-
-  @override
   String get recipeStepFrozenNote =>
       'Étapes figées, modifiables depuis leur recette';
 

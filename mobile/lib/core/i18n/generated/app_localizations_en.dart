@@ -1207,11 +1207,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String recipeStepBaseRefLabel(String name) {
-    return '$name · base recipe';
-  }
-
-  @override
   String get recipeStepFrozenNote => 'Steps frozen, editable from their recipe';
 
   @override

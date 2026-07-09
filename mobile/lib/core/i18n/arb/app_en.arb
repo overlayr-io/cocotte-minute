@@ -472,10 +472,6 @@
   "@recipeStepIngredientsChip": {
     "placeholders": { "count": { "type": "int" } }
   },
-  "recipeStepBaseRefLabel": "{name} · base recipe",
-  "@recipeStepBaseRefLabel": {
-    "placeholders": { "name": { "type": "String" } }
-  },
   "recipeStepFrozenNote": "Steps frozen, editable from their recipe",
   "recipeStepRemoveRef": "Remove reference",
 

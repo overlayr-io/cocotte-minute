@@ -274,8 +274,13 @@ class _StepItem extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     // Numérotation continue des sous-étapes figées.
     var n = startNumber;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 15),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.primaryTint,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -291,7 +296,7 @@ class _StepItem extends StatelessWidget {
                 child: GestureDetector(
                   onTap: onRemoveRef,
                   child: Text(
-                    l10n.recipeStepBaseRefLabel(step.baseRecipeName),
+                    step.baseRecipeName,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(

@@ -2234,12 +2234,6 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 ingrédient} other{{count} ingrédients}}'**
   String recipeStepIngredientsChip(int count);
 
-  /// No description provided for @recipeStepBaseRefLabel.
-  ///
-  /// In fr, this message translates to:
-  /// **'{name} · recette de base'**
-  String recipeStepBaseRefLabel(String name);
-
   /// No description provided for @recipeStepFrozenNote.
   ///
   /// In fr, this message translates to:
