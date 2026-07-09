@@ -8,6 +8,7 @@ import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { validateEnv } from './config/env.validation';
 import { DbModule } from './db/db.module';
 import { AccountModule } from './modules/account/account.module';
+import { BillingModule } from './modules/billing/billing.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { DiscoveryModule } from './modules/discovery/discovery.module';
 import { HealthModule } from './modules/health/health.module';
@@ -83,6 +84,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     SharesModule,
     AccountModule,
     HelpModule,
+    BillingModule,
   ],
   providers: [
     // Filtre global : journalise et normalise toutes les erreurs.

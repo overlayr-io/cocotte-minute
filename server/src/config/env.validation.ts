@@ -1,5 +1,5 @@
 import { plainToInstance, Type } from 'class-transformer';
-import { IsInt, IsString, IsUrl, Max, Min, validateSync } from 'class-validator';
+import { IsInt, IsOptional, IsString, IsUrl, Max, Min, validateSync } from 'class-validator';
 
 /**
  * Validation stricte des variables d'environnement au démarrage.
@@ -32,6 +32,23 @@ export class EnvironmentVariables {
   @Min(1)
   @Max(65535)
   PORT = 3000;
+
+  /**
+   * Valeur attendue dans le header `Authorization` des webhooks RevenueCat
+   * (configurée à l'identique dans le dashboard RevenueCat → Webhooks).
+   * Obligatoire : sans elle le endpoint accepterait des événements forgés.
+   */
+  @IsString()
+  REVENUECAT_WEBHOOK_SECRET!: string;
+
+  /**
+   * Clé API secrète RevenueCat (`sk_...`) pour l'API REST v1 — utilisée
+   * uniquement pour la suppression RGPD du subscriber. Optionnelle : si
+   * absente, la suppression RevenueCat est ignorée (best-effort, loggé).
+   */
+  @IsOptional()
+  @IsString()
+  REVENUECAT_API_KEY?: string;
 }
 
 export function validateEnv(config: Record<string, unknown>): EnvironmentVariables {
