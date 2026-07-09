@@ -124,7 +124,7 @@ class AccountTile extends StatelessWidget {
                 ],
               ),
             ),
-            if (trailing != null) trailing!,
+            ?trailing,
             if (showChevron) ...[
               const SizedBox(width: 6),
               const Icon(
