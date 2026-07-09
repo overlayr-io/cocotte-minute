@@ -3,13 +3,22 @@ import '../../domain/recipe.dart';
 
 /// Variantes « mot entier » d'un nom d'ingrédient replié, pour tolérer un
 /// pluriel simple (français) dans les deux sens (nom singulier ↔ texte pluriel).
+/// Ne retient que le premier mot significatif du nom : un nom composé d'une
+/// base + qualificatif(s) (« Beurre doux », « Farine T55 ») est ainsi détecté
+/// dès que le texte mentionne juste la base (« Beurre », « Farine »). Ce
+/// choix privilégie le rappel : deux variantes d'un même ingrédient de base
+/// (« Sucre roux » / « Sucre glace ») peuvent toutes les deux matcher un
+/// texte qui n'en mentionne qu'une — accepté (traitement local, ajustable
+/// manuellement par l'utilisateur ensuite).
 Set<String> _forms(String folded) {
-  final name = folded.trim();
-  if (name.isEmpty) return const {};
-  final forms = <String>{name, '${name}s', '${name}x'};
-  // Nom déjà au pluriel : ajoute la forme singulière.
-  if (name.length > 2 && (name.endsWith('s') || name.endsWith('x'))) {
-    forms.add(name.substring(0, name.length - 1));
+  final words = folded.trim().split(' ');
+  final firstWord = words.isEmpty ? '' : words.first;
+  if (firstWord.isEmpty) return const {};
+  final forms = <String>{firstWord, '${firstWord}s', '${firstWord}x'};
+  // Mot déjà au pluriel : ajoute la forme singulière.
+  if (firstWord.length > 2 &&
+      (firstWord.endsWith('s') || firstWord.endsWith('x'))) {
+    forms.add(firstWord.substring(0, firstWord.length - 1));
   }
   return forms;
 }
