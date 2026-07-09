@@ -17,4 +17,10 @@ export class CreateIngredientDto {
   @IsUrl({ require_tld: false })
   @MaxLength(2048)
   imageUrl?: string;
+
+  /** Emoji illustrant l'ingrédient (exclusif avec imageUrl, tranché côté service). */
+  @IsOptional()
+  @IsString()
+  @MaxLength(16)
+  emoji?: string;
 }

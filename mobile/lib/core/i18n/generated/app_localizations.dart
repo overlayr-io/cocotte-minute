@@ -1754,6 +1754,126 @@ abstract class AppLocalizations {
   /// **'« {name} » sera supprimé. Les recettes qu\'il contient ne sont pas supprimées.'**
   String categoryDeleteConfirmBody(String name);
 
+  /// No description provided for @recipesOtherFolderTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autres'**
+  String get recipesOtherFolderTitle;
+
+  /// No description provided for @recipesOtherFolderEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette sans dossier. Tout est bien rangé !'**
+  String get recipesOtherFolderEmpty;
+
+  /// No description provided for @recipeMenuAssignFolders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer des dossiers'**
+  String get recipeMenuAssignFolders;
+
+  /// No description provided for @recipeMenuAssignTags.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer des tags'**
+  String get recipeMenuAssignTags;
+
+  /// No description provided for @recipeMenuAssignPerson.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer une personne'**
+  String get recipeMenuAssignPerson;
+
+  /// No description provided for @recipePeopleSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associer une personne'**
+  String get recipePeopleSheetTitle;
+
+  /// No description provided for @recipePeopleSheetSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionne les personnes pour qui cette recette est pensée.'**
+  String get recipePeopleSheetSubtitle;
+
+  /// No description provided for @recipePeopleSheetEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune personne pour l\'instant. Ajoute des membres de ta famille depuis l\'onglet Compte.'**
+  String get recipePeopleSheetEmpty;
+
+  /// No description provided for @personRecipesLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ses recettes'**
+  String get personRecipesLabel;
+
+  /// No description provided for @personRecipesAddTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter des recettes'**
+  String get personRecipesAddTooltip;
+
+  /// No description provided for @personRecipesRemoveTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer la recette'**
+  String get personRecipesRemoveTooltip;
+
+  /// No description provided for @personRecipesEmptyHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette associée. Ajoute ses plats préférés avec le bouton +.'**
+  String get personRecipesEmptyHint;
+
+  /// No description provided for @personRecipesPickTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter des recettes'**
+  String get personRecipesPickTitle;
+
+  /// No description provided for @personRecipesPickSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une recette…'**
+  String get personRecipesPickSearchHint;
+
+  /// No description provided for @personRecipesPickEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette à ajouter.'**
+  String get personRecipesPickEmpty;
+
+  /// No description provided for @personRecipesPickAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Ajouter} =1{Ajouter 1 recette} other{Ajouter {count} recettes}}'**
+  String personRecipesPickAdd(num count);
+
+  /// No description provided for @recipesViewList.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vue liste'**
+  String get recipesViewList;
+
+  /// No description provided for @recipesViewFolders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vue dossiers'**
+  String get recipesViewFolders;
+
+  /// No description provided for @recipesListFilterHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer les recettes…'**
+  String get recipesListFilterHint;
+
+  /// No description provided for @recipesListEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette ne correspond.'**
+  String get recipesListEmpty;
+
   /// No description provided for @recipesTitle.
   ///
   /// In fr, this message translates to:
@@ -2564,6 +2684,48 @@ abstract class AppLocalizations {
   /// **'Annuler'**
   String get commonCancel;
 
+  /// No description provided for @ingredientVisualEmoji.
+  ///
+  /// In fr, this message translates to:
+  /// **'Emoji'**
+  String get ingredientVisualEmoji;
+
+  /// No description provided for @ingredientVisualImage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Image'**
+  String get ingredientVisualImage;
+
+  /// No description provided for @ingredientEmojiPick.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un emoji'**
+  String get ingredientEmojiPick;
+
+  /// No description provided for @ingredientEmojiSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un emoji'**
+  String get ingredientEmojiSheetTitle;
+
+  /// No description provided for @ingredientEmojiCustomHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ou tape le tien 🥕'**
+  String get ingredientEmojiCustomHint;
+
+  /// No description provided for @commonValidate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Valider'**
+  String get commonValidate;
+
+  /// No description provided for @recipeStepIngredientsAutoHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Détectés depuis ton texte'**
+  String get recipeStepIngredientsAutoHint;
+
   /// No description provided for @commonSave.
   ///
   /// In fr, this message translates to:
@@ -3043,48 +3205,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Connexion nécessaire pour charger les alternatives.'**
   String get shoppingAltOffline;
-
-  /// No description provided for @shoppingPremiumBadge.
-  ///
-  /// In fr, this message translates to:
-  /// **'Premium'**
-  String get shoppingPremiumBadge;
-
-  /// No description provided for @shoppingPremiumNewList.
-  ///
-  /// In fr, this message translates to:
-  /// **'Nouvelle liste depuis mes recettes'**
-  String get shoppingPremiumNewList;
-
-  /// No description provided for @shoppingPremiumActiveLists.
-  ///
-  /// In fr, this message translates to:
-  /// **'Listes actives'**
-  String get shoppingPremiumActiveLists;
-
-  /// No description provided for @shoppingPremiumUnlimited.
-  ///
-  /// In fr, this message translates to:
-  /// **'Illimité'**
-  String get shoppingPremiumUnlimited;
-
-  /// No description provided for @shoppingPremiumHistory.
-  ///
-  /// In fr, this message translates to:
-  /// **'Historique'**
-  String get shoppingPremiumHistory;
-
-  /// No description provided for @shoppingPremiumReopen.
-  ///
-  /// In fr, this message translates to:
-  /// **'Rouvrir'**
-  String get shoppingPremiumReopen;
-
-  /// No description provided for @shoppingPremiumPreviewBanner.
-  ///
-  /// In fr, this message translates to:
-  /// **'Aperçu Premium — non actif en version gratuite.'**
-  String get shoppingPremiumPreviewBanner;
 
   /// No description provided for @shoppingAisleFruitsLegumes.
   ///
@@ -3679,6 +3799,396 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'English'**
   String get languageEnglish;
+
+  /// No description provided for @premiumBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pro'**
+  String get premiumBadge;
+
+  /// No description provided for @premiumHeroKicker.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cocotte Minute Pro'**
+  String get premiumHeroKicker;
+
+  /// No description provided for @premiumHeroTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cuisine sans limites'**
+  String get premiumHeroTitle;
+
+  /// No description provided for @premiumHeroBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recettes de base illimitées, listes de courses multiples avec historique et recherche sans plafond.'**
+  String get premiumHeroBody;
+
+  /// No description provided for @premiumCompareTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gratuit vs Pro'**
+  String get premiumCompareTitle;
+
+  /// No description provided for @premiumCompareFreeColumn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gratuit'**
+  String get premiumCompareFreeColumn;
+
+  /// No description provided for @premiumCompareProColumn.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pro'**
+  String get premiumCompareProColumn;
+
+  /// No description provided for @premiumCompareRowRecipes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recettes'**
+  String get premiumCompareRowRecipes;
+
+  /// No description provided for @premiumCompareRowBaseRecipes.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recettes de base'**
+  String get premiumCompareRowBaseRecipes;
+
+  /// No description provided for @premiumCompareRowShoppingLists.
+  ///
+  /// In fr, this message translates to:
+  /// **'Listes de courses'**
+  String get premiumCompareRowShoppingLists;
+
+  /// No description provided for @premiumCompareRowHistory.
+  ///
+  /// In fr, this message translates to:
+  /// **'Historique des listes'**
+  String get premiumCompareRowHistory;
+
+  /// No description provided for @premiumCompareRowSearch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recherche avancée'**
+  String get premiumCompareRowSearch;
+
+  /// No description provided for @premiumCompareUnlimited.
+  ///
+  /// In fr, this message translates to:
+  /// **'Illimité'**
+  String get premiumCompareUnlimited;
+
+  /// No description provided for @premiumCompareBaseFree.
+  ///
+  /// In fr, this message translates to:
+  /// **'5 max'**
+  String get premiumCompareBaseFree;
+
+  /// No description provided for @premiumCompareListsFree.
+  ///
+  /// In fr, this message translates to:
+  /// **'1 active'**
+  String get premiumCompareListsFree;
+
+  /// No description provided for @premiumCompareListsPro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Multiples'**
+  String get premiumCompareListsPro;
+
+  /// No description provided for @premiumCompareHistoryFree.
+  ///
+  /// In fr, this message translates to:
+  /// **'—'**
+  String get premiumCompareHistoryFree;
+
+  /// No description provided for @premiumCompareHistoryPro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Inclus'**
+  String get premiumCompareHistoryPro;
+
+  /// No description provided for @premiumCompareSearchFree.
+  ///
+  /// In fr, this message translates to:
+  /// **'6 critères max'**
+  String get premiumCompareSearchFree;
+
+  /// No description provided for @premiumCompareSearchPro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Illimités'**
+  String get premiumCompareSearchPro;
+
+  /// No description provided for @premiumPlanMonthly.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mensuel'**
+  String get premiumPlanMonthly;
+
+  /// No description provided for @premiumPlanAnnual.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuel'**
+  String get premiumPlanAnnual;
+
+  /// No description provided for @premiumPerMonthSuffix.
+  ///
+  /// In fr, this message translates to:
+  /// **'par mois'**
+  String get premiumPerMonthSuffix;
+
+  /// No description provided for @premiumPerYearSuffix.
+  ///
+  /// In fr, this message translates to:
+  /// **'par an'**
+  String get premiumPerYearSuffix;
+
+  /// No description provided for @premiumPricePerMonth.
+  ///
+  /// In fr, this message translates to:
+  /// **'{price}/mois'**
+  String premiumPricePerMonth(String price);
+
+  /// No description provided for @premiumPricePerYear.
+  ///
+  /// In fr, this message translates to:
+  /// **'{price}/an'**
+  String premiumPricePerYear(String price);
+
+  /// No description provided for @premiumSavingsBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'-{percent} %'**
+  String premiumSavingsBadge(int percent);
+
+  /// No description provided for @premiumTrialMention.
+  ///
+  /// In fr, this message translates to:
+  /// **'{duration} d\'essai gratuit, puis {price}'**
+  String premiumTrialMention(String duration, String price);
+
+  /// No description provided for @premiumDurationDays.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, one{1 jour} other{{count} jours}}'**
+  String premiumDurationDays(int count);
+
+  /// No description provided for @premiumDurationWeeks.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, one{1 semaine} other{{count} semaines}}'**
+  String premiumDurationWeeks(int count);
+
+  /// No description provided for @premiumDurationMonths.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, one{1 mois} other{{count} mois}}'**
+  String premiumDurationMonths(int count);
+
+  /// No description provided for @premiumDurationYears.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, one{1 an} other{{count} ans}}'**
+  String premiumDurationYears(int count);
+
+  /// No description provided for @premiumSubscribeCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'S\'abonner'**
+  String get premiumSubscribeCta;
+
+  /// No description provided for @premiumRestore.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restaurer mes achats'**
+  String get premiumRestore;
+
+  /// No description provided for @premiumGuestTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Crée ton compte pour passer en Pro'**
+  String get premiumGuestTitle;
+
+  /// No description provided for @premiumGuestBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'abonnement Pro est lié à un compte inscrit : crée le tien pour t\'abonner et retrouver tes recettes partout.'**
+  String get premiumGuestBody;
+
+  /// No description provided for @premiumOfferingsError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible de charger les offres. Vérifie ta connexion et réessaie.'**
+  String get premiumOfferingsError;
+
+  /// No description provided for @premiumOfferingsEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune offre n\'est disponible pour le moment. Réessaie plus tard.'**
+  String get premiumOfferingsEmpty;
+
+  /// No description provided for @premiumPurchasePending.
+  ///
+  /// In fr, this message translates to:
+  /// **'Achat en attente de validation — l\'accès Pro s\'activera automatiquement.'**
+  String get premiumPurchasePending;
+
+  /// No description provided for @premiumPurchaseFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'achat n\'a pas abouti. Réessaie.'**
+  String get premiumPurchaseFailed;
+
+  /// No description provided for @premiumRestoreNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun abonnement à restaurer sur ce compte.'**
+  String get premiumRestoreNone;
+
+  /// No description provided for @premiumSuccessTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bienvenue dans Cocotte Minute Pro !'**
+  String get premiumSuccessTitle;
+
+  /// No description provided for @premiumSuccessBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes les limites sont levées. Bonne cuisine !'**
+  String get premiumSuccessBody;
+
+  /// No description provided for @premiumAlreadyProTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu es déjà Pro'**
+  String get premiumAlreadyProTitle;
+
+  /// No description provided for @premiumAlreadyProBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Merci de soutenir Cocotte Minute. Ton abonnement se gère directement depuis le store.'**
+  String get premiumAlreadyProBody;
+
+  /// No description provided for @premiumManageSubscription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer mon abonnement'**
+  String get premiumManageSubscription;
+
+  /// No description provided for @accountSectionSubscription.
+  ///
+  /// In fr, this message translates to:
+  /// **'Abonnement'**
+  String get accountSectionSubscription;
+
+  /// No description provided for @accountRowPremium.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cocotte Minute Pro'**
+  String get accountRowPremium;
+
+  /// No description provided for @premiumStatusFree.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gratuit'**
+  String get premiumStatusFree;
+
+  /// No description provided for @premiumStatusPro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pro'**
+  String get premiumStatusPro;
+
+  /// No description provided for @premiumStatusTrial.
+  ///
+  /// In fr, this message translates to:
+  /// **'Essai en cours'**
+  String get premiumStatusTrial;
+
+  /// No description provided for @premiumStatusTrialUntil.
+  ///
+  /// In fr, this message translates to:
+  /// **'Essai en cours · jusqu\'au {date}'**
+  String premiumStatusTrialUntil(String date);
+
+  /// No description provided for @premiumStatusProUntil.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pro · jusqu\'au {date}'**
+  String premiumStatusProUntil(String date);
+
+  /// No description provided for @premiumLimitCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Découvrir Pro'**
+  String get premiumLimitCta;
+
+  /// No description provided for @premiumLimitDismiss.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus tard'**
+  String get premiumLimitDismiss;
+
+  /// No description provided for @premiumLimitBaseRecipesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limite de recettes de base atteinte'**
+  String get premiumLimitBaseRecipesTitle;
+
+  /// No description provided for @premiumLimitBaseRecipesBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le plan gratuit permet {limit} recettes de base. Passe en Pro pour en créer autant que tu veux.'**
+  String premiumLimitBaseRecipesBody(int limit);
+
+  /// No description provided for @premiumLimitShoppingListsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une seule liste active en gratuit'**
+  String get premiumLimitShoppingListsTitle;
+
+  /// No description provided for @premiumLimitShoppingListsBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Termine ou vide ta liste en cours, ou passe en Pro pour gérer plusieurs listes en parallèle et garder l\'historique.'**
+  String get premiumLimitShoppingListsBody;
+
+  /// No description provided for @premiumLimitSearchTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limite de critères atteinte'**
+  String get premiumLimitSearchTitle;
+
+  /// No description provided for @premiumLimitSearchBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'La recherche gratuite combine jusqu\'à {limit} critères. Passe en Pro pour chercher sans plafond.'**
+  String premiumLimitSearchBody(int limit);
+
+  /// No description provided for @premiumLimitGenericTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fonctionnalité Pro'**
+  String get premiumLimitGenericTitle;
+
+  /// No description provided for @premiumLimitGenericBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette action dépasse les limites du plan gratuit. Découvre Cocotte Minute Pro.'**
+  String get premiumLimitGenericBody;
+
+  /// No description provided for @premiumSearchCounter.
+  ///
+  /// In fr, this message translates to:
+  /// **'{used}/{max}'**
+  String premiumSearchCounter(int used, int max);
+
+  /// No description provided for @premiumSearchCounterFull.
+  ///
+  /// In fr, this message translates to:
+  /// **'{used}/{max} — passe en Pro'**
+  String premiumSearchCounterFull(int used, int max);
 }
 
 class _AppLocalizationsDelegate

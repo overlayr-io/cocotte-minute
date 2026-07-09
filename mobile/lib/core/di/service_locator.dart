@@ -17,6 +17,7 @@ import '../../features/shopping_list/data/shopping_sync_service.dart';
 import '../../features/tags/data/tags_repository.dart';
 import '../network/api_client.dart';
 import '../network/json_list_cache.dart';
+import '../premium/premium_repository.dart';
 import '../storage/image_upload_service.dart';
 
 /// Conteneur d'injection de dépendances global.
@@ -27,6 +28,8 @@ final GetIt sl = GetIt.instance;
 
 void setupServiceLocator() {
   sl.registerLazySingleton<ApiClient>(() => ApiClient());
+  // Abonnement premium : unique point de contact avec les SDK RevenueCat.
+  sl.registerLazySingleton<PremiumRepository>(() => PremiumRepository());
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepository(apiClient: sl<ApiClient>()),
   );

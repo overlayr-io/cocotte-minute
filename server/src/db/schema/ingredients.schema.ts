@@ -40,6 +40,11 @@ export const ingredients = pgTable('ingredients', {
   ownerId: uuid('owner_id'),
   name: varchar('name', { length: 120 }).notNull(),
   imageUrl: text('image_url'),
+  /**
+   * Emoji illustrant l'ingrédient (alternative à `imageUrl`, mutuellement
+   * exclusifs : le service vide l'un quand l'autre est renseigné).
+   */
+  emoji: varchar('emoji', { length: 16 }),
   unit: ingredientUnitEnum('unit').notNull(),
   /** Ingrédient système d'origine si cette ligne est une copie importée. */
   importedFromId: uuid('imported_from_id').references(

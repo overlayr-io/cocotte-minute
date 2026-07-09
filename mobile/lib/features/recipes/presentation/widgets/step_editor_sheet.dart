@@ -6,6 +6,7 @@ import '../../domain/recipe.dart';
 import '../bloc/recipe_detail_cubit.dart';
 import 'base_recipe_picker_sheet.dart';
 import 'step_banner.dart';
+import 'step_ingredient_detector.dart';
 import 'step_ingredients_sheet.dart';
 
 /// Feuille de composition (maquette 9e) et d'édition (9f) d'une étape.
@@ -70,6 +71,13 @@ class _StepEditorSheetState extends State<_StepEditorSheet> {
     ...?widget.edit?.ingredients.map((i) => i.id),
   };
 
+  /// Ids ajoutés par la détection auto (à retirer si le mot disparaît du texte).
+  final Set<String> _autoIds = {};
+
+  /// Ids décochés manuellement alors qu'ils étaient détectés : on ne les
+  /// re-coche pas tant que le mot reste dans le texte.
+  final Set<String> _suppressedIds = {};
+
   late int _number = widget.addStartNumber;
   late int _added = widget.alreadyAdded;
   bool _busy = false;
@@ -121,6 +129,8 @@ class _StepEditorSheetState extends State<_StepEditorSheet> {
       _bannerTextController.clear();
       _bannerType = null;
       _ingredientIds.clear();
+      _autoIds.clear();
+      _suppressedIds.clear();
     });
   }
 
@@ -172,13 +182,50 @@ class _StepEditorSheetState extends State<_StepEditorSheet> {
       recipeIngredients: widget.recipeIngredients,
       selected: _ingredientIds,
     );
-    if (result != null) {
-      setState(() {
-        _ingredientIds
-          ..clear()
-          ..addAll(result);
-      });
+    if (result == null) return;
+    final detected =
+        detectIngredientIds(_descController.text, widget.recipeIngredients);
+    setState(() {
+      // Décochés manuellement : ne plus les considérer comme auto ; s'ils sont
+      // encore détectés dans le texte, les « supprimer » pour ne pas les re-cocher.
+      for (final id in _ingredientIds) {
+        if (!result.contains(id)) {
+          _autoIds.remove(id);
+          if (detected.contains(id)) _suppressedIds.add(id);
+        }
+      }
+      // Cochés manuellement : deviennent un choix explicite (non auto).
+      for (final id in result) {
+        if (!_ingredientIds.contains(id)) {
+          _suppressedIds.remove(id);
+          _autoIds.remove(id);
+        }
+      }
+      _ingredientIds
+        ..clear()
+        ..addAll(result);
+    });
+  }
+
+  /// Recalcule la sélection auto à partir du texte courant (mute les ensembles,
+  /// sans setState — appelé depuis un setState). Ajoute les ingrédients reconnus
+  /// (sauf ceux décochés manuellement), retire ceux dont le mot a disparu, et
+  /// lève la suppression quand le mot n'est plus là (pour un futur re-typage).
+  void _applyAutoDetection() {
+    final detected =
+        detectIngredientIds(_descController.text, widget.recipeIngredients);
+    for (final id in detected) {
+      if (!_suppressedIds.contains(id) && _ingredientIds.add(id)) {
+        _autoIds.add(id);
+      }
     }
+    for (final id in _autoIds.toList()) {
+      if (!detected.contains(id)) {
+        _autoIds.remove(id);
+        _ingredientIds.remove(id);
+      }
+    }
+    _suppressedIds.removeWhere((id) => !detected.contains(id));
   }
 
   @override
@@ -301,7 +348,10 @@ class _StepEditorSheetState extends State<_StepEditorSheet> {
       maxLines: 6,
       textCapitalization: TextCapitalization.sentences,
       onChanged: (_) {
-        if (_descError) setState(() => _descError = false);
+        setState(() {
+          if (_descError) _descError = false;
+          _applyAutoDetection();
+        });
       },
       style: const TextStyle(fontSize: 14.5, height: 1.5, color: Color(0xFF33404B)),
       decoration: InputDecoration(
@@ -484,6 +534,24 @@ class _StepEditorSheetState extends State<_StepEditorSheet> {
             ),
           ],
         ),
+        if (_autoIds.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              const Icon(Icons.auto_awesome_rounded,
+                  size: 14, color: AppColors.primary),
+              const SizedBox(width: 6),
+              Text(
+                l10n.recipeStepIngredientsAutoHint,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  color: AppColors.textMuted,
+                ),
+              ),
+            ],
+          ),
+        ],
         if (selected.isNotEmpty) ...[
           const SizedBox(height: 9),
           Wrap(

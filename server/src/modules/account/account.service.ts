@@ -5,6 +5,7 @@ import { AuthenticatedUser } from '../../common/auth/authenticated-user';
 import { SupabaseAdminService } from '../../common/supabase/supabase-admin.service';
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import { accounts, type AccountRow, type AccountStatus } from '../../db/schema/accounts.schema';
+import { RevenueCatAdminService } from '../billing/revenuecat-admin.service';
 import { CategoriesService } from '../categories/categories.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { PeopleService } from '../people/people.service';
@@ -51,6 +52,7 @@ export class AccountService {
     private readonly recipesService: RecipesService,
     private readonly shoppingListsService: ShoppingListsService,
     private readonly supabaseAdmin: SupabaseAdminService,
+    private readonly revenueCatAdmin: RevenueCatAdminService,
   ) {}
 
   /**
@@ -81,10 +83,12 @@ export class AccountService {
     }
 
     if (user.isAnonymous) {
-      // Compte anonyme → purge cascade complète immédiate.
+      // Compte anonyme → purge cascade complète immédiate. (Jamais loggé dans
+      // RevenueCat, mais l'appel est best-effort et sans effet dans ce cas.)
       await this.purgeAllUserData(user.id);
       await this.markStatus(user.id, 'deleted', null);
       await this.supabaseAdmin.deleteAuthUser(user.id);
+      await this.revenueCatAdmin.deleteSubscriber(user.id);
       this.logger.log(`Compte anonyme ${user.id} supprimé immédiatement (RGPD)`);
       return { status: 'deleted', anonymous: true, deletionScheduledAt: null };
     }
@@ -159,6 +163,7 @@ export class AccountService {
       await this.purgeAllUserData(account.userId);
       await this.markStatus(account.userId, 'deleted', null);
       await this.supabaseAdmin.deleteAuthUser(account.userId);
+      await this.revenueCatAdmin.deleteSubscriber(account.userId);
       this.logger.log(`Compte ${account.userId} supprimé définitivement (CRON RGPD)`);
     }
     if (expired.length > 0) {

@@ -14,6 +14,19 @@ export type AccountStatus = (typeof ACCOUNT_STATUSES)[number];
 export const accountStatusEnum = pgEnum('account_status', ACCOUNT_STATUSES);
 
 /**
+ * Type d'accès premium (cf. features/premium-version.md).
+ * - `none`         : compte gratuit (défaut).
+ * - `subscription` : abonnement Pro actif (mensuel ou annuel), borné par `premiumUntil`.
+ * - `lifetime`     : achat à vie (prévu, produit store non créé dans ce v1) — sans échéance.
+ * Projection de l'état RevenueCat (source de vérité), mise à jour par webhook.
+ */
+export const PREMIUM_TYPES = ['none', 'subscription', 'lifetime'] as const;
+
+export type PremiumType = (typeof PREMIUM_TYPES)[number];
+
+export const premiumTypeEnum = pgEnum('premium_type', PREMIUM_TYPES);
+
+/**
  * Table minimale de gestion de cycle de vie du compte.
  *
  * L'authentification reste 100 % gérée par Supabase Auth (aucune table d'auth
@@ -29,6 +42,15 @@ export const accounts = pgTable('accounts', {
   status: accountStatusEnum('account_status').notNull().default('active'),
   /** Horodatage de la demande de suppression, sert au calcul de l'échéance 30 j. */
   deletionRequestedAt: timestamp('deletion_requested_at', { withTimezone: true }),
+  /** Projection du statut premium RevenueCat (jamais modifiée par le client). */
+  premiumType: premiumTypeEnum('premium_type').notNull().default('none'),
+  /**
+   * Fin de la période courante (null pour `lifetime` et `none`). Permet
+   * d'appliquer l'expiration côté server même si un webhook EXPIRATION se perd.
+   */
+  premiumUntil: timestamp('premium_until', { withTimezone: true }),
+  /** Horodatage du dernier événement RevenueCat appliqué (idempotence webhook). */
+  premiumUpdatedAt: timestamp('premium_updated_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });

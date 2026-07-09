@@ -24,6 +24,7 @@ export interface IngredientDto {
   name: string;
   unit: IngredientUnit;
   imageUrl: string | null;
+  emoji: string | null;
   isSystem: boolean;
   importedFromId: string | null;
   createdAt: string;
@@ -44,6 +45,7 @@ function toDto(row: IngredientRow): IngredientDto {
     name: row.name,
     unit: row.unit,
     imageUrl: row.imageUrl,
+    emoji: row.emoji,
     isSystem: row.ownerId === null,
     importedFromId: row.importedFromId,
     createdAt: row.createdAt.toISOString(),
@@ -122,13 +124,16 @@ export class IngredientsService {
   }
 
   async create(userId: string, dto: CreateIngredientDto): Promise<IngredientDto> {
+    // Emoji et image sont exclusifs : un emoji fourni prime et retire l'image.
+    const emoji = dto.emoji ?? null;
     const [row] = await this.db
       .insert(ingredients)
       .values({
         ownerId: userId,
         name: dto.name,
         unit: dto.unit,
-        imageUrl: dto.imageUrl ?? null,
+        emoji,
+        imageUrl: emoji ? null : dto.imageUrl ?? null,
       })
       .returning();
     return toDto(row);
@@ -175,6 +180,7 @@ export class IngredientsService {
         name: system.name,
         unit: system.unit,
         imageUrl: system.imageUrl,
+        emoji: system.emoji,
         importedFromId: system.id,
       })
       .returning();
@@ -183,10 +189,20 @@ export class IngredientsService {
 
   async update(userId: string, id: string, dto: UpdateIngredientDto): Promise<IngredientDto> {
     await this.findOwnedOrFail(userId, id);
-    const patch: Partial<Pick<IngredientRow, 'name' | 'unit' | 'imageUrl'>> = {};
+    const patch: Partial<
+      Pick<IngredientRow, 'name' | 'unit' | 'imageUrl' | 'emoji'>
+    > = {};
     if (dto.name !== undefined) patch.name = dto.name;
     if (dto.unit !== undefined) patch.unit = dto.unit;
-    if (dto.imageUrl !== undefined) patch.imageUrl = dto.imageUrl;
+    // Exclusivité emoji ↔ image : renseigner l'un vide l'autre.
+    if (dto.emoji !== undefined) {
+      patch.emoji = dto.emoji;
+      if (dto.emoji) patch.imageUrl = null;
+    }
+    if (dto.imageUrl !== undefined) {
+      patch.imageUrl = dto.imageUrl;
+      if (dto.imageUrl) patch.emoji = null;
+    }
 
     const [row] = await this.db
       .update(ingredients)

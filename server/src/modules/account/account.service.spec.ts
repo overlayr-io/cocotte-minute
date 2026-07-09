@@ -4,6 +4,7 @@ import { AuthenticatedUser } from '../../common/auth/authenticated-user';
 import { SupabaseAdminService } from '../../common/supabase/supabase-admin.service';
 import { DrizzleDB } from '../../db/drizzle.provider';
 import type { AccountRow, AccountStatus } from '../../db/schema/accounts.schema';
+import { RevenueCatAdminService } from '../billing/revenuecat-admin.service';
 import { CategoriesService } from '../categories/categories.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { PeopleService } from '../people/people.service';
@@ -44,6 +45,9 @@ const accountRow = (over: Partial<AccountRow> = {}): AccountRow => ({
   userId: USER,
   status: 'active',
   deletionRequestedAt: null,
+  premiumType: 'none',
+  premiumUntil: null,
+  premiumUpdatedAt: null,
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
   updatedAt: new Date('2026-01-01T00:00:00.000Z'),
   ...over,
@@ -74,7 +78,18 @@ function adminMock(): SupabaseAdminService {
   } as unknown as SupabaseAdminService;
 }
 
-function build(db: DrizzleDB, admin: SupabaseAdminService, d = domainMocks()) {
+function revenueCatMock(): RevenueCatAdminService {
+  return {
+    deleteSubscriber: jest.fn().mockResolvedValue(undefined),
+  } as unknown as RevenueCatAdminService;
+}
+
+function build(
+  db: DrizzleDB,
+  admin: SupabaseAdminService,
+  d = domainMocks(),
+  revenueCat = revenueCatMock(),
+) {
   const service = new AccountService(
     db,
     d.ingredients,
@@ -84,8 +99,9 @@ function build(db: DrizzleDB, admin: SupabaseAdminService, d = domainMocks()) {
     d.recipes,
     d.shopping,
     admin,
+    revenueCat,
   );
-  return { service, d };
+  return { service, d, revenueCat };
 }
 
 describe('AccountService', () => {

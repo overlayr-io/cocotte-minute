@@ -5,6 +5,7 @@ const base = {
   SUPABASE_URL: 'https://abc.supabase.co',
   SUPABASE_SERVICE_ROLE_KEY: 'service-role-key',
   SUPABASE_JWT_SECRET: 'jwt-secret-with-at-least-32-characters!!',
+  REVENUECAT_WEBHOOK_SECRET: 'webhook-secret-value',
 };
 
 describe('validateEnv', () => {

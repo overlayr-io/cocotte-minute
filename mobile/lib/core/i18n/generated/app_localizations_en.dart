@@ -923,6 +923,79 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get recipesOtherFolderTitle => 'Other';
+
+  @override
+  String get recipesOtherFolderEmpty =>
+      'No recipes without a folder. Everything is tidy!';
+
+  @override
+  String get recipeMenuAssignFolders => 'Assign folders';
+
+  @override
+  String get recipeMenuAssignTags => 'Assign tags';
+
+  @override
+  String get recipeMenuAssignPerson => 'Assign a person';
+
+  @override
+  String get recipePeopleSheetTitle => 'Assign a person';
+
+  @override
+  String get recipePeopleSheetSubtitle =>
+      'Select the people this recipe is meant for.';
+
+  @override
+  String get recipePeopleSheetEmpty =>
+      'No people yet. Add family members from the Account tab.';
+
+  @override
+  String get personRecipesLabel => 'Their recipes';
+
+  @override
+  String get personRecipesAddTooltip => 'Add recipes';
+
+  @override
+  String get personRecipesRemoveTooltip => 'Remove recipe';
+
+  @override
+  String get personRecipesEmptyHint =>
+      'No recipes yet. Add their favourite dishes with the + button.';
+
+  @override
+  String get personRecipesPickTitle => 'Add recipes';
+
+  @override
+  String get personRecipesPickSearchHint => 'Search a recipe…';
+
+  @override
+  String get personRecipesPickEmpty => 'No recipes to add.';
+
+  @override
+  String personRecipesPickAdd(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add $count recipes',
+      one: 'Add 1 recipe',
+      zero: 'Add',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recipesViewList => 'List view';
+
+  @override
+  String get recipesViewFolders => 'Folder view';
+
+  @override
+  String get recipesListFilterHint => 'Filter recipes…';
+
+  @override
+  String get recipesListEmpty => 'No matching recipes.';
+
+  @override
   String get recipesTitle => 'Recipes';
 
   @override
@@ -1429,6 +1502,27 @@ class AppLocalizationsEn extends AppLocalizations {
   String get commonCancel => 'Cancel';
 
   @override
+  String get ingredientVisualEmoji => 'Emoji';
+
+  @override
+  String get ingredientVisualImage => 'Image';
+
+  @override
+  String get ingredientEmojiPick => 'Pick an emoji';
+
+  @override
+  String get ingredientEmojiSheetTitle => 'Pick an emoji';
+
+  @override
+  String get ingredientEmojiCustomHint => 'Or type your own 🥕';
+
+  @override
+  String get commonValidate => 'Confirm';
+
+  @override
+  String get recipeStepIngredientsAutoHint => 'Detected from your text';
+
+  @override
   String get commonSave => 'Save';
 
   @override
@@ -1738,28 +1832,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get shoppingAltOffline =>
       'Connection required to load the alternatives.';
-
-  @override
-  String get shoppingPremiumBadge => 'Premium';
-
-  @override
-  String get shoppingPremiumNewList => 'New list from my recipes';
-
-  @override
-  String get shoppingPremiumActiveLists => 'Active lists';
-
-  @override
-  String get shoppingPremiumUnlimited => 'Unlimited';
-
-  @override
-  String get shoppingPremiumHistory => 'History';
-
-  @override
-  String get shoppingPremiumReopen => 'Reopen';
-
-  @override
-  String get shoppingPremiumPreviewBanner =>
-      'Premium preview — not active on the free plan.';
 
   @override
   String get shoppingAisleFruitsLegumes => 'Fruits & vegetables';
@@ -2155,4 +2227,262 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageEnglish => 'English';
+
+  @override
+  String get premiumBadge => 'Pro';
+
+  @override
+  String get premiumHeroKicker => 'Cocotte Minute Pro';
+
+  @override
+  String get premiumHeroTitle => 'Cook without limits';
+
+  @override
+  String get premiumHeroBody =>
+      'Unlimited base recipes, multiple shopping lists with history and uncapped search.';
+
+  @override
+  String get premiumCompareTitle => 'Free vs Pro';
+
+  @override
+  String get premiumCompareFreeColumn => 'Free';
+
+  @override
+  String get premiumCompareProColumn => 'Pro';
+
+  @override
+  String get premiumCompareRowRecipes => 'Recipes';
+
+  @override
+  String get premiumCompareRowBaseRecipes => 'Base recipes';
+
+  @override
+  String get premiumCompareRowShoppingLists => 'Shopping lists';
+
+  @override
+  String get premiumCompareRowHistory => 'List history';
+
+  @override
+  String get premiumCompareRowSearch => 'Advanced search';
+
+  @override
+  String get premiumCompareUnlimited => 'Unlimited';
+
+  @override
+  String get premiumCompareBaseFree => '5 max';
+
+  @override
+  String get premiumCompareListsFree => '1 active';
+
+  @override
+  String get premiumCompareListsPro => 'Multiple';
+
+  @override
+  String get premiumCompareHistoryFree => '—';
+
+  @override
+  String get premiumCompareHistoryPro => 'Included';
+
+  @override
+  String get premiumCompareSearchFree => '6 criteria max';
+
+  @override
+  String get premiumCompareSearchPro => 'Unlimited';
+
+  @override
+  String get premiumPlanMonthly => 'Monthly';
+
+  @override
+  String get premiumPlanAnnual => 'Annual';
+
+  @override
+  String get premiumPerMonthSuffix => 'per month';
+
+  @override
+  String get premiumPerYearSuffix => 'per year';
+
+  @override
+  String premiumPricePerMonth(String price) {
+    return '$price/month';
+  }
+
+  @override
+  String premiumPricePerYear(String price) {
+    return '$price/year';
+  }
+
+  @override
+  String premiumSavingsBadge(int percent) {
+    return '-$percent%';
+  }
+
+  @override
+  String premiumTrialMention(String duration, String price) {
+    return '$duration free trial, then $price';
+  }
+
+  @override
+  String premiumDurationDays(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String premiumDurationWeeks(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count weeks',
+      one: '1 week',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String premiumDurationMonths(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count months',
+      one: '1 month',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String premiumDurationYears(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count years',
+      one: '1 year',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get premiumSubscribeCta => 'Subscribe';
+
+  @override
+  String get premiumRestore => 'Restore my purchases';
+
+  @override
+  String get premiumGuestTitle => 'Create your account to go Pro';
+
+  @override
+  String get premiumGuestBody =>
+      'The Pro subscription is tied to a registered account: create yours to subscribe and find your recipes everywhere.';
+
+  @override
+  String get premiumOfferingsError =>
+      'Unable to load the offers. Check your connection and try again.';
+
+  @override
+  String get premiumOfferingsEmpty =>
+      'No offer is available right now. Try again later.';
+
+  @override
+  String get premiumPurchasePending =>
+      'Purchase pending approval — Pro access will activate automatically.';
+
+  @override
+  String get premiumPurchaseFailed =>
+      'The purchase didn\'t go through. Try again.';
+
+  @override
+  String get premiumRestoreNone =>
+      'No subscription to restore on this account.';
+
+  @override
+  String get premiumSuccessTitle => 'Welcome to Cocotte Minute Pro!';
+
+  @override
+  String get premiumSuccessBody => 'All limits are lifted. Happy cooking!';
+
+  @override
+  String get premiumAlreadyProTitle => 'You\'re already Pro';
+
+  @override
+  String get premiumAlreadyProBody =>
+      'Thanks for supporting Cocotte Minute. Your subscription is managed directly from the store.';
+
+  @override
+  String get premiumManageSubscription => 'Manage my subscription';
+
+  @override
+  String get accountSectionSubscription => 'Subscription';
+
+  @override
+  String get accountRowPremium => 'Cocotte Minute Pro';
+
+  @override
+  String get premiumStatusFree => 'Free';
+
+  @override
+  String get premiumStatusPro => 'Pro';
+
+  @override
+  String get premiumStatusTrial => 'Trial in progress';
+
+  @override
+  String premiumStatusTrialUntil(String date) {
+    return 'Trial in progress · until $date';
+  }
+
+  @override
+  String premiumStatusProUntil(String date) {
+    return 'Pro · until $date';
+  }
+
+  @override
+  String get premiumLimitCta => 'Discover Pro';
+
+  @override
+  String get premiumLimitDismiss => 'Later';
+
+  @override
+  String get premiumLimitBaseRecipesTitle => 'Base recipe limit reached';
+
+  @override
+  String premiumLimitBaseRecipesBody(int limit) {
+    return 'The free plan allows $limit base recipes. Go Pro to create as many as you want.';
+  }
+
+  @override
+  String get premiumLimitShoppingListsTitle =>
+      'Only one active list on the free plan';
+
+  @override
+  String get premiumLimitShoppingListsBody =>
+      'Finish or clear your current list, or go Pro to manage several lists in parallel and keep the history.';
+
+  @override
+  String get premiumLimitSearchTitle => 'Criteria limit reached';
+
+  @override
+  String premiumLimitSearchBody(int limit) {
+    return 'Free search combines up to $limit criteria. Go Pro to search without a cap.';
+  }
+
+  @override
+  String get premiumLimitGenericTitle => 'Pro feature';
+
+  @override
+  String get premiumLimitGenericBody =>
+      'This action exceeds the free plan limits. Discover Cocotte Minute Pro.';
+
+  @override
+  String premiumSearchCounter(int used, int max) {
+    return '$used/$max';
+  }
+
+  @override
+  String premiumSearchCounterFull(int used, int max) {
+    return '$used/$max — go Pro';
+  }
 }

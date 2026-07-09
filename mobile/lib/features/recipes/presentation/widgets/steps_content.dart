@@ -78,9 +78,10 @@ class _StepsContentState extends State<StepsContent> {
     }
   }
 
+  // Signature `onReorderItem` : newIndex est déjà ajusté du retrait de
+  // l'élément déplacé (contrairement à l'ancien onReorder, déprécié).
   void _onReorder(int oldIndex, int newIndex) {
     setState(() {
-      if (newIndex > oldIndex) newIndex -= 1;
       final moved = _steps.removeAt(oldIndex);
       _steps.insert(newIndex, moved);
     });
@@ -111,7 +112,7 @@ class _StepsContentState extends State<StepsContent> {
           physics: const NeverScrollableScrollPhysics(),
           buildDefaultDragHandles: false,
           itemCount: _steps.length,
-          onReorder: _onReorder,
+          onReorderItem: _onReorder,
           itemBuilder: (context, i) {
             final step = _steps[i];
             return _StepItem(

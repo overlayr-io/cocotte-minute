@@ -1,13 +1,18 @@
 import 'package:dio/dio.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/premium/premium_limit_error.dart';
 import '../domain/recipe.dart';
 
 /// Erreur portant un message exploitable pour l'UI (snackbar/page d'erreur).
 class RecipesRepositoryException implements Exception {
-  const RecipesRepositoryException(this.message);
+  const RecipesRepositoryException(this.message, {this.premiumLimit});
 
   final String message;
+
+  /// Limite freemium (403 `PREMIUM_LIMIT_*`) : l'UI ouvre la feuille d'upsell
+  /// au lieu d'afficher le message brut.
+  final PremiumLimitError? premiumLimit;
 
   @override
   String toString() => 'RecipesRepositoryException($message)';
@@ -21,9 +26,22 @@ class RecipesRepository {
 
   Dio get _dio => _apiClient.raw;
 
-  Future<List<RecipeSummary>> fetchMine() async {
+  /// Mes recettes. [q]/[limit]/[offset] optionnels pour la vue Liste paginée
+  /// (filtre texte simple côté serveur) ; sans paramètre, tout est renvoyé.
+  Future<List<RecipeSummary>> fetchMine({
+    String? q,
+    int? limit,
+    int? offset,
+  }) async {
     try {
-      final res = await _dio.get<List<dynamic>>('/recipes');
+      final res = await _dio.get<List<dynamic>>(
+        '/recipes',
+        queryParameters: {
+          if (q != null && q.trim().isNotEmpty) 'q': q.trim(),
+          'limit': ?limit,
+          'offset': ?offset,
+        },
+      );
       return (res.data ?? const [])
           .cast<Map<String, dynamic>>()
           .map(RecipeSummary.fromJson)
@@ -38,6 +56,19 @@ class RecipesRepository {
     try {
       final res =
           await _dio.get<List<dynamic>>('/categories/$categoryId/recipes');
+      return (res.data ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(RecipeSummary.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de charger les recettes du dossier.');
+    }
+  }
+
+  /// Recettes rangées dans aucun dossier (dossier virtuel « Autres »).
+  Future<List<RecipeSummary>> fetchUncategorized() async {
+    try {
+      final res = await _dio.get<List<dynamic>>('/recipes/uncategorized');
       return (res.data ?? const [])
           .cast<Map<String, dynamic>>()
           .map(RecipeSummary.fromJson)
@@ -342,8 +373,17 @@ class RecipesRepository {
     final status = e.response?.statusCode;
     if (status == 400 || status == 403 || status == 404 || status == 409) {
       final data = e.response?.data;
+      // 403 structuré { code: PREMIUM_LIMIT_*, limit, current } : porté par
+      // l'exception pour que l'UI ouvre l'upsell adapté.
+      final premiumLimit = PremiumLimitError.fromResponseData(data);
       if (data is Map && data['message'] is String) {
-        return RecipesRepositoryException(data['message'] as String);
+        return RecipesRepositoryException(
+          data['message'] as String,
+          premiumLimit: premiumLimit,
+        );
+      }
+      if (premiumLimit != null) {
+        return RecipesRepositoryException(fallback, premiumLimit: premiumLimit);
       }
     }
     const connectivityErrors = {

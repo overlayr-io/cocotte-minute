@@ -16,6 +16,10 @@ class IngredientsRepositoryException implements Exception {
   String toString() => 'IngredientsRepositoryException($message)';
 }
 
+/// Sentinelle « champ non fourni » pour distinguer « ne pas toucher » de
+/// « mettre à null » dans un PATCH partiel (emoji/image).
+const Object _unset = Object();
+
 /// Accès aux ingrédients via l'API NestJS (donnée métier → jamais Supabase direct).
 class IngredientsRepository {
   IngredientsRepository({required ApiClient apiClient}) : _apiClient = apiClient;
@@ -61,11 +65,17 @@ class IngredientsRepository {
     required String name,
     required IngredientUnit unit,
     String? imageUrl,
+    String? emoji,
   }) async {
     try {
       final res = await _dio.post<Map<String, dynamic>>(
         '/ingredients',
-        data: {'name': name, 'unit': unit.wire, 'imageUrl': ?imageUrl},
+        data: {
+          'name': name,
+          'unit': unit.wire,
+          'imageUrl': ?imageUrl,
+          'emoji': ?emoji,
+        },
       );
       return Ingredient.fromJson(res.data!);
     } on DioException catch (e) {
@@ -82,20 +92,26 @@ class IngredientsRepository {
     }
   }
 
+  /// Met à jour un ingrédient. [emoji]/[imageUrl] utilisent la sentinelle
+  /// [_unset] par défaut : ne rien passer = champ inchangé, passer `null` =
+  /// vider explicitement (le serveur tranche l'exclusivité emoji ↔ image).
   Future<Ingredient> update(
     String id, {
     String? name,
     IngredientUnit? unit,
-    String? imageUrl,
+    Object? imageUrl = _unset,
+    Object? emoji = _unset,
   }) async {
     try {
+      final data = <String, dynamic>{
+        'name': ?name,
+        if (unit != null) 'unit': unit.wire,
+      };
+      if (!identical(imageUrl, _unset)) data['imageUrl'] = imageUrl;
+      if (!identical(emoji, _unset)) data['emoji'] = emoji;
       final res = await _dio.patch<Map<String, dynamic>>(
         '/ingredients/$id',
-        data: {
-          'name': ?name,
-          if (unit != null) 'unit': unit.wire,
-          'imageUrl': ?imageUrl,
-        },
+        data: data,
       );
       return Ingredient.fromJson(res.data!);
     } on DioException catch (e) {

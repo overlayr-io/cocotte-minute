@@ -2,12 +2,17 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/image_upload_picker.dart';
 import '../../domain/ingredient.dart';
+import 'ingredient_visual_field.dart';
 import 'unit_selector.dart';
 
-/// Données saisies pour créer un ingrédient.
-typedef IngredientDraft = ({String name, IngredientUnit unit, String? imageUrl});
+/// Données saisies pour créer un ingrédient (emoji et image exclusifs).
+typedef IngredientDraft = ({
+  String name,
+  IngredientUnit unit,
+  String? imageUrl,
+  String? emoji,
+});
 
 /// Bottom-sheet de création d'un ingrédient custom (nom + unité + image).
 Future<IngredientDraft?> showCreateIngredientSheet(BuildContext context) {
@@ -30,6 +35,7 @@ class _IngredientFormSheetState extends State<_IngredientFormSheet> {
   final _nameController = TextEditingController();
   IngredientUnit _unit = IngredientUnit.gramme;
   String? _imageUrl;
+  String? _emoji;
   bool _showError = false;
 
   @override
@@ -44,7 +50,9 @@ class _IngredientFormSheetState extends State<_IngredientFormSheet> {
       setState(() => _showError = true);
       return;
     }
-    Navigator.of(context).pop((name: name, unit: _unit, imageUrl: _imageUrl));
+    Navigator.of(context).pop(
+      (name: name, unit: _unit, imageUrl: _imageUrl, emoji: _emoji),
+    );
   }
 
   @override
@@ -86,13 +94,17 @@ class _IngredientFormSheetState extends State<_IngredientFormSheet> {
               ),
             ),
             const SizedBox(height: 18),
-            Center(
-              child: ImageUploadPicker(
-                folder: 'ingredients',
-                initialUrl: _imageUrl,
-                onUploaded: (url) => setState(() => _imageUrl = url),
-                placeholder: _ImagePlaceholder(),
-              ),
+            IngredientVisualField(
+              emoji: _emoji,
+              imageUrl: _imageUrl,
+              onEmojiChanged: (emoji) => setState(() {
+                _emoji = emoji;
+                _imageUrl = null;
+              }),
+              onImageUploaded: (url) => setState(() {
+                _imageUrl = url;
+                _emoji = null;
+              }),
             ),
             const SizedBox(height: 18),
             _Label(l10n.ingredientFieldName),
@@ -176,18 +188,3 @@ class _Label extends StatelessWidget {
   }
 }
 
-class _ImagePlaceholder extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 82,
-      height: 82,
-      decoration: BoxDecoration(
-        color: const Color(0xFFEAE3D3),
-        shape: BoxShape.circle,
-        border: Border.all(color: const Color(0xFFC9C3B4), width: 2),
-      ),
-      child: const Icon(Icons.eco_outlined, color: Color(0xFFA79F8B), size: 30),
-    );
-  }
-}

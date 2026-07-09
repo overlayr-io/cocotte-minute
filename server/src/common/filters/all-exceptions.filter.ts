@@ -46,6 +46,17 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? (rawMessage as { message: unknown }).message
         : rawMessage;
 
+    // Passthrough des erreurs structurées (limites premium) : `code` route
+    // l'upsell côté mobile, `limit`/`current` alimentent le texte affiché.
+    const structured =
+      typeof rawMessage === 'object' && rawMessage !== null && 'code' in rawMessage
+        ? {
+            code: (rawMessage as { code: unknown }).code,
+            limit: (rawMessage as { limit?: unknown }).limit,
+            current: (rawMessage as { current?: unknown }).current,
+          }
+        : undefined;
+
     httpAdapter.reply(
       ctx.getResponse<unknown>(),
       {
@@ -53,6 +64,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
         timestamp: new Date().toISOString(),
         path: url,
         message,
+        ...structured,
       },
       status,
     );

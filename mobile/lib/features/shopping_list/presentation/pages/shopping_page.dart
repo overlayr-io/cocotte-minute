@@ -3,14 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
+import '../../../../core/premium/premium_cubit.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_shadows.dart';
+import '../../../premium/presentation/pages/premium_page.dart';
 import '../../data/shopping_list_repository.dart';
 import '../../data/shopping_sync_service.dart';
 import '../../domain/shopping_list.dart';
 import '../bloc/shopping_lists_cubit.dart';
 import 'generate_flow_page.dart';
-import 'premium_shopping_page.dart';
 import 'shopping_list_detail_page.dart';
 
 const Color _gold = Color(0xFF8A7A4E);
@@ -78,10 +79,14 @@ class _ShoppingView extends StatelessWidget {
                     _EmptyState(l10n: l10n),
                   const SizedBox(height: 14),
                   _CreateButton(hasActive: active != null),
-                  const SizedBox(height: 26),
-                  _LockedHistory(l10n: l10n),
-                  const SizedBox(height: 18),
-                  const _UpgradeCard(),
+                  // Upsell Premium : jamais montré à un abonné Pro.
+                  if (!context.select<PremiumCubit, bool>(
+                      (c) => c.state.isPremium)) ...[
+                    const SizedBox(height: 26),
+                    _LockedHistory(l10n: l10n),
+                    const SizedBox(height: 18),
+                    const _UpgradeCard(),
+                  ],
                 ],
               ),
             );
@@ -466,7 +471,7 @@ class _UpgradeCard extends StatelessWidget {
               ),
             ),
             onPressed: () =>
-                Navigator.of(context).push(PremiumShoppingPage.route()),
+                Navigator.of(context).push(PremiumPage.route()),
             child: Text(
               l10n.shoppingPremiumCta,
               style: const TextStyle(fontWeight: FontWeight.w700),

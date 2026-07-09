@@ -633,6 +633,46 @@
     }
   },
 
+  "recipesOtherFolderTitle": "Autres",
+  "@recipesOtherFolderTitle": {},
+  "recipesOtherFolderEmpty": "Aucune recette sans dossier. Tout est bien rangé !",
+  "@recipesOtherFolderEmpty": {},
+  "recipeMenuAssignFolders": "Associer des dossiers",
+  "@recipeMenuAssignFolders": {},
+  "recipeMenuAssignTags": "Associer des tags",
+  "@recipeMenuAssignTags": {},
+  "recipeMenuAssignPerson": "Associer une personne",
+  "@recipeMenuAssignPerson": {},
+  "recipePeopleSheetTitle": "Associer une personne",
+  "@recipePeopleSheetTitle": {},
+  "recipePeopleSheetSubtitle": "Sélectionne les personnes pour qui cette recette est pensée.",
+  "@recipePeopleSheetSubtitle": {},
+  "recipePeopleSheetEmpty": "Aucune personne pour l'instant. Ajoute des membres de ta famille depuis l'onglet Compte.",
+  "@recipePeopleSheetEmpty": {},
+  "personRecipesLabel": "Ses recettes",
+  "@personRecipesLabel": {},
+  "personRecipesAddTooltip": "Ajouter des recettes",
+  "@personRecipesAddTooltip": {},
+  "personRecipesRemoveTooltip": "Retirer la recette",
+  "@personRecipesRemoveTooltip": {},
+  "personRecipesEmptyHint": "Aucune recette associée. Ajoute ses plats préférés avec le bouton +.",
+  "@personRecipesEmptyHint": {},
+  "personRecipesPickTitle": "Ajouter des recettes",
+  "@personRecipesPickTitle": {},
+  "personRecipesPickSearchHint": "Rechercher une recette…",
+  "@personRecipesPickSearchHint": {},
+  "personRecipesPickEmpty": "Aucune recette à ajouter.",
+  "@personRecipesPickEmpty": {},
+  "personRecipesPickAdd": "{count, plural, =0{Ajouter} =1{Ajouter 1 recette} other{Ajouter {count} recettes}}",
+  "@personRecipesPickAdd": {"placeholders": {"count": {"type": "num"}}},
+  "recipesViewList": "Vue liste",
+  "@recipesViewList": {},
+  "recipesViewFolders": "Vue dossiers",
+  "@recipesViewFolders": {},
+  "recipesListFilterHint": "Filtrer les recettes…",
+  "@recipesListFilterHint": {},
+  "recipesListEmpty": "Aucune recette ne correspond.",
+  "@recipesListEmpty": {},
   "recipesTitle": "Recettes",
   "@recipesTitle": {},
   "recipesEmpty": "Tu n'as pas encore de recette. Appuie sur + pour en créer une.",
@@ -967,6 +1007,20 @@
 
   "commonCancel": "Annuler",
   "@commonCancel": {},
+  "ingredientVisualEmoji": "Emoji",
+  "@ingredientVisualEmoji": {},
+  "ingredientVisualImage": "Image",
+  "@ingredientVisualImage": {},
+  "ingredientEmojiPick": "Choisir un emoji",
+  "@ingredientEmojiPick": {},
+  "ingredientEmojiSheetTitle": "Choisir un emoji",
+  "@ingredientEmojiSheetTitle": {},
+  "ingredientEmojiCustomHint": "Ou tape le tien 🥕",
+  "@ingredientEmojiCustomHint": {},
+  "commonValidate": "Valider",
+  "@commonValidate": {},
+  "recipeStepIngredientsAutoHint": "Détectés depuis ton texte",
+  "@recipeStepIngredientsAutoHint": {},
   "commonSave": "Enregistrer",
   "@commonSave": {},
   "commonDelete": "Supprimer",
@@ -1134,21 +1188,6 @@
   "@shoppingAltNoneHint": {},
   "shoppingAltOffline": "Connexion nécessaire pour charger les alternatives.",
   "@shoppingAltOffline": {},
-
-  "shoppingPremiumBadge": "Premium",
-  "@shoppingPremiumBadge": {},
-  "shoppingPremiumNewList": "Nouvelle liste depuis mes recettes",
-  "@shoppingPremiumNewList": {},
-  "shoppingPremiumActiveLists": "Listes actives",
-  "@shoppingPremiumActiveLists": {},
-  "shoppingPremiumUnlimited": "Illimité",
-  "@shoppingPremiumUnlimited": {},
-  "shoppingPremiumHistory": "Historique",
-  "@shoppingPremiumHistory": {},
-  "shoppingPremiumReopen": "Rouvrir",
-  "@shoppingPremiumReopen": {},
-  "shoppingPremiumPreviewBanner": "Aperçu Premium — non actif en version gratuite.",
-  "@shoppingPremiumPreviewBanner": {},
 
   "shoppingAisleFruitsLegumes": "Fruits & légumes",
   "@shoppingAisleFruitsLegumes": {},
@@ -1403,5 +1442,195 @@
   "languageFrench": "Français",
   "@languageFrench": {},
   "languageEnglish": "English",
-  "@languageEnglish": {}
+  "@languageEnglish": {},
+
+  "premiumBadge": "Pro",
+  "@premiumBadge": {},
+  "premiumHeroKicker": "Cocotte Minute Pro",
+  "@premiumHeroKicker": {},
+  "premiumHeroTitle": "Cuisine sans limites",
+  "@premiumHeroTitle": {},
+  "premiumHeroBody": "Recettes de base illimitées, listes de courses multiples avec historique et recherche sans plafond.",
+  "@premiumHeroBody": {},
+  "premiumCompareTitle": "Gratuit vs Pro",
+  "@premiumCompareTitle": {},
+  "premiumCompareFreeColumn": "Gratuit",
+  "@premiumCompareFreeColumn": {},
+  "premiumCompareProColumn": "Pro",
+  "@premiumCompareProColumn": {},
+  "premiumCompareRowRecipes": "Recettes",
+  "@premiumCompareRowRecipes": {},
+  "premiumCompareRowBaseRecipes": "Recettes de base",
+  "@premiumCompareRowBaseRecipes": {},
+  "premiumCompareRowShoppingLists": "Listes de courses",
+  "@premiumCompareRowShoppingLists": {},
+  "premiumCompareRowHistory": "Historique des listes",
+  "@premiumCompareRowHistory": {},
+  "premiumCompareRowSearch": "Recherche avancée",
+  "@premiumCompareRowSearch": {},
+  "premiumCompareUnlimited": "Illimité",
+  "@premiumCompareUnlimited": {},
+  "premiumCompareBaseFree": "5 max",
+  "@premiumCompareBaseFree": {},
+  "premiumCompareListsFree": "1 active",
+  "@premiumCompareListsFree": {},
+  "premiumCompareListsPro": "Multiples",
+  "@premiumCompareListsPro": {},
+  "premiumCompareHistoryFree": "—",
+  "@premiumCompareHistoryFree": {},
+  "premiumCompareHistoryPro": "Inclus",
+  "@premiumCompareHistoryPro": {},
+  "premiumCompareSearchFree": "6 critères max",
+  "@premiumCompareSearchFree": {},
+  "premiumCompareSearchPro": "Illimités",
+  "@premiumCompareSearchPro": {},
+  "premiumPlanMonthly": "Mensuel",
+  "@premiumPlanMonthly": {},
+  "premiumPlanAnnual": "Annuel",
+  "@premiumPlanAnnual": {},
+  "premiumPerMonthSuffix": "par mois",
+  "@premiumPerMonthSuffix": {},
+  "premiumPerYearSuffix": "par an",
+  "@premiumPerYearSuffix": {},
+  "premiumPricePerMonth": "{price}/mois",
+  "@premiumPricePerMonth": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "premiumPricePerYear": "{price}/an",
+  "@premiumPricePerYear": {
+    "placeholders": {
+      "price": { "type": "String" }
+    }
+  },
+  "premiumSavingsBadge": "-{percent} %",
+  "@premiumSavingsBadge": {
+    "placeholders": {
+      "percent": { "type": "int" }
+    }
+  },
+  "premiumTrialMention": "{duration} d'essai gratuit, puis {price}",
+  "@premiumTrialMention": {
+    "placeholders": {
+      "duration": { "type": "String" },
+      "price": { "type": "String" }
+    }
+  },
+  "premiumDurationDays": "{count, plural, one{1 jour} other{{count} jours}}",
+  "@premiumDurationDays": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "premiumDurationWeeks": "{count, plural, one{1 semaine} other{{count} semaines}}",
+  "@premiumDurationWeeks": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "premiumDurationMonths": "{count, plural, one{1 mois} other{{count} mois}}",
+  "@premiumDurationMonths": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "premiumDurationYears": "{count, plural, one{1 an} other{{count} ans}}",
+  "@premiumDurationYears": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "premiumSubscribeCta": "S'abonner",
+  "@premiumSubscribeCta": {},
+  "premiumRestore": "Restaurer mes achats",
+  "@premiumRestore": {},
+  "premiumGuestTitle": "Crée ton compte pour passer en Pro",
+  "@premiumGuestTitle": {},
+  "premiumGuestBody": "L'abonnement Pro est lié à un compte inscrit : crée le tien pour t'abonner et retrouver tes recettes partout.",
+  "@premiumGuestBody": {},
+  "premiumOfferingsError": "Impossible de charger les offres. Vérifie ta connexion et réessaie.",
+  "@premiumOfferingsError": {},
+  "premiumOfferingsEmpty": "Aucune offre n'est disponible pour le moment. Réessaie plus tard.",
+  "@premiumOfferingsEmpty": {},
+  "premiumPurchasePending": "Achat en attente de validation — l'accès Pro s'activera automatiquement.",
+  "@premiumPurchasePending": {},
+  "premiumPurchaseFailed": "L'achat n'a pas abouti. Réessaie.",
+  "@premiumPurchaseFailed": {},
+  "premiumRestoreNone": "Aucun abonnement à restaurer sur ce compte.",
+  "@premiumRestoreNone": {},
+  "premiumSuccessTitle": "Bienvenue dans Cocotte Minute Pro !",
+  "@premiumSuccessTitle": {},
+  "premiumSuccessBody": "Toutes les limites sont levées. Bonne cuisine !",
+  "@premiumSuccessBody": {},
+  "premiumAlreadyProTitle": "Tu es déjà Pro",
+  "@premiumAlreadyProTitle": {},
+  "premiumAlreadyProBody": "Merci de soutenir Cocotte Minute. Ton abonnement se gère directement depuis le store.",
+  "@premiumAlreadyProBody": {},
+  "premiumManageSubscription": "Gérer mon abonnement",
+  "@premiumManageSubscription": {},
+  "accountSectionSubscription": "Abonnement",
+  "@accountSectionSubscription": {},
+  "accountRowPremium": "Cocotte Minute Pro",
+  "@accountRowPremium": {},
+  "premiumStatusFree": "Gratuit",
+  "@premiumStatusFree": {},
+  "premiumStatusPro": "Pro",
+  "@premiumStatusPro": {},
+  "premiumStatusTrial": "Essai en cours",
+  "@premiumStatusTrial": {},
+  "premiumStatusTrialUntil": "Essai en cours · jusqu'au {date}",
+  "@premiumStatusTrialUntil": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "premiumStatusProUntil": "Pro · jusqu'au {date}",
+  "@premiumStatusProUntil": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "premiumLimitCta": "Découvrir Pro",
+  "@premiumLimitCta": {},
+  "premiumLimitDismiss": "Plus tard",
+  "@premiumLimitDismiss": {},
+  "premiumLimitBaseRecipesTitle": "Limite de recettes de base atteinte",
+  "@premiumLimitBaseRecipesTitle": {},
+  "premiumLimitBaseRecipesBody": "Le plan gratuit permet {limit} recettes de base. Passe en Pro pour en créer autant que tu veux.",
+  "@premiumLimitBaseRecipesBody": {
+    "placeholders": {
+      "limit": { "type": "int" }
+    }
+  },
+  "premiumLimitShoppingListsTitle": "Une seule liste active en gratuit",
+  "@premiumLimitShoppingListsTitle": {},
+  "premiumLimitShoppingListsBody": "Termine ou vide ta liste en cours, ou passe en Pro pour gérer plusieurs listes en parallèle et garder l'historique.",
+  "@premiumLimitShoppingListsBody": {},
+  "premiumLimitSearchTitle": "Limite de critères atteinte",
+  "@premiumLimitSearchTitle": {},
+  "premiumLimitSearchBody": "La recherche gratuite combine jusqu'à {limit} critères. Passe en Pro pour chercher sans plafond.",
+  "@premiumLimitSearchBody": {
+    "placeholders": {
+      "limit": { "type": "int" }
+    }
+  },
+  "premiumLimitGenericTitle": "Fonctionnalité Pro",
+  "@premiumLimitGenericTitle": {},
+  "premiumLimitGenericBody": "Cette action dépasse les limites du plan gratuit. Découvre Cocotte Minute Pro.",
+  "@premiumLimitGenericBody": {},
+  "premiumSearchCounter": "{used}/{max}",
+  "@premiumSearchCounter": {
+    "placeholders": {
+      "used": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+  "premiumSearchCounterFull": "{used}/{max} — passe en Pro",
+  "@premiumSearchCounterFull": {
+    "placeholders": {
+      "used": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  }
 }

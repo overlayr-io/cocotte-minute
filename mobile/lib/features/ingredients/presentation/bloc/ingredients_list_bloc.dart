@@ -87,6 +87,7 @@ class IngredientsListBloc extends Bloc<IngredientsListEvent, IngredientsListStat
         name: event.name,
         unit: event.unit,
         imageUrl: event.imageUrl,
+        emoji: event.emoji,
       );
       emit(await _load());
     } on IngredientsRepositoryException catch (e) {

@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/premium/premium_limit_error.dart';
 import '../../../recipes/data/recipes_repository.dart';
 import '../../../recipes/domain/recipe.dart';
 import '../../data/shopping_list_api.dart';
@@ -42,6 +43,7 @@ class GenerateState extends Equatable {
     this.generating = false,
     this.generatedListId,
     this.actionError,
+    this.premiumLimit,
   });
 
   final GeneratePhase phase;
@@ -60,6 +62,10 @@ class GenerateState extends Equatable {
 
   /// Message transitoire (échec de génération) à montrer en snackbar.
   final String? actionError;
+
+  /// Limite freemium atteinte (403 `PREMIUM_LIMIT_SHOPPING_LISTS`) : la page
+  /// ouvre la feuille d'upsell au lieu d'un snackbar. Transitoire.
+  final PremiumLimitError? premiumLimit;
 
   int get selectedCount => selectedIds.length;
   int get totalServings =>
@@ -82,6 +88,7 @@ class GenerateState extends Equatable {
     bool? generating,
     String? generatedListId,
     String? actionError,
+    PremiumLimitError? premiumLimit,
   }) {
     return GenerateState(
       phase: phase ?? this.phase,
@@ -96,6 +103,7 @@ class GenerateState extends Equatable {
       generating: generating ?? this.generating,
       generatedListId: generatedListId ?? this.generatedListId,
       actionError: actionError,
+      premiumLimit: premiumLimit,
     );
   }
 
@@ -113,6 +121,7 @@ class GenerateState extends Equatable {
     generating,
     generatedListId,
     actionError,
+    premiumLimit,
   ];
 }
 
@@ -249,7 +258,13 @@ class GenerateShoppingListCubit extends Cubit<GenerateState> {
       );
       emit(state.copyWith(generating: false, generatedListId: detail.list.id));
     } on ShoppingListApiException catch (e) {
-      emit(state.copyWith(generating: false, actionError: e.message));
+      // Limite freemium (1 liste active) : distincte du message brut pour que
+      // la page ouvre la feuille d'upsell au lieu d'un snackbar.
+      emit(state.copyWith(
+        generating: false,
+        actionError: e.premiumLimit == null ? e.message : null,
+        premiumLimit: e.premiumLimit,
+      ));
     }
   }
 }

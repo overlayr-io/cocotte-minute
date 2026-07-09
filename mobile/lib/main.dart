@@ -6,6 +6,7 @@ import 'app.dart';
 import 'core/config/env.dart';
 import 'core/di/service_locator.dart';
 import 'core/notifications/local_notifications_service.dart';
+import 'core/premium/premium_repository.dart';
 import 'core/supabase/supabase_client.dart';
 
 Future<void> main() async {
@@ -22,6 +23,15 @@ Future<void> main() async {
       'SUPABASE_URL / SUPABASE_ANON_KEY manquants : '
       'lancez avec --dart-define pour activer l\'auth.',
     );
+  }
+
+  // RevenueCat (premium) : configuré SANS appUserID (anonyme), le logIn/logOut
+  // est synchronisé par le PremiumCubit sur l'AuthBloc. Un échec ne doit
+  // jamais bloquer le démarrage — l'app reste simplement « non premium ».
+  try {
+    await sl<PremiumRepository>().configure();
+  } catch (e) {
+    debugPrint('RevenueCat non configuré : $e');
   }
 
   runApp(const CocotteApp());

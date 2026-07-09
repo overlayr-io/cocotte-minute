@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
@@ -29,6 +30,7 @@ import {
   UpdateRecipeStepDto,
 } from './dto/recipe-relations.dto';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
+import { ListRecipesQueryDto } from './dto/list-recipes-query.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import {
   RecipeDetailDto,
@@ -42,8 +44,11 @@ export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}
 
   @Get()
-  listMine(@CurrentUser() user: AuthenticatedUser): Promise<RecipeSummaryDto[]> {
-    return this.recipesService.listMine(user.id);
+  listMine(
+    @CurrentUser() user: AuthenticatedUser,
+    @Query() query: ListRecipesQueryDto,
+  ): Promise<RecipeSummaryDto[]> {
+    return this.recipesService.listMine(user.id, query);
   }
 
   @Post()
@@ -52,6 +57,14 @@ export class RecipesController {
     @Body() dto: CreateRecipeDto,
   ): Promise<RecipeSummaryDto> {
     return this.recipesService.create(user.id, dto);
+  }
+
+  /** Recettes rangées dans aucun dossier (dossier virtuel « Autres »). */
+  @Get('uncategorized')
+  listUncategorized(
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<RecipeSummaryDto[]> {
+    return this.recipesService.listUncategorized(user.id);
   }
 
   @Get(':id')

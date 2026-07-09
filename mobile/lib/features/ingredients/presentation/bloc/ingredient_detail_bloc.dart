@@ -48,6 +48,9 @@ class IngredientDetailBloc extends Bloc<IngredientDetailEvent, IngredientDetailS
         _id,
         name: event.name,
         unit: event.unit,
+        // Envoie explicitement les deux (null = vidé) : le serveur applique
+        // l'exclusivité emoji ↔ image.
+        emoji: event.emoji,
         imageUrl: event.imageUrl,
       );
       emit(const IngredientDetailSaved());

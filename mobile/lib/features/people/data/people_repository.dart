@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/network/json_list_cache.dart';
+import '../../recipes/domain/recipe.dart';
 import '../domain/person.dart';
 
 /// Erreur portant un message exploitable pour l'UI (snackbar/page d'erreur).
@@ -119,6 +120,46 @@ class PeopleRepository {
       return Person.fromJson(res.data!);
     } on DioException catch (e) {
       throw _mapError(e, 'Impossible de retirer le tag.');
+    }
+  }
+
+  /// « Ses recettes » : recettes associées directement à la personne.
+  Future<List<RecipeSummary>> fetchRecipes(String personId) async {
+    try {
+      final res = await _dio.get<List<dynamic>>('/people/$personId/recipes');
+      return (res.data ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(RecipeSummary.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de charger ses recettes.');
+    }
+  }
+
+  /// Associe une recette (« ses recettes ») et retourne la personne à jour.
+  Future<Person> addRecipe(String personId, String recipeId) async {
+    try {
+      final res = await _dio.post<Map<String, dynamic>>(
+        '/people/$personId/recipes',
+        data: {'recipeId': recipeId},
+      );
+      await _cache.clear();
+      return Person.fromJson(res.data!);
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'associer la recette.');
+    }
+  }
+
+  /// Retire l'association d'une recette et retourne la personne à jour.
+  Future<Person> removeRecipe(String personId, String recipeId) async {
+    try {
+      final res = await _dio.delete<Map<String, dynamic>>(
+        '/people/$personId/recipes/$recipeId',
+      );
+      await _cache.clear();
+      return Person.fromJson(res.data!);
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de retirer la recette.');
     }
   }
 

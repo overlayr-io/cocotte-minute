@@ -32,6 +32,7 @@ class DiscoveryPerson {
     required this.firstName,
     required this.avatarUrl,
     required this.tagIds,
+    this.recipeIds = const [],
   });
 
   final String id;
@@ -39,12 +40,17 @@ class DiscoveryPerson {
   final String? avatarUrl;
   final List<String> tagIds;
 
+  /// Recettes associées directement (« ses recettes »).
+  final List<String> recipeIds;
+
   factory DiscoveryPerson.fromJson(Map<String, dynamic> json) {
     return DiscoveryPerson(
       id: json['id'] as String,
       firstName: json['firstName'] as String,
       avatarUrl: json['avatarUrl'] as String?,
       tagIds: (json['tagIds'] as List<dynamic>?)?.cast<String>() ?? const [],
+      recipeIds:
+          (json['recipeIds'] as List<dynamic>?)?.cast<String>() ?? const [],
     );
   }
 }

@@ -6,8 +6,20 @@ import {
   Logger,
   NotFoundException,
 } from '@nestjs/common';
-import { and, asc, desc, eq, ilike, inArray, isNull, sql } from 'drizzle-orm';
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  ilike,
+  inArray,
+  isNull,
+  notInArray,
+  or,
+  sql,
+} from 'drizzle-orm';
 
+import { PremiumLimitException } from '../../common/errors/premium-limit.exception';
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import {
   DEFAULT_INGREDIENT_QUANTITY,
@@ -21,6 +33,7 @@ import {
   type RecipeRow,
   type RecipeStepRow,
 } from '../../db/schema/recipes.schema';
+import { PremiumService } from '../billing/premium.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { isSeasonal } from './data/seasonality';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
@@ -45,6 +58,17 @@ export interface RecipeSearchFilters {
   allTagIds?: string[];
   /** Tags dérivés des personnes : la recette porte AU MOINS UN de ces tags (OU). */
   anyTagIds?: string[];
+  /**
+   * Filtre « personnes » résolu par SearchService. Une recette correspond si :
+   * associée directement à une des personnes (recipeIds), OU porte un de leurs
+   * tags (tagIds), OU n'est associée à rien (aucun tag ET aucune personne —
+   * associatedRecipeIds = toutes les recettes liées à au moins une personne).
+   */
+  person?: {
+    recipeIds: string[];
+    tagIds: string[];
+    associatedRecipeIds: string[];
+  };
 }
 
 /** Ligne de liste / carte (sans les relations lourdes). */
@@ -175,14 +199,105 @@ export class RecipesService {
     // Isolation des domaines : Recipes hydrate/valide les ingrédients via le
     // service Ingredients, jamais en accédant à son schéma.
     private readonly ingredientsService: IngredientsService,
+    private readonly premiumService: PremiumService,
   ) {}
 
-  /** Mes recettes (les plus récentes d'abord), hors supprimées. */
-  async listMine(userId: string): Promise<RecipeSummaryDto[]> {
+  /** Limite du plan gratuit : nombre max de recettes de base (cf. premium-version.md). */
+  private static readonly FREE_BASE_RECIPES_LIMIT = 5;
+
+  /**
+   * Garde freemium : bloque la création/bascule d'une recette de base au-delà
+   * de la limite gratuite. Vérifiée serveur (jamais uniquement UI), ignorée
+   * pour les comptes premium.
+   */
+  private async assertBaseRecipeQuota(userId: string): Promise<void> {
+    const [row] = await this.db
+      .select({ n: sql<number>`count(*)::int` })
+      .from(recipes)
+      .where(
+        and(
+          eq(recipes.authorId, userId),
+          eq(recipes.isBase, true),
+          isNull(recipes.deletedAt),
+        ),
+      );
+    const current = row?.n ?? 0;
+    if (current < RecipesService.FREE_BASE_RECIPES_LIMIT) return;
+    if (await this.premiumService.isPremium(userId)) return;
+    throw new PremiumLimitException(
+      'PREMIUM_LIMIT_BASE_RECIPES',
+      RecipesService.FREE_BASE_RECIPES_LIMIT,
+      current,
+      `Limite gratuite atteinte : ${RecipesService.FREE_BASE_RECIPES_LIMIT} recettes de base maximum. Passe en Pro pour en créer sans limite.`,
+    );
+  }
+
+  /**
+   * Mes recettes (les plus récentes d'abord), hors supprimées. Options pour la
+   * vue Liste paginée : `q` (filtre texte simple sur le nom), `limit`/`offset`.
+   * Sans option, tout est renvoyé (rétro-compatible).
+   */
+  async listMine(
+    userId: string,
+    options?: { q?: string; limit?: number; offset?: number },
+  ): Promise<RecipeSummaryDto[]> {
+    const conditions = [eq(recipes.authorId, userId), isNull(recipes.deletedAt)];
+    const q = options?.q?.trim();
+    if (q) {
+      conditions.push(ilike(recipes.name, `%${escapeLike(q)}%`));
+    }
+    let query = this.db
+      .select()
+      .from(recipes)
+      .where(and(...conditions))
+      .orderBy(desc(recipes.createdAt))
+      .$dynamic();
+    if (options?.limit !== undefined) query = query.limit(options.limit);
+    if (options?.offset !== undefined) query = query.offset(options.offset);
+    const rows = await query;
+    return rows.map(toSummary);
+  }
+
+  /**
+   * Recettes rangées dans aucun dossier (non supprimées, plus récentes d'abord)
+   * — alimente le dossier virtuel « Autres » de la page Recettes.
+   */
+  async listUncategorized(userId: string): Promise<RecipeSummaryDto[]> {
     const rows = await this.db
       .select()
       .from(recipes)
-      .where(and(eq(recipes.authorId, userId), isNull(recipes.deletedAt)))
+      .where(
+        and(
+          eq(recipes.authorId, userId),
+          isNull(recipes.deletedAt),
+          notInArray(
+            recipes.id,
+            this.db
+              .select({ id: recipeCategories.recipeId })
+              .from(recipeCategories),
+          ),
+        ),
+      )
+      .orderBy(desc(recipes.createdAt));
+    return rows.map(toSummary);
+  }
+
+  /**
+   * Résumés d'un ensemble de recettes possédées (non supprimées), les plus
+   * récentes d'abord. Les ids inconnus ou étrangers sont ignorés silencieusement.
+   */
+  async listByIds(userId: string, ids: string[]): Promise<RecipeSummaryDto[]> {
+    if (ids.length === 0) return [];
+    const rows = await this.db
+      .select()
+      .from(recipes)
+      .where(
+        and(
+          inArray(recipes.id, [...new Set(ids)]),
+          eq(recipes.authorId, userId),
+          isNull(recipes.deletedAt),
+        ),
+      )
       .orderBy(desc(recipes.createdAt));
     return rows.map(toSummary);
   }
@@ -254,6 +369,37 @@ export class RecipesService {
             .where(inArray(recipeTags.tagId, filters.anyTagIds)),
         ),
       );
+    }
+
+    if (filters.person) {
+      const { recipeIds, tagIds, associatedRecipeIds } = filters.person;
+      const alternatives = [];
+      if (recipeIds.length > 0) {
+        alternatives.push(inArray(recipes.id, recipeIds));
+      }
+      if (tagIds.length > 0) {
+        alternatives.push(
+          inArray(
+            recipes.id,
+            this.db
+              .select({ id: recipeTags.recipeId })
+              .from(recipeTags)
+              .where(inArray(recipeTags.tagId, tagIds)),
+          ),
+        );
+      }
+      // « Associée à rien » : aucun tag et liée à aucune personne.
+      const orphanParts = [
+        notInArray(
+          recipes.id,
+          this.db.select({ id: recipeTags.recipeId }).from(recipeTags),
+        ),
+      ];
+      if (associatedRecipeIds.length > 0) {
+        orphanParts.push(notInArray(recipes.id, associatedRecipeIds));
+      }
+      alternatives.push(and(...orphanParts)!);
+      conditions.push(or(...alternatives)!);
     }
 
     if (filters.allTagIds && filters.allTagIds.length > 0) {
@@ -361,6 +507,7 @@ export class RecipesService {
   }
 
   async create(userId: string, dto: CreateRecipeDto): Promise<RecipeSummaryDto> {
+    if (dto.isBase === true) await this.assertBaseRecipeQuota(userId);
     const [row] = await this.db
       .insert(recipes)
       .values({
@@ -550,6 +697,11 @@ export class RecipesService {
       throw new ConflictException(
         'Cette recette de base est utilisée comme composant : impossible de la repasser en recette normale',
       );
+    }
+
+    // Garde freemium : la bascule normale→base compte comme une création de base.
+    if (dto.isBase === true && !current.isBase) {
+      await this.assertBaseRecipeQuota(userId);
     }
 
     const patch: Partial<RecipeRow> = {};

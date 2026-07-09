@@ -12,6 +12,7 @@ import '../../data/people_repository.dart';
 import '../../domain/person.dart';
 import '../bloc/person_edit_cubit.dart';
 import '../widgets/person_avatar.dart';
+import '../widgets/recipe_pick_sheet.dart';
 
 /// Page d'édition d'une personne : prénom + nom + avatar, et association des
 /// tags du compte par toggle. Suppression en trailing d'AppBar, enregistrement
@@ -32,7 +33,9 @@ class PersonEditPage extends StatelessWidget {
         peopleRepository: sl<PeopleRepository>(),
         tagsRepository: sl<TagsRepository>(),
         person: person,
-      )..loadTags(),
+      )
+        ..loadTags()
+        ..loadRecipes(),
       child: const _PersonEditView(),
     );
   }
@@ -78,6 +81,18 @@ class _PersonEditViewState extends State<_PersonEditView> {
           lastName: _lastNameController.text.trim(),
           avatarUrl: _avatarUrl,
         );
+  }
+
+  Future<void> _addRecipes(
+    BuildContext context,
+    PersonEditState state,
+  ) async {
+    final cubit = context.read<PersonEditCubit>();
+    final ids = await showRecipePickSheet(
+      context,
+      excludeIds: state.recipes.map((r) => r.id).toSet(),
+    );
+    if (ids != null && ids.isNotEmpty) await cubit.addRecipes(ids);
   }
 
   Future<void> _confirmDelete() async {
@@ -176,6 +191,22 @@ class _PersonEditViewState extends State<_PersonEditView> {
               _Label(l10n.personTagsLabel),
               const SizedBox(height: 11),
               _TagsSection(state: state, l10n: l10n),
+              const SizedBox(height: 22),
+              Row(
+                children: [
+                  Expanded(child: _Label(l10n.personRecipesLabel)),
+                  IconButton(
+                    onPressed: state.recipesBusy
+                        ? null
+                        : () => _addRecipes(context, state),
+                    icon: const Icon(Icons.add_circle_outline_rounded),
+                    color: AppColors.primary,
+                    tooltip: l10n.personRecipesAddTooltip,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              _RecipesSection(state: state, l10n: l10n),
             ],
           ),
           bottomNavigationBar: SafeArea(
@@ -338,6 +369,81 @@ class _TagToggle extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _RecipesSection extends StatelessWidget {
+  const _RecipesSection({required this.state, required this.l10n});
+
+  final PersonEditState state;
+  final AppLocalizations l10n;
+
+  @override
+  Widget build(BuildContext context) {
+    if (state.recipesLoading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 12),
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+    if (state.recipes.isEmpty) {
+      return Text(
+        l10n.personRecipesEmptyHint,
+        style: const TextStyle(
+          fontSize: 13,
+          height: 1.4,
+          color: AppColors.textMuted,
+        ),
+      );
+    }
+    return Column(
+      children: [
+        for (final recipe in state.recipes)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 9),
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(14, 11, 6, 11),
+              decoration: BoxDecoration(
+                color: AppColors.card,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.restaurant_menu_rounded,
+                    size: 17,
+                    color: AppColors.primary,
+                  ),
+                  const SizedBox(width: 11),
+                  Expanded(
+                    child: Text(
+                      recipe.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 14.5,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: state.recipesBusy
+                        ? null
+                        : () => context
+                            .read<PersonEditCubit>()
+                            .removeRecipe(recipe.id),
+                    icon: const Icon(Icons.close_rounded, size: 18),
+                    color: AppColors.textMuted,
+                    tooltip: l10n.personRecipesRemoveTooltip,
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

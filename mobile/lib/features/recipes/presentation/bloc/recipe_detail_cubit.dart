@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/premium/premium_limit_error.dart';
 import '../../data/recipes_repository.dart';
 import '../../domain/recipe.dart';
 
@@ -32,6 +33,7 @@ class RecipeDetailLoaded extends RecipeDetailState {
     this.busy = false,
     this.message,
     this.deleted = false,
+    this.premiumLimit,
   });
 
   final RecipeDetail detail;
@@ -45,22 +47,28 @@ class RecipeDetailLoaded extends RecipeDetailState {
   /// La recette vient d'être supprimée → la page doit se refermer.
   final bool deleted;
 
+  /// Limite freemium atteinte (403 `PREMIUM_LIMIT_BASE_RECIPES` au passage
+  /// is_base) : la vue ouvre la feuille d'upsell. Transitoire.
+  final PremiumLimitError? premiumLimit;
+
   RecipeDetailLoaded copyWith({
     RecipeDetail? detail,
     bool? busy,
     String? message,
     bool? deleted,
+    PremiumLimitError? premiumLimit,
   }) {
     return RecipeDetailLoaded(
       detail: detail ?? this.detail,
       busy: busy ?? this.busy,
       message: message,
       deleted: deleted ?? this.deleted,
+      premiumLimit: premiumLimit,
     );
   }
 
   @override
-  List<Object?> get props => [detail, busy, message, deleted];
+  List<Object?> get props => [detail, busy, message, deleted, premiumLimit];
 }
 
 /// Ligne à ajouter à une recette : ingrédient + quantité (unité lue depuis
@@ -116,7 +124,13 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
       final detail = await _repository.fetchDetail(recipeId);
       emit(RecipeDetailLoaded(detail: detail));
     } on RecipesRepositoryException catch (e) {
-      emit(current.copyWith(busy: false, message: e.message));
+      // Limite freemium (5 recettes de base max) : signalée à part pour que
+      // la vue ouvre la feuille d'upsell au lieu d'un snackbar.
+      emit(current.copyWith(
+        busy: false,
+        message: e.premiumLimit == null ? e.message : null,
+        premiumLimit: e.premiumLimit,
+      ));
     }
   }
 

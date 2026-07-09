@@ -72,6 +72,7 @@ class _IngredientsViewState extends State<_IngredientsView> {
             name: draft.name,
             unit: draft.unit,
             imageUrl: draft.imageUrl,
+            emoji: draft.emoji,
           ),
         );
   }
@@ -195,15 +196,17 @@ class _IngredientsViewState extends State<_IngredientsView> {
 // --- tiles & atoms ---------------------------------------------------------
 
 class _IngredientAvatar extends StatelessWidget {
-  const _IngredientAvatar({this.imageUrl});
+  const _IngredientAvatar({this.imageUrl, this.emoji});
 
   final String? imageUrl;
+  final String? emoji;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 52,
       height: 52,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         color: AppColors.primaryTint,
         borderRadius: BorderRadius.circular(14),
@@ -213,9 +216,11 @@ class _IngredientAvatar extends StatelessWidget {
                 fit: BoxFit.cover)
             : null,
       ),
-      child: imageUrl == null
-          ? const Icon(Icons.eco_outlined, color: AppColors.primary)
-          : null,
+      child: imageUrl != null
+          ? null
+          : emoji != null
+              ? Text(emoji!, style: const TextStyle(fontSize: 26))
+              : const Icon(Icons.eco_outlined, color: AppColors.primary),
     );
   }
 }
@@ -292,7 +297,7 @@ class _MineTile extends StatelessWidget {
           ),
           child: Row(
             children: [
-              _IngredientAvatar(imageUrl: ingredient.imageUrl),
+              _IngredientAvatar(imageUrl: ingredient.imageUrl, emoji: ingredient.emoji),
               const SizedBox(width: 13),
               Expanded(
                 child: Column(
@@ -354,7 +359,7 @@ class _SystemTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          _IngredientAvatar(imageUrl: ingredient.imageUrl),
+          _IngredientAvatar(imageUrl: ingredient.imageUrl, emoji: ingredient.emoji),
           const SizedBox(width: 13),
           Expanded(
             child: Column(
