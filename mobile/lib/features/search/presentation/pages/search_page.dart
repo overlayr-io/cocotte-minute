@@ -3,6 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
+import '../../../../core/premium/premium_cubit.dart';
+import '../../../../core/premium/premium_limit_error.dart';
+import '../../../../core/premium/premium_limit_sheet.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../categories/data/categories_repository.dart';
@@ -43,12 +46,16 @@ class SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) {
+      create: (context) {
+        final premiumCubit = context.read<PremiumCubit>();
         final cubit = SearchCubit(
           searchRepository: sl<SearchRepository>(),
           categoriesRepository: sl<CategoriesRepository>(),
           tagsRepository: sl<TagsRepository>(),
           peopleRepository: sl<PeopleRepository>(),
+          // Lu à chaque action (pas figé à la création) : gating d'affichage,
+          // le serveur reste l'autorité du plafond.
+          isPremium: () => premiumCubit.state.isPremium,
         );
         cubit.init();
         if (initialFolder != null) cubit.addFolder(initialFolder!);
@@ -68,27 +75,41 @@ class _SearchView extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.surface,
       body: SafeArea(
-        child: BlocConsumer<SearchCubit, SearchState>(
-          listenWhen: (p, c) =>
-              p.actionMessage != c.actionMessage && c.actionMessage != null,
+        child: BlocListener<SearchCubit, SearchState>(
+          // Plafond gratuit atteint (tentative locale ou 403 serveur) :
+          // feuille d'upsell, jamais de blocage silencieux.
+          listenWhen: (p, c) => p.limitBlockTick != c.limitBlockTick,
           listener: (context, state) {
-            ScaffoldMessenger.of(context)
-              ..hideCurrentSnackBar()
-              ..showSnackBar(SnackBar(content: Text(state.actionMessage!)));
+            showPremiumLimitSheet(
+              context,
+              error: const PremiumLimitError(
+                code: PremiumLimitError.searchCriteria,
+                limit: SearchState.freeCriteriaLimit,
+              ),
+            );
           },
-          builder: (context, state) {
-            if (state.referenceStatus == SearchStatus.failure) {
-              return ErrorView(
-                message: state.errorMessage ?? l10n.commonRetry,
-                onRetry: () => context.read<SearchCubit>().init(),
-              );
-            }
-            if (state.referenceStatus == SearchStatus.loading ||
-                state.referenceStatus == SearchStatus.initial) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return _content(context, state, l10n);
-          },
+          child: BlocConsumer<SearchCubit, SearchState>(
+            listenWhen: (p, c) =>
+                p.actionMessage != c.actionMessage && c.actionMessage != null,
+            listener: (context, state) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(SnackBar(content: Text(state.actionMessage!)));
+            },
+            builder: (context, state) {
+              if (state.referenceStatus == SearchStatus.failure) {
+                return ErrorView(
+                  message: state.errorMessage ?? l10n.commonRetry,
+                  onRetry: () => context.read<SearchCubit>().init(),
+                );
+              }
+              if (state.referenceStatus == SearchStatus.loading ||
+                  state.referenceStatus == SearchStatus.initial) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return _content(context, state, l10n);
+            },
+          ),
         ),
       ),
     );

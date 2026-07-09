@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
+import '../../../../core/premium/premium_limit_sheet.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_network_image.dart';
 import '../../../recipes/data/recipes_repository.dart';
@@ -60,12 +61,17 @@ class _GenerateView extends StatelessWidget {
         child: BlocConsumer<GenerateShoppingListCubit, GenerateState>(
           listenWhen: (p, c) =>
               p.generatedListId != c.generatedListId ||
-              p.actionError != c.actionError,
+              p.actionError != c.actionError ||
+              p.premiumLimit != c.premiumLimit,
           listener: (context, state) {
             if (state.generatedListId != null) {
               Navigator.of(context).pushReplacement(
                 ShoppingListDetailPage.route(state.generatedListId!),
               );
+            } else if (state.premiumLimit != null) {
+              // Limite freemium (1 liste active) : feuille d'upsell, pas de
+              // message d'erreur brut.
+              showPremiumLimitSheet(context, error: state.premiumLimit!);
             } else if (state.actionError != null) {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()

@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../../core/auth/auth_bloc.dart';
+import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/i18n/locale_cubit.dart';
+import '../../../../core/premium/premium_cubit.dart';
+import '../../../../core/premium/premium_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_shadows.dart';
 import '../../../auth/presentation/pages/auth_page.dart';
@@ -13,6 +17,7 @@ import '../../../help/presentation/pages/contact_page.dart';
 import '../../../help/presentation/pages/help_center_page.dart';
 import '../../../ingredients/presentation/pages/ingredients_page.dart';
 import '../../../people/presentation/pages/famille_page.dart';
+import '../../../premium/presentation/pages/premium_page.dart';
 import '../../../tags/presentation/pages/tags_page.dart';
 import '../widgets/account_section.dart';
 import 'account_manage_page.dart';
@@ -42,6 +47,9 @@ class AccountPage extends StatelessWidget {
     // Écoute la langue courante pour rafraîchir le sous-titre de la tuile.
     context.watch<LocaleCubit>();
 
+    // Statut d'abonnement (sous-titre de la ligne Pro + tuile de gestion).
+    final premium = context.watch<PremiumCubit>().state;
+
     return SafeArea(
       bottom: false,
       child: ListView(
@@ -66,6 +74,29 @@ class AccountPage extends StatelessWidget {
                   Navigator.of(context).push(AuthPage.route()),
             ),
           ],
+
+          // Abonnement — statut Pro + gestion (Customer Center) si abonné.
+          AccountSection(
+            title: l10n.accountSectionSubscription,
+            tiles: [
+              AccountTile(
+                icon: Icons.workspace_premium_rounded,
+                iconColor: AppColors.premiumGoldDark,
+                iconBackground: AppColors.premiumGoldTint,
+                label: l10n.accountRowPremium,
+                sublabel: _premiumStatusLabel(context, l10n, premium),
+                onTap: () => Navigator.of(context).push(PremiumPage.route()),
+              ),
+              if (premium.isPremium)
+                AccountTile(
+                  icon: Icons.credit_card_rounded,
+                  iconColor: const Color(0xFF5B6774),
+                  iconBackground: const Color(0xFFEDF0F3),
+                  label: l10n.premiumManageSubscription,
+                  onTap: () => sl<PremiumRepository>().showCustomerCenter(),
+                ),
+            ],
+          ),
 
           // Mon contenu — ingrédients / tags / dossiers
           AccountSection(
@@ -267,6 +298,30 @@ class AccountPage extends StatelessWidget {
 }
 
 enum _GuestLogoutAction { signOut, createAccount }
+
+/// Sous-titre de la ligne « Cocotte Minute Pro » : Gratuit / Pro / Essai en
+/// cours, avec l'échéance de la période courante quand elle est connue.
+String _premiumStatusLabel(
+  BuildContext context,
+  AppLocalizations l10n,
+  PremiumState premium,
+) {
+  if (!premium.isPremium) return l10n.premiumStatusFree;
+  final raw = premium.expirationDate;
+  final date = raw == null ? null : DateTime.tryParse(raw)?.toLocal();
+  final formatted = date == null
+      ? null
+      : DateFormat.yMMMd(Localizations.localeOf(context).toString())
+          .format(date);
+  if (premium.isTrial) {
+    return formatted == null
+        ? l10n.premiumStatusTrial
+        : l10n.premiumStatusTrialUntil(formatted);
+  }
+  return formatted == null
+      ? l10n.premiumStatusPro
+      : l10n.premiumStatusProUntil(formatted);
+}
 
 /// Numéro de version/build de l'app, affiché en bas de la page compte.
 class _VersionFooter extends StatelessWidget {

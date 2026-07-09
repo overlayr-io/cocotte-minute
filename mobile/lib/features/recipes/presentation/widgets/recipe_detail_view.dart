@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
+import '../../../../core/premium/premium_limit_sheet.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/action_menu.dart';
 import '../../../../core/widgets/app_network_image.dart';
@@ -39,11 +40,17 @@ class RecipeDetailView extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return BlocConsumer<RecipeDetailCubit, RecipeDetailState>(
       listenWhen: (_, curr) =>
-          curr is RecipeDetailLoaded && (curr.deleted || curr.message != null),
+          curr is RecipeDetailLoaded &&
+          (curr.deleted || curr.message != null || curr.premiumLimit != null),
       listener: (context, state) {
         if (state is! RecipeDetailLoaded) return;
         if (state.deleted) {
           Navigator.of(context).pop(true);
+          return;
+        }
+        // Limite freemium (passage is_base refusé) : feuille d'upsell.
+        if (state.premiumLimit != null) {
+          showPremiumLimitSheet(context, error: state.premiumLimit!);
           return;
         }
         if (state.message != null) {

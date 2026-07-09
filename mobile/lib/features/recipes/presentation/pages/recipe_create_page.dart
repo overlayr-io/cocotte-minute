@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
+import '../../../../core/premium/premium_limit_sheet.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/image_upload_picker.dart';
 import '../../data/recipes_repository.dart';
@@ -52,6 +53,13 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
     } on RecipesRepositoryException catch (e) {
       if (!mounted) return;
       setState(() => _submitting = false);
+      // Limite freemium (5 recettes de base max) : feuille d'upsell au lieu
+      // du message d'erreur brut.
+      final premiumLimit = e.premiumLimit;
+      if (premiumLimit != null) {
+        showPremiumLimitSheet(context, error: premiumLimit);
+        return;
+      }
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(SnackBar(content: Text(e.message)));

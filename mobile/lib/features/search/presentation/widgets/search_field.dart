@@ -135,15 +135,73 @@ class _SearchFieldState extends State<SearchField> {
             Wrap(
               spacing: 7,
               runSpacing: 7,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 for (final token in state.tokens)
                   SearchPastille(
                     token: token,
                     onRemove: () => cubit.removeToken(token),
                   ),
+                // Plan gratuit : compteur de critères « X/6 » près des
+                // pastilles, mis en avant quand le plafond est atteint.
+                if (cubit.isLimited)
+                  _CriteriaCounter(
+                    used: state.criteriaCount,
+                    max: SearchState.freeCriteriaLimit,
+                  ),
               ],
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Compteur de critères du plan gratuit (« 3/6 »). Au plafond, il passe en
+/// doré avec la mention Pro (« 6/6 — passe en Pro »).
+class _CriteriaCounter extends StatelessWidget {
+  const _CriteriaCounter({required this.used, required this.max});
+
+  final int used;
+  final int max;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final full = used >= max;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      decoration: BoxDecoration(
+        color: full ? AppColors.premiumGoldTint : AppColors.pill,
+        border: Border.all(
+          color: full
+              ? AppColors.premiumGold.withValues(alpha: 0.55)
+              : AppColors.border,
+        ),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (full) ...[
+            const Icon(
+              Icons.workspace_premium_rounded,
+              size: 13,
+              color: AppColors.premiumGoldDark,
+            ),
+            const SizedBox(width: 4),
+          ],
+          Text(
+            full
+                ? l10n.premiumSearchCounterFull(used, max)
+                : l10n.premiumSearchCounter(used, max),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              color: full ? AppColors.premiumGoldDark : AppColors.textMuted,
+            ),
+          ),
         ],
       ),
     );

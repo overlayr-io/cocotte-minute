@@ -27,16 +27,25 @@ class SearchCubit extends Cubit<SearchState> {
     required CategoriesRepository categoriesRepository,
     required TagsRepository tagsRepository,
     required PeopleRepository peopleRepository,
+    required bool Function() isPremium,
   }) : _search = searchRepository,
        _categories = categoriesRepository,
        _tags = tagsRepository,
        _people = peopleRepository,
+       _isPremium = isPremium,
        super(const SearchState());
 
   final SearchRepository _search;
   final CategoriesRepository _categories;
   final TagsRepository _tags;
   final PeopleRepository _people;
+
+  /// Statut premium au moment de l'action (gating d'affichage uniquement :
+  /// le serveur applique de toute façon le plafond côté API).
+  final bool Function() _isPremium;
+
+  /// Vrai si le plafond gratuit de critères s'applique (indicateur « X/6 »).
+  bool get isLimited => !_isPremium();
 
   Timer? _debounce;
 
@@ -118,7 +127,9 @@ class SearchCubit extends Cubit<SearchState> {
 
   /// Crée un tag à la volée (menu `#`, ligne « Créer le tag ») puis l'ajoute
   /// comme pastille. En cas d'échec, remonte un message non bloquant (snackbar).
+  /// Le plafond gratuit est vérifié AVANT la création serveur du tag.
   Future<void> createAndAddTag(String name) async {
+    if (_blockIfLimitReached()) return;
     try {
       final tag = await _tags.create(name: name, color: _defaultTagColor);
       emit(state.copyWith(allTags: [...state.allTags, tag]));
@@ -154,12 +165,24 @@ class SearchCubit extends Cubit<SearchState> {
       emit(state.copyWith(rawInput: '', clearMenu: true));
       return;
     }
+    if (_blockIfLimitReached()) return;
     emit(state.copyWith(
       tokens: [...state.tokens, token],
       rawInput: '',
       clearMenu: true,
     ));
     _runSearch();
+  }
+
+  /// Plafond gratuit : au-delà de [SearchState.freeCriteriaLimit] critères
+  /// cumulés (pastilles + texte libre), on refuse l'ajout et on signale à la
+  /// page d'ouvrir la feuille d'upsell (tick incrémenté à chaque tentative).
+  /// Aucun plafond pour un utilisateur premium.
+  bool _blockIfLimitReached() {
+    if (_isPremium()) return false;
+    if (state.criteriaCount < SearchState.freeCriteriaLimit) return false;
+    emit(state.copyWith(limitBlockTick: state.limitBlockTick + 1));
+    return true;
   }
 
   void _scheduleSearch() {
@@ -197,6 +220,16 @@ class SearchCubit extends Cubit<SearchState> {
         results: results,
       ));
     } on SearchRepositoryException catch (e) {
+      // Défense en profondeur : si le serveur refuse pour cause de plafond
+      // (403 PREMIUM_LIMIT_SEARCH_CRITERIA), on ouvre l'upsell même si l'état
+      // local croyait être premium.
+      if (e.premiumLimit != null) {
+        emit(state.copyWith(
+          resultsStatus: SearchStatus.failure,
+          limitBlockTick: state.limitBlockTick + 1,
+        ));
+        return;
+      }
       emit(state.copyWith(
         resultsStatus: SearchStatus.failure,
         actionMessage: e.message,

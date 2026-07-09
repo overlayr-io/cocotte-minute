@@ -22,7 +22,12 @@ class SearchState extends Equatable {
     this.results = const [],
     this.errorMessage,
     this.actionMessage,
+    this.limitBlockTick = 0,
   });
+
+  /// Plafond de critères cumulés du plan gratuit (aligné sur le serveur,
+  /// 403 `PREMIUM_LIMIT_SEARCH_CRITERIA` au-delà).
+  static const int freeCriteriaLimit = 6;
 
   /// Contenu brut du champ (peut être un critère en cours `/#@…` ou du texte libre).
   final String rawInput;
@@ -53,8 +58,17 @@ class SearchState extends Equatable {
   /// Message non bloquant transitoire (échec de recherche / création tag) → snackbar.
   final String? actionMessage;
 
+  /// Incrémenté à chaque tentative d'ajout au-delà du plafond gratuit : la
+  /// page écoute son changement pour ouvrir la feuille d'upsell (un simple
+  /// booléen ne re-déclencherait pas sur deux tentatives successives).
+  final int limitBlockTick;
+
   /// Texte libre de recherche par nom (vide tant qu'un critère `/#@` est en cours).
   String get nameQuery => openMenu != null ? '' : rawInput.trim();
+
+  /// Nombre de critères cumulés au sens du plafond serveur : pastilles + le
+  /// texte libre s'il est non vide.
+  int get criteriaCount => tokens.length + (nameQuery.isEmpty ? 0 : 1);
 
   /// Champ « actif » (bordure verte) : saisie en cours ou menu ouvert.
   bool get isTyping => openMenu != null || rawInput.isNotEmpty;
@@ -131,6 +145,7 @@ class SearchState extends Equatable {
     List<RecipeSummary>? results,
     String? errorMessage,
     String? actionMessage,
+    int? limitBlockTick,
   }) {
     return SearchState(
       rawInput: rawInput ?? this.rawInput,
@@ -145,6 +160,7 @@ class SearchState extends Equatable {
       results: results ?? this.results,
       errorMessage: errorMessage ?? this.errorMessage,
       actionMessage: actionMessage,
+      limitBlockTick: limitBlockTick ?? this.limitBlockTick,
     );
   }
 
@@ -162,5 +178,6 @@ class SearchState extends Equatable {
         results,
         errorMessage,
         actionMessage,
+        limitBlockTick,
       ];
 }

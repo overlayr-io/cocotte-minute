@@ -35,6 +35,11 @@ class AppColors {
   // Sémantique
   static const Color danger = Color(0xFFEF4444);
 
+  // Premium (accent doré Cocotte Minute Pro)
+  static const Color premiumGold = Color(0xFFC79A4B);
+  static const Color premiumGoldDark = Color(0xFFA87E32);
+  static const Color premiumGoldTint = Color(0xFFF6EEDC);
+
   // Mode pas-à-pas (mode cuisine)
   static const Color timerAccent = Color(0xFFE8A33D); // minuteur (ambre)
   static const Color panelBackground = Color(0xFFEFEBE1); // panneau ingrédients/média
