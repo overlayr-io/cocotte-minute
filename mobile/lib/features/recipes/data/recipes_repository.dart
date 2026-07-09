@@ -113,11 +113,17 @@ class RecipesRepository {
     required String name,
     String? photoUrl,
     bool isBase = false,
+    required int servings,
   }) async {
     try {
       final res = await _dio.post<Map<String, dynamic>>(
         '/recipes',
-        data: {'name': name, 'photoUrl': ?photoUrl, 'isBase': isBase},
+        data: {
+          'name': name,
+          'photoUrl': ?photoUrl,
+          'isBase': isBase,
+          'servings': servings,
+        },
       );
       return RecipeSummary.fromJson(res.data!);
     } on DioException catch (e) {

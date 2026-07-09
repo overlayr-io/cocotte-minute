@@ -7,6 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/image_upload_picker.dart';
 import '../../data/recipes_repository.dart';
 import '../../domain/recipe.dart';
+import '../widgets/servings_stepper.dart';
 
 /// Écran de création (maquette 1d) : flow minimal — photo (optionnelle),
 /// nom (obligatoire), toggle « recette de base » décidé dès la création.
@@ -27,6 +28,7 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
   final _repository = sl<RecipesRepository>();
   String? _photoUrl;
   bool _isBase = false;
+  int _servings = kDefaultServings;
   bool _showNameError = false;
   bool _submitting = false;
 
@@ -48,6 +50,7 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
         name: name,
         photoUrl: _photoUrl,
         isBase: _isBase,
+        servings: _servings,
       );
       if (mounted) Navigator.of(context).pop(created);
     } on RecipesRepositoryException catch (e) {
@@ -118,6 +121,13 @@ class _RecipeCreatePageState extends State<RecipeCreatePage> {
           Text(
             l10n.recipeNameHelper,
             style: const TextStyle(fontSize: 12.5, color: AppColors.textMuted),
+          ),
+          const SizedBox(height: 22),
+          _FieldLabel(label: l10n.recipeFieldServings, required: true),
+          const SizedBox(height: 8),
+          ServingsStepper(
+            value: _servings,
+            onChanged: (v) => setState(() => _servings = v),
           ),
           const SizedBox(height: 22),
           _BaseToggleCard(
