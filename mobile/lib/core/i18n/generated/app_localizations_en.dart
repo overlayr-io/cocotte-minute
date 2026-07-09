@@ -744,6 +744,31 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get tagsTabMine => 'My tags';
+
+  @override
+  String get tagsTabCatalog => 'Catalog';
+
+  @override
+  String get tagsCatalogSearchHint => 'Search the catalog';
+
+  @override
+  String get tagsEmptyCatalog => 'No tags in the catalog.';
+
+  @override
+  String get tagsNoSearchResult => 'No results.';
+
+  @override
+  String get tagsImport => 'Import';
+
+  @override
+  String get tagsAlreadyImported => 'Already imported';
+
+  @override
+  String get tagsImportInfo =>
+      'Importing creates a personal copy, freely editable, without touching the system tag.';
+
+  @override
   String get tagCreateTitle => 'New tag';
 
   @override

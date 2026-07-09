@@ -1454,6 +1454,54 @@ abstract class AppLocalizations {
   /// **'{count, plural, =0{0 recette} =1{1 recette} other{{count} recettes}}'**
   String tagsRecipeCount(int count);
 
+  /// No description provided for @tagsTabMine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes tags'**
+  String get tagsTabMine;
+
+  /// No description provided for @tagsTabCatalog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catalogue'**
+  String get tagsTabCatalog;
+
+  /// No description provided for @tagsCatalogSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher dans le catalogue'**
+  String get tagsCatalogSearchHint;
+
+  /// No description provided for @tagsEmptyCatalog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun tag dans le catalogue.'**
+  String get tagsEmptyCatalog;
+
+  /// No description provided for @tagsNoSearchResult.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun résultat.'**
+  String get tagsNoSearchResult;
+
+  /// No description provided for @tagsImport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer'**
+  String get tagsImport;
+
+  /// No description provided for @tagsAlreadyImported.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déjà importé'**
+  String get tagsAlreadyImported;
+
+  /// No description provided for @tagsImportInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer crée une copie personnelle, modifiable librement, sans toucher au tag système.'**
+  String get tagsImportInfo;
+
   /// No description provided for @tagCreateTitle.
   ///
   /// In fr, this message translates to:

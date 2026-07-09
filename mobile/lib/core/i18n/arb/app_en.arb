@@ -255,6 +255,14 @@
       "count": { "type": "int" }
     }
   },
+  "tagsTabMine": "My tags",
+  "tagsTabCatalog": "Catalog",
+  "tagsCatalogSearchHint": "Search the catalog",
+  "tagsEmptyCatalog": "No tags in the catalog.",
+  "tagsNoSearchResult": "No results.",
+  "tagsImport": "Import",
+  "tagsAlreadyImported": "Already imported",
+  "tagsImportInfo": "Importing creates a personal copy, freely editable, without touching the system tag.",
   "tagCreateTitle": "New tag",
   "tagEditTitle": "Edit tag",
   "tagFieldName": "Name",

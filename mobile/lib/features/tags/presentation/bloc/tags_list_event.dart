@@ -7,9 +7,19 @@ sealed class TagsListEvent extends Equatable {
   List<Object?> get props => const [];
 }
 
-/// Charge (ou recharge) la liste des tags.
+/// Charge (ou recharge) les deux listes : mes tags + catalogue système.
 class TagsRequested extends TagsListEvent {
   const TagsRequested();
+}
+
+/// Importe un tag système → copie personnelle.
+class TagSystemImported extends TagsListEvent {
+  const TagSystemImported(this.systemId);
+
+  final String systemId;
+
+  @override
+  List<Object?> get props => [systemId];
 }
 
 /// Création d'un tag.

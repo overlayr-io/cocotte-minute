@@ -749,6 +749,31 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get tagsTabMine => 'Mes tags';
+
+  @override
+  String get tagsTabCatalog => 'Catalogue';
+
+  @override
+  String get tagsCatalogSearchHint => 'Rechercher dans le catalogue';
+
+  @override
+  String get tagsEmptyCatalog => 'Aucun tag dans le catalogue.';
+
+  @override
+  String get tagsNoSearchResult => 'Aucun résultat.';
+
+  @override
+  String get tagsImport => 'Importer';
+
+  @override
+  String get tagsAlreadyImported => 'Déjà importé';
+
+  @override
+  String get tagsImportInfo =>
+      'Importer crée une copie personnelle, modifiable librement, sans toucher au tag système.';
+
+  @override
   String get tagCreateTitle => 'Nouveau tag';
 
   @override

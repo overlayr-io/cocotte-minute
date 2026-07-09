@@ -17,7 +17,7 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { SupabaseAuthGuard } from '../../common/guards/supabase-auth.guard';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
-import { TagDto, TagsService } from './tags.service';
+import { SystemTagDto, TagDto, TagsService } from './tags.service';
 
 @Controller('tags')
 @UseGuards(SupabaseAuthGuard)
@@ -30,12 +30,27 @@ export class TagsController {
     return this.tagsService.listMine(user.id);
   }
 
+  /** Catalogue système, annoté "déjà importé". */
+  @Get('system')
+  listSystem(@CurrentUser() user: AuthenticatedUser): Promise<SystemTagDto[]> {
+    return this.tagsService.listSystem(user.id);
+  }
+
   @Post()
   create(
     @CurrentUser() user: AuthenticatedUser,
     @Body() dto: CreateTagDto,
   ): Promise<TagDto> {
     return this.tagsService.create(user.id, dto);
+  }
+
+  /** Importe un tag système → copie indépendante appartenant à l'utilisateur. */
+  @Post(':id/import')
+  import(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<TagDto> {
+    return this.tagsService.importSystem(user.id, id);
   }
 
   @Patch(':id')

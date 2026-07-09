@@ -56,6 +56,8 @@ const tag = (id: string, name: string): TagDto => ({
   id,
   name,
   color: '#3F7D3A',
+  isSystem: false,
+  importedFromId: null,
   recipeCount: 0,
   createdAt: '2026-01-01T00:00:00.000Z',
 });

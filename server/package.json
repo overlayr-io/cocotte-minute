@@ -21,7 +21,8 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed:ingredients": "ts-node scripts/seed-ingredients.ts"
+    "db:seed:ingredients": "ts-node scripts/seed-ingredients.ts",
+    "db:seed:tags": "ts-node scripts/seed-tags.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
