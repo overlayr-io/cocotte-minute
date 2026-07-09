@@ -2762,6 +2762,12 @@ abstract class AppLocalizations {
   /// **'Gratuit · 1/1'**
   String get shoppingFreeBadge;
 
+  /// No description provided for @shoppingProBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pro · Illimité'**
+  String get shoppingProBadge;
+
   /// No description provided for @shoppingDefaultListName.
   ///
   /// In fr, this message translates to:

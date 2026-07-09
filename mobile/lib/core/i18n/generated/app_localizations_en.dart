@@ -1539,6 +1539,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shoppingFreeBadge => 'Free · 1/1';
 
   @override
+  String get shoppingProBadge => 'Pro · Unlimited';
+
+  @override
   String get shoppingDefaultListName => 'This week\'s list';
 
   @override

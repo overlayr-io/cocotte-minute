@@ -1034,6 +1034,8 @@
   "@shoppingTabTitle": {},
   "shoppingFreeBadge": "Gratuit · 1/1",
   "@shoppingFreeBadge": {},
+  "shoppingProBadge": "Pro · Illimité",
+  "@shoppingProBadge": {},
   "shoppingDefaultListName": "Liste de la semaine",
   "@shoppingDefaultListName": {},
   "shoppingCreateFromRecipes": "Créer depuis mes recettes",
