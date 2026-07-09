@@ -1,14 +1,19 @@
 import { Module } from '@nestjs/common';
 
+import { BillingController } from './billing.controller';
+import { BillingService } from './billing.service';
 import { PremiumService } from './premium.service';
+import { RevenueCatAdminService } from './revenuecat-admin.service';
 
 /**
- * Domaine facturation/premium : projection du statut RevenueCat et lecture
- * du droit d'accès (cf. features/premium-version.md). Les autres modules
- * n'importent que `PremiumService` — jamais le schéma `accounts` directement.
+ * Domaine facturation/premium : webhook RevenueCat (écriture de la projection),
+ * lecture du droit d'accès, admin REST RevenueCat (suppression RGPD).
+ * Cf. features/premium-version.md. Les autres modules n'importent que les
+ * services exportés — jamais le schéma `accounts` directement.
  */
 @Module({
-  providers: [PremiumService],
-  exports: [PremiumService],
+  controllers: [BillingController],
+  providers: [BillingService, PremiumService, RevenueCatAdminService],
+  exports: [PremiumService, RevenueCatAdminService],
 })
 export class BillingModule {}

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { SupabaseAdminService } from '../../common/supabase/supabase-admin.service';
+import { BillingModule } from '../billing/billing.module';
 import { CategoriesModule } from '../categories/categories.module';
 import { IngredientsModule } from '../ingredients/ingredients.module';
 import { PeopleModule } from '../people/people.module';
@@ -14,6 +15,7 @@ import { AccountService } from './account.service';
 @Module({
   // Importe les modules métier pour purger chaque domaine via leur service
   // exporté (jamais leur schéma) lors du "repartir de zéro" et de la suppression RGPD.
+  // Billing : suppression du subscriber RevenueCat dans la cascade RGPD.
   imports: [
     IngredientsModule,
     TagsModule,
@@ -21,6 +23,7 @@ import { AccountService } from './account.service';
     CategoriesModule,
     RecipesModule,
     ShoppingListsModule,
+    BillingModule,
   ],
   controllers: [AccountController],
   providers: [AccountService, AccountDeletionCron, SupabaseAdminService],
