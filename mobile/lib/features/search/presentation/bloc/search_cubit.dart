@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../../core/utils/text_normalize.dart';
 import '../../../categories/data/categories_repository.dart';
 import '../../../categories/domain/category.dart';
 import '../../../people/data/people_repository.dart';

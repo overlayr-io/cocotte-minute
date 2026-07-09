@@ -98,11 +98,12 @@ class SearchState extends Equatable {
       allCategories.where((c) => c.parentCategoryId == categoryId).length;
 
   /// Dossiers candidats pour le menu `/` (filtrés, non déjà sélectionnés).
+  /// Comparaison insensible aux accents (ex: "entree" retrouve "Entrée").
   List<Category> get folderCandidates {
-    final q = menuQuery.trim().toLowerCase();
+    final q = foldForMatch(menuQuery.trim());
     return allCategories
         .where((c) => !_isSelected(SearchDimension.folder, c.id))
-        .where((c) => q.isEmpty || categoryPath(c).toLowerCase().contains(q))
+        .where((c) => q.trim().isEmpty || foldForMatch(categoryPath(c)).contains(q.trim()))
         .toList();
   }
 
