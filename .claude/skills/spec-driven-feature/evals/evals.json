@@ -1,0 +1,26 @@
+{
+  "skill_name": "spec-driven-feature",
+  "evals": [
+    {
+      "id": 1,
+      "name": "rating-feature-ambiguous",
+      "prompt": "On va faire une feature de notation des recettes : les utilisateurs pourront mettre une note en étoiles (1 à 5) sur une recette.",
+      "expected_output": "L'agent pose 2-4 questions fermées avant d'écrire quoi que ce soit (pas de fichier docs/features/*.md créé dans ce tour). Il couvre au minimum : la portée de la note (personnelle par utilisateur vs partagée/famille), l'impact sur la recherche/tri des recettes, une éventuelle limite freemium, et le comportement hors-ligne. Il ne suppose aucune de ces réponses.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "comments-cross-feature-conflict",
+      "prompt": "Je veux ajouter des commentaires sur les recettes, visibles par toute la famille (les Personnes liées à la recette).",
+      "expected_output": "L'agent pose des questions fermées sur la visibilité/permissions (qui peut écrire/supprimer un commentaire), la modération, et vérifie la cohérence avec les features déjà documentées (tags-personnes.md, person-recipes / partage-recette) avant d'écrire le document. Il ne documente pas une relation de permission inventée.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "offline-first-transverse",
+      "prompt": "Je veux qu'on passe toute l'app en offline-first complet, comme pour la liste de courses.",
+      "expected_output": "L'agent identifie qu'il s'agit d'une décision d'architecture transverse (pas une feature isolée), le signale explicitement à l'utilisateur, et propose d'exposer risques/bénéfices avant de documenter quoi que ce soit — plutôt que d'écrire directement un docs/features/offline-first.md avec un comportement supposé.",
+      "files": []
+    }
+  ]
+}
