@@ -1,6 +1,6 @@
 ---
 feature: prix-estime
-status: planned
+status: done
 scope: v1
 depends_on: [ingredients, recette-base, liste-courses-auto, limite-freemium, premium-version]
 order: 14
@@ -42,7 +42,7 @@ l'utilisateur**, jamais une vérité absolue.
 ### Différence gratuit / premium (prix ingrédient)
 - **Gratuit** : un seul champ "prix moyen", saisi et modifiable directement à
   la main. Pas de bas/haut, pas de slider.
-- **Premium** : bas + haut renseignés via un slider (maquette à venir). La
+- **Premium** : bas + haut renseignés via un slider (règle graduée, écran 14c). La
   moyenne est calculée automatiquement (`(bas+haut)/2`) à chaque changement de
   bas/haut, mais reste ajustable ensuite en déplaçant un curseur "estimation"
   entre bas et haut (jamais en dehors de la fourchette).
@@ -95,33 +95,76 @@ Deux modes, au choix explicite de l'utilisateur par recette :
 ## Impact technique
 
 ### Server
-- Nouvelle table `ingredient_prices` (clé composite `user_id + ingredient_id`) :
-  `user_id`, `ingredient_id`, `price_reference_unit` (enum: `kilogram`,
-  `litre`, `piece`), `low_price` numeric(10,3) nullable, `high_price`
-  numeric(10,3) nullable, `average_price` numeric(10,3) nullable,
+- Table `ingredient_prices` (migration `0015_prix_estime`, clé composite
+  `user_id + ingredient_id` via index unique) :
+  `user_id`, `ingredient_id` (FK cascade), `price_reference_unit` (enum:
+  `kilogram`, `litre`, `piece`), `low_price` numeric(10,3) nullable,
+  `high_price` numeric(10,3) nullable, `average_price` numeric(10,3) nullable,
   `updated_at`.
   - `low_price`/`high_price` : écriture bloquée serveur si l'utilisateur
-    n'est pas premium (403).
-- `recipes` : ajout de `price_mode` (enum: `calculated` | `fixed`, défaut
-  `calculated`) et `fixed_price` numeric(10,2) nullable (rempli seulement si
-  `price_mode = fixed`).
-- Endpoints : lecture/écriture de `ingredient_prices` (par utilisateur), PATCH
-  du mode de prix + prix étiquette sur une recette. Aucun endpoint de calcul
-  de total — c'est une contrainte transverse actée.
-- Migration Drizzle à prévoir pour les deux ajouts.
+    n'est pas premium (403 nu — pas le format `PREMIUM_LIMIT_*` des quotas,
+    puisque ce n'est pas une limite chiffrée mais un verrou de fonctionnalité
+    binaire ; l'UI ne propose de toute façon ces champs qu'aux premium, ce 403
+    est un garde-fou serveur, jamais un chemin normal).
+  - Module `IngredientPricesModule` (`GET /ingredient-prices` liste complète
+    par utilisateur, `PUT /ingredient-prices/:ingredientId` upsert) —
+    accessible même sur un ingrédient système, via `IngredientsService.assertVisible`
+    (existence + visibilité, sans exiger la possession).
+- `recipes` : `price_mode` (enum: `calculated` | `fixed`, défaut `calculated`),
+  `fixed_price` numeric(10,2) nullable, et `price_bracket` (enum:
+  `under_5` | `from_5_to_10` | `from_10_to_20` | `over_20`, nullable — cf.
+  section Badge tranche de prix ci-dessous). Les trois sont exposés/modifiables
+  via l'endpoint `PATCH /recipes/:id` existant (DTO étendu), pas de nouvel
+  endpoint.
+- Aucun endpoint de calcul de total — contrainte transverse actée : le
+  serveur ne fait que stocker/retourner les valeurs saisies (ou poussées par
+  le client pour `price_bracket`, cf. ci-dessous).
 
 ### Mobile
-- Écran de gestion d'ingrédient : ajout du bloc prix (champ unique moyen en
-  gratuit, slider bas/moyen/haut en premium selon maquette à venir).
-- Fiche recette : bloc prix (moyen, mode calculé/étiquette, icône
-  avertissement si incomplet).
-- Écran de sélection de recettes (liste de courses) et liste générée : total
-  en direct, recalculé localement à chaque changement de sélection/case
-  cochée/remplacement.
-- Cache local des prix ingrédients nécessaire pour le calcul offline,
-  cohérent avec le pattern déjà utilisé pour tags/personnes/catégories
-  (`JsonListCache`) et avec le mode offline-first Drift de la liste de
-  courses.
+- Fiche ingrédient (`ingredient_price_section.dart`) : bloc prix inséré entre
+  l'unité de mesure et les alternatives — champ moyen simple en gratuit (avec
+  aperçu verrouillé de la fourchette, CTA → écran Premium), règle graduée
+  bas/estimation/haut en premium (glisser + tap pour une saisie précise, cf.
+  Règles métier ci-dessous), état vide tant qu'aucun prix n'existe (quel que
+  soit le palier — la bascule gratuit/premium ne se décide qu'au moment de
+  saisir).
+- Fiche recette (`recipe_price_section.dart`) : bloc juste après la carte
+  Portions, toggle Calculé/Étiquette, avertissement (icône + tooltip au tap)
+  si des ingrédients n'ont pas de prix, badge de tranche de prix (cf.
+  ci-dessous).
+- Liste de courses : total en direct à l'écran de sélection des recettes
+  (étapes 1-2, somme par recette scalée — pas d'agrégation par ingrédient
+  dédupliqué, se complète progressivement pendant le chargement des fiches) ;
+  sur la liste générée, total des **articles restants non cochés**
+  (recalculé à chaque case cochée/décochée ou remplacement par alternative,
+  qui suit alors l'ingrédient effectivement affiché).
+- Cache local des prix ingrédients (`IngredientPricesRepository`, pattern
+  `JsonListCache` déjà utilisé pour tags/personnes/catégories — liste complète
+  par utilisateur, jamais le mode offline-first Drift de la liste de courses).
+- Calcul 100 % côté client (`core/pricing/price_calculator.dart` : conversion
+  d'unité, agrégation, scaling ; `core/pricing/price_formatter.dart` :
+  affichage/parsing) — le serveur ne fait que stocker.
+
+### Badge tranche de prix (ajouté en cours de route, hors cadrage initial)
+Décidé avec l'utilisateur après la maquette initiale (écrans 14b/14c/14d) :
+un badge sur la fiche recette identifie une tranche de prix, pour permettre
+une future section d'accueil filtrée (ex. « moins de 10€ »).
+- Tranches : `< 5 €` / `5 – 10 €` / `10 – 20 €` / `> 20 €` (`RecipePriceBracket`,
+  seuils dans `priceBracketForValue`).
+- Calculée et poussée par le **client**, jamais par le serveur (même
+  contrainte transverse que le reste de la feature) : synchronisée en tâche
+  de fond (`RecipeDetailCubit._syncPriceBracket`) à chaque chargement/rechargement
+  de la fiche recette, silencieuse et best-effort (jamais d'erreur affichée).
+- Basée sur le prix de **base** (`servings`), jamais un prix déjà scalé par
+  les portions affichées, ni un total partiel (`≈`) — absente tant que le
+  prix n'est pas entièrement connu.
+- Portée limitée à la fiche recette pour cette itération : les cartes
+  compactes (accueil, listes, recherche) ne l'affichent pas encore —
+  `RecipeSummary` ne porte ni prix ni tranche, il faudrait l'enrichir + 4
+  endpoints serveur (`GET /recipes`, `/categories/:id/recipes`,
+  `/search/recipes`, `/discovery/home`) et créer un composant badge partagé
+  (aucun n'existe aujourd'hui, chaque carte réimplémente son propre pill).
+  Reporté avec la section d'accueil elle-même à une itération dédiée.
 
 ## Règles métier spécifiques
 - Prix propre à chaque utilisateur, y compris sur un ingrédient système
@@ -146,12 +189,21 @@ Deux modes, au choix explicite de l'utilisateur par recette :
 - Prix sur les articles libres de la liste de courses (sans ingrédient lié).
 - Partage de prix entre utilisateurs.
 
-## Questions ouvertes / à trancher
-- UX exacte de conversion "frustration → premium" quand un non-abonné voit
-  le champ prix moyen sans slider (CTA visible ou non vers l'écran premium) —
-  non cadré, à décider à l'implémentation.
-- Maquette du slider bas/moyen/haut : en attente, à fournir avant
-  l'implémentation mobile.
-- Emplacement exact de saisie du prix (uniquement depuis la fiche ingrédient,
-  ou aussi accessible directement depuis la fiche recette au niveau de chaque
-  ligne d'ingrédient) — non tranché explicitement.
+## Décisions prises à l'implémentation
+Les points laissés ouverts au cadrage ont été tranchés avec l'utilisateur
+avant/pendant l'implémentation (écrans fournis 14b/14c/14d + échanges) :
+- **Conversion frustration → premium** : CTA visible — un non-abonné voit un
+  aperçu verrouillé (cadenas) de la fourchette bas/haut sous son champ prix
+  moyen, qui ouvre l'écran Premium au tap (écran 14b).
+- **Maquette du slider** : fournie (écran 14c) — règle graduée bas/estimation/haut,
+  implémentée avec un ajout non présent sur la maquette : un tap sur Bas/Haut
+  ouvre une saisie numérique précise en plus du glisser, nécessaire pour tenir
+  les 3 décimales demandées (un glisser seul ne peut pas garantir cette
+  précision sur un petit écran).
+- **Emplacement de saisie** : fiche ingrédient uniquement — aucun champ prix
+  depuis la fiche recette ou une ligne d'ingrédient.
+- **Unité de référence** (kilogramme/pièce, litre toujours désactivée) :
+  librement modifiable par l'utilisateur, indépendamment de l'unité de mesure
+  de l'ingrédient (ex: un ingrédient mesuré en pièces peut avoir un prix au
+  kilo). Si la combinaison est inconvertible (aucune conversion poids↔pièce
+  sans densité), le prix est traité comme non renseigné dans tous les calculs.
