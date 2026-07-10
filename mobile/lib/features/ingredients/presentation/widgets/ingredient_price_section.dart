@@ -463,7 +463,7 @@ class _ProBadge extends StatelessWidget {
 /// Règle graduée bas → estimation → haut (écran 14c). Glisser un point ajuste
 /// sa valeur ; un tap ouvre une saisie précise (3 décimales, cf. doc) — le
 /// glisser seul ne peut pas garantir cette précision sur un petit écran.
-class _RangeSlider extends StatelessWidget {
+class _RangeSlider extends StatefulWidget {
   const _RangeSlider({
     required this.low,
     required this.high,
@@ -478,11 +478,33 @@ class _RangeSlider extends StatelessWidget {
   final String unitLabel;
   final void Function(double low, double high, double average) onChanged;
 
-  double get _axisMax {
+  @override
+  State<_RangeSlider> createState() => _RangeSliderState();
+}
+
+class _RangeSliderState extends State<_RangeSlider> {
+  double get low => widget.low;
+  double get high => widget.high;
+  double get average => widget.average;
+  String get unitLabel => widget.unitLabel;
+  void Function(double low, double high, double average) get onChanged => widget.onChanged;
+
+  /// Figé pendant un geste de glisser actif : sans ça, glisser le point "haut"
+  /// fait grandir l'axe en direct, donc l'échelle bouge sous le doigt qui la
+  /// détermine — effet d'emballement. Recalculé librement entre deux gestes.
+  double? _frozenAxisMax;
+
+  double _computeAxisMax(double high) {
     if (high <= 0) return 1;
     final raw = high * 1.4;
     return (raw * 10).ceil() / 10;
   }
+
+  double get _axisMax => _frozenAxisMax ?? _computeAxisMax(high);
+
+  void _beginDrag() => _frozenAxisMax ??= _computeAxisMax(high);
+
+  void _endDrag() => setState(() => _frozenAxisMax = null);
 
   Future<void> _editPrecise(BuildContext context, {required bool isLow}) async {
     final l10n = AppLocalizations.of(context);
@@ -659,7 +681,10 @@ class _RangeSlider extends StatelessWidget {
                     child: FractionalTranslation(
                       translation: const Offset(-0.5, 0),
                       child: GestureDetector(
+                        onPanStart: (_) => _beginDrag(),
                         onPanUpdate: dragEstimate,
+                        onPanEnd: (_) => _endDrag(),
+                        onPanCancel: _endDrag,
                         child: const _EstimateHandle(),
                       ),
                     ),
@@ -670,7 +695,10 @@ class _RangeSlider extends StatelessWidget {
                     child: FractionalTranslation(
                       translation: const Offset(-0.5, 0),
                       child: GestureDetector(
+                        onPanStart: (_) => _beginDrag(),
                         onPanUpdate: (d) => dragHandle(d, isLow: true),
+                        onPanEnd: (_) => _endDrag(),
+                        onPanCancel: _endDrag,
                         child: const _HandleDot(),
                       ),
                     ),
@@ -681,7 +709,10 @@ class _RangeSlider extends StatelessWidget {
                     child: FractionalTranslation(
                       translation: const Offset(-0.5, 0),
                       child: GestureDetector(
+                        onPanStart: (_) => _beginDrag(),
                         onPanUpdate: (d) => dragHandle(d, isLow: false),
+                        onPanEnd: (_) => _endDrag(),
+                        onPanCancel: _endDrag,
                         child: const _HandleDot(),
                       ),
                     ),
@@ -719,6 +750,7 @@ class _RangeSlider extends StatelessWidget {
 }
 
 const _axisLabelStyle = TextStyle(
+
   fontSize: 10.5,
   color: Color(0xFFB7AF9C),
   fontWeight: FontWeight.w600,
