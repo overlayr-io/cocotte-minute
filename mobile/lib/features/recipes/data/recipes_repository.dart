@@ -18,6 +18,10 @@ class RecipesRepositoryException implements Exception {
   String toString() => 'RecipesRepositoryException($message)';
 }
 
+/// Sentinelle « champ non fourni » pour distinguer « ne pas toucher » de
+/// « mettre à null » dans un PATCH partiel (prix étiquette / tranche de prix).
+const Object _unset = Object();
+
 /// Accès aux recettes via l'API NestJS.
 class RecipesRepository {
   RecipesRepository({required ApiClient apiClient}) : _apiClient = apiClient;
@@ -131,6 +135,9 @@ class RecipesRepository {
     }
   }
 
+  /// [priceBracket] utilise la sentinelle [_unset] par défaut : ne rien passer
+  /// = tranche inchangée (la plupart des appels ne touchent pas au prix),
+  /// passer `null` explicitement = effacée (prix devenu partiel/inconnu).
   Future<RecipeSummary> update(
     String id, {
     String? name,
@@ -140,19 +147,28 @@ class RecipesRepository {
     int? cookTime,
     int? restTime,
     int? servings,
+    RecipePriceMode? priceMode,
+    double? fixedPrice,
+    Object? priceBracket = _unset,
   }) async {
     try {
+      final data = <String, dynamic>{
+        'name': ?name,
+        'description': ?description,
+        'isBase': ?isBase,
+        'prepTime': ?prepTime,
+        'cookTime': ?cookTime,
+        'restTime': ?restTime,
+        'servings': ?servings,
+        'priceMode': ?priceMode?.wire,
+        'fixedPrice': ?fixedPrice,
+      };
+      if (!identical(priceBracket, _unset)) {
+        data['priceBracket'] = (priceBracket as RecipePriceBracket?)?.wire;
+      }
       final res = await _dio.patch<Map<String, dynamic>>(
         '/recipes/$id',
-        data: {
-          'name': ?name,
-          'description': ?description,
-          'isBase': ?isBase,
-          'prepTime': ?prepTime,
-          'cookTime': ?cookTime,
-          'restTime': ?restTime,
-          'servings': ?servings,
-        },
+        data: data,
       );
       return RecipeSummary.fromJson(res.data!);
     } on DioException catch (e) {

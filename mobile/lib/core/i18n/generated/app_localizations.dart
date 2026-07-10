@@ -1250,6 +1250,144 @@ abstract class AppLocalizations {
   /// **'Provient du catalogue système · copie personnelle'**
   String get ingredientFromSystem;
 
+  /// No description provided for @ingredientPriceSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix'**
+  String get ingredientPriceSectionTitle;
+
+  /// No description provided for @ingredientPriceMineHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'ton prix perso'**
+  String get ingredientPriceMineHint;
+
+  /// No description provided for @ingredientPriceUnknownHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'inconnu'**
+  String get ingredientPriceUnknownHint;
+
+  /// No description provided for @ingredientPriceReferenceUnitLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Unité de référence'**
+  String get ingredientPriceReferenceUnitLabel;
+
+  /// No description provided for @ingredientPriceReferenceUnitHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'déduite, modifiable'**
+  String get ingredientPriceReferenceUnitHint;
+
+  /// No description provided for @priceReferenceUnitKilogram.
+  ///
+  /// In fr, this message translates to:
+  /// **'Kilogramme'**
+  String get priceReferenceUnitKilogram;
+
+  /// No description provided for @priceReferenceUnitLitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Litre'**
+  String get priceReferenceUnitLitre;
+
+  /// No description provided for @priceReferenceUnitPiece.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pièce'**
+  String get priceReferenceUnitPiece;
+
+  /// No description provided for @priceReferenceUnitShortKilogram.
+  ///
+  /// In fr, this message translates to:
+  /// **'kg'**
+  String get priceReferenceUnitShortKilogram;
+
+  /// No description provided for @priceReferenceUnitShortLitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'L'**
+  String get priceReferenceUnitShortLitre;
+
+  /// No description provided for @priceReferenceUnitShortPiece.
+  ///
+  /// In fr, this message translates to:
+  /// **'pièce'**
+  String get priceReferenceUnitShortPiece;
+
+  /// No description provided for @ingredientPriceAverageLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix moyen'**
+  String get ingredientPriceAverageLabel;
+
+  /// No description provided for @ingredientPriceEstimateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Estimation moyenne'**
+  String get ingredientPriceEstimateLabel;
+
+  /// No description provided for @ingredientPriceEstimateFormulaHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'≈ (bas + haut) ÷ 2'**
+  String get ingredientPriceEstimateFormulaHint;
+
+  /// No description provided for @ingredientPriceLowLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bas'**
+  String get ingredientPriceLowLabel;
+
+  /// No description provided for @ingredientPriceHighLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Haut'**
+  String get ingredientPriceHighLabel;
+
+  /// No description provided for @ingredientPriceSliderHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glisse le bas et le haut ; le curseur d\'estimation reste toujours entre les deux. Tap sur une valeur pour la saisir précisément.'**
+  String get ingredientPriceSliderHint;
+
+  /// No description provided for @ingredientPriceLockedCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fourchette bas → haut · Pro'**
+  String get ingredientPriceLockedCta;
+
+  /// No description provided for @ingredientPriceEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun prix renseigné'**
+  String get ingredientPriceEmptyTitle;
+
+  /// No description provided for @ingredientPriceEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoute un prix pour estimer le coût de tes recettes.'**
+  String get ingredientPriceEmptyBody;
+
+  /// No description provided for @ingredientPriceAddCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un prix'**
+  String get ingredientPriceAddCta;
+
+  /// No description provided for @ingredientPriceDialogTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix précis'**
+  String get ingredientPriceDialogTitle;
+
+  /// No description provided for @ingredientPriceRangeInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le bas doit être inférieur ou égal au haut.'**
+  String get ingredientPriceRangeInvalid;
+
   /// No description provided for @ingredientSectionAlternatives.
   ///
   /// In fr, this message translates to:
@@ -2546,6 +2684,66 @@ abstract class AppLocalizations {
   /// **'Les quantités s\'adaptent'**
   String get recipeServingsScaleHint;
 
+  /// No description provided for @recipePriceSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix'**
+  String get recipePriceSectionTitle;
+
+  /// No description provided for @recipePriceModeCalculated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Calculé'**
+  String get recipePriceModeCalculated;
+
+  /// No description provided for @recipePriceModeFixed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étiquette'**
+  String get recipePriceModeFixed;
+
+  /// No description provided for @recipePriceForServings.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{pour 1 personne} other{pour {count} personnes}}'**
+  String recipePriceForServings(int count);
+
+  /// No description provided for @recipePriceMissingTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Des ingrédients n\'ont pas de prix'**
+  String get recipePriceMissingTooltip;
+
+  /// No description provided for @recipePriceFixedInputLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix de base'**
+  String get recipePriceFixedInputLabel;
+
+  /// No description provided for @recipePriceBracketUnder5.
+  ///
+  /// In fr, this message translates to:
+  /// **'< 5 €'**
+  String get recipePriceBracketUnder5;
+
+  /// No description provided for @recipePriceBracketFrom5To10.
+  ///
+  /// In fr, this message translates to:
+  /// **'5 – 10 €'**
+  String get recipePriceBracketFrom5To10;
+
+  /// No description provided for @recipePriceBracketFrom10To20.
+  ///
+  /// In fr, this message translates to:
+  /// **'10 – 20 €'**
+  String get recipePriceBracketFrom10To20;
+
+  /// No description provided for @recipePriceBracketOver20.
+  ///
+  /// In fr, this message translates to:
+  /// **'> 20 €'**
+  String get recipePriceBracketOver20;
+
   /// No description provided for @recipeIngredientsAddCta.
   ///
   /// In fr, this message translates to:
@@ -2965,6 +3163,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Total : {parts} parts sur {recipes} recettes.'**
   String shoppingTotalServings(int parts, int recipes);
+
+  /// No description provided for @shoppingPriceTotal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Total estimé'**
+  String get shoppingPriceTotal;
+
+  /// No description provided for @shoppingPriceUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix inconnu'**
+  String get shoppingPriceUnknown;
+
+  /// No description provided for @shoppingPriceForChosenServings.
+  ///
+  /// In fr, this message translates to:
+  /// **'pour les portions choisies'**
+  String get shoppingPriceForChosenServings;
 
   /// No description provided for @shoppingStep3Title.
   ///

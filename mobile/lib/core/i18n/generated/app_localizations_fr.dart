@@ -635,6 +635,78 @@ class AppLocalizationsFr extends AppLocalizations {
       'Provient du catalogue système · copie personnelle';
 
   @override
+  String get ingredientPriceSectionTitle => 'Prix';
+
+  @override
+  String get ingredientPriceMineHint => 'ton prix perso';
+
+  @override
+  String get ingredientPriceUnknownHint => 'inconnu';
+
+  @override
+  String get ingredientPriceReferenceUnitLabel => 'Unité de référence';
+
+  @override
+  String get ingredientPriceReferenceUnitHint => 'déduite, modifiable';
+
+  @override
+  String get priceReferenceUnitKilogram => 'Kilogramme';
+
+  @override
+  String get priceReferenceUnitLitre => 'Litre';
+
+  @override
+  String get priceReferenceUnitPiece => 'Pièce';
+
+  @override
+  String get priceReferenceUnitShortKilogram => 'kg';
+
+  @override
+  String get priceReferenceUnitShortLitre => 'L';
+
+  @override
+  String get priceReferenceUnitShortPiece => 'pièce';
+
+  @override
+  String get ingredientPriceAverageLabel => 'Prix moyen';
+
+  @override
+  String get ingredientPriceEstimateLabel => 'Estimation moyenne';
+
+  @override
+  String get ingredientPriceEstimateFormulaHint => '≈ (bas + haut) ÷ 2';
+
+  @override
+  String get ingredientPriceLowLabel => 'Bas';
+
+  @override
+  String get ingredientPriceHighLabel => 'Haut';
+
+  @override
+  String get ingredientPriceSliderHint =>
+      'Glisse le bas et le haut ; le curseur d\'estimation reste toujours entre les deux. Tap sur une valeur pour la saisir précisément.';
+
+  @override
+  String get ingredientPriceLockedCta => 'Fourchette bas → haut · Pro';
+
+  @override
+  String get ingredientPriceEmptyTitle => 'Aucun prix renseigné';
+
+  @override
+  String get ingredientPriceEmptyBody =>
+      'Ajoute un prix pour estimer le coût de tes recettes.';
+
+  @override
+  String get ingredientPriceAddCta => 'Ajouter un prix';
+
+  @override
+  String get ingredientPriceDialogTitle => 'Prix précis';
+
+  @override
+  String get ingredientPriceRangeInvalid =>
+      'Le bas doit être inférieur ou égal au haut.';
+
+  @override
   String get ingredientSectionAlternatives => 'Alternatives';
 
   @override
@@ -1416,6 +1488,44 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recipeServingsScaleHint => 'Les quantités s\'adaptent';
 
   @override
+  String get recipePriceSectionTitle => 'Prix';
+
+  @override
+  String get recipePriceModeCalculated => 'Calculé';
+
+  @override
+  String get recipePriceModeFixed => 'Étiquette';
+
+  @override
+  String recipePriceForServings(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'pour $count personnes',
+      one: 'pour 1 personne',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get recipePriceMissingTooltip => 'Des ingrédients n\'ont pas de prix';
+
+  @override
+  String get recipePriceFixedInputLabel => 'Prix de base';
+
+  @override
+  String get recipePriceBracketUnder5 => '< 5 €';
+
+  @override
+  String get recipePriceBracketFrom5To10 => '5 – 10 €';
+
+  @override
+  String get recipePriceBracketFrom10To20 => '10 – 20 €';
+
+  @override
+  String get recipePriceBracketOver20 => '> 20 €';
+
+  @override
   String get recipeIngredientsAddCta => 'Ajouter des ingrédients';
 
   @override
@@ -1693,6 +1803,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String shoppingTotalServings(int parts, int recipes) {
     return 'Total : $parts parts sur $recipes recettes.';
   }
+
+  @override
+  String get shoppingPriceTotal => 'Total estimé';
+
+  @override
+  String get shoppingPriceUnknown => 'Prix inconnu';
+
+  @override
+  String get shoppingPriceForChosenServings => 'pour les portions choisies';
 
   @override
   String get shoppingStep3Title => 'Qu\'as-tu déjà chez toi ?';
