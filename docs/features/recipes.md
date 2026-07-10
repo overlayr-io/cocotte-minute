@@ -32,7 +32,8 @@ order: 5
 > jamais persisté** ; repart de `servings` (défaut **1**) à chaque ouverture.
 >
 > **Toujours hors périmètre (features dédiées) :** bouton Play / mode pas-à-pas,
-> galerie, note ⭐, bouton Suivre.
+> ~~galerie~~ (**cadrée**, voir `docs/features/galerie-recette.md`), note ⭐,
+> bouton Suivre.
 >
 > **Pivots dette branchés :** `recipe_categories` et `recipe_tags` créés ; les
 > `recipeCount` réels sont désormais renvoyés par Tags et Catégories (via

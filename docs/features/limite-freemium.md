@@ -52,6 +52,13 @@ le v1 fonctionnel, décision actée précédemment).
 ### Recherche IA locale
 - Fonctionnalité réservée entièrement au premium (aucun accès en gratuit).
 
+### Galerie photos de recette (Ajout — cadrage `galerie-recette.md`)
+- **3 photos de galerie max par recette** en gratuit, **6 en premium** (la
+  photo de couverture n'est jamais comptée dans ce quota, voir
+  `docs/features/galerie-recette.md`).
+- Quota atteint : ouvre directement le paywall (même pattern que sous-recettes
+  / liste de courses / recherche).
+
 ### Marketplace (chef)
 - Prévue comme feature premium plus tard (V2), pas dans ce v1.
 
