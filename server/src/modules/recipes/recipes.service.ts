@@ -31,6 +31,8 @@ import {
   recipeTags,
   recipes,
   stepIngredients,
+  type RecipePriceBracket,
+  type RecipePriceMode,
   type RecipeRow,
   type RecipeStepRow,
 } from '../../db/schema/recipes.schema';
@@ -161,6 +163,12 @@ export interface RecipeDetailDto extends RecipeSummaryDto {
   description: string | null;
   /** Recette de base utilisée comme composant ailleurs → `is_base` verrouillé. */
   isLocked: boolean;
+  /** Mode de prix (feature prix-estime) : calculé depuis les ingrédients, ou étiquette fixe. */
+  priceMode: RecipePriceMode;
+  /** Prix étiquette pour `servings` personnes — non-null seulement si `priceMode === 'fixed'`. */
+  fixedPrice: number | null;
+  /** Tranche de prix affichée en badge, calculée côté client. Null si prix inconnu/partiel. */
+  priceBracket: RecipePriceBracket | null;
   ingredients: RecipeIngredientLineDto[];
   /** Étapes (arbre déjà déplié + numéroté ; réfs de base résolues récursivement). */
   steps: RecipeStepDto[];
@@ -620,6 +628,9 @@ export class RecipesService {
       authorId: row.authorId,
       description: row.description,
       isLocked: row.isBase && usedIn.length > 0,
+      priceMode: row.priceMode,
+      fixedPrice: row.fixedPrice,
+      priceBracket: row.priceBracket,
       ingredients: ingredientLines,
       steps,
       components,
@@ -724,6 +735,10 @@ export class RecipesService {
     if (dto.cookTime !== undefined) patch.cookTime = dto.cookTime;
     if (dto.restTime !== undefined) patch.restTime = dto.restTime;
     if (dto.servings !== undefined) patch.servings = dto.servings;
+    // Prix (feature prix-estime) : calculés côté client, simplement stockés ici.
+    if (dto.priceMode !== undefined) patch.priceMode = dto.priceMode;
+    if (dto.fixedPrice !== undefined) patch.fixedPrice = dto.fixedPrice;
+    if (dto.priceBracket !== undefined) patch.priceBracket = dto.priceBracket;
 
     const [row] = await this.db
       .update(recipes)
