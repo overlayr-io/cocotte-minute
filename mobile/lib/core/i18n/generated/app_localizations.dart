@@ -845,146 +845,266 @@ abstract class AppLocalizations {
   /// No description provided for @privacyPolicyIntro.
   ///
   /// In fr, this message translates to:
-  /// **'Cocotte Minute respecte tes données. Voici, simplement, ce que l\'app collecte et pourquoi.'**
+  /// **'Chez Cocotte Minute, tes recettes et ta vie de famille t\'appartiennent. Voici, en clair, quelles données nous traitons, pourquoi, et comment garder la main dessus. Sans publicité, sans revente de tes données.'**
   String get privacyPolicyIntro;
 
   /// No description provided for @privacyPolicyS1Title.
   ///
   /// In fr, this message translates to:
-  /// **'Ce que nous collectons'**
+  /// **'Responsable du traitement'**
   String get privacyPolicyS1Title;
 
   /// No description provided for @privacyPolicyS1Body.
   ///
   /// In fr, this message translates to:
-  /// **'Tes recettes, dossiers, tags, personnes et listes de courses, ainsi que l\'adresse e-mail de ton compte si tu en as créé un. En compte invité, seul un identifiant technique anonyme est utilisé.'**
+  /// **'Le responsable du traitement des données est Corentin Lechene (SIRET 994 215 259), éditeur de l\'application Cocotte Minute. Pour toute question, écris-nous via « Nous contacter » ou à corentin.lechene@icloud.com.'**
   String get privacyPolicyS1Body;
 
   /// No description provided for @privacyPolicyS2Title.
   ///
   /// In fr, this message translates to:
-  /// **'Pourquoi nous les utilisons'**
+  /// **'Données que nous collectons'**
   String get privacyPolicyS2Title;
 
   /// No description provided for @privacyPolicyS2Body.
   ///
   /// In fr, this message translates to:
-  /// **'Uniquement pour faire fonctionner l\'app : sauvegarder ton contenu, le synchroniser entre tes appareils et générer tes listes de courses. Aucune revente de données, aucune publicité ciblée.'**
+  /// **'Compte : adresse e-mail et prénom, pour créer et sécuriser ton espace. Contenu que tu crées : recettes, ingrédients, listes de courses, tags, dossiers, ainsi que les membres de ta famille (prénom, avatar) que tu ajoutes. Données techniques : type d\'appareil et journaux d\'erreurs, uniquement pour faire fonctionner et améliorer l\'app. Nous n\'utilisons aucune publicité et ne revendons jamais tes données à des tiers.'**
   String get privacyPolicyS2Body;
 
   /// No description provided for @privacyPolicyS3Title.
   ///
   /// In fr, this message translates to:
-  /// **'Où elles sont stockées'**
+  /// **'Pourquoi nous les traitons'**
   String get privacyPolicyS3Title;
 
   /// No description provided for @privacyPolicyS3Body.
   ///
   /// In fr, this message translates to:
-  /// **'Sur des serveurs sécurisés hébergés dans l\'Union européenne. Tes listes de courses sont aussi conservées sur ton appareil pour fonctionner hors connexion.'**
+  /// **'Uniquement pour te fournir le service : enregistrer et synchroniser tes recettes et listes entre tes appareils, te permettre de retrouver ton contenu hors connexion, répondre à tes demandes de support, et améliorer l\'application de façon agrégée et anonyme.'**
   String get privacyPolicyS3Body;
 
   /// No description provided for @privacyPolicyS4Title.
   ///
   /// In fr, this message translates to:
-  /// **'Combien de temps'**
+  /// **'Base légale'**
   String get privacyPolicyS4Title;
 
   /// No description provided for @privacyPolicyS4Body.
   ///
   /// In fr, this message translates to:
-  /// **'Tant que ton compte existe. Si tu supprimes ton compte, tes données sont anonymisées immédiatement puis définitivement effacées sous 30 jours. Pour un compte invité, l\'effacement est immédiat.'**
+  /// **'Le traitement repose sur l\'exécution du contrat (te fournir l\'app que tu utilises), sur ton consentement lorsqu\'il est requis, et sur notre intérêt légitime à sécuriser et améliorer le service.'**
   String get privacyPolicyS4Body;
 
   /// No description provided for @privacyPolicyS5Title.
   ///
   /// In fr, this message translates to:
-  /// **'Tes droits'**
+  /// **'Hébergement et sous-traitants'**
   String get privacyPolicyS5Title;
 
   /// No description provided for @privacyPolicyS5Body.
   ///
   /// In fr, this message translates to:
-  /// **'Tu peux consulter, corriger ou supprimer tes données à tout moment depuis l\'app (Compte → Gérer mes données). Pour toute question, écris-nous via « Nous contacter ».'**
+  /// **'Tes données sont hébergées par Supabase. Nous ne faisons appel qu\'à des sous-traitants strictement nécessaires au fonctionnement du service, encadrés par contrat.'**
   String get privacyPolicyS5Body;
+
+  /// No description provided for @privacyPolicyS6Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Durée de conservation'**
+  String get privacyPolicyS6Title;
+
+  /// No description provided for @privacyPolicyS6Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous conservons tes données tant que ton compte est actif. À la suppression de ton compte, tes données sont d\'abord anonymisées puis restent récupérables pendant 30 jours (délai de rétablissement) avant d\'être supprimées définitivement.'**
+  String get privacyPolicyS6Body;
+
+  /// No description provided for @privacyPolicyS7Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tes droits'**
+  String get privacyPolicyS7Title;
+
+  /// No description provided for @privacyPolicyS7Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conformément au RGPD, tu disposes d\'un droit d\'accès, de rectification, d\'effacement, de portabilité, d\'opposition et de limitation. Exerce-les à tout moment via « Nous contacter » ou à corentin.lechene@icloud.com. Tu peux aussi introduire une réclamation auprès de la CNIL.'**
+  String get privacyPolicyS7Body;
+
+  /// No description provided for @privacyPolicyS8Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suppression de ton compte'**
+  String get privacyPolicyS8Title;
+
+  /// No description provided for @privacyPolicyS8Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu peux demander la suppression de ton compte directement depuis l\'app (Compte → Gérer mes données). Tes données sont alors anonymisées et récupérables pendant 30 jours, puis effacées de manière irréversible.'**
+  String get privacyPolicyS8Body;
+
+  /// No description provided for @privacyPolicyS9Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sécurité'**
+  String get privacyPolicyS9Title;
+
+  /// No description provided for @privacyPolicyS9Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous mettons en œuvre des mesures techniques et organisationnelles adaptées (chiffrement des échanges, contrôle d\'accès) pour protéger tes données contre tout accès non autorisé.'**
+  String get privacyPolicyS9Body;
+
+  /// No description provided for @privacyPolicyS10Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Traceurs'**
+  String get privacyPolicyS10Title;
+
+  /// No description provided for @privacyPolicyS10Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'application n\'utilise pas de cookies publicitaires ni de traceurs tiers à des fins de ciblage.'**
+  String get privacyPolicyS10Body;
+
+  /// No description provided for @privacyPolicyS11Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contact'**
+  String get privacyPolicyS11Title;
+
+  /// No description provided for @privacyPolicyS11Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour toute question relative à tes données personnelles, contacte-nous via « Nous contacter » ou à corentin.lechene@icloud.com.'**
+  String get privacyPolicyS11Body;
+
+  /// No description provided for @privacyPolicyS12Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifications'**
+  String get privacyPolicyS12Title;
+
+  /// No description provided for @privacyPolicyS12Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous pouvons faire évoluer cette politique. Toute modification importante te sera signalée dans l\'app, avec mise à jour de la date de dernière révision.'**
+  String get privacyPolicyS12Body;
 
   /// No description provided for @termsIntro.
   ///
   /// In fr, this message translates to:
-  /// **'En utilisant Cocotte Minute, tu acceptes ces quelques règles de bon sens.'**
+  /// **'En utilisant Cocotte Minute, tu acceptes les présentes conditions d\'utilisation. Merci de les lire attentivement.'**
   String get termsIntro;
 
   /// No description provided for @termsS1Title.
   ///
   /// In fr, this message translates to:
-  /// **'Le service'**
+  /// **'Éditeur'**
   String get termsS1Title;
 
   /// No description provided for @termsS1Body.
   ///
   /// In fr, this message translates to:
-  /// **'Cocotte Minute te permet de créer, organiser et cuisiner tes recettes, et de générer des listes de courses. Le service évolue régulièrement ; certaines fonctionnalités peuvent changer.'**
+  /// **'Cocotte Minute est éditée par Corentin Lechene (SIRET 994 215 259). Pour toute question, écris-nous via « Nous contacter » ou à corentin.lechene@icloud.com.'**
   String get termsS1Body;
 
   /// No description provided for @termsS2Title.
   ///
   /// In fr, this message translates to:
-  /// **'Ton contenu'**
+  /// **'Le service'**
   String get termsS2Title;
 
   /// No description provided for @termsS2Body.
   ///
   /// In fr, this message translates to:
-  /// **'Tes recettes t\'appartiennent. Tu nous autorises simplement à les stocker et à les afficher pour te fournir le service — rien d\'autre.'**
+  /// **'Cocotte Minute te permet de créer, organiser et cuisiner tes recettes, et de générer des listes de courses. Le service évolue régulièrement ; certaines fonctionnalités peuvent changer.'**
   String get termsS2Body;
 
   /// No description provided for @termsS3Title.
   ///
   /// In fr, this message translates to:
-  /// **'Compte invité'**
+  /// **'Ton compte'**
   String get termsS3Title;
 
   /// No description provided for @termsS3Body.
   ///
   /// In fr, this message translates to:
-  /// **'Sans compte, tes données sont liées à cet appareil. Crée un compte à tout moment pour les sécuriser : tout est conservé lors de la conversion.'**
+  /// **'Tu peux utiliser l\'app en compte invité (données liées à cet appareil) ou avec un compte (e-mail et prénom). Tu es responsable de la confidentialité de tes identifiants.'**
   String get termsS3Body;
 
   /// No description provided for @termsS4Title.
   ///
   /// In fr, this message translates to:
-  /// **'Usage acceptable'**
+  /// **'Ton contenu'**
   String get termsS4Title;
 
   /// No description provided for @termsS4Body.
   ///
   /// In fr, this message translates to:
-  /// **'N\'utilise pas l\'app pour publier des contenus illégaux ou porter atteinte aux droits d\'autrui, et ne tente pas de perturber le service.'**
+  /// **'Tes recettes t\'appartiennent. Tu nous autorises simplement à les stocker et à les afficher pour te fournir le service, rien d\'autre.'**
   String get termsS4Body;
 
   /// No description provided for @termsS5Title.
   ///
   /// In fr, this message translates to:
-  /// **'Suppression'**
+  /// **'Usage acceptable'**
   String get termsS5Title;
 
   /// No description provided for @termsS5Body.
   ///
   /// In fr, this message translates to:
-  /// **'Tu peux supprimer ton compte et tes données à tout moment depuis Compte → Gérer mes données.'**
+  /// **'N\'utilise pas l\'app pour publier des contenus illégaux ou porter atteinte aux droits d\'autrui, et ne tente pas de perturber ou de contourner le fonctionnement du service.'**
   String get termsS5Body;
 
   /// No description provided for @termsS6Title.
   ///
   /// In fr, this message translates to:
-  /// **'Responsabilité'**
+  /// **'Abonnement Pro'**
   String get termsS6Title;
 
   /// No description provided for @termsS6Body.
   ///
   /// In fr, this message translates to:
-  /// **'Le service est fourni « en l\'état ». Nous faisons le maximum pour qu\'il soit fiable, sans pouvoir garantir une disponibilité permanente.'**
+  /// **'Certaines fonctionnalités sont proposées via un abonnement payant, géré par les stores (Apple/Google). La facturation, le renouvellement et l\'annulation suivent leurs conditions respectives.'**
   String get termsS6Body;
+
+  /// No description provided for @termsS7Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suppression'**
+  String get termsS7Title;
+
+  /// No description provided for @termsS7Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu peux supprimer ton compte et tes données à tout moment depuis Compte → Gérer mes données, conformément à notre politique de confidentialité.'**
+  String get termsS7Body;
+
+  /// No description provided for @termsS8Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Responsabilité'**
+  String get termsS8Title;
+
+  /// No description provided for @termsS8Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le service est fourni « en l\'état ». Nous faisons le maximum pour qu\'il soit fiable, sans pouvoir garantir une disponibilité permanente.'**
+  String get termsS8Body;
+
+  /// No description provided for @termsS9Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifications'**
+  String get termsS9Title;
+
+  /// No description provided for @termsS9Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous pouvons faire évoluer ces conditions. Toute modification importante te sera signalée dans l\'app.'**
+  String get termsS9Body;
 
   /// No description provided for @manageDataStoredSection.
   ///

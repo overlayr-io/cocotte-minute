@@ -407,88 +407,158 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get privacyPolicyIntro =>
-      'Cocotte Minute respecte tes données. Voici, simplement, ce que l\'app collecte et pourquoi.';
+      'Chez Cocotte Minute, tes recettes et ta vie de famille t\'appartiennent. Voici, en clair, quelles données nous traitons, pourquoi, et comment garder la main dessus. Sans publicité, sans revente de tes données.';
 
   @override
-  String get privacyPolicyS1Title => 'Ce que nous collectons';
+  String get privacyPolicyS1Title => 'Responsable du traitement';
 
   @override
   String get privacyPolicyS1Body =>
-      'Tes recettes, dossiers, tags, personnes et listes de courses, ainsi que l\'adresse e-mail de ton compte si tu en as créé un. En compte invité, seul un identifiant technique anonyme est utilisé.';
+      'Le responsable du traitement des données est Corentin Lechene (SIRET 994 215 259), éditeur de l\'application Cocotte Minute. Pour toute question, écris-nous via « Nous contacter » ou à corentin.lechene@icloud.com.';
 
   @override
-  String get privacyPolicyS2Title => 'Pourquoi nous les utilisons';
+  String get privacyPolicyS2Title => 'Données que nous collectons';
 
   @override
   String get privacyPolicyS2Body =>
-      'Uniquement pour faire fonctionner l\'app : sauvegarder ton contenu, le synchroniser entre tes appareils et générer tes listes de courses. Aucune revente de données, aucune publicité ciblée.';
+      'Compte : adresse e-mail et prénom, pour créer et sécuriser ton espace. Contenu que tu crées : recettes, ingrédients, listes de courses, tags, dossiers, ainsi que les membres de ta famille (prénom, avatar) que tu ajoutes. Données techniques : type d\'appareil et journaux d\'erreurs, uniquement pour faire fonctionner et améliorer l\'app. Nous n\'utilisons aucune publicité et ne revendons jamais tes données à des tiers.';
 
   @override
-  String get privacyPolicyS3Title => 'Où elles sont stockées';
+  String get privacyPolicyS3Title => 'Pourquoi nous les traitons';
 
   @override
   String get privacyPolicyS3Body =>
-      'Sur des serveurs sécurisés hébergés dans l\'Union européenne. Tes listes de courses sont aussi conservées sur ton appareil pour fonctionner hors connexion.';
+      'Uniquement pour te fournir le service : enregistrer et synchroniser tes recettes et listes entre tes appareils, te permettre de retrouver ton contenu hors connexion, répondre à tes demandes de support, et améliorer l\'application de façon agrégée et anonyme.';
 
   @override
-  String get privacyPolicyS4Title => 'Combien de temps';
+  String get privacyPolicyS4Title => 'Base légale';
 
   @override
   String get privacyPolicyS4Body =>
-      'Tant que ton compte existe. Si tu supprimes ton compte, tes données sont anonymisées immédiatement puis définitivement effacées sous 30 jours. Pour un compte invité, l\'effacement est immédiat.';
+      'Le traitement repose sur l\'exécution du contrat (te fournir l\'app que tu utilises), sur ton consentement lorsqu\'il est requis, et sur notre intérêt légitime à sécuriser et améliorer le service.';
 
   @override
-  String get privacyPolicyS5Title => 'Tes droits';
+  String get privacyPolicyS5Title => 'Hébergement et sous-traitants';
 
   @override
   String get privacyPolicyS5Body =>
-      'Tu peux consulter, corriger ou supprimer tes données à tout moment depuis l\'app (Compte → Gérer mes données). Pour toute question, écris-nous via « Nous contacter ».';
+      'Tes données sont hébergées par Supabase. Nous ne faisons appel qu\'à des sous-traitants strictement nécessaires au fonctionnement du service, encadrés par contrat.';
+
+  @override
+  String get privacyPolicyS6Title => 'Durée de conservation';
+
+  @override
+  String get privacyPolicyS6Body =>
+      'Nous conservons tes données tant que ton compte est actif. À la suppression de ton compte, tes données sont d\'abord anonymisées puis restent récupérables pendant 30 jours (délai de rétablissement) avant d\'être supprimées définitivement.';
+
+  @override
+  String get privacyPolicyS7Title => 'Tes droits';
+
+  @override
+  String get privacyPolicyS7Body =>
+      'Conformément au RGPD, tu disposes d\'un droit d\'accès, de rectification, d\'effacement, de portabilité, d\'opposition et de limitation. Exerce-les à tout moment via « Nous contacter » ou à corentin.lechene@icloud.com. Tu peux aussi introduire une réclamation auprès de la CNIL.';
+
+  @override
+  String get privacyPolicyS8Title => 'Suppression de ton compte';
+
+  @override
+  String get privacyPolicyS8Body =>
+      'Tu peux demander la suppression de ton compte directement depuis l\'app (Compte → Gérer mes données). Tes données sont alors anonymisées et récupérables pendant 30 jours, puis effacées de manière irréversible.';
+
+  @override
+  String get privacyPolicyS9Title => 'Sécurité';
+
+  @override
+  String get privacyPolicyS9Body =>
+      'Nous mettons en œuvre des mesures techniques et organisationnelles adaptées (chiffrement des échanges, contrôle d\'accès) pour protéger tes données contre tout accès non autorisé.';
+
+  @override
+  String get privacyPolicyS10Title => 'Traceurs';
+
+  @override
+  String get privacyPolicyS10Body =>
+      'L\'application n\'utilise pas de cookies publicitaires ni de traceurs tiers à des fins de ciblage.';
+
+  @override
+  String get privacyPolicyS11Title => 'Contact';
+
+  @override
+  String get privacyPolicyS11Body =>
+      'Pour toute question relative à tes données personnelles, contacte-nous via « Nous contacter » ou à corentin.lechene@icloud.com.';
+
+  @override
+  String get privacyPolicyS12Title => 'Modifications';
+
+  @override
+  String get privacyPolicyS12Body =>
+      'Nous pouvons faire évoluer cette politique. Toute modification importante te sera signalée dans l\'app, avec mise à jour de la date de dernière révision.';
 
   @override
   String get termsIntro =>
-      'En utilisant Cocotte Minute, tu acceptes ces quelques règles de bon sens.';
+      'En utilisant Cocotte Minute, tu acceptes les présentes conditions d\'utilisation. Merci de les lire attentivement.';
 
   @override
-  String get termsS1Title => 'Le service';
+  String get termsS1Title => 'Éditeur';
 
   @override
   String get termsS1Body =>
-      'Cocotte Minute te permet de créer, organiser et cuisiner tes recettes, et de générer des listes de courses. Le service évolue régulièrement ; certaines fonctionnalités peuvent changer.';
+      'Cocotte Minute est éditée par Corentin Lechene (SIRET 994 215 259). Pour toute question, écris-nous via « Nous contacter » ou à corentin.lechene@icloud.com.';
 
   @override
-  String get termsS2Title => 'Ton contenu';
+  String get termsS2Title => 'Le service';
 
   @override
   String get termsS2Body =>
-      'Tes recettes t\'appartiennent. Tu nous autorises simplement à les stocker et à les afficher pour te fournir le service — rien d\'autre.';
+      'Cocotte Minute te permet de créer, organiser et cuisiner tes recettes, et de générer des listes de courses. Le service évolue régulièrement ; certaines fonctionnalités peuvent changer.';
 
   @override
-  String get termsS3Title => 'Compte invité';
+  String get termsS3Title => 'Ton compte';
 
   @override
   String get termsS3Body =>
-      'Sans compte, tes données sont liées à cet appareil. Crée un compte à tout moment pour les sécuriser : tout est conservé lors de la conversion.';
+      'Tu peux utiliser l\'app en compte invité (données liées à cet appareil) ou avec un compte (e-mail et prénom). Tu es responsable de la confidentialité de tes identifiants.';
 
   @override
-  String get termsS4Title => 'Usage acceptable';
+  String get termsS4Title => 'Ton contenu';
 
   @override
   String get termsS4Body =>
-      'N\'utilise pas l\'app pour publier des contenus illégaux ou porter atteinte aux droits d\'autrui, et ne tente pas de perturber le service.';
+      'Tes recettes t\'appartiennent. Tu nous autorises simplement à les stocker et à les afficher pour te fournir le service, rien d\'autre.';
 
   @override
-  String get termsS5Title => 'Suppression';
+  String get termsS5Title => 'Usage acceptable';
 
   @override
   String get termsS5Body =>
-      'Tu peux supprimer ton compte et tes données à tout moment depuis Compte → Gérer mes données.';
+      'N\'utilise pas l\'app pour publier des contenus illégaux ou porter atteinte aux droits d\'autrui, et ne tente pas de perturber ou de contourner le fonctionnement du service.';
 
   @override
-  String get termsS6Title => 'Responsabilité';
+  String get termsS6Title => 'Abonnement Pro';
 
   @override
   String get termsS6Body =>
+      'Certaines fonctionnalités sont proposées via un abonnement payant, géré par les stores (Apple/Google). La facturation, le renouvellement et l\'annulation suivent leurs conditions respectives.';
+
+  @override
+  String get termsS7Title => 'Suppression';
+
+  @override
+  String get termsS7Body =>
+      'Tu peux supprimer ton compte et tes données à tout moment depuis Compte → Gérer mes données, conformément à notre politique de confidentialité.';
+
+  @override
+  String get termsS8Title => 'Responsabilité';
+
+  @override
+  String get termsS8Body =>
       'Le service est fourni « en l\'état ». Nous faisons le maximum pour qu\'il soit fiable, sans pouvoir garantir une disponibilité permanente.';
+
+  @override
+  String get termsS9Title => 'Modifications';
+
+  @override
+  String get termsS9Body =>
+      'Nous pouvons faire évoluer ces conditions. Toute modification importante te sera signalée dans l\'app.';
 
   @override
   String get manageDataStoredSection => 'Ce que Cocotte conserve';
