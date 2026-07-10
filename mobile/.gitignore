@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Variables d'environnement locales (clés Supabase, RevenueCat, etc.) — jamais
+# versionnées. Utilisé avec `flutter build/run --dart-define-from-file=env.*.json`.
+env.dev.json
+env.prod.json
