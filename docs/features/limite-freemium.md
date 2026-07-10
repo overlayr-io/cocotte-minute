@@ -1,10 +1,15 @@
 ---
 feature: limite-freemium
-status: planned
-scope: v1 (documentation seulement — implémentation reportée après v1 fonctionnel, paiement non intégré cf. décision actée précédemment)
+status: done        # planned | in-progress | done
+scope: v1 (implémentation réelle livrée, cf. `premium-version.md` pour le détail technique)
 depends_on: [auth, sous-recette, liste-courses-auto, recherche-avancee]
 order: 10
 ---
+
+> **État 2026-07-10** : les limites décrites ci-dessous sont implémentées et
+> vérifiées côté serveur (code livré avec `premium-version.md`, migration
+> 0013). Le contenu qui suit reste la référence des règles métier ; les
+> mentions de paiement "reporté"/"non implémenté" plus bas sont obsolètes.
 
 # Limites freemium / abonnement premium
 
