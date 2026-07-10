@@ -4,9 +4,14 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
+import '../../../../core/pricing/price_calculator.dart';
+import '../../../../core/pricing/price_formatter.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/action_menu.dart';
 import '../../../../core/widgets/app_network_image.dart';
+import '../../../ingredient_prices/data/ingredient_prices_repository.dart';
+import '../../../ingredient_prices/domain/ingredient_price.dart';
+import '../../../ingredients/domain/ingredient.dart';
 import '../../data/shopping_list_repository.dart';
 import '../../domain/shopping_list.dart';
 import '../bloc/shopping_list_cubit.dart';
@@ -157,6 +162,7 @@ class _Loaded extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
                   _ProgressBar(checked: checked, total: total, l10n: l10n),
+                  _ShoppingPriceTotal(items: detail.items),
                   const SizedBox(height: 16),
                   _ViewTabs(current: state.view, onChanged: cubit.setView, l10n: l10n),
                   const SizedBox(height: 16),
@@ -455,6 +461,64 @@ class _ProgressBar extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Total estimé des articles restants (non cochés, hors articles libres) —
+/// recalculé en direct à chaque case cochée/décochée ou remplacement par
+/// alternative (le prix suit alors l'ingrédient effectivement affiché).
+/// État neutre "prix inconnu" si aucun prix n'est connu, plutôt que masqué.
+class _ShoppingPriceTotal extends StatelessWidget {
+  const _ShoppingPriceTotal({required this.items});
+
+  final List<ShoppingListItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return FutureBuilder<List<IngredientPrice>>(
+      future: sl<IngredientPricesRepository>().fetchMine(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const SizedBox.shrink();
+        final byId = {for (final p in snapshot.data!) p.ingredientId: p};
+        final lines = items.where((i) => !i.isFree && !i.isChecked).map(
+              (i) => (
+                quantity: i.quantity ?? 0,
+                unit: IngredientUnit.fromWire(i.unit ?? 'gramme'),
+                ingredientId: i.replacedByAlternativeId ?? i.ingredientId!,
+              ),
+            );
+        final estimate = estimateFromLines(lines, byId);
+        if (estimate.totalCount == 0) return const SizedBox.shrink();
+        return Padding(
+          padding: const EdgeInsets.only(top: 10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                l10n.shoppingPriceTotal,
+                style: const TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              Text(
+                estimate.isFullyUnknown
+                    ? l10n.shoppingPriceUnknown
+                    : formatPriceEstimate(estimate.value, isPartial: estimate.isPartial),
+                style: TextStyle(
+                  fontFamily: AppFonts.display,
+                  fontSize: 16.5,
+                  fontWeight: FontWeight.w700,
+                  color: estimate.isFullyUnknown ? AppColors.textMuted : AppColors.textPrimary,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }
