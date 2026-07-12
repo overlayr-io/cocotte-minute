@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../../../../core/di/service_locator.dart';
@@ -8,9 +10,13 @@ import '../../../recipes/data/recipes_repository.dart';
 import '../../../recipes/domain/recipe.dart';
 import 'add_entry_sheet.dart';
 
+/// Nombre max de recettes renvoyées par la recherche (limite de requête).
+const _kTraySearchLimit = 10;
+
 /// Sheet « Recettes à planifier » : coche/décoche les recettes gardées dans le
-/// bandeau. Retourne la nouvelle liste d'ids (ordre de sélection), ou null si
-/// fermée sans validation… la sélection est renvoyée aussi à la fermeture.
+/// bandeau. Panneau redimensionnable (glisser vers le haut = plus grand) avec
+/// une barre de recherche par nom (requête serveur limitée à 10). Retourne la
+/// nouvelle liste d'ids sélectionnés.
 Future<List<String>?> showTrayPickerSheet(
   BuildContext context, {
   required List<String> initialIds,
@@ -33,8 +39,12 @@ class _TrayPickerSheet extends StatefulWidget {
 }
 
 class _TrayPickerSheetState extends State<_TrayPickerSheet> {
+  final _searchController = TextEditingController();
+  Timer? _debounce;
+
   List<RecipeSummary>? _recipes;
   bool _loadFailed = false;
+  bool _searching = false;
   late final List<String> _selected = [...widget.initialIds];
 
   @override
@@ -43,13 +53,43 @@ class _TrayPickerSheetState extends State<_TrayPickerSheet> {
     _load();
   }
 
-  Future<void> _load() async {
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  /// Requête serveur `GET /recipes?q=&limit=10` (filtre `ilike` sur le nom).
+  /// Query vide → 10 recettes les plus récentes.
+  Future<void> _load({String? query}) async {
+    setState(() => _searching = true);
     try {
-      final recipes = await sl<RecipesRepository>().fetchMine();
-      if (mounted) setState(() => _recipes = recipes);
+      final recipes = await sl<RecipesRepository>().fetchMine(
+        q: query,
+        limit: _kTraySearchLimit,
+      );
+      if (!mounted) return;
+      setState(() {
+        _recipes = recipes;
+        _loadFailed = false;
+        _searching = false;
+      });
     } on Object {
-      if (mounted) setState(() => _loadFailed = true);
+      if (!mounted) return;
+      setState(() {
+        _loadFailed = _recipes == null; // n'écrase pas une liste déjà affichée
+        _searching = false;
+      });
     }
+  }
+
+  void _onSearchChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      final q = value.trim();
+      _load(query: q.isEmpty ? null : q);
+    });
   }
 
   void _toggle(String id) {
@@ -60,129 +100,184 @@ class _TrayPickerSheetState extends State<_TrayPickerSheet> {
 
   @override
   Widget build(BuildContext context) {
+    // Panneau redimensionnable : s'ouvre à ~60 % et se tire jusqu'à 92 %.
+    return DraggableScrollableSheet(
+      initialChildSize: 0.6,
+      minChildSize: 0.4,
+      maxChildSize: 0.92,
+      expand: false,
+      builder: (context, scrollController) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildHeader(context),
+                _buildSearchField(context),
+                const SizedBox(height: 10),
+                Expanded(child: _buildList(context, scrollController)),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Container(
-      height: MediaQuery.sizeOf(context).height * 0.8,
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      child: SafeArea(
-        top: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 44,
-                      height: 5,
-                      margin: const EdgeInsets.only(bottom: 14),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFDAD5C8),
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.planningPickerKicker.toUpperCase(),
-                              style: const TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.5,
-                                color: kPlanningKicker,
-                              ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              l10n.planningPickerTitle,
-                              style: const TextStyle(
-                                fontFamily: AppFonts.display,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 20,
-                                letterSpacing: -0.4,
-                                color: AppColors.textPrimary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      FilledButton(
-                        onPressed: () => Navigator.of(context).pop(_selected),
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.primary,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        child: Text(
-                          l10n.planningPickerDone(_selected.length),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13.5,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    l10n.planningPickerBody,
-                    style: const TextStyle(
-                      fontSize: 12.5,
-                      height: 1.4,
-                      color: Color(0xFF8A8574),
-                    ),
-                  ),
-                ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Container(
+              width: 44,
+              height: 5,
+              margin: const EdgeInsets.only(bottom: 14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFDAD5C8),
+                borderRadius: BorderRadius.circular(999),
               ),
             ),
-            const SizedBox(height: 6),
-            Expanded(
-              child: _loadFailed
-                  ? Center(
-                      child: Text(
-                        l10n.planningNoRecipeFound,
-                        style: const TextStyle(
-                          color: Color(0xFFA79F8B),
-                          fontSize: 13.5,
-                        ),
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.planningPickerKicker.toUpperCase(),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                        color: kPlanningKicker,
                       ),
-                    )
-                  : _recipes == null
-                  ? const Center(child: CircularProgressIndicator())
-                  : ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                      itemCount: _recipes!.length,
-                      separatorBuilder: (_, _) => const SizedBox(height: 10),
-                      itemBuilder: (context, index) {
-                        final recipe = _recipes![index];
-                        final on = _selected.contains(recipe.id);
-                        return _PickRow(
-                          recipe: recipe,
-                          selected: on,
-                          onTap: () => _toggle(recipe.id),
-                        );
-                      },
                     ),
+                    const SizedBox(height: 3),
+                    Text(
+                      l10n.planningPickerTitle,
+                      style: const TextStyle(
+                        fontFamily: AppFonts.display,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 20,
+                        letterSpacing: -0.4,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(context).pop(_selected),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: Text(
+                  l10n.planningPickerDone(_selected.length),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13.5,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSearchField(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+      child: Container(
+        height: 46,
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xFFE3DECF), width: 1.5),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.search, size: 20, color: AppColors.textMuted),
+            const SizedBox(width: 9),
+            Expanded(
+              child: TextField(
+                controller: _searchController,
+                onChanged: _onSearchChanged,
+                textInputAction: TextInputAction.search,
+                decoration: InputDecoration(
+                  hintText: l10n.planningSearchHint,
+                  border: InputBorder.none,
+                  isDense: true,
+                ),
+                style: const TextStyle(fontSize: 14.5),
+              ),
             ),
+            if (_searching)
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            else if (_searchController.text.isNotEmpty)
+              GestureDetector(
+                onTap: () {
+                  _searchController.clear();
+                  _onSearchChanged('');
+                },
+                child: const Icon(Icons.close, size: 18, color: AppColors.textMuted),
+              ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildList(BuildContext context, ScrollController scrollController) {
+    final l10n = AppLocalizations.of(context);
+    if (_recipes == null && !_loadFailed) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_loadFailed || (_recipes?.isEmpty ?? true)) {
+      return Center(
+        child: Text(
+          l10n.planningNoRecipeFound,
+          style: const TextStyle(color: Color(0xFFA79F8B), fontSize: 13.5),
+        ),
+      );
+    }
+    return ListView.separated(
+      controller: scrollController,
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+      itemCount: _recipes!.length,
+      separatorBuilder: (_, _) => const SizedBox(height: 10),
+      itemBuilder: (context, index) {
+        final recipe = _recipes![index];
+        return _PickRow(
+          recipe: recipe,
+          selected: _selected.contains(recipe.id),
+          onTap: () => _toggle(recipe.id),
+        );
+      },
     );
   }
 }
