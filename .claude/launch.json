@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "design-handoff",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "4173",
+        "--directory",
+        "/private/tmp/claude-501/-Users-corentinlechene-WebstormProjects-cocotte-minute/351c92e3-0821-47af-9854-9a2437c0b0a5/scratchpad/design-handoff/design-de-recettes-et-palette/project"
+      ],
+      "port": 4173
+    }
+  ]
+}

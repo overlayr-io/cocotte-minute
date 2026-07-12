@@ -2754,7 +2754,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get planningEmptyBody =>
-      'Glisse une recette du bandeau vers un créneau du matin, du midi ou du soir. Ta liste de courses se remplit toute seule.';
+      'Glisse une recette du bandeau vers un créneau du matin, du midi ou du soir.';
 
   @override
   String get planningEatingOut => 'Manger dehors';
