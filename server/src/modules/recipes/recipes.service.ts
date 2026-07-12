@@ -13,6 +13,7 @@ import {
   eq,
   ilike,
   inArray,
+  isNotNull,
   isNull,
   notInArray,
   or,
@@ -30,6 +31,8 @@ import {
   recipeTags,
   recipes,
   stepIngredients,
+  type RecipePriceBracket,
+  type RecipePriceMode,
   type RecipeRow,
   type RecipeStepRow,
 } from '../../db/schema/recipes.schema';
@@ -160,6 +163,12 @@ export interface RecipeDetailDto extends RecipeSummaryDto {
   description: string | null;
   /** Recette de base utilisée comme composant ailleurs → `is_base` verrouillé. */
   isLocked: boolean;
+  /** Mode de prix (feature prix-estime) : calculé depuis les ingrédients, ou étiquette fixe. */
+  priceMode: RecipePriceMode;
+  /** Prix étiquette pour `servings` personnes — non-null seulement si `priceMode === 'fixed'`. */
+  fixedPrice: number | null;
+  /** Tranche de prix affichée en badge, calculée côté client. Null si prix inconnu/partiel. */
+  priceBracket: RecipePriceBracket | null;
   ingredients: RecipeIngredientLineDto[];
   /** Étapes (arbre déjà déplié + numéroté ; réfs de base résolues récursivement). */
   steps: RecipeStepDto[];
@@ -560,7 +569,7 @@ export class RecipesService {
     const id = row.id;
     const authorId = row.authorId;
 
-    const [ingredientRows, componentRows, categoryRows, tagRows] =
+    const [ingredientRows, componentRows, stepBaseRefRows, categoryRows, tagRows] =
       await Promise.all([
         this.db
           .select({
@@ -573,6 +582,15 @@ export class RecipesService {
           .select({ baseRecipeId: recipeComponents.baseRecipeId })
           .from(recipeComponents)
           .where(eq(recipeComponents.parentRecipeId, id)),
+        // Une recette de base référencée par une étape (base_ref) est aussi
+        // une « sous-recette utilisée », même si elle n'a jamais été ajoutée
+        // explicitement via l'onglet Ingrédients (recipe_components).
+        this.db
+          .select({ baseRecipeId: recipeSteps.baseRecipeRefId })
+          .from(recipeSteps)
+          .where(
+            and(eq(recipeSteps.recipeId, id), isNotNull(recipeSteps.baseRecipeRefId)),
+          ),
         this.db
           .select({ categoryId: recipeCategories.categoryId })
           .from(recipeCategories)
@@ -586,10 +604,11 @@ export class RecipesService {
     const ingredientLines = await this.hydrateIngredients(authorId, ingredientRows);
     const ingredientMap = new Map(ingredientLines.map((l) => [l.id, l]));
     const steps = await this.buildRecipeSteps(id, ingredientMap);
-    const components = await this.summariesByIds(
-      authorId,
-      componentRows.map((r) => r.baseRecipeId),
-    );
+    const componentIds = new Set([
+      ...componentRows.map((r) => r.baseRecipeId),
+      ...stepBaseRefRows.map((r) => r.baseRecipeId!),
+    ]);
+    const components = await this.summariesByIds(authorId, [...componentIds]);
 
     // « Utilisée dans » : relation inverse, pertinente uniquement pour une base.
     let usedIn: RecipeSummaryDto[] = [];
@@ -609,6 +628,9 @@ export class RecipesService {
       authorId: row.authorId,
       description: row.description,
       isLocked: row.isBase && usedIn.length > 0,
+      priceMode: row.priceMode,
+      fixedPrice: row.fixedPrice,
+      priceBracket: row.priceBracket,
       ingredients: ingredientLines,
       steps,
       components,
@@ -713,6 +735,10 @@ export class RecipesService {
     if (dto.cookTime !== undefined) patch.cookTime = dto.cookTime;
     if (dto.restTime !== undefined) patch.restTime = dto.restTime;
     if (dto.servings !== undefined) patch.servings = dto.servings;
+    // Prix (feature prix-estime) : calculés côté client, simplement stockés ici.
+    if (dto.priceMode !== undefined) patch.priceMode = dto.priceMode;
+    if (dto.fixedPrice !== undefined) patch.fixedPrice = dto.fixedPrice;
+    if (dto.priceBracket !== undefined) patch.priceBracket = dto.priceBracket;
 
     const [row] = await this.db
       .update(recipes)

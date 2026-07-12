@@ -1,54 +1,24 @@
+import '../../../../core/utils/text_normalize.dart';
 import '../../domain/recipe.dart';
-
-/// Replie une chaîne pour la comparaison : minuscules, accents retirés, et tout
-/// caractère non alphanumérique remplacé par une espace (espaces normalisés).
-/// Le résultat est encadré d'espaces pour permettre une recherche « mot entier »
-/// par simple test de sous-chaîne (`" mot "`).
-String foldForMatch(String input) {
-  final lower = input.toLowerCase();
-  final buffer = StringBuffer(' ');
-  for (final rune in lower.runes) {
-    final ch = String.fromCharCode(rune);
-    final folded = _accentFolds[ch];
-    if (folded != null) {
-      buffer.write(folded);
-    } else if (_isAlphaNum(rune)) {
-      buffer.write(ch);
-    } else {
-      buffer.write(' ');
-    }
-  }
-  buffer.write(' ');
-  // Espaces multiples → une seule.
-  return buffer.toString().replaceAll(RegExp(r'\s+'), ' ');
-}
-
-bool _isAlphaNum(int rune) {
-  return (rune >= 48 && rune <= 57) || // 0-9
-      (rune >= 97 && rune <= 122); // a-z (déjà en minuscule, hors accents)
-}
-
-const Map<String, String> _accentFolds = {
-  'à': 'a', 'á': 'a', 'â': 'a', 'ã': 'a', 'ä': 'a', 'å': 'a',
-  'ç': 'c',
-  'è': 'e', 'é': 'e', 'ê': 'e', 'ë': 'e',
-  'ì': 'i', 'í': 'i', 'î': 'i', 'ï': 'i',
-  'ñ': 'n',
-  'ò': 'o', 'ó': 'o', 'ô': 'o', 'õ': 'o', 'ö': 'o',
-  'ù': 'u', 'ú': 'u', 'û': 'u', 'ü': 'u',
-  'ý': 'y', 'ÿ': 'y',
-  'œ': 'oe', 'æ': 'ae',
-};
 
 /// Variantes « mot entier » d'un nom d'ingrédient replié, pour tolérer un
 /// pluriel simple (français) dans les deux sens (nom singulier ↔ texte pluriel).
+/// Ne retient que le premier mot significatif du nom : un nom composé d'une
+/// base + qualificatif(s) (« Beurre doux », « Farine T55 ») est ainsi détecté
+/// dès que le texte mentionne juste la base (« Beurre », « Farine »). Ce
+/// choix privilégie le rappel : deux variantes d'un même ingrédient de base
+/// (« Sucre roux » / « Sucre glace ») peuvent toutes les deux matcher un
+/// texte qui n'en mentionne qu'une — accepté (traitement local, ajustable
+/// manuellement par l'utilisateur ensuite).
 Set<String> _forms(String folded) {
-  final name = folded.trim();
-  if (name.isEmpty) return const {};
-  final forms = <String>{name, '${name}s', '${name}x'};
-  // Nom déjà au pluriel : ajoute la forme singulière.
-  if (name.length > 2 && (name.endsWith('s') || name.endsWith('x'))) {
-    forms.add(name.substring(0, name.length - 1));
+  final words = folded.trim().split(' ');
+  final firstWord = words.isEmpty ? '' : words.first;
+  if (firstWord.isEmpty) return const {};
+  final forms = <String>{firstWord, '${firstWord}s', '${firstWord}x'};
+  // Mot déjà au pluriel : ajoute la forme singulière.
+  if (firstWord.length > 2 &&
+      (firstWord.endsWith('s') || firstWord.endsWith('x'))) {
+    forms.add(firstWord.substring(0, firstWord.length - 1));
   }
   return forms;
 }

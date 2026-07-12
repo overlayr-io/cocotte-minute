@@ -24,6 +24,9 @@ class TermsPage extends StatelessWidget {
         LegalSection(l10n.termsS4Title, l10n.termsS4Body),
         LegalSection(l10n.termsS5Title, l10n.termsS5Body),
         LegalSection(l10n.termsS6Title, l10n.termsS6Body),
+        LegalSection(l10n.termsS7Title, l10n.termsS7Body),
+        LegalSection(l10n.termsS8Title, l10n.termsS8Body),
+        LegalSection(l10n.termsS9Title, l10n.termsS9Body),
       ],
     );
   }

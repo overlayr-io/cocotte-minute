@@ -6,12 +6,19 @@ import '../domain/tag.dart';
 
 /// Erreur portant un message exploitable pour l'UI (snackbar/page d'erreur).
 class TagsRepositoryException implements Exception {
-  const TagsRepositoryException(this.message, {this.duplicateName = false});
+  const TagsRepositoryException(
+    this.message, {
+    this.duplicateName = false,
+    this.alreadyImported = false,
+  });
 
   final String message;
 
   /// Vrai si l'échec vient d'un nom de tag déjà pris (409).
   final bool duplicateName;
+
+  /// Vrai si l'échec vient d'un tag système déjà importé (409).
+  final bool alreadyImported;
 
   @override
   String toString() => 'TagsRepositoryException($message)';
@@ -65,6 +72,16 @@ class TagsRepository {
     }
   }
 
+  Future<List<Tag>> fetchSystem() async {
+    try {
+      final res = await _dio.get<List<dynamic>>('/tags/system');
+      final data = (res.data ?? const []).cast<Map<String, dynamic>>();
+      return data.map(Tag.fromJson).toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de charger le catalogue.');
+    }
+  }
+
   Future<Tag> create({required String name, required String color}) async {
     try {
       final res = await _dio.post<Map<String, dynamic>>(
@@ -75,6 +92,16 @@ class TagsRepository {
       return Tag.fromJson(res.data!);
     } on DioException catch (e) {
       throw _mapError(e, 'Impossible de créer le tag.');
+    }
+  }
+
+  Future<Tag> importSystem(String systemId) async {
+    try {
+      final res = await _dio.post<Map<String, dynamic>>('/tags/$systemId/import');
+      await _invalidateCaches();
+      return Tag.fromJson(res.data!);
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'importer le tag.', importConflict: true);
     }
   }
 
@@ -100,12 +127,21 @@ class TagsRepository {
     }
   }
 
-  TagsRepositoryException _mapError(DioException e, String fallback) {
+  TagsRepositoryException _mapError(
+    DioException e,
+    String fallback, {
+    bool importConflict = false,
+  }) {
     if (e.response?.statusCode == 409) {
-      return const TagsRepositoryException(
-        'Un tag portant ce nom existe déjà.',
-        duplicateName: true,
-      );
+      return importConflict
+          ? const TagsRepositoryException(
+              'Ce tag est déjà importé.',
+              alreadyImported: true,
+            )
+          : const TagsRepositoryException(
+              'Un tag portant ce nom existe déjà.',
+              duplicateName: true,
+            );
     }
     // API injoignable (serveur éteint, mauvaise URL, ou HTTP bloqué) : message
     // explicite plutôt qu'un « impossible de charger » générique.

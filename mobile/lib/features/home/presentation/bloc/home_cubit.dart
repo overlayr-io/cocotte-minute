@@ -100,6 +100,9 @@ class HomeCubit extends Cubit<HomeState> {
   /// Plafond de cartes par rangée.
   static const _rowCap = 12;
 
+  /// Plafond spécifique à la rangée « Recettes de base » (point 2 du backlog).
+  static const _baseRowCap = 5;
+
   Future<void> load() async {
     // Ne montre le spinner plein écran qu'au premier chargement : un refresh
     // (ex. retour d'une fiche recette) ne doit pas effacer le flux déjà affiché.
@@ -153,10 +156,11 @@ class HomeCubit extends Cubit<HomeState> {
       Iterable<DiscoveryRecipe> matches, {
       String? personName,
       String? avatarUrl,
+      int cap = _rowCap,
     }) {
       final recipes = matches
           .map((r) => r.summary)
-          .take(_rowCap)
+          .take(cap)
           .toList(growable: false);
       if (recipes.length >= _minRow) {
         sections.add(DiscoverySection(
@@ -193,7 +197,11 @@ class HomeCubit extends Cubit<HomeState> {
         avatarUrl: person.avatarUrl,
       );
     }
-    addRow(DiscoverySectionKind.base, all.where((r) => r.summary.isBase));
+    addRow(
+      DiscoverySectionKind.base,
+      all.where((r) => r.summary.isBase),
+      cap: _baseRowCap,
+    );
     addRow(
       DiscoverySectionKind.large,
       editorial.where((r) => r.summary.servings >= 6),

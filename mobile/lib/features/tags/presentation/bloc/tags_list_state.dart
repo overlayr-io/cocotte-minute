@@ -15,31 +15,40 @@ class TagsListLoading extends TagsListState {
   const TagsListLoading();
 }
 
-/// Liste chargée. `busyId` = tag en cours d'action (édition/suppression), pour
-/// afficher un état de chargement sur la ligne concernée.
+/// Listes chargées. `busyId` = tag en cours d'action (édition/suppression/import),
+/// pour afficher un état de chargement sur la ligne concernée.
 class TagsListLoaded extends TagsListState {
-  const TagsListLoaded({required this.tags, this.busyId});
+  const TagsListLoaded({required this.mine, required this.system, this.busyId});
 
-  final List<Tag> tags;
+  final List<Tag> mine;
+  final List<Tag> system;
   final String? busyId;
 
-  TagsListLoaded copyWith({List<Tag>? tags, String? busyId}) {
-    return TagsListLoaded(tags: tags ?? this.tags, busyId: busyId);
+  TagsListLoaded copyWith({List<Tag>? mine, List<Tag>? system, String? busyId}) {
+    return TagsListLoaded(
+      mine: mine ?? this.mine,
+      system: system ?? this.system,
+      busyId: busyId,
+    );
   }
 
   @override
-  List<Object?> get props => [tags, busyId];
+  List<Object?> get props => [mine, system, busyId];
 }
 
 /// Échec transitoire d'une action : les données restent affichées, un message
 /// est remonté pour une snackbar.
 class TagsListActionFailure extends TagsListLoaded {
-  const TagsListActionFailure({required super.tags, required this.message});
+  const TagsListActionFailure({
+    required super.mine,
+    required super.system,
+    required this.message,
+  });
 
   final String message;
 
   @override
-  List<Object?> get props => [tags, message];
+  List<Object?> get props => [mine, system, message];
 }
 
 /// Échec bloquant du chargement initial → page d'erreur + retry.

@@ -54,5 +54,16 @@ void main() {
     test('texte vide → aucun résultat', () {
       expect(detectIngredientIds('   ', ingredients), isEmpty);
     });
+
+    test('détecte via le premier mot pour un nom composé (qualificatif)', () {
+      final withQualifiers = [
+        ing('6', 'Beurre doux'),
+        ing('7', 'Farine T55'),
+      ];
+      expect(
+        detectIngredientIds('Ajouter le beurre puis la farine', withQualifiers),
+        {'6', '7'},
+      );
+    });
   });
 }

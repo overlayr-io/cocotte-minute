@@ -55,7 +55,10 @@ class _RecipePlayerPageState extends State<RecipePlayerPage> {
 
   @override
   void dispose() {
-    SystemChrome.setPreferredOrientations([]);
+    // Reverrouille en portrait (pas juste « déverrouiller ») : sans ça
+    // l'appareil reste libre de rester en paysage à la sortie du mode
+    // pas-à-pas, ce qui déroute sur le reste de l'app (portrait-only).
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
     WakelockPlus.disable();
     _cubit.close();
     super.dispose();

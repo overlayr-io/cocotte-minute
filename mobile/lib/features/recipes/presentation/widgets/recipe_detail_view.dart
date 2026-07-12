@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/premium/premium_limit_sheet.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/duration_format.dart';
 import '../../../../core/widgets/action_menu.dart';
 import '../../../../core/widgets/app_network_image.dart';
 import '../../../../core/widgets/error_view.dart';
@@ -19,6 +20,7 @@ import 'base_recipe_picker_sheet.dart';
 import 'category_assign_sheet.dart';
 import 'quantity_stepper.dart';
 import 'recipe_edit_sheet.dart';
+import 'recipe_price_section.dart';
 import 'person_assign_sheet.dart';
 import 'share_recipe_sheet.dart';
 import 'tag_assign_sheet.dart';
@@ -407,6 +409,21 @@ class _SheetState extends State<_Sheet> {
   int get _base =>
       detail.summary.servings <= 0 ? 1 : detail.summary.servings;
 
+  Future<void> _edit(BuildContext context) async {
+    final cubit = context.read<RecipeDetailCubit>();
+    final result = await showRecipeEditSheet(context, detail: detail);
+    if (result == null) return;
+    await cubit.updateFields(
+      name: result.name,
+      description: result.description,
+      isBase: result.isBase,
+      prepTime: result.prepTime,
+      cookTime: result.cookTime,
+      restTime: result.restTime,
+      servings: result.servings,
+    );
+  }
+
   Future<void> _addIngredients() async {
     final cubit = context.read<RecipeDetailCubit>();
     final drafts = await showAddIngredientsSheet(context);
@@ -476,6 +493,8 @@ class _SheetState extends State<_Sheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _CreatorRow(l10n: l10n),
+          const SizedBox(height: 15),
+          _TimeMetaGrid(summary: detail.summary, onTap: () => _edit(context)),
           if (detail.description != null && detail.description!.isNotEmpty) ...[
             const SizedBox(height: 15),
             Text(
@@ -491,6 +510,8 @@ class _SheetState extends State<_Sheet> {
               l10n: l10n,
               onChanged: (v) => setState(() => _portions = v),
             ),
+            const SizedBox(height: 16),
+            RecipePriceSection(detail: detail, scale: scale, chosenServings: _portions),
             const SizedBox(height: 16),
           ],
           _IngredientsStepsSegment(
@@ -569,6 +590,84 @@ class _SheetState extends State<_Sheet> {
     await Navigator.of(context).push(RecipeDetailPage.route(id));
     // Au retour, recharge (le graphe de composition a pu changer).
     await cubit.load();
+  }
+}
+
+/// Grille prépa/cuisson/repos, reprenant la mise en page du PDF (tuiles
+/// valeur/libellé séparées par des traits) avec une icône ajoutée par tuile.
+/// Tap = ouvre la modification de la recette (mêmes champs que le menu ⋮).
+class _TimeMetaGrid extends StatelessWidget {
+  const _TimeMetaGrid({required this.summary, required this.onTap});
+
+  final RecipeSummary summary;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final tiles = <MapEntry<String, ({String label, IconData icon})>>[];
+
+    void addTile(int minutes, String label, IconData icon) {
+      final value = formatMinutesShort(minutes);
+      if (value == null) return;
+      tiles.add(MapEntry(value, (label: label, icon: icon)));
+    }
+
+    addTile(summary.prepTime, l10n.pdfMetaPrep, Icons.schedule_rounded);
+    addTile(
+        summary.cookTime, l10n.pdfMetaCook, Icons.local_fire_department_outlined);
+    addTile(summary.restTime, l10n.pdfMetaRest, Icons.hourglass_bottom_rounded);
+    if (tiles.isEmpty) return const SizedBox.shrink();
+
+    final cells = <Widget>[];
+    for (var i = 0; i < tiles.length; i++) {
+      if (i > 0) {
+        cells.add(Container(width: 1, height: 44, color: AppColors.border));
+      }
+      final tile = tiles[i];
+      cells.add(Expanded(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(tile.value.icon, size: 18, color: AppColors.primary),
+            const SizedBox(height: 6),
+            Text(
+              tile.key,
+              style: const TextStyle(
+                fontFamily: AppFonts.display,
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              tile.value.label.toUpperCase(),
+              style: const TextStyle(
+                fontSize: 8.5,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 0.5,
+                color: AppColors.textMuted,
+              ),
+            ),
+          ],
+        ),
+      ));
+    }
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.card,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 13),
+        child: Row(children: cells),
+      ),
+    );
   }
 }
 

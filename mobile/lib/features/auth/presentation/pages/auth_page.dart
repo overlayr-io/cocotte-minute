@@ -113,7 +113,17 @@ class _AuthViewState extends State<_AuthView> {
             case AuthFormAccountReady(:final wasGuest):
               _onAccountReady(wasGuest);
             case AuthFormGuestDataReset():
-              _close();
+              // Confirmation explicite : sans elle, un reset réussi est
+              // visuellement identique à "conserver" ou à une fermeture sans
+              // action (retour signalé en TestFlight — cf. task.md).
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(content: Text(l10n.authGuestDataResetSuccess)),
+                );
+              Future.delayed(const Duration(milliseconds: 900), () {
+                if (mounted) _close();
+              });
             case AuthFormFailure(:final message):
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()

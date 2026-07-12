@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/network/api_client.dart';
@@ -150,7 +151,33 @@ class AuthRepository {
   /// courant (cascade côté serveur), pour démarrer sur un compte vierge.
   Future<void> resetGuestData() async {
     try {
-      await _apiClient.raw.post<void>('/account/reset-guest-data');
+      await _apiClient.raw.post<void>(
+        '/account/reset-guest-data',
+        // Purge de plusieurs domaines + démarrage à froid possible (hébergement
+        // gratuit) : le timeout par défaut de l'ApiClient (15s) peut expirer
+        // avant que le serveur n'ait fini de répondre, sans qu'aucune requête
+        // n'ait pourtant échoué côté serveur (d'où l'absence totale de logs
+        // rapportée en TestFlight). On laisse plus de marge sur cet appel précis.
+        options: Options(
+          sendTimeout: const Duration(seconds: 45),
+          receiveTimeout: const Duration(seconds: 45),
+        ),
+      );
+    } on DioException catch (e) {
+      const connectivityErrors = {
+        DioExceptionType.connectionError,
+        DioExceptionType.connectionTimeout,
+        DioExceptionType.receiveTimeout,
+        DioExceptionType.sendTimeout,
+      };
+      if (connectivityErrors.contains(e.type)) {
+        throw const AuthRepositoryException(
+          'Serveur injoignable ou trop lent à répondre. Réessaie dans quelques instants.',
+        );
+      }
+      throw const AuthRepositoryException(
+        'Impossible de réinitialiser les données.',
+      );
     } catch (_) {
       throw const AuthRepositoryException(
         'Impossible de réinitialiser les données.',

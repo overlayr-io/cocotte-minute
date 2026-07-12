@@ -207,6 +207,54 @@ class RecipeBaseRefStep extends RecipeStep {
   List<Object?> get props => [id, baseRecipeId, baseRecipeName, steps];
 }
 
+/// Mode de prix d'une recette (feature prix-estime) : `calculated` = somme des
+/// prix moyens des ingrédients (défaut) ; `fixed` = prix étiquette saisi
+/// manuellement, pour la base `servings` de la recette. Les deux modes scalent
+/// ensuite de la même façon selon les portions affichées.
+enum RecipePriceMode {
+  calculated('calculated'),
+  fixed('fixed');
+
+  const RecipePriceMode(this.wire);
+
+  final String wire;
+
+  static RecipePriceMode fromWire(String value) => RecipePriceMode.values.firstWhere(
+        (m) => m.wire == value,
+        orElse: () => RecipePriceMode.calculated,
+      );
+}
+
+/// Tranche de prix affichée en badge sur la recette (feature prix-estime) —
+/// calculée et poussée par le client, jamais par le serveur. Absente tant que
+/// le prix n'est pas entièrement connu (jamais posée sur un total partiel).
+enum RecipePriceBracket {
+  under5('under_5'),
+  from5To10('from_5_to_10'),
+  from10To20('from_10_to_20'),
+  over20('over_20');
+
+  const RecipePriceBracket(this.wire);
+
+  final String wire;
+
+  static RecipePriceBracket? fromWire(String? value) {
+    for (final b in RecipePriceBracket.values) {
+      if (b.wire == value) return b;
+    }
+    return null;
+  }
+}
+
+/// Déduit la tranche de prix d'une recette à partir de son prix de base (pour
+/// `servings` personnes, jamais un prix déjà scalé par les portions affichées).
+RecipePriceBracket priceBracketForValue(double value) {
+  if (value < 5) return RecipePriceBracket.under5;
+  if (value < 10) return RecipePriceBracket.from5To10;
+  if (value < 20) return RecipePriceBracket.from10To20;
+  return RecipePriceBracket.over20;
+}
+
 /// Fiche détail complète d'une recette. La même page sert une recette normale et
 /// une recette de base ; certaines sections ne s'affichent que dans l'un des cas
 /// (« Sous-recettes utilisées » côté normale, « Utilisée dans » côté base).
@@ -216,6 +264,9 @@ class RecipeDetail extends Equatable {
     required this.authorId,
     this.description,
     this.isLocked = false,
+    this.priceMode = RecipePriceMode.calculated,
+    this.fixedPrice,
+    this.priceBracket,
     this.ingredients = const [],
     this.steps = const [],
     this.components = const [],
@@ -231,6 +282,13 @@ class RecipeDetail extends Equatable {
   /// Recette de base utilisée comme composant ailleurs → `isBase` verrouillé
   /// (impossible de la repasser en recette normale).
   final bool isLocked;
+
+  final RecipePriceMode priceMode;
+
+  /// Prix étiquette pour `servings` personnes — non-null seulement si
+  /// `priceMode == RecipePriceMode.fixed`.
+  final double? fixedPrice;
+  final RecipePriceBracket? priceBracket;
 
   final List<RecipeIngredientLine> ingredients;
 
@@ -250,6 +308,27 @@ class RecipeDetail extends Equatable {
   String get name => summary.name;
   bool get isBase => summary.isBase;
 
+  /// Copie avec une nouvelle tranche de prix (feature prix-estime) — pas un
+  /// `copyWith` générique : `priceBracket` doit pouvoir être explicitement
+  /// remis à `null` (prix devenu partiel/inconnu), sans ambiguïté `??`.
+  RecipeDetail copyWithPriceBracket(RecipePriceBracket? priceBracket) {
+    return RecipeDetail(
+      summary: summary,
+      authorId: authorId,
+      description: description,
+      isLocked: isLocked,
+      priceMode: priceMode,
+      fixedPrice: fixedPrice,
+      priceBracket: priceBracket,
+      ingredients: ingredients,
+      steps: steps,
+      components: components,
+      usedIn: usedIn,
+      categoryIds: categoryIds,
+      tagIds: tagIds,
+    );
+  }
+
   factory RecipeDetail.fromJson(Map<String, dynamic> json) {
     List<T> list<T>(String key, T Function(Map<String, dynamic>) parse) =>
         ((json[key] as List<dynamic>?) ?? const [])
@@ -262,6 +341,9 @@ class RecipeDetail extends Equatable {
       authorId: json['authorId'] as String,
       description: json['description'] as String?,
       isLocked: json['isLocked'] as bool? ?? false,
+      priceMode: RecipePriceMode.fromWire(json['priceMode'] as String? ?? 'calculated'),
+      fixedPrice: (json['fixedPrice'] as num?)?.toDouble(),
+      priceBracket: RecipePriceBracket.fromWire(json['priceBracket'] as String?),
       ingredients: list('ingredients', RecipeIngredientLine.fromJson),
       steps: list('steps', RecipeStep.fromJson),
       components: list('components', RecipeSummary.fromJson),
@@ -278,6 +360,9 @@ class RecipeDetail extends Equatable {
         authorId,
         description,
         isLocked,
+        priceMode,
+        fixedPrice,
+        priceBracket,
         ingredients,
         steps,
         components,

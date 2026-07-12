@@ -1,10 +1,15 @@
 ---
 feature: limite-freemium
-status: planned
-scope: v1 (documentation seulement — implémentation reportée après v1 fonctionnel, paiement non intégré cf. décision actée précédemment)
+status: done        # planned | in-progress | done
+scope: v1 (implémentation réelle livrée, cf. `premium-version.md` pour le détail technique)
 depends_on: [auth, sous-recette, liste-courses-auto, recherche-avancee]
 order: 10
 ---
+
+> **État 2026-07-10** : les limites décrites ci-dessous sont implémentées et
+> vérifiées côté serveur (code livré avec `premium-version.md`, migration
+> 0013). Le contenu qui suit reste la référence des règles métier ; les
+> mentions de paiement "reporté"/"non implémenté" plus bas sont obsolètes.
 
 # Limites freemium / abonnement premium
 
@@ -51,6 +56,13 @@ le v1 fonctionnel, décision actée précédemment).
 
 ### Recherche IA locale
 - Fonctionnalité réservée entièrement au premium (aucun accès en gratuit).
+
+### Galerie photos de recette (Ajout — cadrage `galerie-recette.md`)
+- **3 photos de galerie max par recette** en gratuit, **6 en premium** (la
+  photo de couverture n'est jamais comptée dans ce quota, voir
+  `docs/features/galerie-recette.md`).
+- Quota atteint : ouvre directement le paywall (même pattern que sous-recettes
+  / liste de courses / recherche).
 
 ### Marketplace (chef)
 - Prévue comme feature premium plus tard (V2), pas dans ce v1.

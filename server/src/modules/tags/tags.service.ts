@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   Logger,
@@ -18,6 +19,8 @@ export interface TagDto {
   id: string;
   name: string;
   color: string;
+  isSystem: boolean;
+  importedFromId: string | null;
   /**
    * Nombre de recettes portant ce tag. Câblé à la table pivot `recipe_tags`
    * (feature recettes, à venir) ; renvoie 0 tant que ce pivot n'existe pas.
@@ -26,11 +29,18 @@ export interface TagDto {
   createdAt: string;
 }
 
+export interface SystemTagDto extends TagDto {
+  /** true si l'utilisateur possède déjà une copie importée de ce tag système. */
+  alreadyImported: boolean;
+}
+
 function toDto(row: TagRow, recipeCount = 0): TagDto {
   return {
     id: row.id,
     name: row.name,
     color: row.color,
+    isSystem: row.ownerId === null,
+    importedFromId: row.importedFromId,
     recipeCount,
     createdAt: row.createdAt.toISOString(),
   };
@@ -82,11 +92,73 @@ export class TagsService {
     return rows.map((row) => toDto(row, counts.get(row.id) ?? 0));
   }
 
+  /** Catalogue système, annoté du statut "déjà importé" pour l'utilisateur courant. */
+  async listSystem(userId: string): Promise<SystemTagDto[]> {
+    const [rows, mine] = await Promise.all([
+      this.db
+        .select()
+        .from(tags)
+        .where(and(isNull(tags.ownerId), isNull(tags.deletedAt)))
+        .orderBy(tags.name),
+      this.db
+        .select({ importedFromId: tags.importedFromId })
+        .from(tags)
+        .where(and(eq(tags.ownerId, userId), isNull(tags.deletedAt))),
+    ]);
+    const importedSystemIds = new Set(
+      mine.map((r) => r.importedFromId).filter((id): id is string => id !== null),
+    );
+    return rows.map((row) => ({
+      ...toDto(row),
+      alreadyImported: importedSystemIds.has(row.id),
+    }));
+  }
+
   async create(userId: string, dto: CreateTagDto): Promise<TagDto> {
     await this.assertNameAvailable(userId, dto.name);
     const [row] = await this.db
       .insert(tags)
       .values({ ownerId: userId, name: dto.name, color: dto.color })
+      .returning();
+    return toDto(row);
+  }
+
+  /**
+   * Importe un tag système : crée une **copie indépendante** appartenant à
+   * l'utilisateur, avec lien `importedFromId` vers l'origine. Le tag système
+   * n'est jamais modifié. Un second import du même modèle est refusé (409).
+   */
+  async importSystem(userId: string, systemId: string): Promise<TagDto> {
+    const [system] = await this.db
+      .select()
+      .from(tags)
+      .where(and(eq(tags.id, systemId), isNull(tags.ownerId), isNull(tags.deletedAt)));
+    if (!system) {
+      throw new NotFoundException('Tag système introuvable');
+    }
+
+    const [existing] = await this.db
+      .select({ id: tags.id })
+      .from(tags)
+      .where(
+        and(
+          eq(tags.ownerId, userId),
+          eq(tags.importedFromId, systemId),
+          isNull(tags.deletedAt),
+        ),
+      );
+    if (existing) {
+      throw new ConflictException('Ce tag système est déjà importé');
+    }
+
+    const [row] = await this.db
+      .insert(tags)
+      .values({
+        ownerId: userId,
+        name: system.name,
+        color: system.color,
+        importedFromId: system.id,
+      })
       .returning();
     return toDto(row);
   }
@@ -155,13 +227,23 @@ export class TagsService {
     }
   }
 
-  /** Récupère un tag appartenant à l'utilisateur (non supprimé), ou lève. */
+  /**
+   * Récupère un tag appartenant à l'utilisateur (non supprimé), ou lève. Un
+   * tag système (owner null) n'est jamais "possédé" : il ne peut donc être
+   * ni modifié ni supprimé par un utilisateur (même règle que les ingrédients).
+   */
   private async findOwnedOrFail(userId: string, id: string): Promise<TagRow> {
     const [row] = await this.db
       .select()
       .from(tags)
       .where(and(eq(tags.id, id), isNull(tags.deletedAt)));
-    if (!row || row.ownerId !== userId) {
+    if (!row) {
+      throw new NotFoundException('Tag introuvable');
+    }
+    if (row.ownerId === null) {
+      throw new ForbiddenException('Un tag système ne peut pas être modifié');
+    }
+    if (row.ownerId !== userId) {
       throw new NotFoundException('Tag introuvable');
     }
     return row;

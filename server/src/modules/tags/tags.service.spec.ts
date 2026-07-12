@@ -1,4 +1,4 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 
 import { DrizzleDB } from '../../db/drizzle.provider';
 import { TagsService } from './tags.service';
@@ -48,6 +48,7 @@ const row = (over: Partial<Record<string, unknown>> = {}) => ({
   ownerId: USER,
   name: 'Végétarien',
   color: '#3F7D3A',
+  importedFromId: null,
   deletedAt: null,
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
   updatedAt: new Date('2026-01-01T00:00:00.000Z'),
@@ -72,10 +73,78 @@ describe('TagsService', () => {
           id: 'tag-1',
           name: 'Végétarien',
           color: '#3F7D3A',
+          isSystem: false,
+          importedFromId: null,
           recipeCount: 0,
           createdAt: '2026-01-01T00:00:00.000Z',
         },
       ]);
+    });
+  });
+
+  describe('listSystem', () => {
+    it('annote alreadyImported selon les copies possédées', async () => {
+      const systemRow = row({ id: 'sys-1', ownerId: null, name: 'Rapide' });
+      const { db } = makeDb([
+        [systemRow], // catalogue système
+        [{ importedFromId: 'sys-1' }], // mes tags importés
+      ]);
+      const service = new TagsService(db, recipesStub);
+
+      const result = await service.listSystem(USER);
+
+      expect(result).toEqual([
+        {
+          id: 'sys-1',
+          name: 'Rapide',
+          color: '#3F7D3A',
+          isSystem: true,
+          importedFromId: null,
+          recipeCount: 0,
+          createdAt: '2026-01-01T00:00:00.000Z',
+          alreadyImported: true,
+        },
+      ]);
+    });
+  });
+
+  describe('importSystem', () => {
+    it('lève NotFound si le tag système est introuvable', async () => {
+      const { db } = makeDb([[]]);
+      const service = new TagsService(db, recipesStub);
+
+      await expect(service.importSystem(USER, 'sys-1')).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+    });
+
+    it('refuse un second import du même tag (409)', async () => {
+      const systemRow = row({ id: 'sys-1', ownerId: null, name: 'Rapide' });
+      const { db, calls } = makeDb([[systemRow], [{ id: 'copy-1' }]]);
+      const service = new TagsService(db, recipesStub);
+
+      await expect(service.importSystem(USER, 'sys-1')).rejects.toBeInstanceOf(
+        ConflictException,
+      );
+      expect(calls.map((c) => c.op)).toEqual(['select', 'select']); // pas d'insert
+    });
+
+    it('crée une copie indépendante liée à l’origine', async () => {
+      const systemRow = row({ id: 'sys-1', ownerId: null, name: 'Rapide' });
+      const copyRow = row({
+        id: 'copy-1',
+        ownerId: USER,
+        name: 'Rapide',
+        importedFromId: 'sys-1',
+      });
+      const { db, calls } = makeDb([[systemRow], [], [copyRow]]);
+      const service = new TagsService(db, recipesStub);
+
+      const result = await service.importSystem(USER, 'sys-1');
+
+      expect(result.importedFromId).toBe('sys-1');
+      expect(result.isSystem).toBe(false);
+      expect(calls.map((c) => c.op)).toEqual(['select', 'select', 'insert']);
     });
   });
 
@@ -119,6 +188,15 @@ describe('TagsService', () => {
 
       await expect(service.update(USER, 'tag-1', { color: '#3D6DA8' })).rejects.toBeInstanceOf(
         NotFoundException,
+      );
+    });
+
+    it('lève Forbidden si le tag est un tag système', async () => {
+      const { db } = makeDb([[row({ ownerId: null })]]);
+      const service = new TagsService(db, recipesStub);
+
+      await expect(service.update(USER, 'tag-1', { color: '#3D6DA8' })).rejects.toBeInstanceOf(
+        ForbiddenException,
       );
     });
   });

@@ -41,7 +41,13 @@ class StepTimerCard extends StatelessWidget {
                       ? () => cubit.pauseTimer(timer.id)
                       : () => cubit.startTimer(
                             timer.stepId,
-                            timer.remaining ?? timer.totalDuration,
+                            // Un minuteur terminé a `remaining == Duration.zero`
+                            // (pas `null`) : redémarrer avec la durée totale,
+                            // sinon le `??` ne s'applique jamais et le minuteur
+                            // se re-termine instantanément.
+                            timer.status == TimerStatus.done
+                                ? timer.totalDuration
+                                : (timer.remaining ?? timer.totalDuration),
                             label: timer.label,
                           ),
                   style: ElevatedButton.styleFrom(
@@ -53,12 +59,18 @@ class StepTimerCard extends StatelessWidget {
                     ),
                   ),
                   icon: Icon(
-                    timer.status == TimerStatus.running
-                        ? Icons.pause_rounded
-                        : Icons.play_arrow_rounded,
+                    switch (timer.status) {
+                      TimerStatus.running => Icons.pause_rounded,
+                      TimerStatus.done => Icons.replay_rounded,
+                      _ => Icons.play_arrow_rounded,
+                    },
                     size: 18,
                   ),
-                  label: Text(l10n.playerTimerStart),
+                  label: Text(
+                    timer.status == TimerStatus.done
+                        ? l10n.playerTimerRestart
+                        : l10n.playerTimerStart,
+                  ),
                 ),
               ),
               const SizedBox(width: 10),

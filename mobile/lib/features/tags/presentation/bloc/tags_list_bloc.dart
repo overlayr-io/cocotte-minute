@@ -7,7 +7,8 @@ import '../../domain/tag.dart';
 part 'tags_list_event.dart';
 part 'tags_list_state.dart';
 
-/// Bloc de l'écran "Tags" : liste + création / édition / suppression.
+/// Bloc de l'écran "Tags" : onglets mine/catalogue + création / édition /
+/// suppression / import.
 class TagsListBloc extends Bloc<TagsListEvent, TagsListState> {
   TagsListBloc({required TagsRepository repository})
     : _repository = repository,
@@ -16,6 +17,7 @@ class TagsListBloc extends Bloc<TagsListEvent, TagsListState> {
     on<TagCreated>(_onCreated);
     on<TagUpdated>(_onUpdated);
     on<TagDeleted>(_onDeleted);
+    on<TagSystemImported>(_onImported);
   }
 
   final TagsRepository _repository;
@@ -26,8 +28,7 @@ class TagsListBloc extends Bloc<TagsListEvent, TagsListState> {
   ) async {
     emit(const TagsListLoading());
     try {
-      final tags = await _repository.fetchMine();
-      emit(TagsListLoaded(tags: tags));
+      emit(await _load());
     } on TagsRepositoryException catch (e) {
       emit(TagsListError(e.message));
     }
@@ -38,9 +39,15 @@ class TagsListBloc extends Bloc<TagsListEvent, TagsListState> {
     if (current is! TagsListLoaded) return;
     try {
       await _repository.create(name: event.name, color: event.color);
-      emit(TagsListLoaded(tags: await _repository.fetchMine()));
+      emit(await _load());
     } on TagsRepositoryException catch (e) {
-      emit(TagsListActionFailure(tags: current.tags, message: e.message));
+      emit(
+        TagsListActionFailure(
+          mine: current.mine,
+          system: current.system,
+          message: e.message,
+        ),
+      );
     }
   }
 
@@ -50,9 +57,15 @@ class TagsListBloc extends Bloc<TagsListEvent, TagsListState> {
     emit(current.copyWith(busyId: event.id));
     try {
       await _repository.update(event.id, name: event.name, color: event.color);
-      emit(TagsListLoaded(tags: await _repository.fetchMine()));
+      emit(await _load());
     } on TagsRepositoryException catch (e) {
-      emit(TagsListActionFailure(tags: current.tags, message: e.message));
+      emit(
+        TagsListActionFailure(
+          mine: current.mine,
+          system: current.system,
+          message: e.message,
+        ),
+      );
     }
   }
 
@@ -62,9 +75,44 @@ class TagsListBloc extends Bloc<TagsListEvent, TagsListState> {
     emit(current.copyWith(busyId: event.id));
     try {
       await _repository.delete(event.id);
-      emit(TagsListLoaded(tags: await _repository.fetchMine()));
+      emit(await _load());
     } on TagsRepositoryException catch (e) {
-      emit(TagsListActionFailure(tags: current.tags, message: e.message));
+      emit(
+        TagsListActionFailure(
+          mine: current.mine,
+          system: current.system,
+          message: e.message,
+        ),
+      );
     }
+  }
+
+  Future<void> _onImported(
+    TagSystemImported event,
+    Emitter<TagsListState> emit,
+  ) async {
+    final current = state;
+    if (current is! TagsListLoaded) return;
+    emit(current.copyWith(busyId: event.systemId));
+    try {
+      await _repository.importSystem(event.systemId);
+      emit(await _load());
+    } on TagsRepositoryException catch (e) {
+      emit(
+        TagsListActionFailure(
+          mine: current.mine,
+          system: current.system,
+          message: e.message,
+        ),
+      );
+    }
+  }
+
+  Future<TagsListLoaded> _load() async {
+    final results = await Future.wait([
+      _repository.fetchMine(),
+      _repository.fetchSystem(),
+    ]);
+    return TagsListLoaded(mine: results[0], system: results[1]);
   }
 }

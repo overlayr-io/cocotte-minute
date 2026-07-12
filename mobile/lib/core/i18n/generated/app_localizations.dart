@@ -326,6 +326,12 @@ abstract class AppLocalizations {
   /// **'Plus tard'**
   String get keepDataLater;
 
+  /// No description provided for @authGuestDataResetSuccess.
+  ///
+  /// In fr, this message translates to:
+  /// **'Données réinitialisées.'**
+  String get authGuestDataResetSuccess;
+
   /// Onglet de navigation Accueil
   ///
   /// In fr, this message translates to:
@@ -839,146 +845,266 @@ abstract class AppLocalizations {
   /// No description provided for @privacyPolicyIntro.
   ///
   /// In fr, this message translates to:
-  /// **'Cocotte Minute respecte tes données. Voici, simplement, ce que l\'app collecte et pourquoi.'**
+  /// **'Chez Cocotte Minute, tes recettes et ta vie de famille t\'appartiennent. Voici, en clair, quelles données nous traitons, pourquoi, et comment garder la main dessus. Sans publicité, sans revente de tes données.'**
   String get privacyPolicyIntro;
 
   /// No description provided for @privacyPolicyS1Title.
   ///
   /// In fr, this message translates to:
-  /// **'Ce que nous collectons'**
+  /// **'Responsable du traitement'**
   String get privacyPolicyS1Title;
 
   /// No description provided for @privacyPolicyS1Body.
   ///
   /// In fr, this message translates to:
-  /// **'Tes recettes, dossiers, tags, personnes et listes de courses, ainsi que l\'adresse e-mail de ton compte si tu en as créé un. En compte invité, seul un identifiant technique anonyme est utilisé.'**
+  /// **'Le responsable du traitement des données est Corentin Lechene (SIRET 994 215 259), éditeur de l\'application Cocotte Minute. Pour toute question, écris-nous via « Nous contacter » ou à corentin.lechene@icloud.com.'**
   String get privacyPolicyS1Body;
 
   /// No description provided for @privacyPolicyS2Title.
   ///
   /// In fr, this message translates to:
-  /// **'Pourquoi nous les utilisons'**
+  /// **'Données que nous collectons'**
   String get privacyPolicyS2Title;
 
   /// No description provided for @privacyPolicyS2Body.
   ///
   /// In fr, this message translates to:
-  /// **'Uniquement pour faire fonctionner l\'app : sauvegarder ton contenu, le synchroniser entre tes appareils et générer tes listes de courses. Aucune revente de données, aucune publicité ciblée.'**
+  /// **'Compte : adresse e-mail et prénom, pour créer et sécuriser ton espace. Contenu que tu crées : recettes, ingrédients, listes de courses, tags, dossiers, ainsi que les membres de ta famille (prénom, avatar) que tu ajoutes. Données techniques : type d\'appareil et journaux d\'erreurs, uniquement pour faire fonctionner et améliorer l\'app. Nous n\'utilisons aucune publicité et ne revendons jamais tes données à des tiers.'**
   String get privacyPolicyS2Body;
 
   /// No description provided for @privacyPolicyS3Title.
   ///
   /// In fr, this message translates to:
-  /// **'Où elles sont stockées'**
+  /// **'Pourquoi nous les traitons'**
   String get privacyPolicyS3Title;
 
   /// No description provided for @privacyPolicyS3Body.
   ///
   /// In fr, this message translates to:
-  /// **'Sur des serveurs sécurisés hébergés dans l\'Union européenne. Tes listes de courses sont aussi conservées sur ton appareil pour fonctionner hors connexion.'**
+  /// **'Uniquement pour te fournir le service : enregistrer et synchroniser tes recettes et listes entre tes appareils, te permettre de retrouver ton contenu hors connexion, répondre à tes demandes de support, et améliorer l\'application de façon agrégée et anonyme.'**
   String get privacyPolicyS3Body;
 
   /// No description provided for @privacyPolicyS4Title.
   ///
   /// In fr, this message translates to:
-  /// **'Combien de temps'**
+  /// **'Base légale'**
   String get privacyPolicyS4Title;
 
   /// No description provided for @privacyPolicyS4Body.
   ///
   /// In fr, this message translates to:
-  /// **'Tant que ton compte existe. Si tu supprimes ton compte, tes données sont anonymisées immédiatement puis définitivement effacées sous 30 jours. Pour un compte invité, l\'effacement est immédiat.'**
+  /// **'Le traitement repose sur l\'exécution du contrat (te fournir l\'app que tu utilises), sur ton consentement lorsqu\'il est requis, et sur notre intérêt légitime à sécuriser et améliorer le service.'**
   String get privacyPolicyS4Body;
 
   /// No description provided for @privacyPolicyS5Title.
   ///
   /// In fr, this message translates to:
-  /// **'Tes droits'**
+  /// **'Hébergement et sous-traitants'**
   String get privacyPolicyS5Title;
 
   /// No description provided for @privacyPolicyS5Body.
   ///
   /// In fr, this message translates to:
-  /// **'Tu peux consulter, corriger ou supprimer tes données à tout moment depuis l\'app (Compte → Gérer mes données). Pour toute question, écris-nous via « Nous contacter ».'**
+  /// **'Tes données sont hébergées par Supabase. Nous ne faisons appel qu\'à des sous-traitants strictement nécessaires au fonctionnement du service, encadrés par contrat.'**
   String get privacyPolicyS5Body;
+
+  /// No description provided for @privacyPolicyS6Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Durée de conservation'**
+  String get privacyPolicyS6Title;
+
+  /// No description provided for @privacyPolicyS6Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous conservons tes données tant que ton compte est actif. À la suppression de ton compte, tes données sont d\'abord anonymisées puis restent récupérables pendant 30 jours (délai de rétablissement) avant d\'être supprimées définitivement.'**
+  String get privacyPolicyS6Body;
+
+  /// No description provided for @privacyPolicyS7Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tes droits'**
+  String get privacyPolicyS7Title;
+
+  /// No description provided for @privacyPolicyS7Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conformément au RGPD, tu disposes d\'un droit d\'accès, de rectification, d\'effacement, de portabilité, d\'opposition et de limitation. Exerce-les à tout moment via « Nous contacter » ou à corentin.lechene@icloud.com. Tu peux aussi introduire une réclamation auprès de la CNIL.'**
+  String get privacyPolicyS7Body;
+
+  /// No description provided for @privacyPolicyS8Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suppression de ton compte'**
+  String get privacyPolicyS8Title;
+
+  /// No description provided for @privacyPolicyS8Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu peux demander la suppression de ton compte directement depuis l\'app (Compte → Gérer mes données). Tes données sont alors anonymisées et récupérables pendant 30 jours, puis effacées de manière irréversible.'**
+  String get privacyPolicyS8Body;
+
+  /// No description provided for @privacyPolicyS9Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sécurité'**
+  String get privacyPolicyS9Title;
+
+  /// No description provided for @privacyPolicyS9Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous mettons en œuvre des mesures techniques et organisationnelles adaptées (chiffrement des échanges, contrôle d\'accès) pour protéger tes données contre tout accès non autorisé.'**
+  String get privacyPolicyS9Body;
+
+  /// No description provided for @privacyPolicyS10Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Traceurs'**
+  String get privacyPolicyS10Title;
+
+  /// No description provided for @privacyPolicyS10Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'application n\'utilise pas de cookies publicitaires ni de traceurs tiers à des fins de ciblage.'**
+  String get privacyPolicyS10Body;
+
+  /// No description provided for @privacyPolicyS11Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contact'**
+  String get privacyPolicyS11Title;
+
+  /// No description provided for @privacyPolicyS11Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pour toute question relative à tes données personnelles, contacte-nous via « Nous contacter » ou à corentin.lechene@icloud.com.'**
+  String get privacyPolicyS11Body;
+
+  /// No description provided for @privacyPolicyS12Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifications'**
+  String get privacyPolicyS12Title;
+
+  /// No description provided for @privacyPolicyS12Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous pouvons faire évoluer cette politique. Toute modification importante te sera signalée dans l\'app, avec mise à jour de la date de dernière révision.'**
+  String get privacyPolicyS12Body;
 
   /// No description provided for @termsIntro.
   ///
   /// In fr, this message translates to:
-  /// **'En utilisant Cocotte Minute, tu acceptes ces quelques règles de bon sens.'**
+  /// **'En utilisant Cocotte Minute, tu acceptes les présentes conditions d\'utilisation. Merci de les lire attentivement.'**
   String get termsIntro;
 
   /// No description provided for @termsS1Title.
   ///
   /// In fr, this message translates to:
-  /// **'Le service'**
+  /// **'Éditeur'**
   String get termsS1Title;
 
   /// No description provided for @termsS1Body.
   ///
   /// In fr, this message translates to:
-  /// **'Cocotte Minute te permet de créer, organiser et cuisiner tes recettes, et de générer des listes de courses. Le service évolue régulièrement ; certaines fonctionnalités peuvent changer.'**
+  /// **'Cocotte Minute est éditée par Corentin Lechene (SIRET 994 215 259). Pour toute question, écris-nous via « Nous contacter » ou à corentin.lechene@icloud.com.'**
   String get termsS1Body;
 
   /// No description provided for @termsS2Title.
   ///
   /// In fr, this message translates to:
-  /// **'Ton contenu'**
+  /// **'Le service'**
   String get termsS2Title;
 
   /// No description provided for @termsS2Body.
   ///
   /// In fr, this message translates to:
-  /// **'Tes recettes t\'appartiennent. Tu nous autorises simplement à les stocker et à les afficher pour te fournir le service — rien d\'autre.'**
+  /// **'Cocotte Minute te permet de créer, organiser et cuisiner tes recettes, et de générer des listes de courses. Le service évolue régulièrement ; certaines fonctionnalités peuvent changer.'**
   String get termsS2Body;
 
   /// No description provided for @termsS3Title.
   ///
   /// In fr, this message translates to:
-  /// **'Compte invité'**
+  /// **'Ton compte'**
   String get termsS3Title;
 
   /// No description provided for @termsS3Body.
   ///
   /// In fr, this message translates to:
-  /// **'Sans compte, tes données sont liées à cet appareil. Crée un compte à tout moment pour les sécuriser : tout est conservé lors de la conversion.'**
+  /// **'Tu peux utiliser l\'app en compte invité (données liées à cet appareil) ou avec un compte (e-mail et prénom). Tu es responsable de la confidentialité de tes identifiants.'**
   String get termsS3Body;
 
   /// No description provided for @termsS4Title.
   ///
   /// In fr, this message translates to:
-  /// **'Usage acceptable'**
+  /// **'Ton contenu'**
   String get termsS4Title;
 
   /// No description provided for @termsS4Body.
   ///
   /// In fr, this message translates to:
-  /// **'N\'utilise pas l\'app pour publier des contenus illégaux ou porter atteinte aux droits d\'autrui, et ne tente pas de perturber le service.'**
+  /// **'Tes recettes t\'appartiennent. Tu nous autorises simplement à les stocker et à les afficher pour te fournir le service, rien d\'autre.'**
   String get termsS4Body;
 
   /// No description provided for @termsS5Title.
   ///
   /// In fr, this message translates to:
-  /// **'Suppression'**
+  /// **'Usage acceptable'**
   String get termsS5Title;
 
   /// No description provided for @termsS5Body.
   ///
   /// In fr, this message translates to:
-  /// **'Tu peux supprimer ton compte et tes données à tout moment depuis Compte → Gérer mes données.'**
+  /// **'N\'utilise pas l\'app pour publier des contenus illégaux ou porter atteinte aux droits d\'autrui, et ne tente pas de perturber ou de contourner le fonctionnement du service.'**
   String get termsS5Body;
 
   /// No description provided for @termsS6Title.
   ///
   /// In fr, this message translates to:
-  /// **'Responsabilité'**
+  /// **'Abonnement Pro'**
   String get termsS6Title;
 
   /// No description provided for @termsS6Body.
   ///
   /// In fr, this message translates to:
-  /// **'Le service est fourni « en l\'état ». Nous faisons le maximum pour qu\'il soit fiable, sans pouvoir garantir une disponibilité permanente.'**
+  /// **'Certaines fonctionnalités sont proposées via un abonnement payant, géré par les stores (Apple/Google). La facturation, le renouvellement et l\'annulation suivent leurs conditions respectives.'**
   String get termsS6Body;
+
+  /// No description provided for @termsS7Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suppression'**
+  String get termsS7Title;
+
+  /// No description provided for @termsS7Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tu peux supprimer ton compte et tes données à tout moment depuis Compte → Gérer mes données, conformément à notre politique de confidentialité.'**
+  String get termsS7Body;
+
+  /// No description provided for @termsS8Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Responsabilité'**
+  String get termsS8Title;
+
+  /// No description provided for @termsS8Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le service est fourni « en l\'état ». Nous faisons le maximum pour qu\'il soit fiable, sans pouvoir garantir une disponibilité permanente.'**
+  String get termsS8Body;
+
+  /// No description provided for @termsS9Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifications'**
+  String get termsS9Title;
+
+  /// No description provided for @termsS9Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nous pouvons faire évoluer ces conditions. Toute modification importante te sera signalée dans l\'app.'**
+  String get termsS9Body;
 
   /// No description provided for @manageDataStoredSection.
   ///
@@ -1244,6 +1370,144 @@ abstract class AppLocalizations {
   /// **'Provient du catalogue système · copie personnelle'**
   String get ingredientFromSystem;
 
+  /// No description provided for @ingredientPriceSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix'**
+  String get ingredientPriceSectionTitle;
+
+  /// No description provided for @ingredientPriceMineHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'ton prix perso'**
+  String get ingredientPriceMineHint;
+
+  /// No description provided for @ingredientPriceUnknownHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'inconnu'**
+  String get ingredientPriceUnknownHint;
+
+  /// No description provided for @ingredientPriceReferenceUnitLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Unité de référence'**
+  String get ingredientPriceReferenceUnitLabel;
+
+  /// No description provided for @ingredientPriceReferenceUnitHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'déduite, modifiable'**
+  String get ingredientPriceReferenceUnitHint;
+
+  /// No description provided for @priceReferenceUnitKilogram.
+  ///
+  /// In fr, this message translates to:
+  /// **'Kilogramme'**
+  String get priceReferenceUnitKilogram;
+
+  /// No description provided for @priceReferenceUnitLitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'Litre'**
+  String get priceReferenceUnitLitre;
+
+  /// No description provided for @priceReferenceUnitPiece.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pièce'**
+  String get priceReferenceUnitPiece;
+
+  /// No description provided for @priceReferenceUnitShortKilogram.
+  ///
+  /// In fr, this message translates to:
+  /// **'kg'**
+  String get priceReferenceUnitShortKilogram;
+
+  /// No description provided for @priceReferenceUnitShortLitre.
+  ///
+  /// In fr, this message translates to:
+  /// **'L'**
+  String get priceReferenceUnitShortLitre;
+
+  /// No description provided for @priceReferenceUnitShortPiece.
+  ///
+  /// In fr, this message translates to:
+  /// **'pièce'**
+  String get priceReferenceUnitShortPiece;
+
+  /// No description provided for @ingredientPriceAverageLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix moyen'**
+  String get ingredientPriceAverageLabel;
+
+  /// No description provided for @ingredientPriceEstimateLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Estimation moyenne'**
+  String get ingredientPriceEstimateLabel;
+
+  /// No description provided for @ingredientPriceEstimateFormulaHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'≈ (bas + haut) ÷ 2'**
+  String get ingredientPriceEstimateFormulaHint;
+
+  /// No description provided for @ingredientPriceLowLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Bas'**
+  String get ingredientPriceLowLabel;
+
+  /// No description provided for @ingredientPriceHighLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Haut'**
+  String get ingredientPriceHighLabel;
+
+  /// No description provided for @ingredientPriceSliderHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glisse le bas et le haut ; le curseur d\'estimation reste toujours entre les deux. Tap sur une valeur pour la saisir précisément.'**
+  String get ingredientPriceSliderHint;
+
+  /// No description provided for @ingredientPriceLockedCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fourchette bas → haut · Pro'**
+  String get ingredientPriceLockedCta;
+
+  /// No description provided for @ingredientPriceEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun prix renseigné'**
+  String get ingredientPriceEmptyTitle;
+
+  /// No description provided for @ingredientPriceEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoute un prix pour estimer le coût de tes recettes.'**
+  String get ingredientPriceEmptyBody;
+
+  /// No description provided for @ingredientPriceAddCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un prix'**
+  String get ingredientPriceAddCta;
+
+  /// No description provided for @ingredientPriceDialogTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix précis'**
+  String get ingredientPriceDialogTitle;
+
+  /// No description provided for @ingredientPriceRangeInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le bas doit être inférieur ou égal au haut.'**
+  String get ingredientPriceRangeInvalid;
+
   /// No description provided for @ingredientSectionAlternatives.
   ///
   /// In fr, this message translates to:
@@ -1453,6 +1717,54 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{count, plural, =0{0 recette} =1{1 recette} other{{count} recettes}}'**
   String tagsRecipeCount(int count);
+
+  /// No description provided for @tagsTabMine.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes tags'**
+  String get tagsTabMine;
+
+  /// No description provided for @tagsTabCatalog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Catalogue'**
+  String get tagsTabCatalog;
+
+  /// No description provided for @tagsCatalogSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher dans le catalogue'**
+  String get tagsCatalogSearchHint;
+
+  /// No description provided for @tagsEmptyCatalog.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun tag dans le catalogue.'**
+  String get tagsEmptyCatalog;
+
+  /// No description provided for @tagsNoSearchResult.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun résultat.'**
+  String get tagsNoSearchResult;
+
+  /// No description provided for @tagsImport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer'**
+  String get tagsImport;
+
+  /// No description provided for @tagsAlreadyImported.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déjà importé'**
+  String get tagsAlreadyImported;
+
+  /// No description provided for @tagsImportInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Importer crée une copie personnelle, modifiable librement, sans toucher au tag système.'**
+  String get tagsImportInfo;
 
   /// No description provided for @tagCreateTitle.
   ///
@@ -2045,7 +2357,7 @@ abstract class AppLocalizations {
   /// No description provided for @recipeComponentsSection.
   ///
   /// In fr, this message translates to:
-  /// **'Sous-recettes utilisées'**
+  /// **'Recettes de base utilisées'**
   String get recipeComponentsSection;
 
   /// No description provided for @recipeUsedInSection.
@@ -2233,12 +2545,6 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'{count, plural, =1{1 ingrédient} other{{count} ingrédients}}'**
   String recipeStepIngredientsChip(int count);
-
-  /// No description provided for @recipeStepBaseRefLabel.
-  ///
-  /// In fr, this message translates to:
-  /// **'{name} · recette de base'**
-  String recipeStepBaseRefLabel(String name);
 
   /// No description provided for @recipeStepFrozenNote.
   ///
@@ -2497,6 +2803,66 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Les quantités s\'adaptent'**
   String get recipeServingsScaleHint;
+
+  /// No description provided for @recipePriceSectionTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix'**
+  String get recipePriceSectionTitle;
+
+  /// No description provided for @recipePriceModeCalculated.
+  ///
+  /// In fr, this message translates to:
+  /// **'Calculé'**
+  String get recipePriceModeCalculated;
+
+  /// No description provided for @recipePriceModeFixed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étiquette'**
+  String get recipePriceModeFixed;
+
+  /// No description provided for @recipePriceForServings.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{pour 1 personne} other{pour {count} personnes}}'**
+  String recipePriceForServings(int count);
+
+  /// No description provided for @recipePriceMissingTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Des ingrédients n\'ont pas de prix'**
+  String get recipePriceMissingTooltip;
+
+  /// No description provided for @recipePriceFixedInputLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix de base'**
+  String get recipePriceFixedInputLabel;
+
+  /// No description provided for @recipePriceBracketUnder5.
+  ///
+  /// In fr, this message translates to:
+  /// **'< 5 €'**
+  String get recipePriceBracketUnder5;
+
+  /// No description provided for @recipePriceBracketFrom5To10.
+  ///
+  /// In fr, this message translates to:
+  /// **'5 – 10 €'**
+  String get recipePriceBracketFrom5To10;
+
+  /// No description provided for @recipePriceBracketFrom10To20.
+  ///
+  /// In fr, this message translates to:
+  /// **'10 – 20 €'**
+  String get recipePriceBracketFrom10To20;
+
+  /// No description provided for @recipePriceBracketOver20.
+  ///
+  /// In fr, this message translates to:
+  /// **'> 20 €'**
+  String get recipePriceBracketOver20;
 
   /// No description provided for @recipeIngredientsAddCta.
   ///
@@ -2768,6 +3134,12 @@ abstract class AppLocalizations {
   /// **'Gratuit · 1/1'**
   String get shoppingFreeBadge;
 
+  /// No description provided for @shoppingProBadge.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pro · Illimité'**
+  String get shoppingProBadge;
+
   /// No description provided for @shoppingDefaultListName.
   ///
   /// In fr, this message translates to:
@@ -2911,6 +3283,24 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Total : {parts} parts sur {recipes} recettes.'**
   String shoppingTotalServings(int parts, int recipes);
+
+  /// No description provided for @shoppingPriceTotal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Total estimé'**
+  String get shoppingPriceTotal;
+
+  /// No description provided for @shoppingPriceUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prix inconnu'**
+  String get shoppingPriceUnknown;
+
+  /// No description provided for @shoppingPriceForChosenServings.
+  ///
+  /// In fr, this message translates to:
+  /// **'pour les portions choisies'**
+  String get shoppingPriceForChosenServings;
 
   /// No description provided for @shoppingStep3Title.
   ///
@@ -3350,17 +3740,11 @@ abstract class AppLocalizations {
   /// **'Ajouter un minuteur'**
   String get playerAddTimerCta;
 
-  /// No description provided for @playerNoTimerDetected.
+  /// No description provided for @playerTimerDetectedMinutes.
   ///
   /// In fr, this message translates to:
-  /// **'Aucun minuteur détecté sur cette étape'**
-  String get playerNoTimerDetected;
-
-  /// No description provided for @playerTimerDetectedHint.
-  ///
-  /// In fr, this message translates to:
-  /// **'Minuteur détecté : « {text} »'**
-  String playerTimerDetectedHint(String text);
+  /// **'Minuteur de {minutes, plural, =1{1 minute} other{{minutes} minutes}}'**
+  String playerTimerDetectedMinutes(int minutes);
 
   /// No description provided for @playerIngredientsTitle.
   ///
@@ -3403,6 +3787,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Démarrer'**
   String get playerTimerStart;
+
+  /// No description provided for @playerTimerRestart.
+  ///
+  /// In fr, this message translates to:
+  /// **'Relancer'**
+  String get playerTimerRestart;
 
   /// No description provided for @playerTimerReset.
   ///

@@ -31,6 +31,26 @@ export const DEFAULT_SERVINGS = 1;
 export const DEFAULT_INGREDIENT_QUANTITY = 1;
 
 /**
+ * Mode de prix d'une recette (feature prix-estime) : `calculated` = somme des
+ * prix moyens des ingrédients (défaut) ; `fixed` = prix étiquette saisi
+ * manuellement (`fixed_price`), pour la base `servings` de la recette. Les deux
+ * modes scalent ensuite de la même façon selon les portions affichées.
+ */
+export const RECIPE_PRICE_MODES = ['calculated', 'fixed'] as const;
+export type RecipePriceMode = (typeof RECIPE_PRICE_MODES)[number];
+export const recipePriceModeEnum = pgEnum('recipe_price_mode', RECIPE_PRICE_MODES);
+
+/**
+ * Tranche de prix affichée en badge sur la recette (feature prix-estime) —
+ * calculée et poussée par le client, jamais par le serveur (contrainte
+ * transverse : tout calcul de prix est côté client). `null` tant que le prix
+ * n'est pas entièrement connu — jamais posée sur un total partiel (`≈`).
+ */
+export const RECIPE_PRICE_BRACKETS = ['under_5', 'from_5_to_10', 'from_10_to_20', 'over_20'] as const;
+export type RecipePriceBracket = (typeof RECIPE_PRICE_BRACKETS)[number];
+export const recipePriceBracketEnum = pgEnum('recipe_price_bracket', RECIPE_PRICE_BRACKETS);
+
+/**
  * Recettes — domaine métier central (cf. features/recipes.md).
  *
  * Distinction fondamentale, décidée dès la création : recette « normale » vs
@@ -56,6 +76,12 @@ export const recipes = pgTable('recipes', {
   restTime: integer('rest_time').notNull().default(0),
   /** Nombre de personnes, défaut `DEFAULT_SERVINGS`. */
   servings: integer('servings').notNull().default(DEFAULT_SERVINGS),
+  /** Mode de prix (feature prix-estime) : calculé depuis les ingrédients, ou étiquette fixe. */
+  priceMode: recipePriceModeEnum('price_mode').notNull().default('calculated'),
+  /** Prix étiquette pour `servings` personnes — rempli seulement si `price_mode = 'fixed'`. */
+  fixedPrice: numeric('fixed_price', { precision: 10, scale: 2, mode: 'number' }),
+  /** Tranche de prix affichée en badge, calculée côté client. Null si prix inconnu/partiel. */
+  priceBracket: recipePriceBracketEnum('price_bracket'),
   /** Soft delete : non-null = supprimé. Toujours filtrer `IS NULL` en lecture. */
   deletedAt: timestamp('deleted_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),

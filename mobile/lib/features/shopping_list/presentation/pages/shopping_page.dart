@@ -66,12 +66,14 @@ class _ShoppingView extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             }
             final active = state.active;
+            final isPremium =
+                context.select<PremiumCubit, bool>((c) => c.state.isPremium);
             return RefreshIndicator(
               onRefresh: () => context.read<ShoppingListsCubit>().refresh(),
               child: ListView(
                 padding: const EdgeInsets.fromLTRB(22, 6, 22, 140),
                 children: [
-                  _header(context, l10n, hasActive: active != null),
+                  _header(context, l10n, isPremium: isPremium),
                   const SizedBox(height: 20),
                   if (active != null)
                     _ActiveListCard(list: active)
@@ -80,8 +82,7 @@ class _ShoppingView extends StatelessWidget {
                   const SizedBox(height: 14),
                   _CreateButton(hasActive: active != null),
                   // Upsell Premium : jamais montré à un abonné Pro.
-                  if (!context.select<PremiumCubit, bool>(
-                      (c) => c.state.isPremium)) ...[
+                  if (!isPremium) ...[
                     const SizedBox(height: 26),
                     _LockedHistory(l10n: l10n),
                     const SizedBox(height: 18),
@@ -99,8 +100,9 @@ class _ShoppingView extends StatelessWidget {
   Widget _header(
     BuildContext context,
     AppLocalizations l10n, {
-    required bool hasActive,
+    required bool isPremium,
   }) {
+    final badgeColor = isPremium ? AppColors.primary : _gold;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -130,15 +132,15 @@ class _ShoppingView extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
-            color: _gold.withValues(alpha: 0.12),
+            color: badgeColor.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(999),
           ),
           child: Text(
-            l10n.shoppingFreeBadge,
-            style: const TextStyle(
+            isPremium ? l10n.shoppingProBadge : l10n.shoppingFreeBadge,
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w700,
-              color: _gold,
+              color: badgeColor,
             ),
           ),
         ),

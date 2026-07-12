@@ -1,4 +1,5 @@
-import { pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { relations } from 'drizzle-orm';
+import { type AnyPgColumn, pgTable, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 
 /**
  * Palette de couleurs d'un tag (cf. maquette 3m). Valeurs stockées en base =
@@ -17,11 +18,11 @@ export const TAG_COLORS = [
 export type TagColor = (typeof TAG_COLORS)[number];
 
 /**
- * Tags — toujours rattachés à un compte utilisateur (`owner_id` non-null).
- *
- * Contrairement aux ingrédients, il n'existe pas de tag "système" : chaque
- * utilisateur gère sa propre liste (règle métier tags-personnes.md). Un tag
- * qualifie recettes, sous-recettes et personnes.
+ * Tags — système (`owner_id = null`, catalogue) vs copie utilisateur
+ * (`owner_id = uid`). Même mécanique que les ingrédients (ingredients.md) :
+ * "importer" un tag système crée une copie indépendante qui garde un lien
+ * vers l'origine via `imported_from_id`. Un tag qualifie recettes,
+ * sous-recettes et personnes.
  *
  * Suppression = soft delete (`deleted_at`), jamais d'effacement réel, pour ne
  * pas casser les entités (recettes/personnes) qui référencent le tag via les
@@ -29,16 +30,27 @@ export type TagColor = (typeof TAG_COLORS)[number];
  */
 export const tags = pgTable('tags', {
   id: uuid('id').primaryKey().defaultRandom(),
-  /** UUID Supabase du propriétaire. Un tag appartient toujours à un compte. */
-  ownerId: uuid('owner_id').notNull(),
+  /** UUID Supabase du propriétaire. NULL = tag système (catalogue de base). */
+  ownerId: uuid('owner_id'),
   name: varchar('name', { length: 60 }).notNull(),
   /** Code couleur hex (#RRGGBB) choisi dans `TAG_COLORS`. */
   color: varchar('color', { length: 7 }).notNull(),
+  /** Tag système d'origine si cette ligne est une copie importée. */
+  importedFromId: uuid('imported_from_id').references((): AnyPgColumn => tags.id, {
+    onDelete: 'set null',
+  }),
   /** Soft delete : non-null = supprimé. Toujours filtrer `IS NULL` en lecture. */
   deletedAt: timestamp('deleted_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
+
+export const tagsRelations = relations(tags, ({ one }) => ({
+  importedFrom: one(tags, {
+    fields: [tags.importedFromId],
+    references: [tags.id],
+  }),
+}));
 
 export type TagRow = typeof tags.$inferSelect;
 export type NewTagRow = typeof tags.$inferInsert;

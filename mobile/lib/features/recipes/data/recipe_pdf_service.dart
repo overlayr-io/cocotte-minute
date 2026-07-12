@@ -6,6 +6,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../../../core/i18n/generated/app_localizations.dart';
+import '../../../core/utils/duration_format.dart';
 import '../../ingredients/domain/ingredient.dart';
 import '../../ingredients/presentation/widgets/unit_selector.dart';
 import '../domain/recipe.dart';
@@ -660,11 +661,5 @@ class RecipePdfService {
   );
 
   /// « 90 » → « 1 h 30 », « 45 » → « 45 min », « 0 » → null.
-  String? _duration(int minutes) {
-    if (minutes <= 0) return null;
-    if (minutes < 60) return '$minutes min';
-    final h = minutes ~/ 60;
-    final m = minutes % 60;
-    return m == 0 ? '$h h' : '$h h $m';
-  }
+  String? _duration(int minutes) => formatMinutesShort(minutes);
 }

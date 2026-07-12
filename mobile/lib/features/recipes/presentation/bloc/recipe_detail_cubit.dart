@@ -1,7 +1,12 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/premium/premium_limit_error.dart';
+import '../../../../core/pricing/price_calculator.dart';
+import '../../../ingredient_prices/data/ingredient_prices_repository.dart';
+import '../../../ingredients/domain/ingredient.dart';
 import '../../data/recipes_repository.dart';
 import '../../domain/recipe.dart';
 
@@ -80,11 +85,14 @@ typedef RecipeIngredientDraft = ({String ingredientId, double quantity});
 class RecipeDetailCubit extends Cubit<RecipeDetailState> {
   RecipeDetailCubit({
     required RecipesRepository repository,
+    required IngredientPricesRepository pricesRepository,
     required this.recipeId,
   }) : _repository = repository,
+       _pricesRepository = pricesRepository,
        super(const RecipeDetailLoading());
 
   final RecipesRepository _repository;
+  final IngredientPricesRepository _pricesRepository;
   final String recipeId;
 
   Future<void> load() async {
@@ -92,6 +100,7 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     try {
       final detail = await _repository.fetchDetail(recipeId);
       emit(RecipeDetailLoaded(detail: detail));
+      unawaited(_syncPriceBracket(detail));
     } on RecipesRepositoryException catch (e) {
       emit(RecipeDetailError(e.message));
     }
@@ -105,6 +114,8 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     int? cookTime,
     int? restTime,
     int? servings,
+    RecipePriceMode? priceMode,
+    double? fixedPrice,
   }) async {
     final current = state;
     if (current is! RecipeDetailLoaded) return;
@@ -119,10 +130,13 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
         cookTime: cookTime,
         restTime: restTime,
         servings: servings,
+        priceMode: priceMode,
+        fixedPrice: fixedPrice,
       );
       // Recharge la fiche pour refléter les relations dérivées (verrou, etc.).
       final detail = await _repository.fetchDetail(recipeId);
       emit(RecipeDetailLoaded(detail: detail));
+      unawaited(_syncPriceBracket(detail));
     } on RecipesRepositoryException catch (e) {
       // Limite freemium (5 recettes de base max) : signalée à part pour que
       // la vue ouvre la feuille d'upsell au lieu d'un snackbar.
@@ -131,6 +145,45 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
         message: e.premiumLimit == null ? e.message : null,
         premiumLimit: e.premiumLimit,
       ));
+    }
+  }
+
+  /// Recalcule la tranche de prix côté client (jamais le serveur) et la pousse
+  /// si elle a changé depuis le dernier chargement — best-effort et silencieux,
+  /// une tranche pas à jour n'est jamais bloquante ni signalée à l'utilisateur.
+  /// Basée sur le mode de prix actif, jamais sur un total partiel (`≈`).
+  Future<void> _syncPriceBracket(RecipeDetail detail) async {
+    try {
+      RecipePriceBracket? bracket;
+      if (detail.priceMode == RecipePriceMode.fixed) {
+        final fixed = detail.fixedPrice;
+        bracket = fixed == null ? null : priceBracketForValue(fixed);
+      } else if (detail.ingredients.isEmpty) {
+        bracket = null;
+      } else {
+        final prices = await _pricesRepository.fetchMine();
+        final byId = {for (final p in prices) p.ingredientId: p};
+        final estimate = estimateFromLines(
+          detail.ingredients.map(
+            (line) => (
+              quantity: line.quantity,
+              unit: IngredientUnit.fromWire(line.unit),
+              ingredientId: line.id,
+            ),
+          ),
+          byId,
+        );
+        bracket = estimate.isPartial ? null : priceBracketForValue(estimate.value);
+      }
+      if (bracket == detail.priceBracket) return;
+      await _repository.update(recipeId, priceBracket: bracket);
+      if (isClosed) return;
+      final current = state;
+      if (current is RecipeDetailLoaded) {
+        emit(current.copyWith(detail: current.detail.copyWithPriceBracket(bracket)));
+      }
+    } on Object {
+      // Best-effort : cf. docstring.
     }
   }
 
@@ -298,5 +351,6 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
   Future<void> _reload() async {
     final detail = await _repository.fetchDetail(recipeId);
     emit(RecipeDetailLoaded(detail: detail));
+    unawaited(_syncPriceBracket(detail));
   }
 }
