@@ -22,6 +22,33 @@ class RecipesRepositoryException implements Exception {
 /// « mettre à null » dans un PATCH partiel (prix étiquette / tranche de prix).
 const Object _unset = Object();
 
+/// Résultat d'un ajout de photo de galerie (feature galerie-recette). Si
+/// [becameCover] est vrai, la photo est devenue la couverture de la recette (la
+/// recette n'en avait pas) et n'entre PAS dans la galerie ; [coverUrl] porte
+/// alors la nouvelle couverture. Sinon, [photos] reflète la galerie mise à jour.
+class GalleryAddResult {
+  const GalleryAddResult({
+    required this.becameCover,
+    required this.coverUrl,
+    required this.photos,
+  });
+
+  final bool becameCover;
+  final String? coverUrl;
+  final List<RecipeGalleryPhoto> photos;
+
+  factory GalleryAddResult.fromJson(Map<String, dynamic> json) {
+    return GalleryAddResult(
+      becameCover: json['becameCover'] as bool? ?? false,
+      coverUrl: json['coverUrl'] as String?,
+      photos: ((json['photos'] as List<dynamic>?) ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(RecipeGalleryPhoto.fromJson)
+          .toList(),
+    );
+  }
+}
+
 /// Accès aux recettes via l'API NestJS.
 class RecipesRepository {
   RecipesRepository({required ApiClient apiClient}) : _apiClient = apiClient;
@@ -141,6 +168,7 @@ class RecipesRepository {
   Future<RecipeSummary> update(
     String id, {
     String? name,
+    String? photoUrl,
     String? description,
     bool? isBase,
     int? prepTime,
@@ -154,6 +182,7 @@ class RecipesRepository {
     try {
       final data = <String, dynamic>{
         'name': ?name,
+        'photoUrl': ?photoUrl,
         'description': ?description,
         'isBase': ?isBase,
         'prepTime': ?prepTime,
@@ -181,6 +210,41 @@ class RecipesRepository {
       await _dio.delete<void>('/recipes/$id');
     } on DioException catch (e) {
       throw _mapError(e, 'Impossible de supprimer la recette.');
+    }
+  }
+
+  // --- galerie (feature galerie-recette) ---------------------------------
+
+  /// Ajoute une photo (déjà uploadée sur Storage) à la galerie d'une recette.
+  /// L'URL vient de `ImageUploadService`. En cas de quota atteint, l'exception
+  /// porte le `PremiumLimitError` (l'UI décide upsell vs message selon le tier).
+  Future<GalleryAddResult> addGalleryPhoto(String recipeId, String imageUrl) async {
+    try {
+      final res = await _dio.post<Map<String, dynamic>>(
+        '/recipes/$recipeId/gallery',
+        data: {'imageUrl': imageUrl},
+      );
+      return GalleryAddResult.fromJson(res.data!);
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'ajouter la photo.');
+    }
+  }
+
+  /// Supprime une photo de galerie et renvoie la galerie mise à jour.
+  Future<List<RecipeGalleryPhoto>> deleteGalleryPhoto(
+    String recipeId,
+    String imageId,
+  ) async {
+    try {
+      final res = await _dio.delete<Map<String, dynamic>>(
+        '/recipes/$recipeId/gallery/$imageId',
+      );
+      return ((res.data?['photos'] as List<dynamic>?) ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(RecipeGalleryPhoto.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de supprimer la photo.');
     }
   }
 
