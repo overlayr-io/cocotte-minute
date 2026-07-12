@@ -2258,6 +2258,90 @@ abstract class AppLocalizations {
   /// **'Retirer la sous-recette'**
   String get recipeComponentRemove;
 
+  /// No description provided for @recipeGallerySection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Galerie'**
+  String get recipeGallerySection;
+
+  /// No description provided for @recipeGallerySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réalisations'**
+  String get recipeGallerySubtitle;
+
+  /// No description provided for @recipeGalleryHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoute ta photo quand tu as cuisiné cette recette.'**
+  String get recipeGalleryHint;
+
+  /// No description provided for @recipeGalleryEmptyCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Uploade ta première création'**
+  String get recipeGalleryEmptyCta;
+
+  /// No description provided for @recipeGalleryEmptyMeta.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count}/{limit} photos · 5 Mo max par photo'**
+  String recipeGalleryEmptyMeta(int count, int limit);
+
+  /// No description provided for @recipeGalleryAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une photo'**
+  String get recipeGalleryAdd;
+
+  /// No description provided for @recipeGalleryCounter.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count}/{limit}'**
+  String recipeGalleryCounter(int count, int limit);
+
+  /// No description provided for @recipeGalleryFullPro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limite de {limit} photos atteinte pour cette recette.'**
+  String recipeGalleryFullPro(int limit);
+
+  /// No description provided for @recipeGalleryOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion requise pour ajouter une photo.'**
+  String get recipeGalleryOffline;
+
+  /// No description provided for @recipeGalleryPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'{index} / {total}'**
+  String recipeGalleryPosition(int index, int total);
+
+  /// No description provided for @recipeGalleryDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la photo'**
+  String get recipeGalleryDelete;
+
+  /// No description provided for @recipeGalleryDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cette photo ?'**
+  String get recipeGalleryDeleteConfirmTitle;
+
+  /// No description provided for @recipeGalleryDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette réalisation sera définitivement retirée de la galerie.'**
+  String get recipeGalleryDeleteConfirmBody;
+
+  /// No description provided for @recipeMenuChangePhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer la photo'**
+  String get recipeMenuChangePhoto;
+
   /// No description provided for @recipeTagsSection.
   ///
   /// In fr, this message translates to:
@@ -4435,6 +4519,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'La recherche gratuite combine jusqu\'à {limit} critères. Passe en Pro pour chercher sans plafond.'**
   String premiumLimitSearchBody(int limit);
+
+  /// No description provided for @premiumLimitGalleryTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Galerie pleine'**
+  String get premiumLimitGalleryTitle;
+
+  /// No description provided for @premiumLimitGalleryBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le plan gratuit permet {limit} photos par recette. Passe en Pro pour en ajouter davantage.'**
+  String premiumLimitGalleryBody(int limit);
 
   /// No description provided for @premiumLimitGenericTitle.
   ///
