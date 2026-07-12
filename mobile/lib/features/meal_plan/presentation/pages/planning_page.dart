@@ -14,6 +14,8 @@ import '../../data/meal_plan_tray_store.dart';
 import '../../domain/meal_plan_entry.dart';
 import '../../../../core/widgets/action_menu.dart';
 import '../../../recipes/presentation/pages/recipe_detail_page.dart';
+import '../../../shopping_list/data/shopping_list_api.dart';
+import '../../../shopping_list/data/shopping_list_repository.dart';
 import '../bloc/meal_plan_cubit.dart';
 import '../widgets/add_entry_sheet.dart';
 import '../widgets/meal_entry_visuals.dart';
@@ -112,7 +114,10 @@ class _PlanningView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _PlanningAppBar(readonly: readonly),
+                if (state.selectMode)
+                  const _SelectModeAppBar()
+                else
+                  _PlanningAppBar(readonly: readonly),
                 if (state.layout == PlanningLayout.grid)
                   const PlanningGridHeader(),
                 Expanded(
@@ -126,6 +131,16 @@ class _PlanningView extends StatelessWidget {
                   PlanningTray(
                     recipes: state.tray,
                     onManage: () => _openTrayPicker(context),
+                  ),
+                if (state.selectMode)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+                    child: _SelectFab(
+                      count: state.selectedRecipeCount,
+                      onPressed: state.selectedRecipeCount == 0
+                          ? null
+                          : () => _addSelectionToShopping(context, isPremium),
+                    ),
                   ),
                 // Espace pour la barre de navigation flottante du shell.
                 const SizedBox(height: 90),
@@ -224,6 +239,230 @@ class _PlanningView extends StatelessWidget {
     }
   }
 
+  /// Bouton flottant 4a : envoie les recettes des créneaux cochés vers la
+  /// liste de courses. Gratuit : remplace la liste active (confirmation si
+  /// non vide, 4b). Premium : crée toujours une nouvelle liste dédiée (4c).
+  Future<void> _addSelectionToShopping(
+    BuildContext context,
+    bool isPremium,
+  ) async {
+    final cubit = context.read<MealPlanCubit>();
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final recipes = cubit.selectedRecipes().values.toList();
+    if (recipes.isEmpty) return;
+    final weekLabel = cubit.state.visibleWeek.label(locale);
+    final shopping = sl<ShoppingListRepository>();
+    final messenger = ScaffoldMessenger.of(context);
+
+    try {
+      if (!isPremium) {
+        final lists = await shopping.watchActiveLists().first;
+        final active = lists.isEmpty ? null : lists.first;
+        if (active != null && active.itemCount > 0) {
+          if (!context.mounted) return;
+          final confirmed = await _showReplaceDialog(context, l10n);
+          if (confirmed != true) return;
+        }
+        if (active != null) await shopping.clear(active.id);
+      }
+      await shopping.generate(
+        name: l10n.planningShoppingName(weekLabel),
+        recipes: [for (final r in recipes) (recipeId: r.id, servings: r.servings)],
+        pantryIngredientIds: const [],
+      );
+      cubit.exitSelectMode();
+      _showShoppingToast(
+        messenger,
+        title: isPremium
+            ? l10n.planningListCreatedTitle(weekLabel)
+            : l10n.planningListUpdatedTitle,
+        subtitle: isPremium
+            ? l10n.planningListCreatedSub
+            : l10n.planningListUpdatedSub(weekLabel),
+      );
+    } on ShoppingListApiException catch (e) {
+      if (!context.mounted) return;
+      if (e.premiumLimit != null) {
+        showPremiumLimitSheet(context, error: e.premiumLimit!);
+      } else {
+        messenger
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    }
+  }
+
+  /// Dialog « Remplacer la liste en cours ? » (écran 4b).
+  Future<bool?> _showReplaceDialog(BuildContext context, AppLocalizations l10n) {
+    return showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => Dialog(
+        backgroundColor: AppColors.surface,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(26)),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(22, 24, 22, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 52,
+                height: 52,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFBEEE9),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: const Icon(
+                  Icons.shopping_cart_outlined,
+                  size: 24,
+                  color: Color(0xFFC0544A),
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text(
+                l10n.planningReplaceTitle,
+                style: const TextStyle(
+                  fontFamily: AppFonts.display,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                  letterSpacing: -0.4,
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                l10n.planningReplaceBody,
+                style: const TextStyle(
+                  fontSize: 14,
+                  height: 1.5,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 50,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(false),
+                        style: OutlinedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          side: const BorderSide(
+                            color: Color(0xFFE3DECF),
+                            width: 1.5,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: Text(
+                          l10n.commonCancel,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14.5,
+                            color: Color(0xFF3F4650),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: SizedBox(
+                      height: 50,
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: const Color(0xFFC0544A),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: Text(
+                          l10n.planningReplaceConfirm,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14.5,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Toast de succès (4c) : fond vert sombre + coche dorée, titre + sous-titre.
+  void _showShoppingToast(
+    ScaffoldMessengerState messenger, {
+    required String title,
+    required String subtitle,
+  }) {
+    messenger
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.fromLTRB(14, 0, 14, 96),
+          backgroundColor: const Color(0xFF2E3B2A),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: BorderSide(
+              color: const Color(0xFFD9C48A).withValues(alpha: 0.25),
+            ),
+          ),
+          duration: const Duration(milliseconds: 4200),
+          content: Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [AppColors.premiumGold, AppColors.premiumGoldDark],
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.check, size: 20, color: Colors.white),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontFamily: AppFonts.display,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withValues(alpha: 0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+  }
+
   Future<void> _openTrayPicker(BuildContext context) async {
     final cubit = context.read<MealPlanCubit>();
     final ids = await showTrayPickerSheet(
@@ -260,6 +499,100 @@ class _PlanningView extends StatelessWidget {
           ),
         ),
       );
+  }
+}
+
+/// En-tête du mode sélection vers les courses (écran 4a).
+class _SelectModeAppBar extends StatelessWidget {
+  const _SelectModeAppBar();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final cubit = context.read<MealPlanCubit>();
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 10),
+      decoration: const BoxDecoration(
+        color: kPlanningHeaderBg,
+        border: Border(bottom: BorderSide(color: kPlanningHairline)),
+      ),
+      child: Row(
+        children: [
+          _RoundIconButton(
+            icon: Icons.close,
+            color: AppColors.textPrimary,
+            onTap: cubit.exitSelectMode,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.planningSelectTitle,
+                  style: const TextStyle(
+                    fontFamily: AppFonts.display,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 17,
+                    letterSpacing: -0.2,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                Text(
+                  l10n.planningSelectSubtitle,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Bouton flottant récapitulatif du mode sélection (écran 4a).
+class _SelectFab extends StatelessWidget {
+  const _SelectFab({required this.count, required this.onPressed});
+
+  final int count;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final disabled = onPressed == null;
+    return SizedBox(
+      height: 56,
+      child: FilledButton(
+        onPressed: onPressed,
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          disabledBackgroundColor: const Color(0xFFC9C3B4),
+          disabledForegroundColor: Colors.white,
+          elevation: disabled ? 0 : 4,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.shopping_cart_outlined, size: 20),
+            const SizedBox(width: 9),
+            Text(
+              l10n.planningSelectCta(count),
+              style: const TextStyle(
+                fontFamily: AppFonts.display,
+                fontWeight: FontWeight.w700,
+                fontSize: 15.5,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
