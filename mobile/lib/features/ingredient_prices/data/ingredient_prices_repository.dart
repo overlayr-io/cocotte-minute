@@ -76,9 +76,11 @@ class IngredientPricesRepository {
       final data = <String, dynamic>{
         'priceReferenceUnit': priceReferenceUnit.wire,
       };
-      if (!identical(lowPrice, _unset)) data['lowPrice'] = lowPrice;
-      if (!identical(highPrice, _unset)) data['highPrice'] = highPrice;
-      if (!identical(averagePrice, _unset)) data['averagePrice'] = averagePrice;
+      if (!identical(lowPrice, _unset)) data['lowPrice'] = _round3(lowPrice);
+      if (!identical(highPrice, _unset)) data['highPrice'] = _round3(highPrice);
+      if (!identical(averagePrice, _unset)) {
+        data['averagePrice'] = _round3(averagePrice);
+      }
       final res = await _dio.put<Map<String, dynamic>>(
         '/ingredient-prices/$ingredientId',
         data: data,
@@ -88,6 +90,16 @@ class IngredientPricesRepository {
     } on DioException catch (e) {
       throw _mapError(e, 'Impossible d\'enregistrer le prix.');
     }
+  }
+
+  /// Arrondit à 3 décimales avant l'envoi (le serveur rejette au-delà —
+  /// `@IsNumber({ maxDecimalPlaces: 3 })`). Le curseur premium calcule
+  /// `average = (low + high) / 2`, ce qui produit des artefacts flottants
+  /// (`0.30000000000000004`) sans arrondi. Laisse `null` tel quel (vidage
+  /// explicite) ; ne s'applique qu'aux valeurs numériques.
+  Object? _round3(Object? value) {
+    if (value is! num) return value;
+    return double.parse(value.toStringAsFixed(3));
   }
 
   IngredientPricesRepositoryException _mapError(DioException e, String fallback) {

@@ -854,6 +854,54 @@
   "recipeComponentRemove": "Retirer la sous-recette",
   "@recipeComponentRemove": {},
 
+  "recipeGallerySection": "Galerie",
+  "@recipeGallerySection": {},
+  "recipeGallerySubtitle": "Réalisations",
+  "@recipeGallerySubtitle": {},
+  "recipeGalleryHint": "Ajoute ta photo quand tu as cuisiné cette recette.",
+  "@recipeGalleryHint": {},
+  "recipeGalleryEmptyCta": "Uploade ta première création",
+  "@recipeGalleryEmptyCta": {},
+  "recipeGalleryEmptyMeta": "{count}/{limit} photos · 5 Mo max par photo",
+  "@recipeGalleryEmptyMeta": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "limit": { "type": "int" }
+    }
+  },
+  "recipeGalleryAdd": "Ajouter une photo",
+  "@recipeGalleryAdd": {},
+  "recipeGalleryCounter": "{count}/{limit}",
+  "@recipeGalleryCounter": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "limit": { "type": "int" }
+    }
+  },
+  "recipeGalleryFullPro": "Limite de {limit} photos atteinte pour cette recette.",
+  "@recipeGalleryFullPro": {
+    "placeholders": {
+      "limit": { "type": "int" }
+    }
+  },
+  "recipeGalleryOffline": "Connexion requise pour ajouter une photo.",
+  "@recipeGalleryOffline": {},
+  "recipeGalleryPosition": "{index} / {total}",
+  "@recipeGalleryPosition": {
+    "placeholders": {
+      "index": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "recipeGalleryDelete": "Supprimer la photo",
+  "@recipeGalleryDelete": {},
+  "recipeGalleryDeleteConfirmTitle": "Supprimer cette photo ?",
+  "@recipeGalleryDeleteConfirmTitle": {},
+  "recipeGalleryDeleteConfirmBody": "Cette réalisation sera définitivement retirée de la galerie.",
+  "@recipeGalleryDeleteConfirmBody": {},
+  "recipeMenuChangePhoto": "Changer la photo",
+  "@recipeMenuChangePhoto": {},
+
   "recipeTagsSection": "Tags",
   "@recipeTagsSection": {},
   "recipeTagsNone": "Aucun tag",
@@ -1744,6 +1792,14 @@
   "@premiumLimitSearchTitle": {},
   "premiumLimitSearchBody": "La recherche gratuite combine jusqu'à {limit} critères. Passe en Pro pour chercher sans plafond.",
   "@premiumLimitSearchBody": {
+    "placeholders": {
+      "limit": { "type": "int" }
+    }
+  },
+  "premiumLimitGalleryTitle": "Galerie pleine",
+  "@premiumLimitGalleryTitle": {},
+  "premiumLimitGalleryBody": "Le plan gratuit permet {limit} photos par recette. Passe en Pro pour en ajouter davantage.",
+  "@premiumLimitGalleryBody": {
     "placeholders": {
       "limit": { "type": "int" }
     }

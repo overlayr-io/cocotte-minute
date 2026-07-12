@@ -1266,6 +1266,59 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recipeComponentRemove => 'Remove sub-recipe';
 
   @override
+  String get recipeGallerySection => 'Galerie';
+
+  @override
+  String get recipeGallerySubtitle => 'Réalisations';
+
+  @override
+  String get recipeGalleryHint =>
+      'Ajoute ta photo quand tu as cuisiné cette recette.';
+
+  @override
+  String get recipeGalleryEmptyCta => 'Uploade ta première création';
+
+  @override
+  String recipeGalleryEmptyMeta(int count, int limit) {
+    return '$count/$limit photos · 5 Mo max par photo';
+  }
+
+  @override
+  String get recipeGalleryAdd => 'Ajouter une photo';
+
+  @override
+  String recipeGalleryCounter(int count, int limit) {
+    return '$count/$limit';
+  }
+
+  @override
+  String recipeGalleryFullPro(int limit) {
+    return 'Limite de $limit photos atteinte pour cette recette.';
+  }
+
+  @override
+  String get recipeGalleryOffline =>
+      'Connexion requise pour ajouter une photo.';
+
+  @override
+  String recipeGalleryPosition(int index, int total) {
+    return '$index / $total';
+  }
+
+  @override
+  String get recipeGalleryDelete => 'Supprimer la photo';
+
+  @override
+  String get recipeGalleryDeleteConfirmTitle => 'Supprimer cette photo ?';
+
+  @override
+  String get recipeGalleryDeleteConfirmBody =>
+      'Cette réalisation sera définitivement retirée de la galerie.';
+
+  @override
+  String get recipeMenuChangePhoto => 'Changer la photo';
+
+  @override
   String get recipeTagsSection => 'Tags';
 
   @override
@@ -2688,6 +2741,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String premiumLimitSearchBody(int limit) {
     return 'Free search combines up to $limit criteria. Go Pro to search without a cap.';
+  }
+
+  @override
+  String get premiumLimitGalleryTitle => 'Galerie pleine';
+
+  @override
+  String premiumLimitGalleryBody(int limit) {
+    return 'Le plan gratuit permet $limit photos par recette. Passe en Pro pour en ajouter davantage.';
   }
 
   @override

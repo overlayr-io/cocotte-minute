@@ -21,7 +21,9 @@ import {
 } from 'drizzle-orm';
 
 import { PremiumLimitException } from '../../common/errors/premium-limit.exception';
+import { SupabaseStorageService } from '../../common/supabase/supabase-storage.service';
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
+import { recipeGalleryImages } from '../../db/schema/recipe-gallery.schema';
 import {
   DEFAULT_INGREDIENT_QUANTITY,
   recipeCategories,
@@ -178,6 +180,15 @@ export interface RecipeDetailDto extends RecipeSummaryDto {
   usedIn: RecipeSummaryDto[];
   categoryIds: string[];
   tagIds: string[];
+  /** Photos de galerie (réalisations), les plus anciennes d'abord. Hors couverture. */
+  galleryPhotos: RecipeGalleryPhotoDto[];
+}
+
+/** Une photo de galerie (feature galerie-recette) — réalisation postée par l'utilisateur. */
+export interface RecipeGalleryPhotoDto {
+  id: string;
+  imageUrl: string;
+  createdAt: string;
 }
 
 /** Échappe les métacaractères LIKE (`%`, `_`, `\`) d'une saisie utilisateur. */
@@ -209,6 +220,9 @@ export class RecipesService {
     // service Ingredients, jamais en accédant à son schéma.
     private readonly ingredientsService: IngredientsService,
     private readonly premiumService: PremiumService,
+    // Nettoyage effectif des fichiers Storage (feature galerie-recette) :
+    // couverture remplacée, recette supprimée, compte purgé.
+    private readonly storage: SupabaseStorageService,
   ) {}
 
   /** Limite du plan gratuit : nombre max de recettes de base (cf. premium-version.md). */
@@ -569,7 +583,7 @@ export class RecipesService {
     const id = row.id;
     const authorId = row.authorId;
 
-    const [ingredientRows, componentRows, stepBaseRefRows, categoryRows, tagRows] =
+    const [ingredientRows, componentRows, stepBaseRefRows, categoryRows, tagRows, galleryRows] =
       await Promise.all([
         this.db
           .select({
@@ -599,6 +613,16 @@ export class RecipesService {
           .select({ tagId: recipeTags.tagId })
           .from(recipeTags)
           .where(eq(recipeTags.recipeId, id)),
+        // Photos de galerie (feature galerie-recette), les plus anciennes d'abord.
+        this.db
+          .select({
+            id: recipeGalleryImages.id,
+            imageUrl: recipeGalleryImages.imageUrl,
+            createdAt: recipeGalleryImages.createdAt,
+          })
+          .from(recipeGalleryImages)
+          .where(eq(recipeGalleryImages.recipeId, id))
+          .orderBy(asc(recipeGalleryImages.createdAt)),
       ]);
 
     const ingredientLines = await this.hydrateIngredients(authorId, ingredientRows);
@@ -637,6 +661,11 @@ export class RecipesService {
       usedIn,
       categoryIds: categoryRows.map((r) => r.categoryId),
       tagIds: tagRows.map((r) => r.tagId),
+      galleryPhotos: galleryRows.map((r) => ({
+        id: r.id,
+        imageUrl: r.imageUrl,
+        createdAt: r.createdAt.toISOString(),
+      })),
     };
   }
 
@@ -745,16 +774,68 @@ export class RecipesService {
       .set({ ...patch, updatedAt: new Date() })
       .where(eq(recipes.id, id))
       .returning();
+
+    // Remplacement de couverture (feature galerie-recette) : l'ancien fichier
+    // Storage est supprimé si la photo a effectivement changé. Best-effort.
+    if (
+      dto.photoUrl !== undefined &&
+      current.photoUrl &&
+      current.photoUrl !== row.photoUrl
+    ) {
+      await this.storage.removeByPublicUrls([current.photoUrl]);
+    }
+
     return toSummary(row);
   }
 
-  /** Soft delete. Les pivots partent en cascade côté DB si le compte est purgé. */
+  /**
+   * Soft delete. Nettoie effectivement les fichiers Storage associés (photos de
+   * galerie + couverture) — comportement plus strict que l'existant, spécifique
+   * à la feature galerie-recette : le soft delete ne déclenche aucune cascade FK,
+   * donc la suppression des fichiers est explicite ici.
+   */
   async softDelete(userId: string, id: string): Promise<void> {
-    await this.findOwnedOrFail(userId, id);
+    const row = await this.findOwnedOrFail(userId, id);
     await this.db
       .update(recipes)
       .set({ deletedAt: new Date(), updatedAt: new Date() })
       .where(eq(recipes.id, id));
+    await this.storage.removeByPublicUrls([
+      row.photoUrl,
+      ...(await this.collectGalleryUrls([id])),
+    ]);
+  }
+
+  /**
+   * URLs des photos de galerie des recettes données (feature galerie-recette),
+   * pour le nettoyage Storage à la suppression. Lecture directe du pivot galerie :
+   * il fait partie du domaine recettes (au même titre que les étapes/composants).
+   */
+  private async collectGalleryUrls(recipeIds: string[]): Promise<string[]> {
+    if (recipeIds.length === 0) return [];
+    const rows = await this.db
+      .select({ imageUrl: recipeGalleryImages.imageUrl })
+      .from(recipeGalleryImages)
+      .where(inArray(recipeGalleryImages.recipeId, recipeIds));
+    return rows.map((r) => r.imageUrl);
+  }
+
+  /**
+   * Pose [url] comme couverture uniquement si la recette n'en a aucune (photo_url
+   * NULL) — mécanisme « le 1er upload galerie devient la couverture » (feature
+   * galerie-recette). Atomique (WHERE photo_url IS NULL) pour rester correct en
+   * cas d'uploads concurrents. Retourne `true` si la photo est devenue la
+   * couverture (et sort donc du quota galerie), `false` si une couverture
+   * existait déjà. Exposé au service galerie (isolation : jamais d'écriture
+   * directe sur `recipes` depuis un autre service).
+   */
+  async setPhotoIfEmpty(recipeId: string, url: string): Promise<boolean> {
+    const updated = await this.db
+      .update(recipes)
+      .set({ photoUrl: url, updatedAt: new Date() })
+      .where(and(eq(recipes.id, recipeId), isNull(recipes.photoUrl)))
+      .returning({ id: recipes.id });
+    return updated.length > 0;
   }
 
   // --- ingrédients -------------------------------------------------------
@@ -1147,7 +1228,19 @@ export class RecipesService {
    * Exposé pour AccountService uniquement.
    */
   async deleteAllForUser(userId: string): Promise<void> {
+    // Fichiers Storage (galerie + couvertures) collectés avant le DELETE cascade,
+    // pour ne pas laisser d'orphelins après purge de compte (feature galerie-recette).
+    const owned = await this.db
+      .select({ id: recipes.id, photoUrl: recipes.photoUrl })
+      .from(recipes)
+      .where(eq(recipes.authorId, userId));
+    const filesToRemove = [
+      ...owned.map((r) => r.photoUrl),
+      ...(await this.collectGalleryUrls(owned.map((r) => r.id))),
+    ];
+
     await this.db.delete(recipes).where(eq(recipes.authorId, userId));
+    await this.storage.removeByPublicUrls(filesToRemove);
     this.logger.log(`Recettes supprimées pour l'utilisateur ${userId}`);
   }
 

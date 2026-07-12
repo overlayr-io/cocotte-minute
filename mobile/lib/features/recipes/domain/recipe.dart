@@ -42,6 +42,21 @@ class RecipeSummary extends Equatable {
     );
   }
 
+  /// Copie avec une nouvelle couverture (feature galerie-recette). [photoUrl]
+  /// est toujours fourni non-null par les appelants (couverture posée/remplacée).
+  RecipeSummary copyWith({String? photoUrl}) {
+    return RecipeSummary(
+      id: id,
+      name: name,
+      photoUrl: photoUrl ?? this.photoUrl,
+      isBase: isBase,
+      prepTime: prepTime,
+      cookTime: cookTime,
+      restTime: restTime,
+      servings: servings,
+    );
+  }
+
   @override
   List<Object?> get props =>
       [id, name, photoUrl, isBase, prepTime, cookTime, restTime, servings];
@@ -79,6 +94,33 @@ class RecipeIngredientLine extends Equatable {
 
   @override
   List<Object?> get props => [id, name, unit, quantity, imageUrl];
+}
+
+/// Une photo de galerie (feature galerie-recette) — une réalisation postée par
+/// l'utilisateur après avoir cuisiné la recette. Distincte de la photo de
+/// couverture (`summary.photoUrl`), jamais comptée dans le quota galerie.
+class RecipeGalleryPhoto extends Equatable {
+  const RecipeGalleryPhoto({
+    required this.id,
+    required this.imageUrl,
+    required this.createdAt,
+  });
+
+  final String id;
+  final String imageUrl;
+  final DateTime createdAt;
+
+  factory RecipeGalleryPhoto.fromJson(Map<String, dynamic> json) {
+    return RecipeGalleryPhoto(
+      id: json['id'] as String,
+      imageUrl: json['imageUrl'] as String,
+      createdAt:
+          DateTime.tryParse(json['createdAt'] as String? ?? '') ?? DateTime(1970),
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, imageUrl, createdAt];
 }
 
 /// Type de bannière d'une étape. `wire` = valeur stable échangée avec l'API ;
@@ -273,6 +315,7 @@ class RecipeDetail extends Equatable {
     this.usedIn = const [],
     this.categoryIds = const [],
     this.tagIds = const [],
+    this.galleryPhotos = const [],
   });
 
   final RecipeSummary summary;
@@ -304,6 +347,9 @@ class RecipeDetail extends Equatable {
   final List<String> categoryIds;
   final List<String> tagIds;
 
+  /// Photos de galerie (réalisations), les plus anciennes d'abord.
+  final List<RecipeGalleryPhoto> galleryPhotos;
+
   String get id => summary.id;
   String get name => summary.name;
   bool get isBase => summary.isBase;
@@ -326,6 +372,35 @@ class RecipeDetail extends Equatable {
       usedIn: usedIn,
       categoryIds: categoryIds,
       tagIds: tagIds,
+      galleryPhotos: galleryPhotos,
+    );
+  }
+
+  /// Copie avec une galerie mise à jour (feature galerie-recette), et
+  /// éventuellement une nouvelle couverture ([coverPhotoUrl]) — utile quand le
+  /// 1er upload devient la couverture, ou lors d'un « Changer la photo ». Les
+  /// autres champs sont inchangés.
+  RecipeDetail copyWithGallery({
+    List<RecipeGalleryPhoto>? galleryPhotos,
+    String? coverPhotoUrl,
+  }) {
+    return RecipeDetail(
+      summary: coverPhotoUrl == null
+          ? summary
+          : summary.copyWith(photoUrl: coverPhotoUrl),
+      authorId: authorId,
+      description: description,
+      isLocked: isLocked,
+      priceMode: priceMode,
+      fixedPrice: fixedPrice,
+      priceBracket: priceBracket,
+      ingredients: ingredients,
+      steps: steps,
+      components: components,
+      usedIn: usedIn,
+      categoryIds: categoryIds,
+      tagIds: tagIds,
+      galleryPhotos: galleryPhotos ?? this.galleryPhotos,
     );
   }
 
@@ -351,6 +426,7 @@ class RecipeDetail extends Equatable {
       categoryIds:
           ((json['categoryIds'] as List<dynamic>?) ?? const []).cast<String>(),
       tagIds: ((json['tagIds'] as List<dynamic>?) ?? const []).cast<String>(),
+      galleryPhotos: list('galleryPhotos', RecipeGalleryPhoto.fromJson),
     );
   }
 
@@ -369,5 +445,6 @@ class RecipeDetail extends Equatable {
         usedIn,
         categoryIds,
         tagIds,
+        galleryPhotos,
       ];
 }

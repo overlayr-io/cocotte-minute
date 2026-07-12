@@ -3,10 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/premium/premium_limit_sheet.dart';
+import '../../../../core/storage/image_pick_upload.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/duration_format.dart';
 import '../../../../core/widgets/action_menu.dart';
 import '../../../../core/widgets/app_network_image.dart';
+import '../../../../core/widgets/image_upload_picker.dart' show ImageCropAspect;
 import '../../../../core/widgets/error_view.dart';
 import '../../../ingredients/domain/ingredient.dart';
 import '../../../ingredients/presentation/widgets/unit_selector.dart';
@@ -20,6 +22,7 @@ import 'base_recipe_picker_sheet.dart';
 import 'category_assign_sheet.dart';
 import 'quantity_stepper.dart';
 import 'recipe_edit_sheet.dart';
+import 'recipe_gallery_section.dart';
 import 'recipe_price_section.dart';
 import 'person_assign_sheet.dart';
 import 'share_recipe_sheet.dart';
@@ -110,6 +113,21 @@ class _Loaded extends StatelessWidget {
       restTime: result.restTime,
       servings: result.servings,
     );
+  }
+
+  /// « Changer la photo » (feature galerie-recette) : remplace la couverture.
+  /// Aucune autre entrée n'existait pour ça (l'édition de recette ne touche pas
+  /// la photo) ; le serveur supprime l'ancien fichier Storage au remplacement.
+  Future<void> _changePhoto(BuildContext context) async {
+    final cubit = context.read<RecipeDetailCubit>();
+    final url = await pickCropUploadImage(
+      context,
+      folder: 'recipes',
+      cropAspect: ImageCropAspect.ratio4x3,
+      maxBytes: kGalleryMaxBytes,
+    );
+    if (url == null) return;
+    await cubit.changeCoverPhoto(url);
   }
 
   Future<void> _delete(BuildContext context) async {
@@ -225,6 +243,11 @@ class _Loaded extends StatelessWidget {
           icon: Icons.edit_outlined,
           label: l10n.commonEdit,
           onSelected: () => _edit(menuContext),
+        ),
+        ActionMenuItem(
+          icon: Icons.image_outlined,
+          label: l10n.recipeMenuChangePhoto,
+          onSelected: () => _changePhoto(menuContext),
         ),
         ActionMenuItem(
           icon: Icons.ios_share_rounded,
@@ -582,6 +605,9 @@ class _SheetState extends State<_Sheet> {
             ),
           ),
       ],
+      // Galerie des réalisations (feature galerie-recette) : juste après les
+      // sous-recettes / « Utilisée dans », comme demandé par la doc.
+      RecipeGallerySection(detail: detail),
     ];
   }
 

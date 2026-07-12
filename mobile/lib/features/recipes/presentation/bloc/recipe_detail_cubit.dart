@@ -199,6 +199,64 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     }
   }
 
+  // --- galerie (feature galerie-recette) ---------------------------------
+
+  /// Ajoute une photo (déjà uploadée sur Storage) à la galerie. Si la recette
+  /// n'avait pas de couverture, la photo la devient (hors galerie) — l'état
+  /// reflète alors la nouvelle couverture. En cas de quota atteint côté serveur,
+  /// le `premiumLimit` est signalé (la vue en gratuit ouvre l'upsell).
+  Future<void> addGalleryPhoto(String imageUrl) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    emit(current.copyWith(busy: true));
+    try {
+      final result = await _repository.addGalleryPhoto(recipeId, imageUrl);
+      emit(RecipeDetailLoaded(
+        detail: current.detail.copyWithGallery(
+          galleryPhotos: result.photos,
+          coverPhotoUrl: result.becameCover ? result.coverUrl : null,
+        ),
+      ));
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(
+        busy: false,
+        message: e.premiumLimit == null ? e.message : null,
+        premiumLimit: e.premiumLimit,
+      ));
+    }
+  }
+
+  /// Supprime une photo de galerie (depuis la vue plein écran).
+  Future<void> removeGalleryPhoto(String imageId) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    emit(current.copyWith(busy: true));
+    try {
+      final photos = await _repository.deleteGalleryPhoto(recipeId, imageId);
+      emit(RecipeDetailLoaded(
+        detail: current.detail.copyWithGallery(galleryPhotos: photos),
+      ));
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(busy: false, message: e.message));
+    }
+  }
+
+  /// « Changer la photo » : remplace la couverture (PATCH photoUrl). L'ancien
+  /// fichier Storage est supprimé côté serveur.
+  Future<void> changeCoverPhoto(String imageUrl) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    emit(current.copyWith(busy: true));
+    try {
+      await _repository.update(recipeId, photoUrl: imageUrl);
+      emit(RecipeDetailLoaded(
+        detail: current.detail.copyWithGallery(coverPhotoUrl: imageUrl),
+      ));
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(busy: false, message: e.message));
+    }
+  }
+
   /// Ajoute plusieurs ingrédients (avec leur quantité) puis recharge la fiche.
   /// Ré-ajouter un ingrédient déjà présent met à jour sa quantité (upsert serveur).
   Future<void> addIngredients(List<RecipeIngredientDraft> drafts) async {
