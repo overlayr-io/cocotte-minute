@@ -1,0 +1,549 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../../core/di/service_locator.dart';
+import '../../../../core/i18n/generated/app_localizations.dart';
+import '../../../../core/premium/premium_cubit.dart';
+import '../../../../core/premium/premium_limit_sheet.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/error_view.dart';
+import '../../../premium/presentation/pages/premium_page.dart';
+import '../../../recipes/data/recipes_repository.dart';
+import '../../data/meal_plan_repository.dart';
+import '../../data/meal_plan_tray_store.dart';
+import '../../domain/meal_plan_entry.dart';
+import '../bloc/meal_plan_cubit.dart';
+import '../widgets/planning_boards.dart';
+
+/// Onglet Planning : calendrier semaine lundi → dimanche, 3 créneaux par jour
+/// (cf. docs/features/planification-repas.md, écrans 1a-1g).
+class PlanningPage extends StatelessWidget {
+  const PlanningPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (_) => MealPlanCubit(
+        repository: sl<MealPlanRepository>(),
+        recipesRepository: sl<RecipesRepository>(),
+        trayStore: sl<MealPlanTrayStore>(),
+      )..load(),
+      child: const _PlanningView(),
+    );
+  }
+}
+
+class _PlanningView extends StatelessWidget {
+  const _PlanningView();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final isPremium = context.select<PremiumCubit, bool>(
+      (c) => c.state.isPremium,
+    );
+
+    return BlocConsumer<MealPlanCubit, MealPlanState>(
+      listener: (context, state) {
+        final cubit = context.read<MealPlanCubit>();
+        if (state.premiumLimit != null) {
+          final error = state.premiumLimit!;
+          cubit.acknowledge();
+          showPremiumLimitSheet(context, error: error);
+        } else if (state.removedEntry != null) {
+          final entry = state.removedEntry!;
+          cubit.acknowledge();
+          _showUndoSnackBar(context, l10n, entry);
+        } else if (state.actionError != null) {
+          final message = state.actionError!;
+          cubit.acknowledge();
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(message)));
+        }
+      },
+      builder: (context, state) {
+        final cubit = context.read<MealPlanCubit>();
+
+        if (state.status == MealPlanStatus.loading ||
+            state.status == MealPlanStatus.initial) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state.status == MealPlanStatus.error) {
+          return ErrorView(
+            message: state.loadError ?? '',
+            onRetry: cubit.load,
+          );
+        }
+
+        final week = state.visibleWeek;
+        final readonly = !isPremium && !week.isFreeEditable;
+
+        final boardData = PlanningBoardData(
+          week: week,
+          entriesOf: state.slotEntries,
+          readonly: readonly,
+          selectMode: state.selectMode,
+          selectedSlots: state.selectedSlots,
+          onToggleSelect: cubit.toggleSlotSelected,
+        );
+
+        final emptyHook =
+            state.visibleEntries.isEmpty && !readonly && !state.selectMode
+            ? const _FirstUseHook()
+            : null;
+
+        return Scaffold(
+          backgroundColor: AppColors.surface,
+          body: SafeArea(
+            bottom: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _PlanningAppBar(readonly: readonly),
+                if (state.layout == PlanningLayout.grid)
+                  const PlanningGridHeader(),
+                Expanded(
+                  child: state.weekLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : state.layout == PlanningLayout.grid
+                      ? PlanningGridBoard(data: boardData, header: emptyHook)
+                      : PlanningBlocksBoard(data: boardData, header: emptyHook),
+                ),
+                // Espace pour la barre de navigation flottante du shell.
+                const SizedBox(height: 90),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showUndoSnackBar(
+    BuildContext context,
+    AppLocalizations l10n,
+    MealPlanEntry entry,
+  ) {
+    final cubit = context.read<MealPlanCubit>();
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.fromLTRB(14, 0, 14, 96),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          backgroundColor: AppColors.textPrimary,
+          duration: const Duration(milliseconds: 4800),
+          content: Text(
+            entry.type == MealEntryType.recipe
+                ? l10n.planningRemovedSnackRecipe
+                : l10n.planningRemovedSnackOther,
+          ),
+          action: SnackBarAction(
+            label: l10n.planningUndo,
+            textColor: const Color(0xFF8CB47A),
+            onPressed: cubit.undoRemove,
+          ),
+        ),
+      );
+  }
+}
+
+/// En-tête : titre, bascule Grille/Blocs, panier, navigation de semaine et
+/// bandeau lecture seule (design 1a / 1f).
+class _PlanningAppBar extends StatelessWidget {
+  const _PlanningAppBar({required this.readonly});
+
+  final bool readonly;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final cubit = context.read<MealPlanCubit>();
+    final state = context.watch<MealPlanCubit>().state;
+
+    return Container(
+      color: kPlanningHeaderBg,
+      padding: const EdgeInsets.fromLTRB(16, 4, 16, 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.navPlanning,
+                      style: const TextStyle(
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF8A7A4E),
+                      ),
+                    ),
+                    Text(
+                      l10n.planningTitle,
+                      style: const TextStyle(
+                        fontFamily: AppFonts.display,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 23,
+                        height: 1.05,
+                        letterSpacing: -0.4,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              _LayoutToggle(layout: state.layout, onChanged: cubit.setLayout),
+              const SizedBox(width: 10),
+              _RoundIconButton(
+                icon: Icons.shopping_cart_outlined,
+                color: AppColors.primaryDark,
+                tooltip: l10n.planningCartTooltip,
+                onTap: cubit.enterSelectMode,
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _WeekNav(state: state, onSelect: cubit.selectWeek),
+          if (readonly) ...[
+            const SizedBox(height: 10),
+            const _ReadonlyBanner(),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _WeekNav extends StatelessWidget {
+  const _WeekNav({required this.state, required this.onSelect});
+
+  final MealPlanState state;
+  final ValueChanged<int> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final week = state.visibleWeek;
+    final canPrev = state.weekIndex > 0;
+    final canNext = state.weekIndex < state.weeks.length - 1;
+    final sub = switch (week.offset) {
+      0 => l10n.planningWeekCurrent,
+      1 => l10n.planningWeekNext,
+      _ => l10n.planningWeekOther,
+    };
+
+    return Container(
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: AppColors.pill,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          _NavChevron(
+            icon: Icons.chevron_left,
+            enabled: canPrev,
+            onTap: () => onSelect(state.weekIndex - 1),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                Text(
+                  week.label(locale),
+                  style: const TextStyle(
+                    fontFamily: AppFonts.display,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 15,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                Text(
+                  sub.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.3,
+                    color: week.offset == 0
+                        ? AppColors.primaryDark
+                        : const Color(0xFFA79F8B),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          _NavChevron(
+            icon: Icons.chevron_right,
+            enabled: canNext,
+            onTap: () => onSelect(state.weekIndex + 1),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavChevron extends StatelessWidget {
+  const _NavChevron({required this.icon, required this.enabled, required this.onTap});
+
+  final IconData icon;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: enabled ? onTap : null,
+      child: Opacity(
+        opacity: enabled ? 1 : 0.35,
+        child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: enabled ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            boxShadow: enabled
+                ? [
+                    BoxShadow(
+                      color: AppColors.textPrimary.withValues(alpha: 0.15),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Icon(icon, size: 22, color: AppColors.textPrimary),
+        ),
+      ),
+    );
+  }
+}
+
+class _LayoutToggle extends StatelessWidget {
+  const _LayoutToggle({required this.layout, required this.onChanged});
+
+  final PlanningLayout layout;
+  final ValueChanged<PlanningLayout> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: AppColors.pill,
+        borderRadius: BorderRadius.circular(11),
+      ),
+      child: Row(
+        children: [
+          _segment(
+            icon: Icons.grid_view_rounded,
+            selected: layout == PlanningLayout.grid,
+            tooltip: l10n.planningLayoutGrid,
+            onTap: () => onChanged(PlanningLayout.grid),
+          ),
+          const SizedBox(width: 2),
+          _segment(
+            icon: Icons.table_rows_rounded,
+            selected: layout == PlanningLayout.blocks,
+            tooltip: l10n.planningLayoutBlocks,
+            onTap: () => onChanged(PlanningLayout.blocks),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _segment({
+    required IconData icon,
+    required bool selected,
+    required String tooltip,
+    required VoidCallback onTap,
+  }) {
+    return Tooltip(
+      message: tooltip,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 36,
+          height: 32,
+          decoration: BoxDecoration(
+            color: selected ? Colors.white : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: AppColors.textPrimary.withValues(alpha: 0.12),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
+          ),
+          child: Icon(
+            icon,
+            size: 17,
+            color: selected ? AppColors.textPrimary : const Color(0xFFA79F8B),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RoundIconButton extends StatelessWidget {
+  const _RoundIconButton({
+    required this.icon,
+    required this.color,
+    required this.onTap,
+    this.tooltip,
+  });
+
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+  final String? tooltip;
+
+  @override
+  Widget build(BuildContext context) {
+    final button = GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 38,
+        height: 38,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(11),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Icon(icon, size: 20, color: color),
+      ),
+    );
+    return tooltip == null ? button : Tooltip(message: tooltip!, child: button);
+  }
+}
+
+/// Bandeau lecture seule (gratuit hors T/T+1, écran 1f).
+class _ReadonlyBanner extends StatelessWidget {
+  const _ReadonlyBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3EEDF),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFEADFC4)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.lock_outline, size: 18, color: Color(0xFF9A7327)),
+          const SizedBox(width: 9),
+          Expanded(
+            child: Text(
+              l10n.planningReadonlyBanner,
+              style: const TextStyle(
+                fontSize: 12,
+                height: 1.35,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF8A6E27),
+              ),
+            ),
+          ),
+          const SizedBox(width: 9),
+          GestureDetector(
+            onTap: () => Navigator.of(context).push(PremiumPage.route()),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 6),
+              decoration: BoxDecoration(
+                color: const Color(0xFFB8862F),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                l10n.planningReadonlyCta,
+                style: const TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Accroche première utilisation (semaine vierge, écran 1e).
+class _FirstUseHook extends StatelessWidget {
+  const _FirstUseHook();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 6),
+      padding: const EdgeInsets.fromLTRB(17, 16, 17, 16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFFEEF3E9), AppColors.surface],
+        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFDDE7D2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 34,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(11),
+                ),
+                child: const Icon(
+                  Icons.calendar_month_outlined,
+                  size: 18,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  l10n.planningEmptyTitle,
+                  style: const TextStyle(
+                    fontFamily: AppFonts.display,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            l10n.planningEmptyBody,
+            style: const TextStyle(
+              fontSize: 13,
+              height: 1.5,
+              color: Color(0xFF5B6470),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

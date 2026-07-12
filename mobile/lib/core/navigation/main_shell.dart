@@ -7,6 +7,7 @@ import '../../features/account/presentation/pages/account_page.dart';
 import '../../features/account/presentation/widgets/cancel_deletion_banner.dart';
 import '../../features/auth/presentation/pages/auth_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/meal_plan/presentation/pages/planning_page.dart';
 import '../../features/recipes/presentation/pages/recipes_page.dart';
 import '../../features/shopping_list/data/shopping_sync_service.dart';
 import '../../features/shopping_list/presentation/pages/shopping_page.dart';
@@ -15,8 +16,8 @@ import '../di/service_locator.dart';
 import '../i18n/generated/app_localizations.dart';
 import '../theme/app_colors.dart';
 
-/// Coquille de navigation principale : 4 onglets (Accueil, Recettes, Courses,
-/// Compte) sous une barre flottante, façon maquette Cocotte Minute.
+/// Coquille de navigation principale : 5 onglets (Accueil, Recettes, Planning,
+/// Courses, Compte) sous une barre flottante, façon maquette Cocotte Minute.
 ///
 /// Pas de routeur dédié pour l'instant : un simple [IndexedStack] conserve
 /// l'état de chaque onglet. Les sous-écrans (ingrédients, etc.) sont poussés via
@@ -82,6 +83,7 @@ class _MainShellState extends State<MainShell> {
     final tabs = <Widget>[
       const HomePage(),
       const RecipesPage(),
+      const PlanningPage(),
       const ShoppingPage(),
       const AccountPage(),
     ];
@@ -151,6 +153,8 @@ class _CocotteNavBar extends StatelessWidget {
     final items = <_NavItemData>[
       _NavItemData(Icons.home_outlined, Icons.home_rounded, l10n.navHome),
       _NavItemData(Icons.menu_book_outlined, Icons.menu_book_rounded, l10n.navRecipes),
+      _NavItemData(
+          Icons.calendar_month_outlined, Icons.calendar_month_rounded, l10n.navPlanning),
       _NavItemData(
           Icons.shopping_cart_outlined, Icons.shopping_cart_rounded, l10n.navShopping),
       _NavItemData(Icons.person_outline_rounded, Icons.person_rounded, l10n.navAccount),

@@ -4592,6 +4592,372 @@ abstract class AppLocalizations {
   /// **'Pro · jusqu\'au {date}'**
   String premiumStatusProUntil(String date);
 
+  /// No description provided for @navPlanning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planning'**
+  String get navPlanning;
+
+  /// No description provided for @planningTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes repas'**
+  String get planningTitle;
+
+  /// No description provided for @planningWeekCurrent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette semaine'**
+  String get planningWeekCurrent;
+
+  /// No description provided for @planningWeekNext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Semaine prochaine'**
+  String get planningWeekNext;
+
+  /// No description provided for @planningWeekOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre semaine'**
+  String get planningWeekOther;
+
+  /// No description provided for @planningReadonlyBanner.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture seule — le gratuit édite la semaine en cours et la suivante.'**
+  String get planningReadonlyBanner;
+
+  /// No description provided for @planningReadonlyCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Premium'**
+  String get planningReadonlyCta;
+
+  /// No description provided for @planningToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd\'hui'**
+  String get planningToday;
+
+  /// No description provided for @planningAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter'**
+  String get planningAdd;
+
+  /// No description provided for @planningEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planifie ta première semaine'**
+  String get planningEmptyTitle;
+
+  /// No description provided for @planningEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glisse une recette depuis le bandeau du bas sur n\'importe quel créneau — matin, midi ou soir. Ta liste de courses suivra.'**
+  String get planningEmptyBody;
+
+  /// No description provided for @planningEatingOut.
+  ///
+  /// In fr, this message translates to:
+  /// **'Manger dehors'**
+  String get planningEatingOut;
+
+  /// No description provided for @planningEatingOutMeta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repas hors du planning'**
+  String get planningEatingOutMeta;
+
+  /// No description provided for @planningNoteMeta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note libre'**
+  String get planningNoteMeta;
+
+  /// No description provided for @planningSlotMorning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Matin'**
+  String get planningSlotMorning;
+
+  /// No description provided for @planningSlotNoon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Midi'**
+  String get planningSlotNoon;
+
+  /// No description provided for @planningSlotEvening.
+  ///
+  /// In fr, this message translates to:
+  /// **'Soir'**
+  String get planningSlotEvening;
+
+  /// No description provided for @planningLayoutGrid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vue grille'**
+  String get planningLayoutGrid;
+
+  /// No description provided for @planningLayoutBlocks.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vue blocs'**
+  String get planningLayoutBlocks;
+
+  /// No description provided for @planningCartTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter aux courses'**
+  String get planningCartTooltip;
+
+  /// No description provided for @planningMoreOthers.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{＋1 autre} other{＋{count} autres}}'**
+  String planningMoreOthers(int count);
+
+  /// No description provided for @planningSlotCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 recette} other{{count} recettes}}'**
+  String planningSlotCount(int count);
+
+  /// No description provided for @planningAddSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter au créneau'**
+  String get planningAddSheetTitle;
+
+  /// No description provided for @planningNoteSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note libre'**
+  String get planningNoteSheetTitle;
+
+  /// No description provided for @planningNoteBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un repas à la volée, sans recette — note juste ce que tu prévois.'**
+  String get planningNoteBody;
+
+  /// No description provided for @planningNoteHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex : pâtes sauce tomate'**
+  String get planningNoteHint;
+
+  /// No description provided for @planningNoteCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter la note'**
+  String get planningNoteCta;
+
+  /// No description provided for @planningNoteQuickPasta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pâtes sauce tomate'**
+  String get planningNoteQuickPasta;
+
+  /// No description provided for @planningNoteQuickLeftovers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restes du frigo'**
+  String get planningNoteQuickLeftovers;
+
+  /// No description provided for @planningNoteQuickPizza.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pizza surgelée'**
+  String get planningNoteQuickPizza;
+
+  /// No description provided for @planningNoteQuickSandwich.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sandwichs'**
+  String get planningNoteQuickSandwich;
+
+  /// No description provided for @planningSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une recette'**
+  String get planningSearchHint;
+
+  /// No description provided for @planningNoRecipeFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette trouvée.'**
+  String get planningNoRecipeFound;
+
+  /// No description provided for @planningTrayTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'À planifier · {count}'**
+  String planningTrayTitle(int count);
+
+  /// No description provided for @planningTrayHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'glissez vers un créneau ↑'**
+  String get planningTrayHint;
+
+  /// No description provided for @planningTrayEmptyCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoute des recettes à planifier'**
+  String get planningTrayEmptyCta;
+
+  /// No description provided for @planningTrayManage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer'**
+  String get planningTrayManage;
+
+  /// No description provided for @planningPickerKicker.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste à planifier'**
+  String get planningPickerKicker;
+
+  /// No description provided for @planningPickerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recettes à planifier'**
+  String get planningPickerTitle;
+
+  /// No description provided for @planningPickerDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminé · {count}'**
+  String planningPickerDone(int count);
+
+  /// No description provided for @planningPickerBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Garde sous la main les recettes de ce planning — tu ne glisses que celles-ci sur les créneaux.'**
+  String get planningPickerBody;
+
+  /// No description provided for @planningDropHere.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déposer ici'**
+  String get planningDropHere;
+
+  /// No description provided for @planningMenuSlot.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créneau'**
+  String get planningMenuSlot;
+
+  /// No description provided for @planningMenuView.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir la recette'**
+  String get planningMenuView;
+
+  /// No description provided for @planningMenuAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une recette'**
+  String get planningMenuAdd;
+
+  /// No description provided for @planningMenuRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer de ce créneau'**
+  String get planningMenuRemove;
+
+  /// No description provided for @planningRemovedSnackRecipe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette retirée du créneau'**
+  String get planningRemovedSnackRecipe;
+
+  /// No description provided for @planningRemovedSnackOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retiré du créneau'**
+  String get planningRemovedSnackOther;
+
+  /// No description provided for @planningUndo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get planningUndo;
+
+  /// No description provided for @planningDetailTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 recette sur ce créneau} other{{count} recettes sur ce créneau}}'**
+  String planningDetailTitle(int count);
+
+  /// No description provided for @planningSelectTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter aux courses'**
+  String get planningSelectTitle;
+
+  /// No description provided for @planningSelectSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Coche les créneaux à inclure'**
+  String get planningSelectSubtitle;
+
+  /// No description provided for @planningSelectCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Ajouter à la liste de courses} =1{Ajouter à la liste de courses · 1 recette} other{Ajouter à la liste de courses · {count} recettes}}'**
+  String planningSelectCta(int count);
+
+  /// No description provided for @planningReplaceTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplacer la liste en cours ?'**
+  String get planningReplaceTitle;
+
+  /// No description provided for @planningReplaceBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ta liste de courses actuelle n\'est pas vide. En gratuit, une seule liste active : les nouveaux ingrédients remplaceront son contenu.'**
+  String get planningReplaceBody;
+
+  /// No description provided for @planningReplaceConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplacer'**
+  String get planningReplaceConfirm;
+
+  /// No description provided for @planningListCreatedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste « Courses du {week} » créée'**
+  String planningListCreatedTitle(String week);
+
+  /// No description provided for @planningListCreatedSub.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle liste dédiée · liste active conservée'**
+  String get planningListCreatedSub;
+
+  /// No description provided for @planningListUpdatedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste de courses mise à jour'**
+  String get planningListUpdatedTitle;
+
+  /// No description provided for @planningListUpdatedSub.
+  ///
+  /// In fr, this message translates to:
+  /// **'{week} · ingrédients ajoutés'**
+  String planningListUpdatedSub(String week);
+
+  /// No description provided for @planningShoppingName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Courses du {week}'**
+  String planningShoppingName(String week);
+
   /// No description provided for @premiumLimitCta.
   ///
   /// In fr, this message translates to:

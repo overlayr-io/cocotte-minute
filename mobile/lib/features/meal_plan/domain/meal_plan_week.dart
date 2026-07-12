@@ -3,6 +3,8 @@
 /// rétention T-1 → T+2, écriture gratuite T/T+1.
 library;
 
+import 'package:intl/intl.dart';
+
 /// `YYYY-MM-DD` d'une date locale.
 String dayKey(DateTime d) =>
     '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
@@ -25,13 +27,13 @@ class MealPlanWeek {
   DateTime dayAt(int index) => monday.add(Duration(days: index));
 
   /// Libellé « 6 – 12 juil. » / « 29 juin – 5 juil. » (design 1a).
-  String get label {
+  String label(String locale) {
     final end = monday.add(const Duration(days: 6));
-    final sameMonth = monday.month == end.month;
-    final start = sameMonth
+    final month = DateFormat.MMM(locale);
+    final start = monday.month == end.month
         ? '${monday.day}'
-        : '${monday.day} ${_kMonthsShortFr[monday.month - 1]}';
-    return '$start – ${end.day} ${_kMonthsShortFr[end.month - 1]}';
+        : '${monday.day} ${month.format(monday)}';
+    return '$start – ${end.day} ${month.format(end)}';
   }
 
   /// Fenêtre de rétention T-1 → T+2 autour d'aujourd'hui.
@@ -49,18 +51,3 @@ class MealPlanWeek {
   /// Éditable pour un compte gratuit (T et T+1 uniquement).
   bool get isFreeEditable => offset == 0 || offset == 1;
 }
-
-const _kMonthsShortFr = [
-  'janv.',
-  'févr.',
-  'mars',
-  'avr.',
-  'mai',
-  'juin',
-  'juil.',
-  'août',
-  'sept.',
-  'oct.',
-  'nov.',
-  'déc.',
-];

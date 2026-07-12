@@ -2714,6 +2714,237 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get navPlanning => 'Planner';
+
+  @override
+  String get planningTitle => 'My meals';
+
+  @override
+  String get planningWeekCurrent => 'This week';
+
+  @override
+  String get planningWeekNext => 'Next week';
+
+  @override
+  String get planningWeekOther => 'Other week';
+
+  @override
+  String get planningReadonlyBanner =>
+      'Read-only — the free plan edits the current and next week.';
+
+  @override
+  String get planningReadonlyCta => 'Premium';
+
+  @override
+  String get planningToday => 'Today';
+
+  @override
+  String get planningAdd => 'Add';
+
+  @override
+  String get planningEmptyTitle => 'Plan your first week';
+
+  @override
+  String get planningEmptyBody =>
+      'Drag a recipe from the bottom tray onto any slot — morning, noon or evening. Your shopping list will follow.';
+
+  @override
+  String get planningEatingOut => 'Eating out';
+
+  @override
+  String get planningEatingOutMeta => 'Meal outside the plan';
+
+  @override
+  String get planningNoteMeta => 'Free note';
+
+  @override
+  String get planningSlotMorning => 'Morning';
+
+  @override
+  String get planningSlotNoon => 'Noon';
+
+  @override
+  String get planningSlotEvening => 'Evening';
+
+  @override
+  String get planningLayoutGrid => 'Grid view';
+
+  @override
+  String get planningLayoutBlocks => 'Blocks view';
+
+  @override
+  String get planningCartTooltip => 'Add to shopping list';
+
+  @override
+  String planningMoreOthers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '＋$count more',
+      one: '＋1 more',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String planningSlotCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recipes',
+      one: '1 recipe',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planningAddSheetTitle => 'Add to slot';
+
+  @override
+  String get planningNoteSheetTitle => 'Free note';
+
+  @override
+  String get planningNoteBody =>
+      'A meal on the fly, without a recipe — just note what you plan.';
+
+  @override
+  String get planningNoteHint => 'E.g. pasta with tomato sauce';
+
+  @override
+  String get planningNoteCta => 'Add the note';
+
+  @override
+  String get planningNoteQuickPasta => 'Pasta with tomato sauce';
+
+  @override
+  String get planningNoteQuickLeftovers => 'Fridge leftovers';
+
+  @override
+  String get planningNoteQuickPizza => 'Frozen pizza';
+
+  @override
+  String get planningNoteQuickSandwich => 'Sandwiches';
+
+  @override
+  String get planningSearchHint => 'Search a recipe';
+
+  @override
+  String get planningNoRecipeFound => 'No recipe found.';
+
+  @override
+  String planningTrayTitle(int count) {
+    return 'To plan · $count';
+  }
+
+  @override
+  String get planningTrayHint => 'drag onto a slot ↑';
+
+  @override
+  String get planningTrayEmptyCta => 'Add recipes to plan';
+
+  @override
+  String get planningTrayManage => 'Manage';
+
+  @override
+  String get planningPickerKicker => 'Planning list';
+
+  @override
+  String get planningPickerTitle => 'Recipes to plan';
+
+  @override
+  String planningPickerDone(int count) {
+    return 'Done · $count';
+  }
+
+  @override
+  String get planningPickerBody =>
+      'Keep the recipes of this plan at hand — you only drag these onto slots.';
+
+  @override
+  String get planningDropHere => 'Drop here';
+
+  @override
+  String get planningMenuSlot => 'Slot';
+
+  @override
+  String get planningMenuView => 'View recipe';
+
+  @override
+  String get planningMenuAdd => 'Add a recipe';
+
+  @override
+  String get planningMenuRemove => 'Remove from this slot';
+
+  @override
+  String get planningRemovedSnackRecipe => 'Recipe removed from the slot';
+
+  @override
+  String get planningRemovedSnackOther => 'Removed from the slot';
+
+  @override
+  String get planningUndo => 'Undo';
+
+  @override
+  String planningDetailTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recipes on this slot',
+      one: '1 recipe on this slot',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planningSelectTitle => 'Add to shopping list';
+
+  @override
+  String get planningSelectSubtitle => 'Tick the slots to include';
+
+  @override
+  String planningSelectCta(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Add to shopping list · $count recipes',
+      one: 'Add to shopping list · 1 recipe',
+      zero: 'Add to shopping list',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planningReplaceTitle => 'Replace the current list?';
+
+  @override
+  String get planningReplaceBody =>
+      'Your current shopping list is not empty. On the free plan there is a single active list: the new ingredients will replace its content.';
+
+  @override
+  String get planningReplaceConfirm => 'Replace';
+
+  @override
+  String planningListCreatedTitle(String week) {
+    return 'List “Groceries for $week” created';
+  }
+
+  @override
+  String get planningListCreatedSub => 'New dedicated list · active list kept';
+
+  @override
+  String get planningListUpdatedTitle => 'Shopping list updated';
+
+  @override
+  String planningListUpdatedSub(String week) {
+    return '$week · ingredients added';
+  }
+
+  @override
+  String planningShoppingName(String week) {
+    return 'Groceries for $week';
+  }
+
+  @override
   String get premiumLimitCta => 'Discover Pro';
 
   @override

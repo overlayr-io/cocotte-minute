@@ -2722,6 +2722,238 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get navPlanning => 'Planning';
+
+  @override
+  String get planningTitle => 'Mes repas';
+
+  @override
+  String get planningWeekCurrent => 'Cette semaine';
+
+  @override
+  String get planningWeekNext => 'Semaine prochaine';
+
+  @override
+  String get planningWeekOther => 'Autre semaine';
+
+  @override
+  String get planningReadonlyBanner =>
+      'Lecture seule — le gratuit édite la semaine en cours et la suivante.';
+
+  @override
+  String get planningReadonlyCta => 'Premium';
+
+  @override
+  String get planningToday => 'Aujourd\'hui';
+
+  @override
+  String get planningAdd => 'Ajouter';
+
+  @override
+  String get planningEmptyTitle => 'Planifie ta première semaine';
+
+  @override
+  String get planningEmptyBody =>
+      'Glisse une recette depuis le bandeau du bas sur n\'importe quel créneau — matin, midi ou soir. Ta liste de courses suivra.';
+
+  @override
+  String get planningEatingOut => 'Manger dehors';
+
+  @override
+  String get planningEatingOutMeta => 'Repas hors du planning';
+
+  @override
+  String get planningNoteMeta => 'Note libre';
+
+  @override
+  String get planningSlotMorning => 'Matin';
+
+  @override
+  String get planningSlotNoon => 'Midi';
+
+  @override
+  String get planningSlotEvening => 'Soir';
+
+  @override
+  String get planningLayoutGrid => 'Vue grille';
+
+  @override
+  String get planningLayoutBlocks => 'Vue blocs';
+
+  @override
+  String get planningCartTooltip => 'Ajouter aux courses';
+
+  @override
+  String planningMoreOthers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '＋$count autres',
+      one: '＋1 autre',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String planningSlotCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recettes',
+      one: '1 recette',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planningAddSheetTitle => 'Ajouter au créneau';
+
+  @override
+  String get planningNoteSheetTitle => 'Note libre';
+
+  @override
+  String get planningNoteBody =>
+      'Un repas à la volée, sans recette — note juste ce que tu prévois.';
+
+  @override
+  String get planningNoteHint => 'Ex : pâtes sauce tomate';
+
+  @override
+  String get planningNoteCta => 'Ajouter la note';
+
+  @override
+  String get planningNoteQuickPasta => 'Pâtes sauce tomate';
+
+  @override
+  String get planningNoteQuickLeftovers => 'Restes du frigo';
+
+  @override
+  String get planningNoteQuickPizza => 'Pizza surgelée';
+
+  @override
+  String get planningNoteQuickSandwich => 'Sandwichs';
+
+  @override
+  String get planningSearchHint => 'Rechercher une recette';
+
+  @override
+  String get planningNoRecipeFound => 'Aucune recette trouvée.';
+
+  @override
+  String planningTrayTitle(int count) {
+    return 'À planifier · $count';
+  }
+
+  @override
+  String get planningTrayHint => 'glissez vers un créneau ↑';
+
+  @override
+  String get planningTrayEmptyCta => 'Ajoute des recettes à planifier';
+
+  @override
+  String get planningTrayManage => 'Gérer';
+
+  @override
+  String get planningPickerKicker => 'Liste à planifier';
+
+  @override
+  String get planningPickerTitle => 'Recettes à planifier';
+
+  @override
+  String planningPickerDone(int count) {
+    return 'Terminé · $count';
+  }
+
+  @override
+  String get planningPickerBody =>
+      'Garde sous la main les recettes de ce planning — tu ne glisses que celles-ci sur les créneaux.';
+
+  @override
+  String get planningDropHere => 'Déposer ici';
+
+  @override
+  String get planningMenuSlot => 'Créneau';
+
+  @override
+  String get planningMenuView => 'Voir la recette';
+
+  @override
+  String get planningMenuAdd => 'Ajouter une recette';
+
+  @override
+  String get planningMenuRemove => 'Retirer de ce créneau';
+
+  @override
+  String get planningRemovedSnackRecipe => 'Recette retirée du créneau';
+
+  @override
+  String get planningRemovedSnackOther => 'Retiré du créneau';
+
+  @override
+  String get planningUndo => 'Annuler';
+
+  @override
+  String planningDetailTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recettes sur ce créneau',
+      one: '1 recette sur ce créneau',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planningSelectTitle => 'Ajouter aux courses';
+
+  @override
+  String get planningSelectSubtitle => 'Coche les créneaux à inclure';
+
+  @override
+  String planningSelectCta(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ajouter à la liste de courses · $count recettes',
+      one: 'Ajouter à la liste de courses · 1 recette',
+      zero: 'Ajouter à la liste de courses',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planningReplaceTitle => 'Remplacer la liste en cours ?';
+
+  @override
+  String get planningReplaceBody =>
+      'Ta liste de courses actuelle n\'est pas vide. En gratuit, une seule liste active : les nouveaux ingrédients remplaceront son contenu.';
+
+  @override
+  String get planningReplaceConfirm => 'Remplacer';
+
+  @override
+  String planningListCreatedTitle(String week) {
+    return 'Liste « Courses du $week » créée';
+  }
+
+  @override
+  String get planningListCreatedSub =>
+      'Nouvelle liste dédiée · liste active conservée';
+
+  @override
+  String get planningListUpdatedTitle => 'Liste de courses mise à jour';
+
+  @override
+  String planningListUpdatedSub(String week) {
+    return '$week · ingrédients ajoutés';
+  }
+
+  @override
+  String planningShoppingName(String week) {
+    return 'Courses du $week';
+  }
+
+  @override
   String get premiumLimitCta => 'Découvrir Pro';
 
   @override
