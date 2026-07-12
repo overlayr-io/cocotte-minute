@@ -176,6 +176,35 @@ void main() {
     expect(cubit.state.visibleEntries, hasLength(1));
   });
 
+  test('les signaux one-shot ne persistent pas au changement d\'état suivant',
+      () async {
+    when(
+      () => repository.addEntry(
+        day: any(named: 'day'),
+        slot: any(named: 'slot'),
+        type: any(named: 'type'),
+        recipeId: any(named: 'recipeId'),
+        noteText: any(named: 'noteText'),
+      ),
+    ).thenThrow(
+      const MealPlanRepositoryException(
+        'limite',
+        premiumLimit: PremiumLimitError(
+          code: PremiumLimitError.mealSlotEntries,
+        ),
+      ),
+    );
+    final cubit = build();
+    await cubit.load();
+    await cubit.addRecipe(day: tDay, slot: MealSlot.midi, recipeId: 'r1');
+    expect(cubit.state.premiumLimit, isNotNull);
+
+    // Un changement d'état sans rapport (bascule de layout) ne doit PAS
+    // reporter le signal premium — sinon le paywall se ré-afficherait.
+    cubit.setLayout(PlanningLayout.blocks);
+    expect(cubit.state.premiumLimit, isNull);
+  });
+
   test('mode sélection : compte les recettes des créneaux cochés', () async {
     final recipeEntry = entry();
     final noteEntry = entry(id: 'e2', slot: MealSlot.soir, type: MealEntryType.note);

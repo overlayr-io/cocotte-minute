@@ -68,7 +68,12 @@ class _PlanningView extends StatelessWidget {
           cubit.acknowledge();
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(message)));
+            ..showSnackBar(
+              SnackBar(
+                content: Text(message),
+                duration: const Duration(seconds: 3),
+              ),
+            );
         }
       },
       builder: (context, state) {
@@ -288,7 +293,12 @@ class _PlanningView extends StatelessWidget {
       } else {
         messenger
           ..hideCurrentSnackBar()
-          ..showSnackBar(SnackBar(content: Text(e.message)));
+          ..showSnackBar(
+            SnackBar(
+              content: Text(e.message),
+              duration: const Duration(seconds: 3),
+            ),
+          );
       }
     }
   }
@@ -418,7 +428,7 @@ class _PlanningView extends StatelessWidget {
               color: const Color(0xFFD9C48A).withValues(alpha: 0.25),
             ),
           ),
-          duration: const Duration(milliseconds: 4200),
+          duration: const Duration(milliseconds: 2600),
           content: Row(
             children: [
               Container(
@@ -486,7 +496,7 @@ class _PlanningView extends StatelessWidget {
           margin: const EdgeInsets.fromLTRB(14, 0, 14, 96),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           backgroundColor: AppColors.textPrimary,
-          duration: const Duration(milliseconds: 4800),
+          duration: const Duration(milliseconds: 4000),
           content: Text(
             entry.type == MealEntryType.recipe
                 ? l10n.planningRemovedSnackRecipe

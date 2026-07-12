@@ -95,9 +95,12 @@ class MealPlanState extends Equatable {
       selectMode: selectMode ?? this.selectMode,
       selectedSlots: selectedSlots ?? this.selectedSlots,
       loadError: loadError ?? this.loadError,
-      actionError: actionError ?? this.actionError,
-      premiumLimit: premiumLimit ?? this.premiumLimit,
-      removedEntry: removedEntry ?? this.removedEntry,
+      // Signaux one-shot (paywall, erreur, snackbar de retrait) : jamais
+      // reportés d'un état à l'autre. Sans ce reset, un `?? this.xxx` les
+      // rendrait collants et le listener les ré-afficherait à chaque rebuild.
+      actionError: actionError,
+      premiumLimit: premiumLimit,
+      removedEntry: removedEntry,
     );
   }
 
