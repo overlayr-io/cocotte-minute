@@ -4,8 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/premium/premium_limit_sheet.dart';
+import '../../../../core/pricing/price_calculator.dart';
+import '../../../../core/pricing/price_formatter.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_network_image.dart';
+import '../../../ingredient_prices/data/ingredient_prices_repository.dart';
 import '../../../recipes/data/recipes_repository.dart';
 import '../../../recipes/domain/recipe.dart';
 import '../../data/shopping_list_repository.dart';
@@ -40,6 +43,7 @@ class GenerateFlowPage extends StatelessWidget {
       create: (_) => GenerateShoppingListCubit(
         recipesRepository: sl<RecipesRepository>(),
         shoppingRepository: sl<ShoppingListRepository>(),
+        pricesRepository: sl<IngredientPricesRepository>(),
         initialRecipeId: initialRecipeId,
       ),
       child: _GenerateView(hasActive: hasActive),
@@ -232,6 +236,11 @@ class _StepRecipes extends StatelessWidget {
             },
           ),
         ),
+        if (state.selectedCount > 0)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(22, 0, 22, 0),
+            child: _PriceTotalRow(estimate: state.priceEstimate),
+          ),
         _BottomBar(
           child: FilledButton(
             style: _primaryButtonStyle(),
@@ -370,6 +379,7 @@ class _StepServings extends StatelessWidget {
                   ],
                 ),
               ),
+              _PriceTotalRow(estimate: state.priceEstimate),
             ],
           ),
         ),
@@ -733,6 +743,66 @@ class _SquareButton extends StatelessWidget {
           ),
           child: Icon(icon, color: AppColors.textPrimary),
         ),
+      ),
+    );
+  }
+}
+
+/// Total en direct des recettes sélectionnées (feature prix-estime), scalé aux
+/// portions choisies pour chacune — se complète progressivement à mesure que
+/// les fiches recette sont chargées. Masqué tant qu'aucune recette n'a de
+/// prix à contribuer (`totalCount == 0`).
+class _PriceTotalRow extends StatelessWidget {
+  const _PriceTotalRow({required this.estimate});
+
+  final PriceEstimate estimate;
+
+  @override
+  Widget build(BuildContext context) {
+    if (estimate.totalCount == 0) return const SizedBox.shrink();
+    final l10n = AppLocalizations.of(context);
+    return Container(
+      margin: const EdgeInsets.only(top: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 13),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.shoppingPriceTotal,
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.4,
+                  color: AppColors.textMuted,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                l10n.shoppingPriceForChosenServings,
+                style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
+              ),
+            ],
+          ),
+          Text(
+            estimate.isFullyUnknown
+                ? l10n.shoppingPriceUnknown
+                : formatPriceEstimate(estimate.value, isPartial: estimate.isPartial),
+            style: TextStyle(
+              fontFamily: AppFonts.display,
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
+              color: estimate.isFullyUnknown ? AppColors.textMuted : AppColors.textPrimary,
+            ),
+          ),
+        ],
       ),
     );
   }

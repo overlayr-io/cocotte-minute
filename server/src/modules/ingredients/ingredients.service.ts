@@ -274,6 +274,26 @@ export class IngredientsService {
     return alternatives.find((a) => a.id === alternativeId) ?? null;
   }
 
+  /**
+   * Vérifie qu'un ingrédient est visible pour l'utilisateur (système OU possédé
+   * par lui), sans exiger la possession — pour les domaines qui référencent un
+   * ingrédient sans le modifier (ex: prix-estime, qui autorise un prix personnel
+   * même sur un ingrédient système partagé). Lève si absent/supprimé ou possédé
+   * par un autre utilisateur.
+   */
+  async assertVisible(userId: string, id: string): Promise<void> {
+    const [row] = await this.db
+      .select({ ownerId: ingredients.ownerId })
+      .from(ingredients)
+      .where(and(eq(ingredients.id, id), isNull(ingredients.deletedAt)));
+    if (!row) {
+      throw new NotFoundException('Ingrédient introuvable');
+    }
+    if (row.ownerId !== null && row.ownerId !== userId) {
+      throw new NotFoundException('Ingrédient introuvable');
+    }
+  }
+
   // --- privé -------------------------------------------------------------
 
   /** Alternatives (non supprimées) d'un ingrédient de l'utilisateur. */

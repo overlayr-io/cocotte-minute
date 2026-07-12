@@ -20,6 +20,7 @@ import 'base_recipe_picker_sheet.dart';
 import 'category_assign_sheet.dart';
 import 'quantity_stepper.dart';
 import 'recipe_edit_sheet.dart';
+import 'recipe_price_section.dart';
 import 'person_assign_sheet.dart';
 import 'share_recipe_sheet.dart';
 import 'tag_assign_sheet.dart';
@@ -509,6 +510,8 @@ class _SheetState extends State<_Sheet> {
               l10n: l10n,
               onChanged: (v) => setState(() => _portions = v),
             ),
+            const SizedBox(height: 16),
+            RecipePriceSection(detail: detail, scale: scale, chosenServings: _portions),
             const SizedBox(height: 16),
           ],
           _IngredientsStepsSegment(

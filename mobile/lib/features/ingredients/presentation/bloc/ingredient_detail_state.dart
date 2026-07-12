@@ -12,34 +12,46 @@ class IngredientDetailLoading extends IngredientDetailState {
 }
 
 /// Détail chargé. `mutating` = une action (save/alternatives) est en cours.
+/// `price` : prix de l'utilisateur pour cet ingrédient, `null` si non renseigné.
 class IngredientDetailLoaded extends IngredientDetailState {
-  const IngredientDetailLoaded({required this.detail, this.mutating = false});
+  const IngredientDetailLoaded({
+    required this.detail,
+    required this.price,
+    this.mutating = false,
+  });
 
   final IngredientDetail detail;
+  final IngredientPrice? price;
   final bool mutating;
 
-  IngredientDetailLoaded copyWith({IngredientDetail? detail, bool? mutating}) {
+  IngredientDetailLoaded copyWith({
+    IngredientDetail? detail,
+    IngredientPrice? price,
+    bool? mutating,
+  }) {
     return IngredientDetailLoaded(
       detail: detail ?? this.detail,
+      price: price ?? this.price,
       mutating: mutating ?? this.mutating,
     );
   }
 
   @override
-  List<Object?> get props => [detail, mutating];
+  List<Object?> get props => [detail, price, mutating];
 }
 
 /// Échec transitoire d'une action : données conservées + message pour snackbar.
 class IngredientDetailActionFailure extends IngredientDetailLoaded {
   const IngredientDetailActionFailure({
     required super.detail,
+    required super.price,
     required this.message,
   });
 
   final String message;
 
   @override
-  List<Object?> get props => [detail, message];
+  List<Object?> get props => [detail, price, message];
 }
 
 /// Échec bloquant du chargement → page d'erreur + retry.

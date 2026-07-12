@@ -3,12 +3,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/service_locator.dart';
 import '../../../../core/i18n/generated/app_localizations.dart';
+import '../../../../core/premium/premium_cubit.dart';
+import '../../../../core/pricing/price_calculator.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_network_image.dart';
 import '../../../../core/widgets/error_view.dart';
+import '../../../ingredient_prices/data/ingredient_prices_repository.dart';
+import '../../../ingredient_prices/domain/ingredient_price.dart';
 import '../../data/ingredients_repository.dart';
 import '../../domain/ingredient.dart';
 import '../bloc/ingredient_detail_bloc.dart';
+import '../widgets/ingredient_price_section.dart';
 import '../widgets/ingredient_visual_field.dart';
 import '../widgets/unit_selector.dart';
 
@@ -26,9 +31,10 @@ class IngredientDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) =>
-          IngredientDetailBloc(repository: sl<IngredientsRepository>())
-            ..add(IngredientDetailRequested(id)),
+      create: (_) => IngredientDetailBloc(
+        repository: sl<IngredientsRepository>(),
+        pricesRepository: sl<IngredientPricesRepository>(),
+      )..add(IngredientDetailRequested(id)),
       child: _DetailView(id: id),
     );
   }
@@ -50,18 +56,32 @@ class _DetailViewState extends State<_DetailView> {
   String? _emoji;
   bool _initialized = false;
 
+  // Prix (feature prix-estime) : `_priceRevealed` distingue l'état vide
+  // (14d, jamais affiché) de l'édition active (14b gratuit / 14c premium).
+  bool _priceRevealed = false;
+  PriceReferenceUnit _priceReferenceUnit = PriceReferenceUnit.kilogram;
+  double? _averagePrice;
+  double? _lowPrice;
+  double? _highPrice;
+
   @override
   void dispose() {
     _nameController.dispose();
     super.dispose();
   }
 
-  void _initFrom(Ingredient ingredient) {
+  void _initFrom(Ingredient ingredient, IngredientPrice? price) {
     if (_initialized) return;
     _nameController.text = ingredient.name;
     _unit = ingredient.unit;
     _imageUrl = ingredient.imageUrl;
     _emoji = ingredient.emoji;
+    _priceReferenceUnit = price?.priceReferenceUnit ?? deduceReferenceUnit(ingredient.unit);
+    _averagePrice = price?.averagePrice;
+    _lowPrice = price?.lowPrice;
+    _highPrice = price?.highPrice;
+    _priceRevealed = price != null &&
+        (price.averagePrice != null || price.lowPrice != null || price.highPrice != null);
     _initialized = true;
   }
 
@@ -74,12 +94,19 @@ class _DetailViewState extends State<_DetailView> {
         ..showSnackBar(SnackBar(content: Text(l10n.ingredientNameRequired)));
       return;
     }
+    final isPremium = context.read<PremiumCubit>().state.isPremium;
+    final hasRange = isPremium && _lowPrice != null && _highPrice != null;
     context.read<IngredientDetailBloc>().add(
           IngredientDetailSaveRequested(
             name: name,
             unit: _unit,
             emoji: _emoji,
             imageUrl: _imageUrl,
+            savePrice: _priceRevealed,
+            priceReferenceUnit: _priceRevealed ? _priceReferenceUnit : null,
+            averagePrice: _priceRevealed ? _averagePrice : null,
+            lowPrice: hasRange ? _lowPrice : null,
+            highPrice: hasRange ? _highPrice : null,
           ),
         );
   }
@@ -139,8 +166,8 @@ class _DetailViewState extends State<_DetailView> {
               ScaffoldMessenger.of(context)
                 ..hideCurrentSnackBar()
                 ..showSnackBar(SnackBar(content: Text(message)));
-            case IngredientDetailLoaded(:final detail):
-              _initFrom(detail.ingredient);
+            case IngredientDetailLoaded(:final detail, :final price):
+              _initFrom(detail.ingredient, price);
             default:
               break;
           }
@@ -212,6 +239,26 @@ class _DetailViewState extends State<_DetailView> {
             onChanged: (u) => setState(() => _unit = u),
           ),
           const SizedBox(height: 18),
+          IngredientPriceSection(
+            isPremium: context.select<PremiumCubit, bool>((c) => c.state.isPremium),
+            revealed: _priceRevealed,
+            referenceUnit: _priceReferenceUnit,
+            averagePrice: _averagePrice,
+            lowPrice: _lowPrice,
+            highPrice: _highPrice,
+            onReveal: () => setState(() {
+              _priceRevealed = true;
+              _priceReferenceUnit = deduceReferenceUnit(_unit);
+            }),
+            onReferenceUnitChanged: (unit) => setState(() => _priceReferenceUnit = unit),
+            onAveragePriceChanged: (value) => setState(() => _averagePrice = value),
+            onRangeChanged: (low, high, average) => setState(() {
+              _lowPrice = low;
+              _highPrice = high;
+              _averagePrice = average;
+            }),
+          ),
+          const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

@@ -1,7 +1,9 @@
 import { Transform } from 'class-transformer';
 import {
   IsBoolean,
+  IsIn,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   IsUrl,
@@ -9,12 +11,24 @@ import {
   MaxLength,
   Min,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
+
+import {
+  RECIPE_PRICE_BRACKETS,
+  RECIPE_PRICE_MODES,
+  type RecipePriceBracket,
+  type RecipePriceMode,
+} from '../../../db/schema/recipes.schema';
 
 /**
  * Modification d'une recette depuis sa fiche. Tous les champs sont optionnels
  * (patch partiel). Le passage `is_base` true→false est refusé côté service si la
  * recette est utilisée comme composant (verrou métier).
+ *
+ * `fixedPrice`/`priceBracket` (feature prix-estime) sont calculés côté client
+ * (jamais par le serveur) et simplement poussés ici pour stockage.
+ * `priceBracket: null` = prix inconnu/partiel, jamais posé sur un total `≈`.
  */
 export class UpdateRecipeDto {
   @IsOptional()
@@ -62,4 +76,20 @@ export class UpdateRecipeDto {
   @Min(1)
   @Max(1000)
   servings?: number;
+
+  @IsOptional()
+  @IsIn(RECIPE_PRICE_MODES)
+  priceMode?: RecipePriceMode;
+
+  @IsOptional()
+  @ValidateIf((o: UpdateRecipeDto) => o.fixedPrice !== null)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  @Max(99999999)
+  fixedPrice?: number | null;
+
+  @IsOptional()
+  @ValidateIf((o: UpdateRecipeDto) => o.priceBracket !== null)
+  @IsIn(RECIPE_PRICE_BRACKETS)
+  priceBracket?: RecipePriceBracket | null;
 }

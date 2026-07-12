@@ -1,7 +1,13 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../../core/premium/premium_limit_error.dart';
+import '../../../../core/pricing/price_calculator.dart';
+import '../../../ingredient_prices/data/ingredient_prices_repository.dart';
+import '../../../ingredient_prices/domain/ingredient_price.dart';
+import '../../../ingredients/domain/ingredient.dart';
 import '../../../recipes/data/recipes_repository.dart';
 import '../../../recipes/domain/recipe.dart';
 import '../../data/shopping_list_api.dart';
@@ -44,6 +50,7 @@ class GenerateState extends Equatable {
     this.generatedListId,
     this.actionError,
     this.premiumLimit,
+    this.priceEstimate = PriceEstimate.empty,
   });
 
   final GeneratePhase phase;
@@ -67,6 +74,12 @@ class GenerateState extends Equatable {
   /// ouvre la feuille d'upsell au lieu d'un snackbar. Transitoire.
   final PremiumLimitError? premiumLimit;
 
+  /// Total en direct des recettes sélectionnées (feature prix-estime) — somme
+  /// par recette scalée aux portions choisies, jamais une agrégation par
+  /// ingrédient dédupliqué. Se complète progressivement : une recette dont la
+  /// fiche n'est pas encore chargée ne contribue pas encore au total.
+  final PriceEstimate priceEstimate;
+
   int get selectedCount => selectedIds.length;
   int get totalServings =>
       selectedIds.fold(0, (sum, id) => sum + (servings[id] ?? 0));
@@ -89,6 +102,7 @@ class GenerateState extends Equatable {
     String? generatedListId,
     String? actionError,
     PremiumLimitError? premiumLimit,
+    PriceEstimate? priceEstimate,
   }) {
     return GenerateState(
       phase: phase ?? this.phase,
@@ -104,6 +118,7 @@ class GenerateState extends Equatable {
       generatedListId: generatedListId ?? this.generatedListId,
       actionError: actionError,
       premiumLimit: premiumLimit,
+      priceEstimate: priceEstimate ?? this.priceEstimate,
     );
   }
 
@@ -122,6 +137,7 @@ class GenerateState extends Equatable {
     generatedListId,
     actionError,
     premiumLimit,
+    priceEstimate,
   ];
 }
 
@@ -131,15 +147,22 @@ class GenerateShoppingListCubit extends Cubit<GenerateState> {
   GenerateShoppingListCubit({
     required RecipesRepository recipesRepository,
     required ShoppingListRepository shoppingRepository,
+    required IngredientPricesRepository pricesRepository,
     this.initialRecipeId,
   }) : _recipes = recipesRepository,
        _shopping = shoppingRepository,
+       _prices = pricesRepository,
        super(const GenerateState()) {
     _loadRecipes();
   }
 
   final RecipesRepository _recipes;
   final ShoppingListRepository _shopping;
+  final IngredientPricesRepository _prices;
+
+  /// Fiches déjà chargées (prix + agrégation placard) : évite de refetcher une
+  /// recette déjà consultée pendant ce parcours.
+  final Map<String, RecipeDetail> _detailCache = {};
 
   /// Recette à pré-sélectionner au chargement (entrée « Ajouter aux courses »
   /// depuis une fiche recette). Null pour le flux normal depuis l'onglet Courses.
@@ -167,6 +190,7 @@ class GenerateShoppingListCubit extends Cubit<GenerateState> {
             ? null
             : {preselect.id: preselect.servings < 1 ? 1 : preselect.servings},
       ));
+      if (preselect != null) unawaited(_ensurePriced(preselect.id));
     } on RecipesRepositoryException catch (e) {
       emit(state.copyWith(phase: GeneratePhase.error, errorMessage: e.message));
     }
@@ -177,20 +201,87 @@ class GenerateShoppingListCubit extends Cubit<GenerateState> {
   void toggleRecipe(RecipeSummary recipe) {
     final selected = Set<String>.from(state.selectedIds);
     final servings = Map<String, int>.from(state.servings);
-    if (selected.contains(recipe.id)) {
-      selected.remove(recipe.id);
-      servings.remove(recipe.id);
-    } else {
+    final adding = !selected.contains(recipe.id);
+    if (adding) {
       selected.add(recipe.id);
       servings[recipe.id] = recipe.servings < 1 ? 1 : recipe.servings;
+    } else {
+      selected.remove(recipe.id);
+      servings.remove(recipe.id);
     }
     emit(state.copyWith(selectedIds: selected, servings: servings));
+    if (adding) {
+      unawaited(_ensurePriced(recipe.id));
+    } else {
+      unawaited(_recomputeTotal());
+    }
   }
 
   void setServings(String recipeId, int value) {
     if (value < 1) return;
     final servings = Map<String, int>.from(state.servings)..[recipeId] = value;
     emit(state.copyWith(servings: servings));
+    unawaited(_recomputeTotal());
+  }
+
+  /// Charge la fiche d'une recette sélectionnée (mise en cache) si besoin, puis
+  /// recalcule le total — best-effort : un échec laisse simplement la recette
+  /// hors du total tant qu'elle n'a pas pu être chargée.
+  Future<void> _ensurePriced(String recipeId) async {
+    if (!_detailCache.containsKey(recipeId)) {
+      try {
+        _detailCache[recipeId] = await _recipes.fetchDetail(recipeId);
+      } on RecipesRepositoryException {
+        return;
+      }
+    }
+    await _recomputeTotal();
+  }
+
+  /// Somme par recette (jamais une agrégation par ingrédient dédupliqué, cf.
+  /// doc prix-estime), scalée aux portions choisies pour chacune. Une recette
+  /// pas encore chargée ne contribue pas encore au total (se complète au fil
+  /// des réponses réseau).
+  Future<void> _recomputeTotal() async {
+    List<IngredientPrice> prices;
+    try {
+      prices = await _prices.fetchMine();
+    } on IngredientPricesRepositoryException {
+      prices = const [];
+    }
+    final byId = {for (final p in prices) p.ingredientId: p};
+    var total = PriceEstimate.empty;
+    for (final id in state.selectedIds) {
+      final detail = _detailCache[id];
+      if (detail == null) continue;
+      final base = detail.summary.servings < 1 ? 1 : detail.summary.servings;
+      final chosen = state.servings[id] ?? base;
+      final scale = chosen / base;
+      if (detail.priceMode == RecipePriceMode.fixed) {
+        final fixed = detail.fixedPrice;
+        total += fixed == null
+            ? const PriceEstimate(value: 0, knownCount: 0, totalCount: 1)
+            : PriceEstimate(value: fixed * scale, knownCount: 1, totalCount: 1);
+      } else {
+        final estimate = estimateFromLines(
+          detail.ingredients.map(
+            (line) => (
+              quantity: line.quantity,
+              unit: IngredientUnit.fromWire(line.unit),
+              ingredientId: line.id,
+            ),
+          ),
+          byId,
+        );
+        total += PriceEstimate(
+          value: estimate.value * scale,
+          knownCount: estimate.knownCount,
+          totalCount: estimate.totalCount,
+        );
+      }
+    }
+    if (isClosed) return;
+    emit(state.copyWith(priceEstimate: total));
   }
 
   Future<void> next() async {
@@ -218,7 +309,8 @@ class GenerateShoppingListCubit extends Cubit<GenerateState> {
     final byId = <String, PantryIngredient>{};
     try {
       for (final recipeId in state.selectedIds) {
-        final detail = await _recipes.fetchDetail(recipeId);
+        final detail = _detailCache[recipeId] ?? await _recipes.fetchDetail(recipeId);
+        _detailCache[recipeId] = detail;
         final base = detail.summary.servings < 1 ? 1 : detail.summary.servings;
         final chosen = state.servings[recipeId] ?? base;
         final factor = chosen / base;
