@@ -113,8 +113,7 @@ semaine de vacances), plutôt que de choisir au jour le jour.
   courses).
 
 ## Questions ouvertes / à trancher
-- Persistance de la liste « À planifier » (bandeau du bas) : locale au device
-  ou synchronisée serveur ? À trancher avant l'implémentation.
+- Aucune — tout est tranché.
 
 ## Ajout — design Claude Design validé (2026-07-12)
 
@@ -159,3 +158,5 @@ La limite gratuit « 1 par créneau » compte **toutes les entrées confondues**
   utilisateur, suppression de ses semaines hors fenêtre T-1 → T+2 (pas de
   cron, peu fiable sur Render free tier).
 - Écran 1g inclus (nécessaire pour gérer les créneaux multi-recettes).
+- **Liste « À planifier » : locale au device** (shared_preferences) — c'est un
+  brouillon de travail, pas une donnée métier synchronisée.
