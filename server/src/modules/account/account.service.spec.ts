@@ -9,6 +9,7 @@ import { CategoriesService } from '../categories/categories.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { PeopleService } from '../people/people.service';
 import { RecipesService } from '../recipes/recipes.service';
+import { MealPlanService } from '../meal-plan/meal-plan.service';
 import { ShoppingListsService } from '../shopping-lists/shopping-lists.service';
 import { TagsService } from '../tags/tags.service';
 import { AccountService, DELETION_DELAY_DAYS } from './account.service';
@@ -68,6 +69,7 @@ function domainMocks() {
     categories: mk() as unknown as CategoriesService,
     recipes: mk() as unknown as RecipesService,
     shopping: mk() as unknown as ShoppingListsService,
+    mealPlan: mk() as unknown as MealPlanService,
   };
 }
 
@@ -98,6 +100,7 @@ function build(
     d.categories,
     d.recipes,
     d.shopping,
+    d.mealPlan,
     admin,
     revenueCat,
   );

@@ -5,6 +5,7 @@ import { BillingModule } from '../billing/billing.module';
 import { CategoriesModule } from '../categories/categories.module';
 import { IngredientsModule } from '../ingredients/ingredients.module';
 import { PeopleModule } from '../people/people.module';
+import { MealPlanModule } from '../meal-plan/meal-plan.module';
 import { RecipesModule } from '../recipes/recipes.module';
 import { ShoppingListsModule } from '../shopping-lists/shopping-lists.module';
 import { TagsModule } from '../tags/tags.module';
@@ -23,6 +24,7 @@ import { AccountService } from './account.service';
     CategoriesModule,
     RecipesModule,
     ShoppingListsModule,
+    MealPlanModule,
     BillingModule,
   ],
   controllers: [AccountController],

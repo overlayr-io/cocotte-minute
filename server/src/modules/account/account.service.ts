@@ -10,6 +10,7 @@ import { CategoriesService } from '../categories/categories.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { PeopleService } from '../people/people.service';
 import { RecipesService } from '../recipes/recipes.service';
+import { MealPlanService } from '../meal-plan/meal-plan.service';
 import { ShoppingListsService } from '../shopping-lists/shopping-lists.service';
 import { TagsService } from '../tags/tags.service';
 
@@ -51,6 +52,7 @@ export class AccountService {
     private readonly categoriesService: CategoriesService,
     private readonly recipesService: RecipesService,
     private readonly shoppingListsService: ShoppingListsService,
+    private readonly mealPlanService: MealPlanService,
     private readonly supabaseAdmin: SupabaseAdminService,
     private readonly revenueCatAdmin: RevenueCatAdminService,
   ) {}
@@ -185,6 +187,7 @@ export class AccountService {
    * domaines référencés.
    */
   private async purgeAllUserData(userId: string): Promise<void> {
+    await this.mealPlanService.deleteAllForUser(userId);
     await this.shoppingListsService.deleteAllForUser(userId);
     await this.recipesService.deleteAllForUser(userId);
     await this.peopleService.deleteAllForUser(userId);
