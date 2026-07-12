@@ -936,56 +936,57 @@ class _FirstUseHook extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 6),
-      padding: const EdgeInsets.fromLTRB(17, 16, 17, 16),
+      margin: const EdgeInsets.fromLTRB(16, 14, 16, 4),
+      padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [Color(0xFFEEF3E9), AppColors.surface],
         ),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: const Color(0xFFDDE7D2)),
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Container(
-                width: 34,
-                height: 34,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(11),
-                ),
-                child: const Icon(
-                  Icons.calendar_month_outlined,
-                  size: 18,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Text(
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.calendar_month_outlined,
+              size: 18,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 11),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
                   l10n.planningEmptyTitle,
                   style: const TextStyle(
                     fontFamily: AppFonts.display,
                     fontWeight: FontWeight.w700,
-                    fontSize: 16,
+                    fontSize: 15.5,
                     color: AppColors.textPrimary,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Text(
-            l10n.planningEmptyBody,
-            style: const TextStyle(
-              fontSize: 13,
-              height: 1.5,
-              color: Color(0xFF5B6470),
+                const SizedBox(height: 4),
+                Text(
+                  l10n.planningEmptyBody,
+                  style: const TextStyle(
+                    fontSize: 12.5,
+                    height: 1.4,
+                    color: Color(0xFF5B6470),
+                  ),
+                ),
+              ],
             ),
           ),
         ],

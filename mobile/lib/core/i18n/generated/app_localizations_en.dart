@@ -2746,7 +2746,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planningEmptyBody =>
-      'Drag a recipe from the bottom tray onto any slot — morning, noon or evening. Your shopping list will follow.';
+      'Drag a recipe from the tray onto a morning, noon or evening slot. Your shopping list fills itself.';
 
   @override
   String get planningEatingOut => 'Eating out';

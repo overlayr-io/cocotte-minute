@@ -4655,7 +4655,7 @@ abstract class AppLocalizations {
   /// No description provided for @planningEmptyBody.
   ///
   /// In fr, this message translates to:
-  /// **'Glisse une recette depuis le bandeau du bas sur n\'importe quel créneau — matin, midi ou soir. Ta liste de courses suivra.'**
+  /// **'Glisse une recette du bandeau vers un créneau du matin, du midi ou du soir. Ta liste de courses se remplit toute seule.'**
   String get planningEmptyBody;
 
   /// No description provided for @planningEatingOut.
