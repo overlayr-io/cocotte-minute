@@ -45,6 +45,11 @@ void main() {
     when(() => repository.isConfigured).thenReturn(true);
     when(() => repository.addEntitlementListener(any())).thenAnswer((_) {});
     when(() => repository.removeEntitlementListener(any())).thenAnswer((_) {});
+    when(() => repository.setUserAttributes(
+          email: any(named: 'email'),
+          displayName: any(named: 'displayName'),
+          custom: any(named: 'custom'),
+        )).thenAnswer((_) async {});
     // La page résout le repository via get_it (comme en prod).
     sl.registerSingleton<PremiumRepository>(repository);
   });

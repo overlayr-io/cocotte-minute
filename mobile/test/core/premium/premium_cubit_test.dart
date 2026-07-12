@@ -41,6 +41,11 @@ void main() {
     when(() => repository.addEntitlementListener(any())).thenAnswer((_) {});
     when(() => repository.removeEntitlementListener(any())).thenAnswer((_) {});
     when(() => repository.logOut()).thenAnswer((_) async {});
+    when(() => repository.setUserAttributes(
+          email: any(named: 'email'),
+          displayName: any(named: 'displayName'),
+          custom: any(named: 'custom'),
+        )).thenAnswer((_) async {});
   });
 
   tearDown(() => authStream.close());
