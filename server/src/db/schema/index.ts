@@ -15,3 +15,4 @@ export * from './recipe-gallery.schema';
 export * from './recipe-shares.schema';
 export * from './shopping-lists.schema';
 export * from './accounts.schema';
+export * from './meal-plan.schema';
