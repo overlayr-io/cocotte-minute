@@ -91,7 +91,11 @@ class PlanningGridBoard extends StatelessWidget {
           bottom: BorderSide(color: Color(0xFFF1EDE3)),
         ),
       ),
-      child: Row(
+      // IntrinsicHeight : la ligne prend la hauteur de sa cellule la plus
+      // haute (dans un ListView la hauteur est non bornée, un stretch nu
+      // forcerait une hauteur infinie).
+      child: IntrinsicHeight(
+        child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           SizedBox(
@@ -136,6 +140,7 @@ class PlanningGridBoard extends StatelessWidget {
             Expanded(child: _GridSlotCell(data: data, day: day, slot: slot)),
           ],
         ],
+        ),
       ),
     );
   }

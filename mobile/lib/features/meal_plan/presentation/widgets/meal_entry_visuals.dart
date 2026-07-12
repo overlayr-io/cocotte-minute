@@ -39,10 +39,22 @@ class MealEntryThumb extends StatelessWidget {
       MealEntryType.recipe => (AppColors.primaryTint, AppColors.primary, Icons.restaurant_menu),
     };
     final photoUrl = entry.recipe?.photoUrl;
+    // Largeur infinie (vignette pleine largeur de card) : on laisse le parent
+    // contraindre et on fixe seulement la largeur de décodage.
+    final finiteWidth = w.isFinite ? w : null;
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
       child: entry.type == MealEntryType.recipe && photoUrl != null
-          ? AppNetworkImage(photoUrl, width: w, height: size)
+          ? SizedBox(
+              width: w,
+              height: size,
+              child: AppNetworkImage(
+                photoUrl,
+                width: finiteWidth,
+                height: size,
+                decodeWidth: finiteWidth == null ? 160 : null,
+              ),
+            )
           : Container(
               width: w,
               height: size,
