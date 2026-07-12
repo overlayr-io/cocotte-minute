@@ -1,10 +1,14 @@
 ---
 feature: planification-repas
-status: planned        # planned | in-progress | done
+status: done        # planned | in-progress | done
 scope: v2
 depends_on: [recipes, limite-freemium, premium-version, list-courses-auto]
 order: 17
 ---
+
+> **État 2026-07-12** : livrée sur `feat/planification-repas` (migration
+> `0017_meal_plan.sql` **non appliquée** — `npx drizzle-kit push` à lancer).
+> Écarts d'implémentation vs prototype en bas de document.
 
 # Planification des repas
 
@@ -160,3 +164,28 @@ La limite gratuit « 1 par créneau » compte **toutes les entrées confondues**
 - Écran 1g inclus (nécessaire pour gérer les créneaux multi-recettes).
 - **Liste « À planifier » : locale au device** (shared_preferences) — c'est un
   brouillon de travail, pas une donnée métier synchronisée.
+
+## Ajout — écarts d'implémentation (livraison 2026-07-12)
+
+- **Serveur** : module `meal-plan` (table `meal_plan_entries`, migration 0017),
+  `GET /meal-plan?weekStart`, `POST/DELETE /meal-plan/entries`. Codes premium
+  `PREMIUM_LIMIT_MEAL_SLOT_ENTRIES` (1 entrée/créneau gratuit) et
+  `PREMIUM_LIMIT_MEAL_PLAN_WEEK` (écriture hors T/T+1 gratuit — s'applique
+  aussi au retrait, cohérent avec la lecture seule). Semaine calculée en jours
+  civils Europe/Paris.
+- **Cascade recettes** : FK `ON DELETE CASCADE` pour les hard deletes + purge
+  lazy à la lecture pour les recettes *soft*-supprimées (le soft delete ne
+  déclenche pas la FK).
+- **Aucun nouvel endpoint courses** : le mobile réutilise
+  `POST /shopping-lists` (generate) et `DELETE /shopping-lists/:id` (clear).
+  Gratuit avec liste active *vide* : remplacement direct sans dialog (le
+  dialog n'apparaît que si la liste contient des articles).
+- **Menu contextuel 3a** : popover partagé `showActionMenu` de l'app (sans le
+  bloc d'en-tête « Créneau · nom » du prototype).
+- **Drag & drop** : démarre par appui long court (~150 ms) sur une chip du
+  bandeau — pattern mobile (le prototype desktop draguait au pointeur).
+- **Sheet détail 1g** : reste ouverte pendant les retraits, se ferme
+  automatiquement quand le créneau est vide.
+- **Snackbar/toast** : snackbar sombre « Annuler » (~5 s) pour le retrait ;
+  toast vert sombre + coche dorée pour le succès courses (gratuit et premium,
+  textes distincts), comme le prototype.
