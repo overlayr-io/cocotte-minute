@@ -12,11 +12,14 @@ import '../../../recipes/data/recipes_repository.dart';
 import '../../data/meal_plan_repository.dart';
 import '../../data/meal_plan_tray_store.dart';
 import '../../domain/meal_plan_entry.dart';
+import '../../../../core/widgets/action_menu.dart';
+import '../../../recipes/presentation/pages/recipe_detail_page.dart';
 import '../bloc/meal_plan_cubit.dart';
 import '../widgets/add_entry_sheet.dart';
 import '../widgets/meal_entry_visuals.dart';
 import '../widgets/planning_boards.dart';
 import '../widgets/planning_tray.dart';
+import '../widgets/slot_detail_sheet.dart';
 import '../widgets/tray_picker_sheet.dart';
 
 /// Onglet Planning : calendrier semaine lundi → dimanche, 3 créneaux par jour
@@ -93,6 +96,8 @@ class _PlanningView extends StatelessWidget {
           onAddToSlot: (day, slot) => _openAddSheet(context, day, slot),
           onDropRecipe: (day, slot, recipe) =>
               cubit.addRecipe(day: day, slot: slot, recipeId: recipe.id),
+          onTapSlot: (cellContext, day, slot) =>
+              _onTapSlot(cellContext, context, day, slot, isPremium, readonly),
         );
 
         final emptyHook =
@@ -129,6 +134,67 @@ class _PlanningView extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  /// Tap sur un créneau rempli : menu contextuel (3a) pour une entrée seule,
+  /// sheet détail (1g) pour un créneau multi-recettes.
+  void _onTapSlot(
+    BuildContext cellContext,
+    BuildContext pageContext,
+    String day,
+    MealSlot slot,
+    bool isPremium,
+    bool readonly,
+  ) {
+    final cubit = pageContext.read<MealPlanCubit>();
+    final l10n = AppLocalizations.of(pageContext);
+    final entries = cubit.state.slotEntries(day, slot);
+    if (entries.isEmpty) return;
+
+    if (entries.length > 1) {
+      final locale = Localizations.localeOf(pageContext).toString();
+      final date = DateTime.parse(day);
+      showSlotDetailSheet(
+        pageContext,
+        slotLabel:
+            '${longWeekday(locale, date)} ${date.day} · ${mealSlotLabel(l10n, slot)}',
+        entries: entries,
+        canEdit: !readonly,
+        canAdd: isPremium && !readonly,
+        onRemove: cubit.removeEntry,
+        onAdd: () => _openAddSheet(pageContext, day, slot),
+      );
+      return;
+    }
+
+    final entry = entries.first;
+    showActionMenu(
+      context: cellContext,
+      items: [
+        if (entry.type == MealEntryType.recipe && entry.recipe != null)
+          ActionMenuItem(
+            icon: Icons.visibility_outlined,
+            label: l10n.planningMenuView,
+            onSelected: () => Navigator.of(
+              pageContext,
+            ).push(RecipeDetailPage.route(entry.recipe!.id)),
+          ),
+        if (isPremium && !readonly)
+          ActionMenuItem(
+            icon: Icons.add,
+            label: l10n.planningMenuAdd,
+            style: ActionMenuStyle.primary,
+            onSelected: () => _openAddSheet(pageContext, day, slot),
+          ),
+        if (!readonly)
+          ActionMenuItem(
+            icon: Icons.delete_outline,
+            label: l10n.planningMenuRemove,
+            style: ActionMenuStyle.destructive,
+            onSelected: () => cubit.removeEntry(entry),
+          ),
+      ],
     );
   }
 
