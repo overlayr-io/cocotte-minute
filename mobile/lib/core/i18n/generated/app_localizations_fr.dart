@@ -2761,6 +2761,20 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get premiumLimitMealSlotTitle => 'Un créneau, une recette';
+
+  @override
+  String get premiumLimitMealSlotBody =>
+      'En gratuit, chaque créneau accueille une recette. Passe en Pro pour empiler plusieurs recettes sur le même moment.';
+
+  @override
+  String get premiumLimitMealWeekTitle => 'Semaine en lecture seule';
+
+  @override
+  String get premiumLimitMealWeekBody =>
+      'En gratuit, le planning s\'édite sur la semaine en cours et la suivante. Passe en Pro pour planifier toutes les semaines.';
+
+  @override
   String get premiumLimitGenericTitle => 'Fonctionnalité Pro';
 
   @override

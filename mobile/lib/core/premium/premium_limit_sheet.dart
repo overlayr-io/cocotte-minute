@@ -166,6 +166,14 @@ class _PremiumLimitSheet extends StatelessWidget {
           l10n.premiumLimitGalleryTitle,
           l10n.premiumLimitGalleryBody(error.limit ?? 3),
         ),
+      PremiumLimitError.mealSlotEntries => (
+          l10n.premiumLimitMealSlotTitle,
+          l10n.premiumLimitMealSlotBody,
+        ),
+      PremiumLimitError.mealPlanWeek => (
+          l10n.premiumLimitMealWeekTitle,
+          l10n.premiumLimitMealWeekBody,
+        ),
       _ => (l10n.premiumLimitGenericTitle, l10n.premiumLimitGenericBody),
     };
   }

@@ -2752,6 +2752,20 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get premiumLimitMealSlotTitle => 'One slot, one recipe';
+
+  @override
+  String get premiumLimitMealSlotBody =>
+      'On the free plan, each slot holds one recipe. Go Pro to stack several recipes on the same moment.';
+
+  @override
+  String get premiumLimitMealWeekTitle => 'Read-only week';
+
+  @override
+  String get premiumLimitMealWeekBody =>
+      'On the free plan you can edit the current and next week only. Go Pro to plan every week.';
+
+  @override
   String get premiumLimitGenericTitle => 'Pro feature';
 
   @override

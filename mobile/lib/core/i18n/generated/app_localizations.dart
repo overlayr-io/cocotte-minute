@@ -4652,6 +4652,30 @@ abstract class AppLocalizations {
   /// **'Le plan gratuit permet {limit} photos par recette. Passe en Pro pour en ajouter davantage.'**
   String premiumLimitGalleryBody(int limit);
 
+  /// No description provided for @premiumLimitMealSlotTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un créneau, une recette'**
+  String get premiumLimitMealSlotTitle;
+
+  /// No description provided for @premiumLimitMealSlotBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'En gratuit, chaque créneau accueille une recette. Passe en Pro pour empiler plusieurs recettes sur le même moment.'**
+  String get premiumLimitMealSlotBody;
+
+  /// No description provided for @premiumLimitMealWeekTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Semaine en lecture seule'**
+  String get premiumLimitMealWeekTitle;
+
+  /// No description provided for @premiumLimitMealWeekBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'En gratuit, le planning s\'édite sur la semaine en cours et la suivante. Passe en Pro pour planifier toutes les semaines.'**
+  String get premiumLimitMealWeekBody;
+
   /// No description provided for @premiumLimitGenericTitle.
   ///
   /// In fr, this message translates to:

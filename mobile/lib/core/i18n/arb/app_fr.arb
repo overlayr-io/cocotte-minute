@@ -1804,6 +1804,14 @@
       "limit": { "type": "int" }
     }
   },
+  "premiumLimitMealSlotTitle": "Un créneau, une recette",
+  "@premiumLimitMealSlotTitle": {},
+  "premiumLimitMealSlotBody": "En gratuit, chaque créneau accueille une recette. Passe en Pro pour empiler plusieurs recettes sur le même moment.",
+  "@premiumLimitMealSlotBody": {},
+  "premiumLimitMealWeekTitle": "Semaine en lecture seule",
+  "@premiumLimitMealWeekTitle": {},
+  "premiumLimitMealWeekBody": "En gratuit, le planning s'édite sur la semaine en cours et la suivante. Passe en Pro pour planifier toutes les semaines.",
+  "@premiumLimitMealWeekBody": {},
   "premiumLimitGenericTitle": "Fonctionnalité Pro",
   "@premiumLimitGenericTitle": {},
   "premiumLimitGenericBody": "Cette action dépasse les limites du plan gratuit. Découvre Cocotte Minute Pro.",
