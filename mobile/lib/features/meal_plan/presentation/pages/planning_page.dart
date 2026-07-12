@@ -13,7 +13,11 @@ import '../../data/meal_plan_repository.dart';
 import '../../data/meal_plan_tray_store.dart';
 import '../../domain/meal_plan_entry.dart';
 import '../bloc/meal_plan_cubit.dart';
+import '../widgets/add_entry_sheet.dart';
+import '../widgets/meal_entry_visuals.dart';
 import '../widgets/planning_boards.dart';
+import '../widgets/planning_tray.dart';
+import '../widgets/tray_picker_sheet.dart';
 
 /// Onglet Planning : calendrier semaine lundi → dimanche, 3 créneaux par jour
 /// (cf. docs/features/planification-repas.md, écrans 1a-1g).
@@ -86,6 +90,9 @@ class _PlanningView extends StatelessWidget {
           selectMode: state.selectMode,
           selectedSlots: state.selectedSlots,
           onToggleSelect: cubit.toggleSlotSelected,
+          onAddToSlot: (day, slot) => _openAddSheet(context, day, slot),
+          onDropRecipe: (day, slot, recipe) =>
+              cubit.addRecipe(day: day, slot: slot, recipeId: recipe.id),
         );
 
         final emptyHook =
@@ -110,6 +117,11 @@ class _PlanningView extends StatelessWidget {
                       ? PlanningGridBoard(data: boardData, header: emptyHook)
                       : PlanningBlocksBoard(data: boardData, header: emptyHook),
                 ),
+                if (!state.selectMode && !readonly)
+                  PlanningTray(
+                    recipes: state.tray,
+                    onManage: () => _openTrayPicker(context),
+                  ),
                 // Espace pour la barre de navigation flottante du shell.
                 const SizedBox(height: 90),
               ],
@@ -118,6 +130,41 @@ class _PlanningView extends StatelessWidget {
         );
       },
     );
+  }
+
+  /// « + » sur un créneau vide → sheet de choix (2a/2c) puis ajout.
+  Future<void> _openAddSheet(
+    BuildContext context,
+    String day,
+    MealSlot slot,
+  ) async {
+    final cubit = context.read<MealPlanCubit>();
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final date = DateTime.parse(day);
+    final slotLabel =
+        '${longWeekday(locale, date)} ${date.day} · ${mealSlotLabel(l10n, slot)}';
+
+    final choice = await showAddEntrySheet(context, slotLabel: slotLabel);
+    switch (choice) {
+      case AddRecipeChoice(:final recipe):
+        await cubit.addRecipe(day: day, slot: slot, recipeId: recipe.id);
+      case AddEatingOutChoice():
+        await cubit.addEatingOut(day: day, slot: slot);
+      case AddNoteChoice(:final text):
+        await cubit.addNote(day: day, slot: slot, text: text);
+      case null:
+        break;
+    }
+  }
+
+  Future<void> _openTrayPicker(BuildContext context) async {
+    final cubit = context.read<MealPlanCubit>();
+    final ids = await showTrayPickerSheet(
+      context,
+      initialIds: [for (final r in cubit.state.tray) r.id],
+    );
+    if (ids != null) await cubit.setTray(ids);
   }
 
   void _showUndoSnackBar(
