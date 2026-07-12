@@ -11,6 +11,7 @@ export * from './person-tags.schema';
 export * from './person-recipes.schema';
 export * from './categories.schema';
 export * from './recipes.schema';
+export * from './recipe-gallery.schema';
 export * from './recipe-shares.schema';
 export * from './shopping-lists.schema';
 export * from './accounts.schema';
