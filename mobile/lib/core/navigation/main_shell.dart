@@ -8,6 +8,7 @@ import '../../features/account/presentation/widgets/cancel_deletion_banner.dart'
 import '../../features/auth/presentation/pages/auth_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/meal_plan/presentation/pages/planning_page.dart';
+import '../../features/onboarding/data/onboarding_service.dart';
 import '../../features/recipes/presentation/pages/recipes_page.dart';
 import '../../features/shopping_list/data/shopping_sync_service.dart';
 import '../../features/shopping_list/presentation/pages/shopping_page.dart';
@@ -39,6 +40,11 @@ class _MainShellState extends State<MainShell> {
     // l'onglet Courses (désormais chargé à la première visite) n'est jamais
     // ouvert. Idempotent — l'appel de shopping_page reste sans effet.
     sl<ShoppingSyncService>().start();
+    // Onboarding (#12) : au 1er lancement, semer des recettes d'exemple pour
+    // montrer le but de l'app. Idempotent (serveur) + gardé par un flag local ;
+    // non bloquant. La session Supabase est prête ici (MainShell n'est monté
+    // qu'après `AuthAuthenticated`).
+    sl<OnboardingService>().maybeSeedSampleRecipes();
     // Rappel J+14 (informatif, jamais bloquant) : à chaque lancement, si le
     // compte anonyme a plus de 2 semaines, on invite à créer un compte.
     WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowGuestReminder());

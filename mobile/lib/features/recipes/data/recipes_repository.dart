@@ -191,6 +191,16 @@ class RecipesRepository {
     }
   }
 
+  /// Sème les recettes d'exemple à la 1ère ouverture (#12). Idempotent côté
+  /// serveur : sans effet si le compte a déjà eu au moins une recette.
+  Future<void> seedSamples() async {
+    try {
+      await _dio.post<void>('/recipes/seed-samples');
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de préparer les exemples.');
+    }
+  }
+
   /// Ajoute la recette aux favoris (idempotent). Peut porter un `premiumLimit`.
   Future<void> addFavorite(String recipeId) async {
     try {
