@@ -178,6 +178,11 @@ export interface RecipeDetailDto extends RecipeSummaryDto {
   fixedPrice: number | null;
   /** Tranche de prix affichée en badge, calculée côté client. Null si prix inconnu/partiel. */
   priceBracket: RecipePriceBracket | null;
+  /** Nutrition saisie à la main (feature #8), PAR PORTION. Null = non renseigné. */
+  caloriesPerServing: number | null;
+  proteinsPerServing: number | null;
+  carbsPerServing: number | null;
+  fatsPerServing: number | null;
   ingredients: RecipeIngredientLineDto[];
   /** Étapes (arbre déjà déplié + numéroté ; réfs de base résolues récursivement). */
   steps: RecipeStepDto[];
@@ -923,6 +928,10 @@ export class RecipesService {
       priceMode: row.priceMode,
       fixedPrice: row.fixedPrice,
       priceBracket: row.priceBracket,
+      caloriesPerServing: row.caloriesPerServing,
+      proteinsPerServing: row.proteinsPerServing,
+      carbsPerServing: row.carbsPerServing,
+      fatsPerServing: row.fatsPerServing,
       ingredients: ingredientLines,
       steps,
       components,
@@ -1039,6 +1048,15 @@ export class RecipesService {
     if (dto.priceMode !== undefined) patch.priceMode = dto.priceMode;
     if (dto.fixedPrice !== undefined) patch.fixedPrice = dto.fixedPrice;
     if (dto.priceBracket !== undefined) patch.priceBracket = dto.priceBracket;
+    // Nutrition manuelle (feature #8), par portion.
+    if (dto.caloriesPerServing !== undefined)
+      patch.caloriesPerServing = dto.caloriesPerServing;
+    if (dto.proteinsPerServing !== undefined)
+      patch.proteinsPerServing = dto.proteinsPerServing;
+    if (dto.carbsPerServing !== undefined)
+      patch.carbsPerServing = dto.carbsPerServing;
+    if (dto.fatsPerServing !== undefined)
+      patch.fatsPerServing = dto.fatsPerServing;
 
     const [row] = await this.db
       .update(recipes)

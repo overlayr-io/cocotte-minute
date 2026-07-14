@@ -82,6 +82,15 @@ export const recipes = pgTable('recipes', {
   fixedPrice: numeric('fixed_price', { precision: 10, scale: 2, mode: 'number' }),
   /** Tranche de prix affichée en badge, calculée côté client. Null si prix inconnu/partiel. */
   priceBracket: recipePriceBracketEnum('price_bracket'),
+  /**
+   * Valeurs nutritionnelles saisies à la main (feature #8), exprimées PAR
+   * PORTION. Toutes optionnelles (null = non renseigné). Calories en kcal,
+   * macros (protéines/glucides/lipides) en grammes.
+   */
+  caloriesPerServing: numeric('calories_per_serving', { precision: 8, scale: 2, mode: 'number' }),
+  proteinsPerServing: numeric('proteins_per_serving', { precision: 8, scale: 2, mode: 'number' }),
+  carbsPerServing: numeric('carbs_per_serving', { precision: 8, scale: 2, mode: 'number' }),
+  fatsPerServing: numeric('fats_per_serving', { precision: 8, scale: 2, mode: 'number' }),
   /** Soft delete : non-null = supprimé. Toujours filtrer `IS NULL` en lecture. */
   deletedAt: timestamp('deleted_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
