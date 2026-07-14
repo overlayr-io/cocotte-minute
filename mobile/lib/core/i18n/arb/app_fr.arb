@@ -1403,7 +1403,7 @@
   "@playerTimersBadge": { "placeholders": { "count": { "type": "int" } } },
   "playerServingsQuestion": "Pour combien de personnes ?",
   "@playerServingsQuestion": {},
-  "playerServingsHint": "Recette prévue pour {base} — les quantités sont recalculées automatiquement.",
+  "playerServingsHint": "Recette prévue pour {base}. Les quantités sont recalculées automatiquement.",
   "@playerServingsHint": { "placeholders": { "base": { "type": "int" } } },
   "playerServingsUnit": "personnes",
   "@playerServingsUnit": {},
@@ -1501,7 +1501,7 @@
 
   "playerSwitchTitle": "Une autre recette est en cours",
   "@playerSwitchTitle": {},
-  "playerSwitchBody": "{name}, étape {step} — la quitter et commencer celle-ci ?",
+  "playerSwitchBody": "{name}, étape {step} : la quitter et commencer celle-ci ?",
   "@playerSwitchBody": {
     "placeholders": { "name": { "type": "String" }, "step": { "type": "int" } }
   },
@@ -1736,7 +1736,7 @@
   "@premiumOfferingsError": {},
   "premiumOfferingsEmpty": "Aucune offre n'est disponible pour le moment. Réessaie plus tard.",
   "@premiumOfferingsEmpty": {},
-  "premiumPurchasePending": "Achat en attente de validation — l'accès Pro s'activera automatiquement.",
+  "premiumPurchasePending": "Achat en attente de validation. L'accès Pro s'activera automatiquement.",
   "@premiumPurchasePending": {},
   "premiumPurchaseFailed": "L'achat n'a pas abouti. Réessaie.",
   "@premiumPurchaseFailed": {},
@@ -1784,7 +1784,7 @@
   "@planningWeekNext": {},
   "planningWeekOther": "Autre semaine",
   "@planningWeekOther": {},
-  "planningReadonlyBanner": "Lecture seule — le gratuit édite la semaine en cours et la suivante.",
+  "planningReadonlyBanner": "Lecture seule. Le gratuit édite la semaine en cours et la suivante.",
   "@planningReadonlyBanner": {},
   "planningReadonlyCta": "Premium",
   "@planningReadonlyCta": {},
@@ -1822,7 +1822,7 @@
   "@planningAddSheetTitle": {},
   "planningNoteSheetTitle": "Note libre",
   "@planningNoteSheetTitle": {},
-  "planningNoteBody": "Un repas à la volée, sans recette — note juste ce que tu prévois.",
+  "planningNoteBody": "Un repas à la volée, sans recette : note juste ce que tu prévois.",
   "@planningNoteBody": {},
   "planningNoteHint": "Ex : pâtes sauce tomate",
   "@planningNoteHint": {},
@@ -1854,7 +1854,7 @@
   "@planningPickerTitle": {},
   "planningPickerDone": "Terminé · {count}",
   "@planningPickerDone": {"placeholders": {"count": {"type": "int"}}},
-  "planningPickerBody": "Garde sous la main les recettes de ce planning — tu ne glisses que celles-ci sur les créneaux.",
+  "planningPickerBody": "Garde sous la main les recettes de ce planning : tu ne glisses que celles-ci sur les créneaux.",
   "@planningPickerBody": {},
   "planningDropHere": "Déposer ici",
   "@planningDropHere": {},
@@ -1947,7 +1947,7 @@
       "max": { "type": "int" }
     }
   },
-  "premiumSearchCounterFull": "{used}/{max} — passe en Pro",
+  "premiumSearchCounterFull": "{used}/{max} · passe en Pro",
   "@premiumSearchCounterFull": {
     "placeholders": {
       "used": { "type": "int" },

@@ -2181,7 +2181,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String playerServingsHint(int base) {
-    return 'Recipe planned for $base — quantities are recalculated automatically.';
+    return 'Recipe planned for $base. Quantities are recalculated automatically.';
   }
 
   @override
@@ -2325,7 +2325,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String playerSwitchBody(String name, int step) {
-    return '$name, step $step — quit it and start this one?';
+    return '$name, step $step: quit it and start this one?';
   }
 
   @override
@@ -2665,7 +2665,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get premiumPurchasePending =>
-      'Purchase pending approval — Pro access will activate automatically.';
+      'Purchase pending approval. Pro access will activate automatically.';
 
   @override
   String get premiumPurchaseFailed =>
@@ -2733,7 +2733,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planningReadonlyBanner =>
-      'Read-only — the free plan edits the current and next week.';
+      'Read-only. The free plan edits the current and next week.';
 
   @override
   String get planningReadonlyCta => 'Premium';
@@ -2808,7 +2808,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planningNoteBody =>
-      'A meal on the fly, without a recipe — just note what you plan.';
+      'A meal on the fly, without a recipe: just note what you plan.';
 
   @override
   String get planningNoteHint => 'E.g. pasta with tomato sauce';
@@ -2861,7 +2861,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planningPickerBody =>
-      'Keep the recipes of this plan at hand — you only drag these onto slots.';
+      'Keep the recipes of this plan at hand: you only drag these onto slots.';
 
   @override
   String get planningDropHere => 'Drop here';
@@ -3013,6 +3013,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String premiumSearchCounterFull(int used, int max) {
-    return '$used/$max — go Pro';
+    return '$used/$max · go Pro';
   }
 }

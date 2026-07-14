@@ -751,7 +751,7 @@
   "playerTimersBadge": "{count, plural, =0{0 timers} =1{1 timer} other{{count} timers}}",
   "@playerTimersBadge": { "placeholders": { "count": { "type": "int" } } },
   "playerServingsQuestion": "For how many people?",
-  "playerServingsHint": "Recipe planned for {base} — quantities are recalculated automatically.",
+  "playerServingsHint": "Recipe planned for {base}. Quantities are recalculated automatically.",
   "@playerServingsHint": { "placeholders": { "base": { "type": "int" } } },
   "playerServingsUnit": "people",
   "playerStartCta": "Start cooking",
@@ -824,7 +824,7 @@
   "playerQuitConfirm": "Quit",
 
   "playerSwitchTitle": "Another recipe is in progress",
-  "playerSwitchBody": "{name}, step {step} — quit it and start this one?",
+  "playerSwitchBody": "{name}, step {step}: quit it and start this one?",
   "@playerSwitchBody": {
     "placeholders": { "name": { "type": "String" }, "step": { "type": "int" } }
   },
@@ -946,7 +946,7 @@
   "premiumGuestBody": "The Pro subscription is tied to a registered account: create yours to subscribe and find your recipes everywhere.",
   "premiumOfferingsError": "Unable to load the offers. Check your connection and try again.",
   "premiumOfferingsEmpty": "No offer is available right now. Try again later.",
-  "premiumPurchasePending": "Purchase pending approval — Pro access will activate automatically.",
+  "premiumPurchasePending": "Purchase pending approval. Pro access will activate automatically.",
   "premiumPurchaseFailed": "The purchase didn't go through. Try again.",
   "premiumRestoreNone": "No subscription to restore on this account.",
   "premiumSuccessTitle": "Welcome to Cocotte Minute Pro!",
@@ -971,7 +971,7 @@
   "@planningWeekNext": {},
   "planningWeekOther": "Other week",
   "@planningWeekOther": {},
-  "planningReadonlyBanner": "Read-only — the free plan edits the current and next week.",
+  "planningReadonlyBanner": "Read-only. The free plan edits the current and next week.",
   "@planningReadonlyBanner": {},
   "planningReadonlyCta": "Premium",
   "@planningReadonlyCta": {},
@@ -1009,7 +1009,7 @@
   "@planningAddSheetTitle": {},
   "planningNoteSheetTitle": "Free note",
   "@planningNoteSheetTitle": {},
-  "planningNoteBody": "A meal on the fly, without a recipe — just note what you plan.",
+  "planningNoteBody": "A meal on the fly, without a recipe: just note what you plan.",
   "@planningNoteBody": {},
   "planningNoteHint": "E.g. pasta with tomato sauce",
   "@planningNoteHint": {},
@@ -1041,7 +1041,7 @@
   "@planningPickerTitle": {},
   "planningPickerDone": "Done · {count}",
   "@planningPickerDone": {"placeholders": {"count": {"type": "int"}}},
-  "planningPickerBody": "Keep the recipes of this plan at hand — you only drag these onto slots.",
+  "planningPickerBody": "Keep the recipes of this plan at hand: you only drag these onto slots.",
   "@planningPickerBody": {},
   "planningDropHere": "Drop here",
   "@planningDropHere": {},
@@ -1102,5 +1102,5 @@
   "premiumLimitGenericTitle": "Pro feature",
   "premiumLimitGenericBody": "This action exceeds the free plan limits. Discover Cocotte Minute Pro.",
   "premiumSearchCounter": "{used}/{max}",
-  "premiumSearchCounterFull": "{used}/{max} — go Pro"
+  "premiumSearchCounterFull": "{used}/{max} · go Pro"
 }

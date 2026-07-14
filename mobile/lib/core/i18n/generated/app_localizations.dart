@@ -3785,7 +3785,7 @@ abstract class AppLocalizations {
   /// No description provided for @playerServingsHint.
   ///
   /// In fr, this message translates to:
-  /// **'Recette prévue pour {base} — les quantités sont recalculées automatiquement.'**
+  /// **'Recette prévue pour {base}. Les quantités sont recalculées automatiquement.'**
   String playerServingsHint(int base);
 
   /// No description provided for @playerServingsUnit.
@@ -4001,7 +4001,7 @@ abstract class AppLocalizations {
   /// No description provided for @playerSwitchBody.
   ///
   /// In fr, this message translates to:
-  /// **'{name}, étape {step} — la quitter et commencer celle-ci ?'**
+  /// **'{name}, étape {step} : la quitter et commencer celle-ci ?'**
   String playerSwitchBody(String name, int step);
 
   /// No description provided for @playerSwitchCancel.
@@ -4511,7 +4511,7 @@ abstract class AppLocalizations {
   /// No description provided for @premiumPurchasePending.
   ///
   /// In fr, this message translates to:
-  /// **'Achat en attente de validation — l\'accès Pro s\'activera automatiquement.'**
+  /// **'Achat en attente de validation. L\'accès Pro s\'activera automatiquement.'**
   String get premiumPurchasePending;
 
   /// No description provided for @premiumPurchaseFailed.
@@ -4631,7 +4631,7 @@ abstract class AppLocalizations {
   /// No description provided for @planningReadonlyBanner.
   ///
   /// In fr, this message translates to:
-  /// **'Lecture seule — le gratuit édite la semaine en cours et la suivante.'**
+  /// **'Lecture seule. Le gratuit édite la semaine en cours et la suivante.'**
   String get planningReadonlyBanner;
 
   /// No description provided for @planningReadonlyCta.
@@ -4745,7 +4745,7 @@ abstract class AppLocalizations {
   /// No description provided for @planningNoteBody.
   ///
   /// In fr, this message translates to:
-  /// **'Un repas à la volée, sans recette — note juste ce que tu prévois.'**
+  /// **'Un repas à la volée, sans recette : note juste ce que tu prévois.'**
   String get planningNoteBody;
 
   /// No description provided for @planningNoteHint.
@@ -4841,7 +4841,7 @@ abstract class AppLocalizations {
   /// No description provided for @planningPickerBody.
   ///
   /// In fr, this message translates to:
-  /// **'Garde sous la main les recettes de ce planning — tu ne glisses que celles-ci sur les créneaux.'**
+  /// **'Garde sous la main les recettes de ce planning : tu ne glisses que celles-ci sur les créneaux.'**
   String get planningPickerBody;
 
   /// No description provided for @planningDropHere.
@@ -5069,7 +5069,7 @@ abstract class AppLocalizations {
   /// No description provided for @premiumSearchCounterFull.
   ///
   /// In fr, this message translates to:
-  /// **'{used}/{max} — passe en Pro'**
+  /// **'{used}/{max} · passe en Pro'**
   String premiumSearchCounterFull(int used, int max);
 }
 

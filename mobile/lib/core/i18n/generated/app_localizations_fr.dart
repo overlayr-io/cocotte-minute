@@ -2189,7 +2189,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String playerServingsHint(int base) {
-    return 'Recette prévue pour $base — les quantités sont recalculées automatiquement.';
+    return 'Recette prévue pour $base. Les quantités sont recalculées automatiquement.';
   }
 
   @override
@@ -2333,7 +2333,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String playerSwitchBody(String name, int step) {
-    return '$name, étape $step — la quitter et commencer celle-ci ?';
+    return '$name, étape $step : la quitter et commencer celle-ci ?';
   }
 
   @override
@@ -2673,7 +2673,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get premiumPurchasePending =>
-      'Achat en attente de validation — l\'accès Pro s\'activera automatiquement.';
+      'Achat en attente de validation. L\'accès Pro s\'activera automatiquement.';
 
   @override
   String get premiumPurchaseFailed => 'L\'achat n\'a pas abouti. Réessaie.';
@@ -2741,7 +2741,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get planningReadonlyBanner =>
-      'Lecture seule — le gratuit édite la semaine en cours et la suivante.';
+      'Lecture seule. Le gratuit édite la semaine en cours et la suivante.';
 
   @override
   String get planningReadonlyCta => 'Premium';
@@ -2816,7 +2816,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get planningNoteBody =>
-      'Un repas à la volée, sans recette — note juste ce que tu prévois.';
+      'Un repas à la volée, sans recette : note juste ce que tu prévois.';
 
   @override
   String get planningNoteHint => 'Ex : pâtes sauce tomate';
@@ -2869,7 +2869,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get planningPickerBody =>
-      'Garde sous la main les recettes de ce planning — tu ne glisses que celles-ci sur les créneaux.';
+      'Garde sous la main les recettes de ce planning : tu ne glisses que celles-ci sur les créneaux.';
 
   @override
   String get planningDropHere => 'Déposer ici';
@@ -3023,6 +3023,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String premiumSearchCounterFull(int used, int max) {
-    return '$used/$max — passe en Pro';
+    return '$used/$max · passe en Pro';
   }
 }
