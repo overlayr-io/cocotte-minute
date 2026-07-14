@@ -315,6 +315,10 @@ class RecipeDetail extends Equatable {
     this.priceMode = RecipePriceMode.calculated,
     this.fixedPrice,
     this.priceBracket,
+    this.caloriesPerServing,
+    this.proteinsPerServing,
+    this.carbsPerServing,
+    this.fatsPerServing,
     this.ingredients = const [],
     this.steps = const [],
     this.components = const [],
@@ -339,6 +343,20 @@ class RecipeDetail extends Equatable {
   /// `priceMode == RecipePriceMode.fixed`.
   final double? fixedPrice;
   final RecipePriceBracket? priceBracket;
+
+  /// Nutrition saisie à la main (feature #8), PAR PORTION. Null = non renseigné.
+  /// Calories en kcal, macros (protéines/glucides/lipides) en grammes.
+  final double? caloriesPerServing;
+  final double? proteinsPerServing;
+  final double? carbsPerServing;
+  final double? fatsPerServing;
+
+  /// true si au moins une valeur nutritionnelle est renseignée.
+  bool get hasNutrition =>
+      caloriesPerServing != null ||
+      proteinsPerServing != null ||
+      carbsPerServing != null ||
+      fatsPerServing != null;
 
   final List<RecipeIngredientLine> ingredients;
 
@@ -376,6 +394,10 @@ class RecipeDetail extends Equatable {
       priceMode: priceMode,
       fixedPrice: fixedPrice,
       priceBracket: priceBracket,
+      caloriesPerServing: caloriesPerServing,
+      proteinsPerServing: proteinsPerServing,
+      carbsPerServing: carbsPerServing,
+      fatsPerServing: fatsPerServing,
       ingredients: ingredients,
       steps: steps,
       components: components,
@@ -405,6 +427,10 @@ class RecipeDetail extends Equatable {
       priceMode: priceMode,
       fixedPrice: fixedPrice,
       priceBracket: priceBracket,
+      caloriesPerServing: caloriesPerServing,
+      proteinsPerServing: proteinsPerServing,
+      carbsPerServing: carbsPerServing,
+      fatsPerServing: fatsPerServing,
       ingredients: ingredients,
       steps: steps,
       components: components,
@@ -426,6 +452,10 @@ class RecipeDetail extends Equatable {
       priceMode: priceMode,
       fixedPrice: fixedPrice,
       priceBracket: priceBracket,
+      caloriesPerServing: caloriesPerServing,
+      proteinsPerServing: proteinsPerServing,
+      carbsPerServing: carbsPerServing,
+      fatsPerServing: fatsPerServing,
       ingredients: ingredients,
       steps: steps,
       components: components,
@@ -452,6 +482,10 @@ class RecipeDetail extends Equatable {
       priceMode: RecipePriceMode.fromWire(json['priceMode'] as String? ?? 'calculated'),
       fixedPrice: (json['fixedPrice'] as num?)?.toDouble(),
       priceBracket: RecipePriceBracket.fromWire(json['priceBracket'] as String?),
+      caloriesPerServing: (json['caloriesPerServing'] as num?)?.toDouble(),
+      proteinsPerServing: (json['proteinsPerServing'] as num?)?.toDouble(),
+      carbsPerServing: (json['carbsPerServing'] as num?)?.toDouble(),
+      fatsPerServing: (json['fatsPerServing'] as num?)?.toDouble(),
       ingredients: list('ingredients', RecipeIngredientLine.fromJson),
       steps: list('steps', RecipeStep.fromJson),
       components: list('components', RecipeSummary.fromJson),
@@ -473,6 +507,10 @@ class RecipeDetail extends Equatable {
         priceMode,
         fixedPrice,
         priceBracket,
+        caloriesPerServing,
+        proteinsPerServing,
+        carbsPerServing,
+        fatsPerServing,
         ingredients,
         steps,
         components,

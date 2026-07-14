@@ -445,6 +445,11 @@
   "recipeFieldCook": "Cook (min)",
   "recipeFieldRest": "Rest (min)",
   "recipeFieldServings": "Servings",
+  "recipeFieldNutrition": "Nutrition (per serving)",
+  "recipeFieldCalories": "Calories",
+  "recipeFieldProteins": "Proteins",
+  "recipeFieldCarbs": "Carbs",
+  "recipeFieldFats": "Fats",
 
   "recipeIngredientsSection": "Ingredients",
   "recipeIngredientsEmpty": "No ingredients yet.",

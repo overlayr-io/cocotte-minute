@@ -1261,6 +1261,21 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recipeFieldServings => 'Personnes';
 
   @override
+  String get recipeFieldNutrition => 'Nutrition (par portion)';
+
+  @override
+  String get recipeFieldCalories => 'Calories';
+
+  @override
+  String get recipeFieldProteins => 'Protéines';
+
+  @override
+  String get recipeFieldCarbs => 'Glucides';
+
+  @override
+  String get recipeFieldFats => 'Lipides';
+
+  @override
   String get recipeIngredientsSection => 'Ingrédients';
 
   @override

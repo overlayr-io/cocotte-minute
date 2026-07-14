@@ -2354,6 +2354,36 @@ abstract class AppLocalizations {
   /// **'Personnes'**
   String get recipeFieldServings;
 
+  /// No description provided for @recipeFieldNutrition.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nutrition (par portion)'**
+  String get recipeFieldNutrition;
+
+  /// No description provided for @recipeFieldCalories.
+  ///
+  /// In fr, this message translates to:
+  /// **'Calories'**
+  String get recipeFieldCalories;
+
+  /// No description provided for @recipeFieldProteins.
+  ///
+  /// In fr, this message translates to:
+  /// **'Protéines'**
+  String get recipeFieldProteins;
+
+  /// No description provided for @recipeFieldCarbs.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glucides'**
+  String get recipeFieldCarbs;
+
+  /// No description provided for @recipeFieldFats.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lipides'**
+  String get recipeFieldFats;
+
   /// No description provided for @recipeIngredientsSection.
   ///
   /// In fr, this message translates to:

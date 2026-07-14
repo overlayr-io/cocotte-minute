@@ -106,6 +106,9 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     }
   }
 
+  /// Édition des champs de la fiche (sheet « Modifier »). Les 4 valeurs
+  /// nutritionnelles (feature #8) sont toujours fournies par la sheet — passer
+  /// null = champ effacé.
   Future<void> updateFields({
     String? name,
     String? description,
@@ -116,6 +119,10 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     int? servings,
     RecipePriceMode? priceMode,
     double? fixedPrice,
+    double? caloriesPerServing,
+    double? proteinsPerServing,
+    double? carbsPerServing,
+    double? fatsPerServing,
   }) async {
     final current = state;
     if (current is! RecipeDetailLoaded) return;
@@ -132,6 +139,10 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
         servings: servings,
         priceMode: priceMode,
         fixedPrice: fixedPrice,
+        caloriesPerServing: caloriesPerServing,
+        proteinsPerServing: proteinsPerServing,
+        carbsPerServing: carbsPerServing,
+        fatsPerServing: fatsPerServing,
       );
       // Recharge la fiche pour refléter les relations dérivées (verrou, etc.).
       final detail = await _repository.fetchDetail(recipeId);

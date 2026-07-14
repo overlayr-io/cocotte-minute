@@ -225,6 +225,10 @@ class RecipesRepository {
     RecipePriceMode? priceMode,
     double? fixedPrice,
     Object? priceBracket = _unset,
+    Object? caloriesPerServing = _unset,
+    Object? proteinsPerServing = _unset,
+    Object? carbsPerServing = _unset,
+    Object? fatsPerServing = _unset,
   }) async {
     try {
       final data = <String, dynamic>{
@@ -241,6 +245,20 @@ class RecipesRepository {
       };
       if (!identical(priceBracket, _unset)) {
         data['priceBracket'] = (priceBracket as RecipePriceBracket?)?.wire;
+      }
+      // Nutrition (feature #8) : sentinelle `_unset` = champ non touché ; null
+      // explicite = valeur effacée. Chaque champ est envoyé indépendamment.
+      if (!identical(caloriesPerServing, _unset)) {
+        data['caloriesPerServing'] = caloriesPerServing as double?;
+      }
+      if (!identical(proteinsPerServing, _unset)) {
+        data['proteinsPerServing'] = proteinsPerServing as double?;
+      }
+      if (!identical(carbsPerServing, _unset)) {
+        data['carbsPerServing'] = carbsPerServing as double?;
+      }
+      if (!identical(fatsPerServing, _unset)) {
+        data['fatsPerServing'] = fatsPerServing as double?;
       }
       final res = await _dio.patch<Map<String, dynamic>>(
         '/recipes/$id',

@@ -1254,6 +1254,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recipeFieldServings => 'Servings';
 
   @override
+  String get recipeFieldNutrition => 'Nutrition (per serving)';
+
+  @override
+  String get recipeFieldCalories => 'Calories';
+
+  @override
+  String get recipeFieldProteins => 'Proteins';
+
+  @override
+  String get recipeFieldCarbs => 'Carbs';
+
+  @override
+  String get recipeFieldFats => 'Fats';
+
+  @override
   String get recipeIngredientsSection => 'Ingredients';
 
   @override

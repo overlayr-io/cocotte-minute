@@ -112,6 +112,10 @@ class _Loaded extends StatelessWidget {
       cookTime: result.cookTime,
       restTime: result.restTime,
       servings: result.servings,
+      caloriesPerServing: result.caloriesPerServing,
+      proteinsPerServing: result.proteinsPerServing,
+      carbsPerServing: result.carbsPerServing,
+      fatsPerServing: result.fatsPerServing,
     );
   }
 
@@ -487,6 +491,10 @@ class _SheetState extends State<_Sheet> {
       cookTime: result.cookTime,
       restTime: result.restTime,
       servings: result.servings,
+      caloriesPerServing: result.caloriesPerServing,
+      proteinsPerServing: result.proteinsPerServing,
+      carbsPerServing: result.carbsPerServing,
+      fatsPerServing: result.fatsPerServing,
     );
   }
 
@@ -579,6 +587,10 @@ class _SheetState extends State<_Sheet> {
             const SizedBox(height: 16),
             RecipePriceSection(detail: detail, scale: scale, chosenServings: _portions),
             const SizedBox(height: 16),
+            if (detail.hasNutrition) ...[
+              _NutritionCard(detail: detail),
+              const SizedBox(height: 16),
+            ],
           ],
           _IngredientsStepsSegment(
             selected: _tab,
@@ -1318,6 +1330,100 @@ class _IngredientRow extends StatelessWidget {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Carte nutrition (feature #8) : calories + macros PAR PORTION. Affichée
+/// seulement si au moins une valeur est renseignée ; « — » pour une valeur
+/// absente. Même gabarit que la grille des temps.
+class _NutritionCard extends StatelessWidget {
+  const _NutritionCard({required this.detail});
+
+  final RecipeDetail detail;
+
+  static String _fmt(double? v) {
+    if (v == null) return '—';
+    return v == v.roundToDouble() ? v.toInt().toString() : v.toStringAsFixed(1);
+  }
+
+  Widget _cell(String label, double? value, String unit) {
+    final has = value != null;
+    return Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            has ? '${_fmt(value)}$unit' : '—',
+            style: TextStyle(
+              fontFamily: AppFonts.display,
+              fontSize: 15,
+              fontWeight: FontWeight.w700,
+              color: has ? AppColors.textPrimary : AppColors.textMuted,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            label.toUpperCase(),
+            style: const TextStyle(
+              fontSize: 8.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              color: AppColors.textMuted,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    Widget divider() =>
+        Container(width: 1, height: 40, color: AppColors.border);
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      padding: const EdgeInsets.fromLTRB(8, 12, 8, 13),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 8, bottom: 10),
+            child: Row(
+              children: [
+                const Icon(Icons.pie_chart_outline_rounded,
+                    size: 15, color: AppColors.primary),
+                const SizedBox(width: 6),
+                Text(
+                  l10n.recipeFieldNutrition,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 0.5,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Row(
+            children: [
+              _cell(l10n.recipeFieldCalories, detail.caloriesPerServing, ' kcal'),
+              divider(),
+              _cell(l10n.recipeFieldProteins, detail.proteinsPerServing, ' g'),
+              divider(),
+              _cell(l10n.recipeFieldCarbs, detail.carbsPerServing, ' g'),
+              divider(),
+              _cell(l10n.recipeFieldFats, detail.fatsPerServing, ' g'),
+            ],
+          ),
+        ],
       ),
     );
   }
