@@ -575,17 +575,31 @@ class _SheetState extends State<_Sheet> {
     AppLocalizations l10n,
     double scale,
   ) {
+    // Ingrédients directs (éditables, réordonnables) vs hérités des
+    // sous-recettes de base (lecture seule, cf. #11).
+    final direct =
+        detail.ingredients.where((i) => !i.inherited).toList(growable: false);
+    final inherited =
+        detail.ingredients.where((i) => i.inherited).toList(growable: false);
     return [
       if (detail.ingredients.isEmpty)
         _EmptyHint(message: l10n.recipeIngredientsEmpty)
-      else
-        _IngredientsList(
-          ingredients: detail.ingredients,
-          scale: scale,
-          onReorder: (ids) =>
-              context.read<RecipeDetailCubit>().reorderIngredients(ids),
-          onTapLine: _editLine,
-        ),
+      else ...[
+        if (direct.isNotEmpty)
+          _IngredientsList(
+            ingredients: direct,
+            scale: scale,
+            onReorder: (ids) =>
+                context.read<RecipeDetailCubit>().reorderIngredients(ids),
+            onTapLine: _editLine,
+          ),
+        if (inherited.isNotEmpty) ...[
+          const SizedBox(height: 6),
+          _IngredientsSubHeader(label: l10n.recipeIngredientsFromComponents),
+          for (final ing in inherited)
+            _IngredientRow(ingredient: ing, scale: scale, readOnly: true),
+        ],
+      ],
       const SizedBox(height: 14),
       _AddIngredientsButton(
         label: l10n.recipeIngredientsAddCta,
@@ -1194,8 +1208,9 @@ class _IngredientRow extends StatelessWidget {
     super.key,
     required this.ingredient,
     required this.scale,
-    required this.index,
-    required this.onTap,
+    this.index,
+    this.onTap,
+    this.readOnly = false,
   });
 
   final RecipeIngredientLine ingredient;
@@ -1203,9 +1218,12 @@ class _IngredientRow extends StatelessWidget {
   /// Facteur de mise à l'échelle (portions / servings) appliqué à l'affichage.
   final double scale;
 
-  /// Index dans la liste réordonnable (pour la poignée de drag).
-  final int index;
-  final VoidCallback onTap;
+  /// Index dans la liste réordonnable (poignée de drag ; null en lecture seule).
+  final int? index;
+  final VoidCallback? onTap;
+
+  /// true = ligne héritée d'une sous-recette : lecture seule (ni tap ni drag).
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -1213,7 +1231,7 @@ class _IngredientRow extends StatelessWidget {
     final unit = IngredientUnit.fromWire(ingredient.unit);
     final shownQuantity = (ingredient.quantity * scale * 100).round() / 100;
     return InkWell(
-      onTap: onTap,
+      onTap: readOnly ? null : onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 2),
         decoration: const BoxDecoration(
@@ -1238,29 +1256,70 @@ class _IngredientRow extends StatelessWidget {
             Expanded(
               child: Text(
                 ingredient.name,
-                style: const TextStyle(
-                    fontSize: 15, fontWeight: FontWeight.w500, color: AppColors.textPrimary),
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color:
+                      readOnly ? AppColors.textSecondary : AppColors.textPrimary,
+                ),
               ),
             ),
             const SizedBox(width: 10),
             Text(
               formatQuantityWithUnit(l10n, shownQuantity, unit),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF4B5563),
+                color: readOnly ? AppColors.textMuted : const Color(0xFF4B5563),
               ),
             ),
-            ReorderableDragStartListener(
-              index: index,
-              child: const Padding(
+            if (readOnly)
+              const Padding(
                 padding: EdgeInsets.only(left: 8),
-                child: Icon(Icons.drag_indicator_rounded,
-                    size: 20, color: Color(0xFFCBC7BB)),
+                child: Icon(Icons.subdirectory_arrow_right_rounded,
+                    size: 18, color: Color(0xFFCBC7BB)),
+              )
+            else
+              ReorderableDragStartListener(
+                index: index!,
+                child: const Padding(
+                  padding: EdgeInsets.only(left: 8),
+                  child: Icon(Icons.drag_indicator_rounded,
+                      size: 20, color: Color(0xFFCBC7BB)),
+                ),
               ),
-            ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Petit en-tête pour la sous-liste d'ingrédients hérités des sous-recettes.
+class _IngredientsSubHeader extends StatelessWidget {
+  const _IngredientsSubHeader({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10, bottom: 2),
+      child: Row(
+        children: [
+          const Icon(Icons.subdirectory_arrow_right_rounded,
+              size: 15, color: AppColors.textMuted),
+          const SizedBox(width: 6),
+          Text(
+            label.toUpperCase(),
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.5,
+              color: AppColors.textMuted,
+            ),
+          ),
+        ],
       ),
     );
   }

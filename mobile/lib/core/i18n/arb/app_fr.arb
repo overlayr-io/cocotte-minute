@@ -843,6 +843,8 @@
   "recipeIngredientsSection": "Ingrédients",
   "@recipeIngredientsSection": {},
   "recipeIngredientsEmpty": "Aucun ingrédient pour l'instant.",
+  "recipeIngredientsFromComponents": "Depuis les sous-recettes",
+  "@recipeIngredientsFromComponents": {},
   "@recipeIngredientsEmpty": {},
   "recipeComponentsSection": "Recettes de base utilisées",
   "@recipeComponentsSection": {},

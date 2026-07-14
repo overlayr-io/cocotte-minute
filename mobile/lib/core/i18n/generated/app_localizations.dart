@@ -2354,6 +2354,12 @@ abstract class AppLocalizations {
   /// **'Aucun ingrédient pour l\'instant.'**
   String get recipeIngredientsEmpty;
 
+  /// No description provided for @recipeIngredientsFromComponents.
+  ///
+  /// In fr, this message translates to:
+  /// **'Depuis les sous-recettes'**
+  String get recipeIngredientsFromComponents;
+
   /// No description provided for @recipeComponentsSection.
   ///
   /// In fr, this message translates to:

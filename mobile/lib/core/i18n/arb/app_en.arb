@@ -442,6 +442,8 @@
 
   "recipeIngredientsSection": "Ingredients",
   "recipeIngredientsEmpty": "No ingredients yet.",
+  "recipeIngredientsFromComponents": "From sub-recipes",
+  "@recipeIngredientsFromComponents": {},
   "recipeComponentsSection": "Base recipes used",
   "recipeUsedInSection": "Used in",
 

@@ -110,6 +110,12 @@ export interface RecipeIngredientLineDto {
   unit: string;
   imageUrl: string | null;
   quantity: number;
+  /**
+   * true = ligne héritée uniquement d'une sous-recette de base (pas un
+   * ingrédient direct de la recette). Lecture seule côté fiche : ni édition de
+   * quantité, ni réordonnancement.
+   */
+  inherited: boolean;
 }
 
 /** Bannière d'une étape (couleur/icône dérivées du type côté client). */
@@ -752,7 +758,29 @@ export class RecipesService {
           .orderBy(asc(recipeGalleryImages.createdAt)),
       ]);
 
-    const ingredientLines = await this.hydrateIngredients(authorId, ingredientRows);
+    // Agrégation récursive : ingrédients directs + ceux des sous-recettes de
+    // base (1×), cumulés par ingrédient. Les directs gardent leur position
+    // (drag & drop) et restent éditables ; les ingrédients hérités uniquement
+    // des sous-recettes sont marqués `inherited` (lecture seule) et ajoutés en
+    // fin de liste.
+    const aggregated = await this.collectIngredientQuantities(id);
+    const directIngredientIds = new Set(ingredientRows.map((r) => r.ingredientId));
+    const ingredientLines = await this.hydrateIngredients(authorId, [
+      ...ingredientRows.map((r) => ({
+        ingredientId: r.ingredientId,
+        quantity: aggregated.get(r.ingredientId) ?? r.quantity,
+        position: r.position,
+        inherited: false,
+      })),
+      ...[...aggregated.entries()]
+        .filter(([ingId]) => !directIngredientIds.has(ingId))
+        .map(([ingredientId, quantity]) => ({
+          ingredientId,
+          quantity,
+          position: Number.MAX_SAFE_INTEGER,
+          inherited: true,
+        })),
+    ]);
     const ingredientMap = new Map(ingredientLines.map((l) => [l.id, l]));
     const steps = await this.buildRecipeSteps(id, ingredientMap);
     const componentIds = new Set([
@@ -849,6 +877,7 @@ export class RecipesService {
           unit: info.unit,
           imageUrl: info.imageUrl,
           quantity,
+          inherited: false,
         });
       }
       linesByRecipe.set(recipeId, arr);
@@ -1487,7 +1516,12 @@ export class RecipesService {
    */
   private async hydrateIngredients(
     userId: string,
-    lines: { ingredientId: string; quantity: number; position?: number }[],
+    lines: {
+      ingredientId: string;
+      quantity: number;
+      position?: number;
+      inherited?: boolean;
+    }[],
   ): Promise<RecipeIngredientLineDto[]> {
     if (lines.length === 0) return [];
     const owned = await this.ingredientsService.listByIds(
@@ -1516,6 +1550,7 @@ export class RecipesService {
         unit: i.unit,
         imageUrl: i.imageUrl,
         quantity: line.quantity,
+        inherited: line.inherited ?? false,
       });
     }
     return result;

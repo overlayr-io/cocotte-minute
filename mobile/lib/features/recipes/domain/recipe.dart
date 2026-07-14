@@ -72,6 +72,7 @@ class RecipeIngredientLine extends Equatable {
     required this.unit,
     required this.quantity,
     this.imageUrl,
+    this.inherited = false,
   });
 
   final String id;
@@ -82,6 +83,10 @@ class RecipeIngredientLine extends Equatable {
   final double quantity;
   final String? imageUrl;
 
+  /// true = ligne héritée d'une sous-recette de base (lecture seule : ni
+  /// édition de quantité, ni réordonnancement dans la fiche).
+  final bool inherited;
+
   factory RecipeIngredientLine.fromJson(Map<String, dynamic> json) {
     return RecipeIngredientLine(
       id: json['id'] as String,
@@ -89,11 +94,12 @@ class RecipeIngredientLine extends Equatable {
       unit: json['unit'] as String,
       quantity: (json['quantity'] as num?)?.toDouble() ?? 1,
       imageUrl: json['imageUrl'] as String?,
+      inherited: json['inherited'] as bool? ?? false,
     );
   }
 
   @override
-  List<Object?> get props => [id, name, unit, quantity, imageUrl];
+  List<Object?> get props => [id, name, unit, quantity, imageUrl, inherited];
 }
 
 /// Une photo de galerie (feature galerie-recette) — une réalisation postée par

@@ -1260,6 +1260,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recipeIngredientsEmpty => 'Aucun ingrédient pour l\'instant.';
 
   @override
+  String get recipeIngredientsFromComponents => 'Depuis les sous-recettes';
+
+  @override
   String get recipeComponentsSection => 'Recettes de base utilisées';
 
   @override
