@@ -7,7 +7,8 @@ import '../config/env.dart';
 import 'premium_models.dart';
 
 /// Signature des écouteurs de changement d'abonnement côté app.
-typedef PremiumEntitlementListener = void Function(PremiumEntitlement entitlement);
+typedef PremiumEntitlementListener =
+    void Function(PremiumEntitlement entitlement);
 
 /// Unique point de contact avec les SDK RevenueCat (`purchases_flutter` +
 /// `purchases_ui_flutter`) : aucun cubit n'appelle les statiques `Purchases.*`
@@ -19,8 +20,8 @@ class PremiumRepository {
   /// les cubits doivent se comporter comme « non premium » sans appeler le SDK.
   bool get isConfigured => _configured;
 
-  final Map<PremiumEntitlementListener, void Function(CustomerInfo)> _listeners =
-      {};
+  final Map<PremiumEntitlementListener, void Function(CustomerInfo)>
+  _listeners = {};
 
   /// Configure RevenueCat au démarrage, SANS appUserID (utilisateur anonyme
   /// RevenueCat) ; `logIn` n'est appelé que pour un compte Supabase inscrit.
@@ -28,6 +29,18 @@ class PremiumRepository {
   /// bloquer le démarrage de l'app.
   Future<void> configure() async {
     if (_configured) return;
+    // Garde-fou release : sans clé de prod (`appl_`/`goog_`), on NE configure
+    // PAS RevenueCat avec la clé du Test Store. Le premium reste désactivé
+    // proprement (l'appelant catch, l'app démarre) au lieu de faire échouer le
+    // paywall sur l'appareil du reviewer Apple (rejet 2.1). En debug, repli
+    // Test Store toléré via Env.revenueCatApiKey.
+    if (Env.revenueCatKeyMissingInRelease) {
+      throw StateError(
+        'RevenueCat: REVENUECAT_API_KEY (clé de prod appl_.../goog_...) '
+        'manquante en release. La fournir via '
+        '--dart-define-from-file=env.prod.json avant tout build de release.',
+      );
+    }
     if (kDebugMode) {
       await Purchases.setLogLevel(LogLevel.debug);
     }
@@ -74,14 +87,22 @@ class PremiumRepository {
   void _debugDumpCustomerInfo(String origin, CustomerInfo info) {
     if (!kDebugMode) return;
     debugPrint('[Premium/$origin] appUserId=${info.originalAppUserId}');
-    debugPrint('[Premium/$origin] activeSubscriptions='
-        '${info.activeSubscriptions}');
-    debugPrint('[Premium/$origin] entitlements.all='
-        '${info.entitlements.all.keys.toList()}');
-    debugPrint('[Premium/$origin] entitlements.active='
-        '${info.entitlements.active.keys.toList()}');
-    debugPrint('[Premium/$origin] pro actif='
-        '${info.entitlements.active[kPremiumEntitlementId] != null}');
+    debugPrint(
+      '[Premium/$origin] activeSubscriptions='
+      '${info.activeSubscriptions}',
+    );
+    debugPrint(
+      '[Premium/$origin] entitlements.all='
+      '${info.entitlements.all.keys.toList()}',
+    );
+    debugPrint(
+      '[Premium/$origin] entitlements.active='
+      '${info.entitlements.active.keys.toList()}',
+    );
+    debugPrint(
+      '[Premium/$origin] pro actif='
+      '${info.entitlements.active[kPremiumEntitlementId] != null}',
+    );
   }
 
   /// Déconnecte l'utilisateur RevenueCat. `Purchases.logOut()` lève si
@@ -104,6 +125,7 @@ class PremiumRepository {
       _debugDumpCustomerInfo('update', info);
       listener(PremiumEntitlement.fromCustomerInfo(info));
     }
+
     _listeners[listener] = wrapped;
     Purchases.addCustomerInfoUpdateListener(wrapped);
   }
@@ -162,7 +184,8 @@ class PremiumRepository {
     return switch (code) {
       PurchasesErrorCode.purchaseCancelledError =>
         PremiumPurchaseErrorType.cancelled,
-      PurchasesErrorCode.paymentPendingError => PremiumPurchaseErrorType.pending,
+      PurchasesErrorCode.paymentPendingError =>
+        PremiumPurchaseErrorType.pending,
       _ => PremiumPurchaseErrorType.failed,
     };
   }

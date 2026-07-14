@@ -10,6 +10,10 @@ order: 11
 > webhook, limites, PremiumCubit, paywall, upsells). Reste uniquement de la
 > config externe (pas de code) : dashboard RevenueCat (entitlement `pro`,
 > produits, webhook), produits App Store Connect / Play Console.
+>
+> **État 2026-07-14** : 1re soumission App Store **rejetée** (submission
+> 9d90d366, 3 points) — corrections code livrées, reste de la config externe.
+> Voir [Soumission App Store — rejet 2026-07-14](#soumission-app-store--rejet-2026-07-14-et-corrections).
 
 # Version premium — abonnement, écran d'offre et application des limites
 
@@ -117,7 +121,11 @@ La décision "paiement reporté après le v1" de `limite-freemium.md` est levée
   réellement éligible (15 ou 30 jours selon la fenêtre de lancement — lue
   depuis l'Introductory Offer RevenueCat, jamais codée en dur côté app)
   + bouton d'abonnement (achat natif) + lien "Restaurer mes achats"
-  + liens CGV/confidentialité (obligatoires pour la review Apple).
+  + liens CGU (EULA)/confidentialité (obligatoires pour la review Apple —
+  guideline 3.1.2c). Depuis le 2026-07-14 ces liens vivent dans un
+  **`_LegalFooter` persistant**, affiché sous la zone d'état dans **tous** les
+  états du paywall (chargement, erreur, offres, succès) : ils ne disparaissent
+  plus sur l'écran d'erreur (cf. section rejet App Store).
 - Construite avec les paywalls RevenueCat **ou** en Flutter maison branchée sur
   les `Offerings` RevenueCat (prix localisés récupérés du store, jamais codés
   en dur) — à trancher à l'implémentation, paywall maison par défaut pour
@@ -188,6 +196,15 @@ La décision "paiement reporté après le v1" de `limite-freemium.md` est levée
 ### Mobile (Flutter)
 - Dépendance `purchases_flutter` ; init au démarrage (clés API par plateforme),
   `logIn/logOut` synchronisés sur `AuthBloc`.
+- **Clé RevenueCat / garde-fou release (2026-07-14)** : `Env.revenueCatApiKey`
+  ne retombe sur la clé du **Test Store** qu'en **debug**
+  (`kReleaseMode ? '' : _testStoreKey`). En release, une clé de prod
+  (`appl_...`/`goog_...`) via `--dart-define-from-file=env.prod.json` est
+  obligatoire : sinon `PremiumRepository.configure()` lève un `StateError`
+  (attrapé par l'appelant → premium désactivé proprement, jamais la clé test
+  embarquée). Empêche la récurrence du rejet 2.1 (paywall en erreur car un
+  build prod embarquait la clé Test Store, qui ne sert pas les produits App
+  Store réels).
 - **`PremiumCubit`** (core) : expose `isPremium` + statut (essai, expiration).
   Alimenté par `Purchases.getCustomerInfo()` + listener
   `addCustomerInfoUpdateListener` (activation instantanée après achat, sans
@@ -213,6 +230,46 @@ La décision "paiement reporté après le v1" de `limite-freemium.md` est levée
   puis 15j à J+90, base plan annuel sans essai).
 - Dashboard RevenueCat : projet, entitlement `pro`, offering par défaut,
   webhook vers le serveur (header `Authorization` = `REVENUECAT_WEBHOOK_SECRET`).
+
+## Soumission App Store — rejet 2026-07-14 et corrections
+1re soumission (v1.0 build 1, submission `9d90d366-d6fe-4dd4-8bda-724e49f5c447`,
+review sur iPad Air M3 / iPadOS 26.5) **rejetée** sur 3 points. Les corrections
+**code** sont livrées ; le reste est de la config externe (ASC / RevenueCat /
+`env.prod.json`).
+
+- **2.1(a) — « Pro page displays an error message »** *(code corrigé)*.
+  Cause racine : le build de prod embarquait la **clé Test Store** RevenueCat
+  (`REVENUECAT_API_KEY` absente de `env.prod.json`, repli sur le `defaultValue`
+  `test_` dans `env.dart`) → `Purchases.getOfferings()` échoue sur l'appareil
+  réel du reviewer → `PaywallStatus.failure` (écran d'erreur plein écran).
+  Correction : garde-fou release (cf. *Mobile (Flutter)* ci-dessus). **Reste
+  user** : renseigner la vraie clé `appl_...` dans `env.prod.json`.
+- **3.1.2(b) — durées d'abonnement en produits IAP séparés** *(config ASC,
+  aucun code)*. Le doc prévoyait bien **un seul subscription group** (cf.
+  *Config stores*), mais l'App Store Connect réel avait créé
+  `cocotte_399_1m_30d0` (mensuel) et `cocotte_2999_1y_0` (annuel) comme produits
+  séparés. **Reste user** : les regrouper dans **un même Subscription Group**
+  (garder les identifiants — RevenueCat lit par `$rc_monthly` / `$rc_annual`,
+  aucun impact code).
+- **3.1.2(c) — lien Terms of Use (EULA) manquant** *(code corrigé + metadata
+  user)*. Choix retenu = **EULA standard Apple** (Option A) : pas de EULA custom,
+  `termsS6` laissé générique. Correction code : les liens légaux sont désormais
+  dans un `_LegalFooter` persistant (cf. *Écran d'offre*) — visibles même sur
+  l'écran d'erreur, où ils disparaissaient avant. **Reste user** : lien EULA
+  standard `https://www.apple.com/legal/internet-services/itunes/dev/stdeula/`
+  dans la **description App Store** + URL de politique de confidentialité dans
+  le champ dédié ASC.
+
+**Checklist resoumission (100 % côté user, hors code)** :
+1. Clé `appl_...` dans `env.prod.json`, rebuild `--dart-define-from-file`.
+2. Un seul Subscription Group en ASC (IDs inchangés).
+3. Soumettre les 2 produits IAP **avec** le build.
+4. EULA standard dans la description + Privacy Policy URL en metadata ASC.
+5. RevenueCat : produits rattachés à l'entitlement `pro` + offering courant ;
+   **Sandbox Testing Access = « Anybody »** (piège confirmé le 2026-07-12).
+
+Tests : `test/features/premium/premium_page_test.dart` couvre les liens légaux
+visibles sur l'écran d'erreur (scénario reviewer).
 
 ## Règles métier
 - Toute vérification de limite s'appuie sur `PremiumService.isPremium()`

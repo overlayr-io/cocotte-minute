@@ -176,6 +176,11 @@ void main() {
       findsOneWidget,
     );
 
+    // Les liens légaux (CGU/EULA + confidentialité) restent visibles même sur
+    // l'écran d'erreur — exigence App Store 3.1.2 (scénario vu par le reviewer).
+    expect(find.text('Conditions d\'utilisation'), findsOneWidget);
+    expect(find.text('Politique de confidentialité'), findsOneWidget);
+
     await tester.tap(find.text('Réessayer'));
     await tester.pumpAndSettle();
     expect(find.text('3,99 €'), findsOneWidget);
