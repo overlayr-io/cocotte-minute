@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/premium/premium_limit_error.dart';
 import '../domain/recipe.dart';
+import '../domain/recipe_sort.dart';
 
 /// Erreur portant un message exploitable pour l'UI (snackbar/page d'erreur).
 class RecipesRepositoryException implements Exception {
@@ -63,6 +64,7 @@ class RecipesRepository {
     String? q,
     int? limit,
     int? offset,
+    RecipeSort? sort,
   }) async {
     try {
       final res = await _dio.get<List<dynamic>>(
@@ -71,6 +73,7 @@ class RecipesRepository {
           if (q != null && q.trim().isNotEmpty) 'q': q.trim(),
           'limit': ?limit,
           'offset': ?offset,
+          if (sort != null && sort != RecipeSort.recent) 'sort': sort.wire,
         },
       );
       return (res.data ?? const [])

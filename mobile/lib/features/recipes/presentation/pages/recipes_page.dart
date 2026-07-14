@@ -18,6 +18,7 @@ import '../../data/recipes_repository.dart';
 import '../bloc/all_recipes_cubit.dart';
 import '../bloc/uncategorized_recipes_cubit.dart';
 import '../widgets/recipe_list_card.dart';
+import '../widgets/recipe_sort_button.dart';
 import 'recipe_create_page.dart';
 import 'recipe_detail_page.dart';
 import 'uncategorized_folder_page.dart';
@@ -415,7 +416,16 @@ class _AllRecipesListState extends State<_AllRecipesList> {
                 hint: l10n.recipesListFilterHint,
                 onChanged: (q) => context.read<AllRecipesCubit>().load(query: q),
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 12),
+              Align(
+                alignment: Alignment.centerRight,
+                child: RecipeSortButton(
+                  value: state.sort,
+                  onChanged: (s) =>
+                      context.read<AllRecipesCubit>().setSort(s),
+                ),
+              ),
+              const SizedBox(height: 12),
               if (state.error != null)
                 Padding(
                   padding: const EdgeInsets.only(top: 30),

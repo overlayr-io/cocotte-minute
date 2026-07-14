@@ -12,6 +12,7 @@ import '../../../categories/data/categories_repository.dart';
 import '../../../categories/domain/category.dart';
 import '../../../people/data/people_repository.dart';
 import '../../../recipes/presentation/pages/recipe_detail_page.dart';
+import '../../../recipes/presentation/widgets/recipe_sort_button.dart';
 import '../../../tags/data/tags_repository.dart';
 import '../../data/search_repository.dart';
 import '../bloc/search_cubit.dart';
@@ -262,13 +263,23 @@ class _Results extends StatelessWidget {
             ],
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: RecipeSortButton(
+              value: state.sort,
+              onChanged: cubit.setSort,
+            ),
+          ),
+        ),
         Expanded(
           child: ListView.separated(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-            itemCount: state.results.length,
+            itemCount: state.sortedResults.length,
             separatorBuilder: (_, _) => const SizedBox(height: 11),
             itemBuilder: (context, i) {
-              final recipe = state.results[i];
+              final recipe = state.sortedResults[i];
               return SearchResultCard(
                 recipe: recipe,
                 onTap: () => Navigator.of(

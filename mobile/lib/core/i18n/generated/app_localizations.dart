@@ -2360,6 +2360,30 @@ abstract class AppLocalizations {
   /// **'Depuis les sous-recettes'**
   String get recipeIngredientsFromComponents;
 
+  /// No description provided for @recipeSortTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trier les recettes'**
+  String get recipeSortTooltip;
+
+  /// No description provided for @recipeSortRecent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récent'**
+  String get recipeSortRecent;
+
+  /// No description provided for @recipeSortTime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Temps'**
+  String get recipeSortTime;
+
+  /// No description provided for @recipeSortName.
+  ///
+  /// In fr, this message translates to:
+  /// **'A-Z'**
+  String get recipeSortName;
+
   /// No description provided for @recipeComponentsSection.
   ///
   /// In fr, this message translates to:

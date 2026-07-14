@@ -1263,6 +1263,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recipeIngredientsFromComponents => 'Depuis les sous-recettes';
 
   @override
+  String get recipeSortTooltip => 'Trier les recettes';
+
+  @override
+  String get recipeSortRecent => 'Récent';
+
+  @override
+  String get recipeSortTime => 'Temps';
+
+  @override
+  String get recipeSortName => 'A-Z';
+
+  @override
   String get recipeComponentsSection => 'Recettes de base utilisées';
 
   @override

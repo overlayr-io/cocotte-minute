@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../data/recipes_repository.dart';
 import '../../domain/recipe.dart';
+import '../../domain/recipe_sort.dart';
 
 /// Vue Liste de la page Recettes : toutes les recettes, paginées (infinite
 /// scroll) et filtrables par un texte simple (filtre serveur sur le nom —
@@ -19,13 +20,26 @@ class AllRecipesCubit extends Cubit<AllRecipesState> {
   /// Jeton anti-course : seule la dernière requête lancée a le droit d'émettre.
   int _requestId = 0;
 
+  /// Change le tri et recharge depuis la première page (le tri est serveur, la
+  /// pagination doit repartir de zéro).
+  Future<void> setSort(RecipeSort sort) async {
+    if (sort == state.sort) return;
+    emit(state.copyWith(sort: sort));
+    await load();
+  }
+
   /// (Re)charge la première page pour [query] ('' = toutes les recettes).
   Future<void> load({String? query}) async {
     final q = query ?? state.query;
     final id = ++_requestId;
     emit(state.copyWith(query: q, loading: true, error: null));
     try {
-      final page = await _repository.fetchMine(q: q, limit: _pageSize, offset: 0);
+      final page = await _repository.fetchMine(
+        q: q,
+        limit: _pageSize,
+        offset: 0,
+        sort: state.sort,
+      );
       if (id != _requestId) return;
       emit(state.copyWith(
         recipes: page,
@@ -48,6 +62,7 @@ class AllRecipesCubit extends Cubit<AllRecipesState> {
         q: state.query,
         limit: _pageSize,
         offset: state.recipes.length,
+        sort: state.sort,
       );
       if (id != _requestId) return;
       emit(state.copyWith(
@@ -72,6 +87,7 @@ class AllRecipesState extends Equatable {
     this.hasMore = true,
     this.error,
     this.loadedOnce = false,
+    this.sort = RecipeSort.recent,
   });
 
   final List<RecipeSummary> recipes;
@@ -80,6 +96,7 @@ class AllRecipesState extends Equatable {
   final bool loadingMore;
   final bool hasMore;
   final String? error;
+  final RecipeSort sort;
 
   /// Au moins une page chargée avec succès (évite le spinner plein écran lors
   /// des filtrages suivants).
@@ -92,6 +109,7 @@ class AllRecipesState extends Equatable {
     bool? loadingMore,
     bool? hasMore,
     String? error,
+    RecipeSort? sort,
   }) {
     return AllRecipesState(
       recipes: recipes ?? this.recipes,
@@ -101,10 +119,11 @@ class AllRecipesState extends Equatable {
       hasMore: hasMore ?? this.hasMore,
       error: error,
       loadedOnce: loadedOnce || recipes != null,
+      sort: sort ?? this.sort,
     );
   }
 
   @override
   List<Object?> get props =>
-      [recipes, query, loading, loadingMore, hasMore, error, loadedOnce];
+      [recipes, query, loading, loadingMore, hasMore, error, loadedOnce, sort];
 }

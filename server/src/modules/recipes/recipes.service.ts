@@ -41,6 +41,7 @@ import { PremiumService } from '../billing/premium.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { isSeasonal } from './data/seasonality';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
+import { type RecipeSort } from './dto/list-recipes-query.dto';
 import {
   CreateRecipeStepDto,
   UpdateRecipeStepDto,
@@ -267,7 +268,7 @@ export class RecipesService {
    */
   async listMine(
     userId: string,
-    options?: { q?: string; limit?: number; offset?: number },
+    options?: { q?: string; limit?: number; offset?: number; sort?: RecipeSort },
   ): Promise<RecipeSummaryDto[]> {
     const conditions = [eq(recipes.authorId, userId), isNull(recipes.deletedAt)];
     const q = options?.q?.trim();
@@ -278,12 +279,34 @@ export class RecipesService {
       .select()
       .from(recipes)
       .where(and(...conditions))
-      .orderBy(desc(recipes.createdAt))
+      .orderBy(...this.recipeOrderBy(options?.sort))
       .$dynamic();
     if (options?.limit !== undefined) query = query.limit(options.limit);
     if (options?.offset !== undefined) query = query.offset(options.offset);
     const rows = await query;
     return rows.map(toSummary);
+  }
+
+  /**
+   * Clause de tri de la vue Liste. `createdAt` desc en critère secondaire pour un
+   * ordre déterministe (stabilité de la pagination limit/offset). Pas de tri par
+   * prix : calcul de prix côté client uniquement (contrainte transverse).
+   */
+  private recipeOrderBy(sort?: RecipeSort) {
+    switch (sort) {
+      case 'name':
+        return [asc(recipes.name), desc(recipes.createdAt)];
+      case 'time':
+        return [
+          asc(
+            sql`${recipes.prepTime} + ${recipes.cookTime} + ${recipes.restTime}`,
+          ),
+          desc(recipes.createdAt),
+        ];
+      case 'recent':
+      default:
+        return [desc(recipes.createdAt)];
+    }
   }
 
   /**
