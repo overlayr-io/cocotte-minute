@@ -797,10 +797,9 @@ export class RecipesService {
   }
 
   /**
-   * Recettes possédées (non supprimées) + leurs ingrédients directs, pour générer
-   * une liste de courses (feature liste-courses-auto). N'inclut PAS les ingrédients
-   * des sous-recettes (`recipe_components`) — cohérent avec `getDetail` aujourd'hui ;
-   * le dépliage récursif des composants relèvera d'une itération dédiée. Lève si un
+   * Recettes possédées (non supprimées) + leurs ingrédients agrégés (directs +
+   * ceux des sous-recettes de base en 1×, cf. `collectIngredientQuantities`),
+   * pour générer une liste de courses (feature liste-courses-auto). Lève si un
    * id demandé n'appartient pas à l'utilisateur (ou est supprimé). Exposé à
    * ShoppingListsService (isolation des domaines : jamais d'accès direct au schéma).
    */
@@ -824,33 +823,35 @@ export class RecipesService {
       throw new NotFoundException('Recette introuvable');
     }
 
-    const ingRows = await this.db
-      .select({
-        recipeId: recipeIngredients.recipeId,
-        ingredientId: recipeIngredients.ingredientId,
-        quantity: recipeIngredients.quantity,
-      })
-      .from(recipeIngredients)
-      .where(inArray(recipeIngredients.recipeId, uniqueIds));
+    // Quantités agrégées par recette : ingrédients directs + ceux des
+    // sous-recettes de base (1×), cumulés récursivement.
+    const aggregatedByRecipe = new Map<string, Map<string, number>>();
+    for (const id of uniqueIds) {
+      aggregatedByRecipe.set(id, await this.collectIngredientQuantities(id));
+    }
 
     // Hydratation en une passe (nom/unité/image via le service Ingredients).
-    const allIngredientIds = [...new Set(ingRows.map((r) => r.ingredientId))];
+    const allIngredientIds = [
+      ...new Set([...aggregatedByRecipe.values()].flatMap((m) => [...m.keys()])),
+    ];
     const owned = await this.ingredientsService.listByIds(userId, allIngredientIds);
     const ingredientMap = new Map(owned.map((i) => [i.id, i]));
 
     const linesByRecipe = new Map<string, RecipeIngredientLineDto[]>();
-    for (const r of ingRows) {
-      const info = ingredientMap.get(r.ingredientId);
-      if (!info) continue; // ingrédient supprimé entre-temps → ignoré
-      const arr = linesByRecipe.get(r.recipeId) ?? [];
-      arr.push({
-        id: info.id,
-        name: info.name,
-        unit: info.unit,
-        imageUrl: info.imageUrl,
-        quantity: r.quantity,
-      });
-      linesByRecipe.set(r.recipeId, arr);
+    for (const [recipeId, totals] of aggregatedByRecipe) {
+      const arr: RecipeIngredientLineDto[] = [];
+      for (const [ingredientId, quantity] of totals) {
+        const info = ingredientMap.get(ingredientId);
+        if (!info) continue; // ingrédient supprimé entre-temps → ignoré
+        arr.push({
+          id: info.id,
+          name: info.name,
+          unit: info.unit,
+          imageUrl: info.imageUrl,
+          quantity,
+        });
+      }
+      linesByRecipe.set(recipeId, arr);
     }
 
     return rows.map((row) => ({
@@ -1420,6 +1421,64 @@ export class RecipesService {
   }
 
   // --- privé -------------------------------------------------------------
+
+  /**
+   * Quantités d'ingrédients agrégées d'une recette : ses ingrédients directs +
+   * ceux de ses sous-recettes de base — composants (`recipe_components`) ET
+   * références d'étape (`base_recipe_ref_id`), dédupliquées — cumulées par
+   * ingrédient. Quantités BRUTES (1×, aux portions propres de chaque
+   * sous-recette : `recipe_components` ne porte pas de quantité, pas de mise à
+   * l'échelle). Récursif, anti-cycle via `visited`.
+   */
+  private async collectIngredientQuantities(
+    recipeId: string,
+    visited: Set<string> = new Set(),
+  ): Promise<Map<string, number>> {
+    const totals = new Map<string, number>();
+    if (visited.has(recipeId)) return totals;
+    visited.add(recipeId);
+
+    const [direct, components, stepRefs] = await Promise.all([
+      this.db
+        .select({
+          ingredientId: recipeIngredients.ingredientId,
+          quantity: recipeIngredients.quantity,
+        })
+        .from(recipeIngredients)
+        .where(eq(recipeIngredients.recipeId, recipeId)),
+      this.db
+        .select({ baseRecipeId: recipeComponents.baseRecipeId })
+        .from(recipeComponents)
+        .where(eq(recipeComponents.parentRecipeId, recipeId)),
+      this.db
+        .select({ baseRecipeId: recipeSteps.baseRecipeRefId })
+        .from(recipeSteps)
+        .where(
+          and(
+            eq(recipeSteps.recipeId, recipeId),
+            isNotNull(recipeSteps.baseRecipeRefId),
+          ),
+        ),
+    ]);
+
+    for (const r of direct) {
+      totals.set(r.ingredientId, (totals.get(r.ingredientId) ?? 0) + r.quantity);
+    }
+
+    const baseIds = new Set<string>();
+    for (const c of components) baseIds.add(c.baseRecipeId);
+    for (const s of stepRefs) {
+      if (s.baseRecipeId) baseIds.add(s.baseRecipeId);
+    }
+
+    for (const baseId of baseIds) {
+      const sub = await this.collectIngredientQuantities(baseId, visited);
+      for (const [ingId, qty] of sub) {
+        totals.set(ingId, (totals.get(ingId) ?? 0) + qty);
+      }
+    }
+    return totals;
+  }
 
   /**
    * Résout les lignes du pivot (id + quantité) en lignes affichables, en lisant

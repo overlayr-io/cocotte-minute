@@ -270,6 +270,44 @@ describe('RecipesService', () => {
     });
   });
 
+  describe('collectIngredientQuantities (agrégation récursive)', () => {
+    // Accès à la méthode privée (logique métier critique pour la liste de courses).
+    type WithCollect = {
+      collectIngredientQuantities(id: string): Promise<Map<string, number>>;
+    };
+
+    it('cumule les ingrédients directs et ceux d’une sous-recette de base (1×)', async () => {
+      const { db } = makeDb([
+        [{ ingredientId: 'ing1', quantity: 2 }], // directs du parent
+        [{ baseRecipeId: 'base1' }], // composants du parent
+        [], // réfs d'étape du parent
+        [{ ingredientId: 'ing1', quantity: 3 }, { ingredientId: 'ing2', quantity: 5 }], // directs de base1
+        [], // composants de base1
+        [], // réfs d'étape de base1
+      ]);
+      const service = new RecipesService(db, ingredientsStub, premiumStub(), storageStub);
+      const totals = await (service as unknown as WithCollect)
+        .collectIngredientQuantities('parent');
+      // ing1 cumulé (2 direct + 3 hérité), ing2 hérité seul.
+      expect(Object.fromEntries(totals)).toEqual({ ing1: 5, ing2: 5 });
+    });
+
+    it('anti-cycle : une sous-recette qui se référence en boucle ne fait pas exploser', async () => {
+      const { db } = makeDb([
+        [{ ingredientId: 'ing1', quantity: 1 }], // directs parent
+        [{ baseRecipeId: 'base1' }], // composants parent
+        [], // réfs d'étape parent
+        [{ ingredientId: 'ing2', quantity: 1 }], // directs base1
+        [{ baseRecipeId: 'parent' }], // composants base1 → cycle vers parent
+        [], // réfs d'étape base1
+      ]);
+      const service = new RecipesService(db, ingredientsStub, premiumStub(), storageStub);
+      const totals = await (service as unknown as WithCollect)
+        .collectIngredientQuantities('parent');
+      expect(Object.fromEntries(totals)).toEqual({ ing1: 1, ing2: 1 });
+    });
+  });
+
   describe('garde freemium — 5 recettes de base max', () => {
     it('refuse la 6e recette de base en gratuit (403 structuré)', async () => {
       const { db } = makeDb([[{ n: 5 }]]); // count(is_base) = 5
