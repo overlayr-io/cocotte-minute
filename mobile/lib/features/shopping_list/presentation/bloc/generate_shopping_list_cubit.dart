@@ -168,23 +168,38 @@ class GenerateShoppingListCubit extends Cubit<GenerateState> {
   /// depuis une fiche recette). Null pour le flux normal depuis l'onglet Courses.
   final String? initialRecipeId;
 
+  /// La liste de sélection est une recherche par nom, plafonnée (pas de
+  /// pagination) : requête vide = les N recettes les plus récentes.
+  static const int _kSearchLimit = 10;
+  Timer? _searchDebounce;
+
   Future<void> _loadRecipes() async {
     emit(state.copyWith(phase: GeneratePhase.loadingRecipes));
     try {
-      final recipes = await _recipes.fetchMine();
+      final recipes = await _recipes.fetchMine(limit: _kSearchLimit);
       final initial = initialRecipeId;
       RecipeSummary? preselect;
       if (initial != null) {
-        for (final r in recipes) {
-          if (r.id == initial) {
-            preselect = r;
-            break;
+        preselect = _firstWhereIdOrNull(recipes, initial);
+        // Présélection possiblement hors des N récents (« Ajouter aux courses »
+        // depuis une vieille fiche) : on récupère sa fiche pour la garantir.
+        if (preselect == null) {
+          try {
+            preselect = (await _recipes.fetchDetail(initial)).summary;
+          } on RecipesRepositoryException {
+            preselect = null;
           }
         }
       }
+      // Présélection absente de la liste des récents → on la préfixe pour
+      // qu'elle reste visible et décochable.
+      final list = (preselect != null &&
+              _firstWhereIdOrNull(recipes, preselect.id) == null)
+          ? [preselect, ...recipes]
+          : recipes;
       emit(state.copyWith(
         phase: GeneratePhase.ready,
-        recipes: recipes,
+        recipes: list,
         selectedIds: preselect == null ? null : {preselect.id},
         servings: preselect == null
             ? null
@@ -194,6 +209,41 @@ class GenerateShoppingListCubit extends Cubit<GenerateState> {
     } on RecipesRepositoryException catch (e) {
       emit(state.copyWith(phase: GeneratePhase.error, errorMessage: e.message));
     }
+  }
+
+  static RecipeSummary? _firstWhereIdOrNull(
+      List<RecipeSummary> list, String id) {
+    for (final r in list) {
+      if (r.id == id) return r;
+    }
+    return null;
+  }
+
+  /// Recherche par nom (debounce 300 ms). Requête vide → recettes récentes.
+  /// La sélection en cours est préservée (elle vit dans `selectedIds`).
+  void searchRecipes(String query) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 300), () {
+      unawaited(_runSearch(query.trim()));
+    });
+  }
+
+  Future<void> _runSearch(String query) async {
+    try {
+      final recipes = await _recipes.fetchMine(
+        q: query.isEmpty ? null : query,
+        limit: _kSearchLimit,
+      );
+      emit(state.copyWith(recipes: recipes));
+    } on RecipesRepositoryException catch (e) {
+      emit(state.copyWith(actionError: e.message));
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _searchDebounce?.cancel();
+    return super.close();
   }
 
   Future<void> retry() => _loadRecipes();
