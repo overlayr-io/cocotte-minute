@@ -68,6 +68,14 @@ export class RecipesController {
     return this.recipesService.listUncategorized(user.id);
   }
 
+  /** Recettes aimées « J'aime » (dossier virtuel dédié). */
+  @Get('favorites')
+  listFavorites(
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<RecipeSummaryDto[]> {
+    return this.recipesService.listFavorites(user.id);
+  }
+
   @Get(':id')
   detail(
     @CurrentUser() user: AuthenticatedUser,
@@ -82,6 +90,24 @@ export class RecipesController {
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<RecipeSummaryDto> {
     return this.recipesService.duplicateRecipe(user.id, id);
+  }
+
+  @Post(':id/favorite')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  addFavorite(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<void> {
+    return this.recipesService.addFavorite(user.id, id);
+  }
+
+  @Delete(':id/favorite')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeFavorite(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<void> {
+    return this.recipesService.removeFavorite(user.id, id);
   }
 
   @Patch(':id')

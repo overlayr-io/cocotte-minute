@@ -27,6 +27,7 @@ import { recipeGalleryImages } from '../../db/schema/recipe-gallery.schema';
 import {
   recipeCategories,
   recipeComponents,
+  recipeFavorites,
   recipeIngredients,
   recipeSteps,
   recipeTags,
@@ -186,6 +187,8 @@ export interface RecipeDetailDto extends RecipeSummaryDto {
   usedIn: RecipeSummaryDto[];
   categoryIds: string[];
   tagIds: string[];
+  /** true si la recette est dans les favoris « J'aime » du lecteur (false en lecture publique). */
+  isFavorite: boolean;
   /** Photos de galerie (réalisations), les plus anciennes d'abord. Hors couverture. */
   galleryPhotos: RecipeGalleryPhotoDto[];
 }
@@ -234,6 +237,9 @@ export class RecipesService {
   /** Limite du plan gratuit : nombre max de recettes de base (cf. premium-version.md). */
   private static readonly FREE_BASE_RECIPES_LIMIT = 5;
 
+  /** Limite du plan gratuit : nombre max de favoris « J'aime » (feature #15). */
+  private static readonly FREE_FAVORITES_LIMIT = 10;
+
   /**
    * Garde freemium : bloque la création/bascule d'une recette de base au-delà
    * de la limite gratuite. Vérifiée serveur (jamais uniquement UI), ignorée
@@ -258,6 +264,68 @@ export class RecipesService {
       RecipesService.FREE_BASE_RECIPES_LIMIT,
       current,
       `Limite gratuite atteinte : ${RecipesService.FREE_BASE_RECIPES_LIMIT} recettes de base maximum. Passe en Pro pour en créer sans limite.`,
+    );
+  }
+
+  // --- favoris « J'aime » (#15) -----------------------------------------
+
+  /** Recettes aimées de l'utilisateur, plus récemment ajoutées d'abord. */
+  async listFavorites(userId: string): Promise<RecipeSummaryDto[]> {
+    const rows = await this.db
+      .select({ recipe: recipes })
+      .from(recipeFavorites)
+      .innerJoin(recipes, eq(recipes.id, recipeFavorites.recipeId))
+      .where(and(eq(recipeFavorites.userId, userId), isNull(recipes.deletedAt)))
+      .orderBy(desc(recipeFavorites.createdAt));
+    return rows.map((r) => toSummary(r.recipe));
+  }
+
+  /**
+   * Ajoute une recette aux favoris (idempotent). Vérifie la propriété + le quota
+   * freemium (uniquement à l'ajout d'un nouveau favori, pas sur un doublon).
+   */
+  async addFavorite(userId: string, recipeId: string): Promise<void> {
+    await this.findOwnedOrFail(userId, recipeId);
+    const [existing] = await this.db
+      .select({ recipeId: recipeFavorites.recipeId })
+      .from(recipeFavorites)
+      .where(
+        and(
+          eq(recipeFavorites.userId, userId),
+          eq(recipeFavorites.recipeId, recipeId),
+        ),
+      );
+    if (existing) return; // déjà favori : rien à faire
+    await this.assertFavoritesQuota(userId);
+    await this.db.insert(recipeFavorites).values({ userId, recipeId });
+  }
+
+  /** Retire une recette des favoris (idempotent). */
+  async removeFavorite(userId: string, recipeId: string): Promise<void> {
+    await this.db
+      .delete(recipeFavorites)
+      .where(
+        and(
+          eq(recipeFavorites.userId, userId),
+          eq(recipeFavorites.recipeId, recipeId),
+        ),
+      );
+  }
+
+  /** Garde freemium : bloque l'ajout d'un favori au-delà de la limite gratuite. */
+  private async assertFavoritesQuota(userId: string): Promise<void> {
+    const [row] = await this.db
+      .select({ n: sql<number>`count(*)::int` })
+      .from(recipeFavorites)
+      .where(eq(recipeFavorites.userId, userId));
+    const current = row?.n ?? 0;
+    if (current < RecipesService.FREE_FAVORITES_LIMIT) return;
+    if (await this.premiumService.isPremium(userId)) return;
+    throw new PremiumLimitException(
+      'PREMIUM_LIMIT_FAVORITES',
+      RecipesService.FREE_FAVORITES_LIMIT,
+      current,
+      `Limite gratuite atteinte : ${RecipesService.FREE_FAVORITES_LIMIT} favoris maximum. Passe en Pro pour en enregistrer sans limite.`,
     );
   }
 
@@ -706,7 +774,7 @@ export class RecipesService {
   /** Fiche détail : ingrédients, composants, « utilisée dans », catégories, tags. */
   async getDetail(userId: string, id: string): Promise<RecipeDetailDto> {
     const row = await this.findOwnedOrFail(userId, id);
-    return this.buildDetail(row);
+    return this.buildDetail(row, userId);
   }
 
   /**
@@ -733,10 +801,32 @@ export class RecipesService {
     await this.findOwnedOrFail(userId, id);
   }
 
-  /** Corps commun de `getDetail`/`getPublicDetail` : hydratation depuis l'auteur de la recette. */
-  private async buildDetail(row: RecipeRow): Promise<RecipeDetailDto> {
+  /**
+   * Corps commun de `getDetail`/`getPublicDetail` : hydratation depuis l'auteur
+   * de la recette. `viewerId` (le lecteur courant) sert au flag `isFavorite` —
+   * absent en lecture publique/partage (isFavorite = false).
+   */
+  private async buildDetail(
+    row: RecipeRow,
+    viewerId?: string,
+  ): Promise<RecipeDetailDto> {
     const id = row.id;
     const authorId = row.authorId;
+
+    const isFavorite = viewerId
+      ? (
+          await this.db
+            .select({ recipeId: recipeFavorites.recipeId })
+            .from(recipeFavorites)
+            .where(
+              and(
+                eq(recipeFavorites.userId, viewerId),
+                eq(recipeFavorites.recipeId, id),
+              ),
+            )
+            .limit(1)
+        ).length > 0
+      : false;
 
     const [ingredientRows, componentRows, stepBaseRefRows, categoryRows, tagRows, galleryRows] =
       await Promise.all([
@@ -839,6 +929,7 @@ export class RecipesService {
       usedIn,
       categoryIds: categoryRows.map((r) => r.categoryId),
       tagIds: tagRows.map((r) => r.tagId),
+      isFavorite,
       galleryPhotos: galleryRows.map((r) => ({
         id: r.id,
         imageUrl: r.imageUrl,

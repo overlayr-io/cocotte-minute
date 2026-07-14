@@ -235,6 +235,24 @@ export const recipeTags = pgTable(
   (t) => [primaryKey({ columns: [t.recipeId, t.tagId] })],
 );
 
+/**
+ * Favoris « J'aime » (feature #15) : liste personnelle de recettes marquées par
+ * l'utilisateur. `user_id` = propriétaire (les recettes sont déjà scopées par
+ * `author_id`, on favorise donc ses propres recettes). Pivot (user_id, recipe_id) ;
+ * la suppression d'une recette retire ses favoris (cascade).
+ */
+export const recipeFavorites = pgTable(
+  'recipe_favorites',
+  {
+    userId: uuid('user_id').notNull(),
+    recipeId: uuid('recipe_id')
+      .notNull()
+      .references(() => recipes.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.recipeId] })],
+);
+
 export const recipesRelations = relations(recipes, ({ many }) => ({
   ingredients: many(recipeIngredients),
   components: many(recipeComponents, { relationName: 'parent' }),

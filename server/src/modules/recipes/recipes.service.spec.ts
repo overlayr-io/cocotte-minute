@@ -270,6 +270,30 @@ describe('RecipesService', () => {
     });
   });
 
+  describe('favoris (#15)', () => {
+    it('refuse un nouveau favori au-delà du quota gratuit (403)', async () => {
+      const { db } = makeDb([
+        [recipeRow()], // findOwnedOrFail
+        [], // favori existant : aucun
+        [{ n: 10 }], // count favoris = 10 → limite gratuite atteinte
+      ]);
+      const service = new RecipesService(db, ingredientsStub, premiumStub(false), storageStub);
+      await expect(service.addFavorite(USER, 'rec-1')).rejects.toBeInstanceOf(
+        PremiumLimitException,
+      );
+    });
+
+    it('idempotent : un doublon ne compte pas et n’insère pas', async () => {
+      const { db, calls } = makeDb([
+        [recipeRow()], // findOwnedOrFail
+        [{ recipeId: 'rec-1' }], // déjà favori
+      ]);
+      const service = new RecipesService(db, ingredientsStub, premiumStub(false), storageStub);
+      await service.addFavorite(USER, 'rec-1');
+      expect(calls.some((c) => c.op === 'insert')).toBe(false);
+    });
+  });
+
   describe('collectIngredientQuantities (agrégation récursive)', () => {
     // Accès à la méthode privée (logique métier critique pour la liste de courses).
     type WithCollect = {
