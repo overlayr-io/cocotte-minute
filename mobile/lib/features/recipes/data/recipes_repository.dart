@@ -162,6 +162,19 @@ class RecipesRepository {
     }
   }
 
+  /// Duplique une recette (copie profonde côté serveur). Renvoie le résumé de
+  /// la nouvelle recette.
+  Future<RecipeSummary> duplicateRecipe(String recipeId) async {
+    try {
+      final res = await _dio.post<Map<String, dynamic>>(
+        '/recipes/$recipeId/duplicate',
+      );
+      return RecipeSummary.fromJson(res.data!);
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de dupliquer la recette.');
+    }
+  }
+
   /// [priceBracket] utilise la sentinelle [_unset] par défaut : ne rien passer
   /// = tranche inchangée (la plupart des appels ne touchent pas au prix),
   /// passer `null` explicitement = effacée (prix devenu partiel/inconnu).

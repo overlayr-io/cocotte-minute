@@ -901,6 +901,8 @@
   "@recipeGalleryDeleteConfirmBody": {},
   "recipeMenuChangePhoto": "Changer la photo",
   "@recipeMenuChangePhoto": {},
+  "recipeMenuDuplicate": "Dupliquer",
+  "@recipeMenuDuplicate": {},
 
   "recipeTagsSection": "Tags",
   "@recipeTagsSection": {},

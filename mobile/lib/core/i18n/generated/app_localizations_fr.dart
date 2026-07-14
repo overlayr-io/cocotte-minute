@@ -1325,6 +1325,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recipeMenuChangePhoto => 'Changer la photo';
 
   @override
+  String get recipeMenuDuplicate => 'Dupliquer';
+
+  @override
   String get recipeTagsSection => 'Tags';
 
   @override

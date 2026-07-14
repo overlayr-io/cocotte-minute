@@ -257,6 +257,19 @@ describe('RecipesService', () => {
     });
   });
 
+  describe('duplicateRecipe', () => {
+    it('refuse la duplication d’une recette de base au-delà du quota gratuit (403)', async () => {
+      const { db } = makeDb([
+        [recipeRow({ isBase: true })], // findOwnedOrFail
+        [{ n: 5 }], // count(is_base) = 5 → quota gratuit atteint
+      ]);
+      const service = new RecipesService(db, ingredientsStub, premiumStub(false), storageStub);
+      await expect(service.duplicateRecipe(USER, 'rec-1')).rejects.toBeInstanceOf(
+        PremiumLimitException,
+      );
+    });
+  });
+
   describe('garde freemium — 5 recettes de base max', () => {
     it('refuse la 6e recette de base en gratuit (403 structuré)', async () => {
       const { db } = makeDb([[{ n: 5 }]]); // count(is_base) = 5

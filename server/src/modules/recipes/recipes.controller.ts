@@ -76,6 +76,14 @@ export class RecipesController {
     return this.recipesService.getDetail(user.id, id);
   }
 
+  @Post(':id/duplicate')
+  duplicate(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<RecipeSummaryDto> {
+    return this.recipesService.duplicateRecipe(user.id, id);
+  }
+
   @Patch(':id')
   update(
     @CurrentUser() user: AuthenticatedUser,

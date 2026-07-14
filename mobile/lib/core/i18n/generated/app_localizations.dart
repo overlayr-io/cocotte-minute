@@ -2462,6 +2462,12 @@ abstract class AppLocalizations {
   /// **'Changer la photo'**
   String get recipeMenuChangePhoto;
 
+  /// No description provided for @recipeMenuDuplicate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dupliquer'**
+  String get recipeMenuDuplicate;
+
   /// No description provided for @recipeTagsSection.
   ///
   /// In fr, this message translates to:

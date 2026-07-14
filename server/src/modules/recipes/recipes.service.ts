@@ -547,6 +547,133 @@ export class RecipesService {
     return toSummary(row);
   }
 
+  /**
+   * Duplique une recette possédée (copie profonde) : nom + « (copie) »,
+   * ingrédients (+ positions), étapes (+ positions, bannières, réfs de base et
+   * sélections d'ingrédients d'étape), composants/sous-recettes, catégories,
+   * tags. Ne sont PAS copiés : la photo de couverture et la galerie — ce sont
+   * des objets Storage ; partager leur URL casserait la copie si l'original est
+   * supprimé. Respecte le quota freemium si la source est une recette de base.
+   */
+  async duplicateRecipe(userId: string, recipeId: string): Promise<RecipeSummaryDto> {
+    const source = await this.findOwnedOrFail(userId, recipeId);
+    if (source.isBase) await this.assertBaseRecipeQuota(userId);
+
+    // 1) Recette (couverture non copiée)
+    const [copy] = await this.db
+      .insert(recipes)
+      .values({
+        authorId: userId,
+        name: `${source.name} (copie)`.slice(0, 160),
+        photoUrl: null,
+        description: source.description,
+        isBase: source.isBase,
+        prepTime: source.prepTime,
+        cookTime: source.cookTime,
+        restTime: source.restTime,
+        servings: source.servings,
+        priceMode: source.priceMode,
+        fixedPrice: source.fixedPrice,
+        priceBracket: source.priceBracket,
+      })
+      .returning();
+    const newId = copy.id;
+
+    // 2) Ingrédients (avec position)
+    const ings = await this.db
+      .select({
+        ingredientId: recipeIngredients.ingredientId,
+        quantity: recipeIngredients.quantity,
+        position: recipeIngredients.position,
+      })
+      .from(recipeIngredients)
+      .where(eq(recipeIngredients.recipeId, recipeId));
+    if (ings.length > 0) {
+      await this.db
+        .insert(recipeIngredients)
+        .values(ings.map((r) => ({ recipeId: newId, ...r })));
+    }
+
+    // 3) Étapes (mapping ancien id → nouvel id pour les sélections d'ingrédients)
+    const steps = await this.db
+      .select()
+      .from(recipeSteps)
+      .where(eq(recipeSteps.recipeId, recipeId))
+      .orderBy(asc(recipeSteps.position));
+    const stepIdMap = new Map<string, string>();
+    for (const s of steps) {
+      const [ns] = await this.db
+        .insert(recipeSteps)
+        .values({
+          recipeId: newId,
+          position: s.position,
+          description: s.description,
+          bannerType: s.bannerType,
+          bannerText: s.bannerText,
+          baseRecipeRefId: s.baseRecipeRefId,
+        })
+        .returning({ id: recipeSteps.id });
+      stepIdMap.set(s.id, ns.id);
+    }
+    if (steps.length > 0) {
+      const stepIngRows = await this.db
+        .select({
+          stepId: stepIngredients.stepId,
+          ingredientId: stepIngredients.ingredientId,
+        })
+        .from(stepIngredients)
+        .where(
+          inArray(
+            stepIngredients.stepId,
+            steps.map((s) => s.id),
+          ),
+        );
+      if (stepIngRows.length > 0) {
+        await this.db.insert(stepIngredients).values(
+          stepIngRows.map((r) => ({
+            stepId: stepIdMap.get(r.stepId)!,
+            ingredientId: r.ingredientId,
+          })),
+        );
+      }
+    }
+
+    // 4) Composants (sous-recettes)
+    const comps = await this.db
+      .select({ baseRecipeId: recipeComponents.baseRecipeId })
+      .from(recipeComponents)
+      .where(eq(recipeComponents.parentRecipeId, recipeId));
+    if (comps.length > 0) {
+      await this.db
+        .insert(recipeComponents)
+        .values(comps.map((c) => ({ parentRecipeId: newId, baseRecipeId: c.baseRecipeId })));
+    }
+
+    // 5) Catégories
+    const cats = await this.db
+      .select({ categoryId: recipeCategories.categoryId })
+      .from(recipeCategories)
+      .where(eq(recipeCategories.recipeId, recipeId));
+    if (cats.length > 0) {
+      await this.db
+        .insert(recipeCategories)
+        .values(cats.map((c) => ({ recipeId: newId, categoryId: c.categoryId })));
+    }
+
+    // 6) Tags
+    const tgs = await this.db
+      .select({ tagId: recipeTags.tagId })
+      .from(recipeTags)
+      .where(eq(recipeTags.recipeId, recipeId));
+    if (tgs.length > 0) {
+      await this.db
+        .insert(recipeTags)
+        .values(tgs.map((t) => ({ recipeId: newId, tagId: t.tagId })));
+    }
+
+    return toSummary(copy);
+  }
+
   /** Fiche détail : ingrédients, composants, « utilisée dans », catégories, tags. */
   async getDetail(userId: string, id: string): Promise<RecipeDetailDto> {
     const row = await this.findOwnedOrFail(userId, id);

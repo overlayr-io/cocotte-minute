@@ -226,6 +226,28 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     }
   }
 
+  /// Duplique la recette (copie profonde côté serveur). En cas de succès,
+  /// renvoie le résumé de la copie (la vue navigue vers la nouvelle recette).
+  /// Erreur ou quota freemium (recette de base) → surfacé via l'état (message
+  /// ou `premiumLimit`), et renvoie null.
+  Future<RecipeSummary?> duplicate() async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return null;
+    emit(current.copyWith(busy: true));
+    try {
+      final copy = await _repository.duplicateRecipe(recipeId);
+      emit(current.copyWith(busy: false));
+      return copy;
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(
+        busy: false,
+        message: e.premiumLimit == null ? e.message : null,
+        premiumLimit: e.premiumLimit,
+      ));
+      return null;
+    }
+  }
+
   /// Supprime une photo de galerie (depuis la vue plein écran).
   Future<void> removeGalleryPhoto(String imageId) async {
     final current = state;

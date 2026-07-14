@@ -255,6 +255,11 @@ class _Loaded extends StatelessWidget {
           onSelected: () => showShareRecipeSheet(menuContext, detail),
         ),
         ActionMenuItem(
+          icon: Icons.copy_all_outlined,
+          label: l10n.recipeMenuDuplicate,
+          onSelected: () => _duplicate(menuContext),
+        ),
+        ActionMenuItem(
           icon: Icons.folder_outlined,
           label: l10n.recipeMenuAssignFolders,
           dividerBefore: true,
@@ -294,6 +299,16 @@ class _Loaded extends StatelessWidget {
     Navigator.of(context).push(
       GenerateFlowPage.route(initialRecipeId: detail.id),
     );
+  }
+
+  /// Duplique la recette puis ouvre la copie. Erreur / quota freemium (recette
+  /// de base) : déjà surfacé via l'état du cubit (snackbar ou upsell premium).
+  Future<void> _duplicate(BuildContext context) async {
+    final cubit = context.read<RecipeDetailCubit>();
+    final navigator = Navigator.of(context);
+    final copy = await cubit.duplicate();
+    if (copy == null) return;
+    await navigator.push(RecipeDetailPage.route(copy.id));
   }
 }
 

@@ -370,6 +370,8 @@
   "@recipeMenuAssignFolders": {},
   "recipeMenuAssignTags": "Assign tags",
   "@recipeMenuAssignTags": {},
+  "recipeMenuDuplicate": "Duplicate",
+  "@recipeMenuDuplicate": {},
   "recipeMenuAssignPerson": "Assign a person",
   "@recipeMenuAssignPerson": {},
   "recipePeopleSheetTitle": "Assign a person",

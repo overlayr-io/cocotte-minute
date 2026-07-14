@@ -1319,6 +1319,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recipeMenuChangePhoto => 'Changer la photo';
 
   @override
+  String get recipeMenuDuplicate => 'Duplicate';
+
+  @override
   String get recipeTagsSection => 'Tags';
 
   @override
