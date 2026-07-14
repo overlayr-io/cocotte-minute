@@ -13,6 +13,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_shadows.dart';
 import '../../../auth/presentation/pages/auth_page.dart';
 import '../../../categories/presentation/pages/categories_page.dart';
+import '../../../help/presentation/pages/concept_guides_page.dart';
 import '../../../help/presentation/pages/contact_page.dart';
 import '../../../help/presentation/pages/help_center_page.dart';
 import '../../../ingredients/presentation/pages/ingredients_page.dart';
@@ -203,6 +204,14 @@ class AccountPage extends StatelessWidget {
                 iconBackground: const Color(0xFFEDF0F3),
                 label: l10n.accountRowHelpCenter,
                 onTap: () => Navigator.of(context).push(HelpCenterPage.route()),
+              ),
+              AccountTile(
+                icon: Icons.menu_book_outlined,
+                iconColor: const Color(0xFF5B6774),
+                iconBackground: const Color(0xFFEDF0F3),
+                label: l10n.accountRowConceptGuides,
+                onTap: () =>
+                    Navigator.of(context).push(ConceptGuidesPage.route()),
               ),
               AccountTile(
                 icon: Icons.mail_outline_rounded,

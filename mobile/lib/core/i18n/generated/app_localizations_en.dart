@@ -605,6 +605,163 @@ class AppLocalizationsEn extends AppLocalizations {
   String get helpCenterContactSubtitle => 'Write to us, we reply fast';
 
   @override
+  String get accountRowConceptGuides => 'Understand the app';
+
+  @override
+  String get conceptGuidesTitle => 'Understand the app';
+
+  @override
+  String get conceptGuidesIntro =>
+      'Short guides to understand each key idea in Cocotte Minute. A video will soon accompany every guide.';
+
+  @override
+  String get conceptVideoComingSoon => 'Video coming soon';
+
+  @override
+  String get conceptBaseTitle => 'Base recipes and sub-recipes';
+
+  @override
+  String get conceptBaseSummary => 'Reuse a preparation across several dishes';
+
+  @override
+  String get conceptBaseIntro =>
+      'A base recipe is a preparation you use often: a sauce, a dough, a stock. You create it once, then add it to as many dishes as you like.';
+
+  @override
+  String get conceptBaseS1Title => 'What is a base recipe?';
+
+  @override
+  String get conceptBaseS1Body =>
+      'It is a recipe like any other, but marked as a base. A homemade tomato sauce, for instance: make it once and it becomes a reusable building block.';
+
+  @override
+  String get conceptBaseS2Title => 'Using it in a dish';
+
+  @override
+  String get conceptBaseS2Body =>
+      'In a dish, add the base recipe as a sub-recipe. Its ingredients are then counted automatically in the dish and in your shopping list.';
+
+  @override
+  String get conceptFoldersTitle => 'Folders';
+
+  @override
+  String get conceptFoldersSummary => 'Organise your recipes into folders';
+
+  @override
+  String get conceptFoldersIntro =>
+      'Folders help you organise recipes by theme: starters, mains, desserts, or whatever you like. You can even put a folder inside another.';
+
+  @override
+  String get conceptFoldersS1Title => 'Create and nest';
+
+  @override
+  String get conceptFoldersS1Body =>
+      'Create a folder, then drop your recipes into it. A folder can contain other folders, for a classification as precise as you want.';
+
+  @override
+  String get conceptFoldersS2Title => 'Find a recipe';
+
+  @override
+  String get conceptFoldersS2Body =>
+      'Open a folder to see only the recipes it contains. Recipes filed nowhere stay visible in the \"Others\" folder.';
+
+  @override
+  String get conceptTagsTitle => 'Tags';
+
+  @override
+  String get conceptTagsSummary => 'Label your recipes to filter them';
+
+  @override
+  String get conceptTagsIntro =>
+      'Tags are free labels: \"quick\", \"vegetarian\", \"kids\' favourite\". A single recipe can have several.';
+
+  @override
+  String get conceptTagsS1Title => 'What tags are for';
+
+  @override
+  String get conceptTagsS1Body =>
+      'Unlike folders, a recipe can carry several tags at once. Perfect for crossing criteria that do not fit into a single filing spot.';
+
+  @override
+  String get conceptTagsS2Title => 'Filter with search';
+
+  @override
+  String get conceptTagsS2Body =>
+      'From search, combine one or more tags to see only the matching recipes. Handy to find a quick, vegetarian dish at once.';
+
+  @override
+  String get conceptPeopleTitle => 'People and family';
+
+  @override
+  String get conceptPeopleSummary => 'Link recipes to the people in your home';
+
+  @override
+  String get conceptPeopleIntro =>
+      'Add the people in your home to tailor your recipes to each one: tastes, portions and allergies.';
+
+  @override
+  String get conceptPeopleS1Title => 'Add people';
+
+  @override
+  String get conceptPeopleS1Body =>
+      'Create a card per person, with their name and, if you want, their allergies. You can then link recipes to those they concern.';
+
+  @override
+  String get conceptPeopleS2Title => 'Filter by person';
+
+  @override
+  String get conceptPeopleS2Body =>
+      'Filter your recipes by person to see what suits them. The allergies you enter help you spot dishes to avoid.';
+
+  @override
+  String get conceptShoppingTitle => 'Shopping list';
+
+  @override
+  String get conceptShoppingSummary => 'Generate your list from your recipes';
+
+  @override
+  String get conceptShoppingIntro =>
+      'No more writing everything by hand: pick recipes and Cocotte Minute gathers their ingredients into a single list.';
+
+  @override
+  String get conceptShoppingS1Title => 'Generate from recipes';
+
+  @override
+  String get conceptShoppingS1Body =>
+      'Select the recipes for your week: ingredients are added up and grouped. Tick off what you put in the basket as you shop.';
+
+  @override
+  String get conceptShoppingS2Title => 'Works offline';
+
+  @override
+  String get conceptShoppingS2Body =>
+      'Your list stays available even without a connection in the store. Your changes sync on their own as soon as the network is back.';
+
+  @override
+  String get conceptPlanningTitle => 'Meal planning';
+
+  @override
+  String get conceptPlanningSummary => 'Organise your meals for the week';
+
+  @override
+  String get conceptPlanningIntro =>
+      'The planner gives you a week view to decide ahead of time who eats what and when.';
+
+  @override
+  String get conceptPlanningS1Title => 'Plan the week';
+
+  @override
+  String get conceptPlanningS1Body =>
+      'Place a recipe on a day and a time (lunch, dinner). You see your week at a glance and avoid the \"what\'s for dinner?\" question.';
+
+  @override
+  String get conceptPlanningS2Title => 'Drag and drop your recipes';
+
+  @override
+  String get conceptPlanningS2Body =>
+      'Move a recipe from one slot to another with a simple drag and drop. Once your week is set, generate the matching shopping list.';
+
+  @override
   String get contactIntro =>
       'A question, a bug, an idea? Tell us everything, we read every message.';
 

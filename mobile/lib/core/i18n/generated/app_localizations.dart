@@ -1190,6 +1190,282 @@ abstract class AppLocalizations {
   /// **'Écris-nous, on te répond vite'**
   String get helpCenterContactSubtitle;
 
+  /// No description provided for @accountRowConceptGuides.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comprendre l\'app'**
+  String get accountRowConceptGuides;
+
+  /// No description provided for @conceptGuidesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comprendre l\'app'**
+  String get conceptGuidesTitle;
+
+  /// No description provided for @conceptGuidesIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Des guides courts pour comprendre chaque idée clé de Cocotte Minute. Une vidéo accompagnera bientôt chaque guide.'**
+  String get conceptGuidesIntro;
+
+  /// No description provided for @conceptVideoComingSoon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vidéo bientôt disponible'**
+  String get conceptVideoComingSoon;
+
+  /// No description provided for @conceptBaseTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recettes de base et sous-recettes'**
+  String get conceptBaseTitle;
+
+  /// No description provided for @conceptBaseSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réutilise une préparation dans plusieurs plats'**
+  String get conceptBaseSummary;
+
+  /// No description provided for @conceptBaseIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une recette de base est une préparation que tu réutilises souvent : une sauce, une pâte, un fond. Tu la crées une fois, puis tu l\'ajoutes dans autant de plats que tu veux.'**
+  String get conceptBaseIntro;
+
+  /// No description provided for @conceptBaseS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Qu\'est-ce qu\'une recette de base ?'**
+  String get conceptBaseS1Title;
+
+  /// No description provided for @conceptBaseS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'C\'est une recette comme les autres, mais marquée « de base ». Par exemple une sauce tomate maison : tu la prépares une fois et elle devient une brique réutilisable.'**
+  String get conceptBaseS1Body;
+
+  /// No description provided for @conceptBaseS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'utiliser dans un plat'**
+  String get conceptBaseS2Title;
+
+  /// No description provided for @conceptBaseS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans un plat, ajoute la recette de base comme sous-recette. Ses ingrédients sont alors comptés automatiquement dans le plat et dans ta liste de courses.'**
+  String get conceptBaseS2Body;
+
+  /// No description provided for @conceptFoldersTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers'**
+  String get conceptFoldersTitle;
+
+  /// No description provided for @conceptFoldersSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Range tes recettes dans des dossiers'**
+  String get conceptFoldersSummary;
+
+  /// No description provided for @conceptFoldersIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les dossiers t\'aident à organiser tes recettes par thème : entrées, plats, desserts, ou ce que tu veux. Tu peux même mettre un dossier dans un autre.'**
+  String get conceptFoldersIntro;
+
+  /// No description provided for @conceptFoldersS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer et imbriquer'**
+  String get conceptFoldersS1Title;
+
+  /// No description provided for @conceptFoldersS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Crée un dossier, puis glisse tes recettes dedans. Un dossier peut contenir d\'autres dossiers, pour un classement aussi précis que tu le souhaites.'**
+  String get conceptFoldersS1Body;
+
+  /// No description provided for @conceptFoldersS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retrouver une recette'**
+  String get conceptFoldersS2Title;
+
+  /// No description provided for @conceptFoldersS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvre un dossier pour voir seulement les recettes qu\'il contient. Les recettes rangées nulle part restent visibles dans le dossier « Autres ».'**
+  String get conceptFoldersS2Body;
+
+  /// No description provided for @conceptTagsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tags'**
+  String get conceptTagsTitle;
+
+  /// No description provided for @conceptTagsSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étiquette tes recettes pour les filtrer'**
+  String get conceptTagsSummary;
+
+  /// No description provided for @conceptTagsIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les tags sont des étiquettes libres : « rapide », « végétarien », « préféré des enfants ». Une même recette peut en avoir plusieurs.'**
+  String get conceptTagsIntro;
+
+  /// No description provided for @conceptTagsS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'À quoi servent les tags'**
+  String get conceptTagsS1Title;
+
+  /// No description provided for @conceptTagsS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contrairement aux dossiers, une recette peut porter plusieurs tags à la fois. C\'est idéal pour croiser des critères qui ne rentrent pas dans un seul rangement.'**
+  String get conceptTagsS1Body;
+
+  /// No description provided for @conceptTagsS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer avec la recherche'**
+  String get conceptTagsS2Title;
+
+  /// No description provided for @conceptTagsS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Depuis la recherche, combine un ou plusieurs tags pour ne voir que les recettes correspondantes. Pratique pour trouver un plat rapide et végétarien d\'un coup.'**
+  String get conceptTagsS2Body;
+
+  /// No description provided for @conceptPeopleTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnes et famille'**
+  String get conceptPeopleTitle;
+
+  /// No description provided for @conceptPeopleSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associe des recettes aux personnes du foyer'**
+  String get conceptPeopleSummary;
+
+  /// No description provided for @conceptPeopleIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoute les personnes de ton foyer pour adapter tes recettes à chacun : goûts, portions et allergies.'**
+  String get conceptPeopleIntro;
+
+  /// No description provided for @conceptPeopleS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter des personnes'**
+  String get conceptPeopleS1Title;
+
+  /// No description provided for @conceptPeopleS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Crée une fiche par personne, avec son prénom et, si tu veux, ses allergies. Tu peux ensuite associer des recettes à celles et ceux qu\'elles concernent.'**
+  String get conceptPeopleS1Body;
+
+  /// No description provided for @conceptPeopleS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer par personne'**
+  String get conceptPeopleS2Title;
+
+  /// No description provided for @conceptPeopleS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtre tes recettes par personne pour voir ce qui lui convient. Les allergies renseignées t\'aident à repérer les plats à éviter.'**
+  String get conceptPeopleS2Body;
+
+  /// No description provided for @conceptShoppingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste de courses'**
+  String get conceptShoppingTitle;
+
+  /// No description provided for @conceptShoppingSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Génère ta liste depuis tes recettes'**
+  String get conceptShoppingSummary;
+
+  /// No description provided for @conceptShoppingIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus besoin de tout noter à la main : choisis des recettes et Cocotte Minute rassemble leurs ingrédients dans une seule liste.'**
+  String get conceptShoppingIntro;
+
+  /// No description provided for @conceptShoppingS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Générer depuis des recettes'**
+  String get conceptShoppingS1Title;
+
+  /// No description provided for @conceptShoppingS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionne les recettes de ta semaine : les ingrédients sont additionnés et regroupés. Coche ce que tu mets dans le panier au fil des courses.'**
+  String get conceptShoppingS1Body;
+
+  /// No description provided for @conceptShoppingS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fonctionne hors ligne'**
+  String get conceptShoppingS2Title;
+
+  /// No description provided for @conceptShoppingS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ta liste reste disponible même sans connexion en magasin. Tes changements se synchronisent tout seuls dès que le réseau revient.'**
+  String get conceptShoppingS2Body;
+
+  /// No description provided for @conceptPlanningTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planification des repas'**
+  String get conceptPlanningTitle;
+
+  /// No description provided for @conceptPlanningSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Organise tes repas de la semaine'**
+  String get conceptPlanningSummary;
+
+  /// No description provided for @conceptPlanningIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le planning te donne une vue de la semaine pour décider à l\'avance qui mange quoi et quand.'**
+  String get conceptPlanningIntro;
+
+  /// No description provided for @conceptPlanningS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planifier la semaine'**
+  String get conceptPlanningS1Title;
+
+  /// No description provided for @conceptPlanningS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Place une recette sur un jour et un moment (midi, soir). Tu visualises ta semaine d\'un coup d\'oeil et tu évites la question du « qu\'est-ce qu\'on mange ce soir ? ».'**
+  String get conceptPlanningS1Body;
+
+  /// No description provided for @conceptPlanningS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glisser-déposer tes recettes'**
+  String get conceptPlanningS2Title;
+
+  /// No description provided for @conceptPlanningS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déplace une recette d\'un créneau à l\'autre par simple glisser-déposer. Une fois ta semaine posée, génère la liste de courses correspondante.'**
+  String get conceptPlanningS2Body;
+
   /// No description provided for @contactIntro.
   ///
   /// In fr, this message translates to:

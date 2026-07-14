@@ -609,6 +609,165 @@ class AppLocalizationsFr extends AppLocalizations {
   String get helpCenterContactSubtitle => 'Écris-nous, on te répond vite';
 
   @override
+  String get accountRowConceptGuides => 'Comprendre l\'app';
+
+  @override
+  String get conceptGuidesTitle => 'Comprendre l\'app';
+
+  @override
+  String get conceptGuidesIntro =>
+      'Des guides courts pour comprendre chaque idée clé de Cocotte Minute. Une vidéo accompagnera bientôt chaque guide.';
+
+  @override
+  String get conceptVideoComingSoon => 'Vidéo bientôt disponible';
+
+  @override
+  String get conceptBaseTitle => 'Recettes de base et sous-recettes';
+
+  @override
+  String get conceptBaseSummary =>
+      'Réutilise une préparation dans plusieurs plats';
+
+  @override
+  String get conceptBaseIntro =>
+      'Une recette de base est une préparation que tu réutilises souvent : une sauce, une pâte, un fond. Tu la crées une fois, puis tu l\'ajoutes dans autant de plats que tu veux.';
+
+  @override
+  String get conceptBaseS1Title => 'Qu\'est-ce qu\'une recette de base ?';
+
+  @override
+  String get conceptBaseS1Body =>
+      'C\'est une recette comme les autres, mais marquée « de base ». Par exemple une sauce tomate maison : tu la prépares une fois et elle devient une brique réutilisable.';
+
+  @override
+  String get conceptBaseS2Title => 'L\'utiliser dans un plat';
+
+  @override
+  String get conceptBaseS2Body =>
+      'Dans un plat, ajoute la recette de base comme sous-recette. Ses ingrédients sont alors comptés automatiquement dans le plat et dans ta liste de courses.';
+
+  @override
+  String get conceptFoldersTitle => 'Dossiers';
+
+  @override
+  String get conceptFoldersSummary => 'Range tes recettes dans des dossiers';
+
+  @override
+  String get conceptFoldersIntro =>
+      'Les dossiers t\'aident à organiser tes recettes par thème : entrées, plats, desserts, ou ce que tu veux. Tu peux même mettre un dossier dans un autre.';
+
+  @override
+  String get conceptFoldersS1Title => 'Créer et imbriquer';
+
+  @override
+  String get conceptFoldersS1Body =>
+      'Crée un dossier, puis glisse tes recettes dedans. Un dossier peut contenir d\'autres dossiers, pour un classement aussi précis que tu le souhaites.';
+
+  @override
+  String get conceptFoldersS2Title => 'Retrouver une recette';
+
+  @override
+  String get conceptFoldersS2Body =>
+      'Ouvre un dossier pour voir seulement les recettes qu\'il contient. Les recettes rangées nulle part restent visibles dans le dossier « Autres ».';
+
+  @override
+  String get conceptTagsTitle => 'Tags';
+
+  @override
+  String get conceptTagsSummary => 'Étiquette tes recettes pour les filtrer';
+
+  @override
+  String get conceptTagsIntro =>
+      'Les tags sont des étiquettes libres : « rapide », « végétarien », « préféré des enfants ». Une même recette peut en avoir plusieurs.';
+
+  @override
+  String get conceptTagsS1Title => 'À quoi servent les tags';
+
+  @override
+  String get conceptTagsS1Body =>
+      'Contrairement aux dossiers, une recette peut porter plusieurs tags à la fois. C\'est idéal pour croiser des critères qui ne rentrent pas dans un seul rangement.';
+
+  @override
+  String get conceptTagsS2Title => 'Filtrer avec la recherche';
+
+  @override
+  String get conceptTagsS2Body =>
+      'Depuis la recherche, combine un ou plusieurs tags pour ne voir que les recettes correspondantes. Pratique pour trouver un plat rapide et végétarien d\'un coup.';
+
+  @override
+  String get conceptPeopleTitle => 'Personnes et famille';
+
+  @override
+  String get conceptPeopleSummary =>
+      'Associe des recettes aux personnes du foyer';
+
+  @override
+  String get conceptPeopleIntro =>
+      'Ajoute les personnes de ton foyer pour adapter tes recettes à chacun : goûts, portions et allergies.';
+
+  @override
+  String get conceptPeopleS1Title => 'Ajouter des personnes';
+
+  @override
+  String get conceptPeopleS1Body =>
+      'Crée une fiche par personne, avec son prénom et, si tu veux, ses allergies. Tu peux ensuite associer des recettes à celles et ceux qu\'elles concernent.';
+
+  @override
+  String get conceptPeopleS2Title => 'Filtrer par personne';
+
+  @override
+  String get conceptPeopleS2Body =>
+      'Filtre tes recettes par personne pour voir ce qui lui convient. Les allergies renseignées t\'aident à repérer les plats à éviter.';
+
+  @override
+  String get conceptShoppingTitle => 'Liste de courses';
+
+  @override
+  String get conceptShoppingSummary => 'Génère ta liste depuis tes recettes';
+
+  @override
+  String get conceptShoppingIntro =>
+      'Plus besoin de tout noter à la main : choisis des recettes et Cocotte Minute rassemble leurs ingrédients dans une seule liste.';
+
+  @override
+  String get conceptShoppingS1Title => 'Générer depuis des recettes';
+
+  @override
+  String get conceptShoppingS1Body =>
+      'Sélectionne les recettes de ta semaine : les ingrédients sont additionnés et regroupés. Coche ce que tu mets dans le panier au fil des courses.';
+
+  @override
+  String get conceptShoppingS2Title => 'Fonctionne hors ligne';
+
+  @override
+  String get conceptShoppingS2Body =>
+      'Ta liste reste disponible même sans connexion en magasin. Tes changements se synchronisent tout seuls dès que le réseau revient.';
+
+  @override
+  String get conceptPlanningTitle => 'Planification des repas';
+
+  @override
+  String get conceptPlanningSummary => 'Organise tes repas de la semaine';
+
+  @override
+  String get conceptPlanningIntro =>
+      'Le planning te donne une vue de la semaine pour décider à l\'avance qui mange quoi et quand.';
+
+  @override
+  String get conceptPlanningS1Title => 'Planifier la semaine';
+
+  @override
+  String get conceptPlanningS1Body =>
+      'Place une recette sur un jour et un moment (midi, soir). Tu visualises ta semaine d\'un coup d\'oeil et tu évites la question du « qu\'est-ce qu\'on mange ce soir ? ».';
+
+  @override
+  String get conceptPlanningS2Title => 'Glisser-déposer tes recettes';
+
+  @override
+  String get conceptPlanningS2Body =>
+      'Déplace une recette d\'un créneau à l\'autre par simple glisser-déposer. Une fois ta semaine posée, génère la liste de courses correspondante.';
+
+  @override
   String get contactIntro =>
       'Une question, un bug, une idée ? Dis-nous tout, on lit chaque message.';
 

@@ -64,6 +64,35 @@ quand il ne trouve pas — le tout accessible depuis l'onglet Compte, section
 - **Une seule entrée de FAQ** pour l'instant (générer une liste de courses) ;
   les autres seront ajoutées au fil de l'eau directement dans `faq.json`.
 
+## Guides de concepts (#13)
+
+Pages explicatives simples, une par concept clé, accessibles depuis l'onglet
+Compte > Aide > « Comprendre l'app ».
+
+- **Contenu** : 100 % i18n (pas de serveur), catalogue statique de 6 guides —
+  recettes de base & sous-recettes, dossiers, tags, personnes & famille, liste
+  de courses, planification. Chaque guide = une intro + 2 sections titre/texte,
+  sans jargon.
+- **Structure mobile** (`features/help/`) :
+  - `domain/concept_guide.dart` : modèle `ConceptGuide` (+ `videoUrl` optionnel)
+    et `ConceptSection`.
+  - `domain/concept_guides_catalog.dart` : `conceptGuides(l10n)` construit la
+    liste depuis l'i18n.
+  - `presentation/pages/concept_guides_page.dart` : liste (tuiles carte).
+  - `presentation/pages/concept_guide_page.dart` : détail (bloc vidéo + intro +
+    sections, même esprit que `LegalPage`).
+  - `presentation/widgets/concept_video_box.dart` : emplacement vidéo.
+- **Vidéo** : décision produit = une vidéo par concept (embed YouTube ou package
+  vidéo, avec vidéo de test aléatoire en dev). Pour l'instant, `ConceptVideoBox`
+  affiche un état **« Vidéo bientôt disponible »** ; c'est le **point de bascule
+  unique** quand le lecteur réel sera branché (chaque guide porte déjà un
+  `videoUrl` optionnel, tous `null` aujourd'hui).
+
+### Reste à faire (vidéos)
+- Brancher le **lecteur vidéo réel** (package + config plateforme) et remplir les
+  `videoUrl` des guides. En dev, une URL de vidéo d'exemple suffit pour valider
+  la mise en page.
+
 ## Reste à faire (raison du statut `in-progress`)
 - **Envoi e-mail réel** du message de contact au support (aujourd'hui simplement
   journalisé côté serveur).
