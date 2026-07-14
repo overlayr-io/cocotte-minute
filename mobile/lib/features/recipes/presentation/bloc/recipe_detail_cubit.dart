@@ -248,6 +248,29 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     }
   }
 
+  /// Ajoute/retire la recette des favoris « J'aime » (#15). Optimiste : bascule
+  /// le cœur tout de suite ; en cas d'erreur / quota gratuit, revert visuel +
+  /// surface (message, ou `premiumLimit` → feuille d'upsell).
+  Future<void> toggleFavorite() async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    final target = !current.detail.isFavorite;
+    emit(current.copyWith(detail: current.detail.copyWithFavorite(target)));
+    try {
+      if (target) {
+        await _repository.addFavorite(recipeId);
+      } else {
+        await _repository.removeFavorite(recipeId);
+      }
+    } on RecipesRepositoryException catch (e) {
+      // Revert (retour à `current`, cœur d'origine) + surface l'erreur/quota.
+      emit(current.copyWith(
+        message: e.premiumLimit == null ? e.message : null,
+        premiumLimit: e.premiumLimit,
+      ));
+    }
+  }
+
   /// Supprime une photo de galerie (depuis la vue plein écran).
   Future<void> removeGalleryPhoto(String imageId) async {
     final current = state;

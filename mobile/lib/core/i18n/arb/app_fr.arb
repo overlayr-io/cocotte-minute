@@ -742,6 +742,10 @@
   "recipesOtherFolderTitle": "Autres",
   "@recipesOtherFolderTitle": {},
   "recipesOtherFolderEmpty": "Aucune recette sans dossier. Tout est bien rangé !",
+  "recipesFavoritesFolderTitle": "J'aime",
+  "@recipesFavoritesFolderTitle": {},
+  "recipesFavoritesFolderEmpty": "Aucune recette aimée pour l'instant.",
+  "@recipesFavoritesFolderEmpty": {},
   "@recipesOtherFolderEmpty": {},
   "recipeMenuAssignFolders": "Associer des dossiers",
   "@recipeMenuAssignFolders": {},
@@ -913,6 +917,10 @@
   "@recipeMenuChangePhoto": {},
   "recipeMenuDuplicate": "Dupliquer",
   "@recipeMenuDuplicate": {},
+  "recipeMenuFavorite": "J'aime",
+  "@recipeMenuFavorite": {},
+  "recipeMenuUnfavorite": "Ne plus aimer",
+  "@recipeMenuUnfavorite": {},
 
   "recipeTagsSection": "Tags",
   "@recipeTagsSection": {},
@@ -1914,6 +1922,14 @@
   "@premiumLimitBaseRecipesTitle": {},
   "premiumLimitBaseRecipesBody": "Le plan gratuit permet {limit} recettes de base. Passe en Pro pour en créer autant que tu veux.",
   "@premiumLimitBaseRecipesBody": {
+    "placeholders": {
+      "limit": { "type": "int" }
+    }
+  },
+  "premiumLimitFavoritesTitle": "Limite de favoris atteinte",
+  "@premiumLimitFavoritesTitle": {},
+  "premiumLimitFavoritesBody": "Le plan gratuit permet {limit} favoris. Passe en Pro pour en enregistrer autant que tu veux.",
+  "@premiumLimitFavoritesBody": {
     "placeholders": {
       "limit": { "type": "int" }
     }

@@ -33,6 +33,9 @@ class PremiumLimitError extends Equatable {
   /// Planning éditable sur T/T+1 uniquement en gratuit (au-delà : lecture seule).
   static const String mealPlanWeek = 'PREMIUM_LIMIT_MEAL_PLAN_WEEK';
 
+  /// 10 favoris « J'aime » max en gratuit, illimité en Pro (POST /recipes/:id/favorite).
+  static const String favorites = 'PREMIUM_LIMIT_FAVORITES';
+
   /// Parse le corps d'une réponse d'erreur serveur. Null si le corps ne porte
   /// pas un code `PREMIUM_LIMIT_*` (erreur classique).
   static PremiumLimitError? fromResponseData(Object? data) {

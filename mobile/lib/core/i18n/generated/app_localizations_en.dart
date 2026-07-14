@@ -1100,6 +1100,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'No recipes without a folder. Everything is tidy!';
 
   @override
+  String get recipesFavoritesFolderTitle => 'Favorites';
+
+  @override
+  String get recipesFavoritesFolderEmpty => 'No favorite recipes yet.';
+
+  @override
   String get recipeMenuAssignFolders => 'Assign folders';
 
   @override
@@ -1335,6 +1341,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recipeMenuDuplicate => 'Duplicate';
+
+  @override
+  String get recipeMenuFavorite => 'Add to favorites';
+
+  @override
+  String get recipeMenuUnfavorite => 'Remove from favorites';
 
   @override
   String get recipeTagsSection => 'Tags';
@@ -2974,6 +2986,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String premiumLimitBaseRecipesBody(int limit) {
     return 'The free plan allows $limit base recipes. Go Pro to create as many as you want.';
+  }
+
+  @override
+  String get premiumLimitFavoritesTitle => 'Favorites limit reached';
+
+  @override
+  String premiumLimitFavoritesBody(int limit) {
+    return 'The free plan allows $limit favorites. Go Pro to save as many as you want.';
   }
 
   @override

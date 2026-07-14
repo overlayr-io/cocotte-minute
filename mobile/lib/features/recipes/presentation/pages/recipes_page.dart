@@ -16,9 +16,11 @@ import '../../../categories/presentation/widgets/category_form_sheet.dart';
 import '../../../search/presentation/pages/search_page.dart';
 import '../../data/recipes_repository.dart';
 import '../bloc/all_recipes_cubit.dart';
+import '../bloc/favorites_cubit.dart';
 import '../bloc/uncategorized_recipes_cubit.dart';
 import '../widgets/recipe_list_card.dart';
 import '../widgets/recipe_sort_button.dart';
+import 'favorites_folder_page.dart';
 import 'recipe_create_page.dart';
 import 'recipe_detail_page.dart';
 import 'uncategorized_folder_page.dart';
@@ -44,6 +46,10 @@ class RecipesPage extends StatelessWidget {
           create: (_) =>
               UncategorizedRecipesCubit(repository: sl<RecipesRepository>())
                 ..load(),
+        ),
+        BlocProvider(
+          create: (_) =>
+              FavoritesCubit(repository: sl<RecipesRepository>())..load(),
         ),
         // Lazy : créé (et chargé) au premier passage en vue Liste.
         BlocProvider(
@@ -86,6 +92,13 @@ class _RecipesViewState extends State<_RecipesView> {
     final cubit = context.read<UncategorizedRecipesCubit>();
     await Navigator.of(context).push(UncategorizedFolderPage.route());
     // Des recettes ont pu être rangées/créées : rafraîchit le compteur.
+    await cubit.load();
+  }
+
+  Future<void> _openFavoritesFolder(BuildContext context) async {
+    final cubit = context.read<FavoritesCubit>();
+    await Navigator.of(context).push(FavoritesFolderPage.route());
+    // Des favoris ont pu être ajoutés/retirés : rafraîchit le compteur.
     await cubit.load();
   }
 
@@ -225,6 +238,24 @@ class _RecipesViewState extends State<_RecipesView> {
           onTap: () => Navigator.of(context).push(SearchPage.route()),
         ),
         const SizedBox(height: 18),
+        // Dossier virtuel « J'aime » : recettes favorites (#15), affiché en tête.
+        BlocBuilder<FavoritesCubit, FavoritesState>(
+          builder: (context, favorites) {
+            if (favorites is! FavoritesLoaded || favorites.recipes.isEmpty) {
+              return const SizedBox.shrink();
+            }
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 11),
+              child: _OtherFolderCard(
+                title: l10n.recipesFavoritesFolderTitle,
+                subtitle: l10n.categoriesRecipeCount(favorites.recipes.length),
+                icon: Icons.favorite_rounded,
+                iconColor: AppColors.danger,
+                onTap: () => _openFavoritesFolder(context),
+              ),
+            );
+          },
+        ),
         if (folders.isEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -544,18 +575,22 @@ class _FilterFieldState extends State<_FilterField> {
   }
 }
 
-/// Carte du dossier virtuel « Autres » — même gabarit que [_FolderCard], avec
-/// une pastille neutre (pas d'emoji, pas de sous-dossiers).
+/// Carte d'un dossier virtuel (« Autres », « J'aime ») — même gabarit que
+/// [_FolderCard], avec une pastille à icône (pas d'emoji, pas de sous-dossiers).
 class _OtherFolderCard extends StatelessWidget {
   const _OtherFolderCard({
     required this.title,
     required this.subtitle,
     required this.onTap,
+    this.icon = Icons.folder_open_rounded,
+    this.iconColor = AppColors.textMuted,
   });
 
   final String title;
   final String subtitle;
   final VoidCallback onTap;
+  final IconData icon;
+  final Color iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -582,10 +617,10 @@ class _OtherFolderCard extends StatelessWidget {
                     color: AppColors.pill,
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  child: const Icon(
-                    Icons.folder_open_rounded,
+                  child: Icon(
+                    icon,
                     size: 24,
-                    color: AppColors.textMuted,
+                    color: iconColor,
                   ),
                 ),
                 const SizedBox(width: 14),

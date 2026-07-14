@@ -204,11 +204,29 @@ class _Loaded extends StatelessWidget {
                       icon: Icons.chevron_left_rounded,
                       onTap: () => Navigator.of(context).maybePop(true),
                     ),
-                    Builder(
-                      builder: (menuContext) => _RoundIconButton(
-                        icon: Icons.more_vert_rounded,
-                        onTap: busy ? null : () => _openMenu(menuContext),
-                      ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _RoundIconButton(
+                          icon: detail.isFavorite
+                              ? Icons.favorite_rounded
+                              : Icons.favorite_border_rounded,
+                          iconColor:
+                              detail.isFavorite ? AppColors.danger : null,
+                          onTap: busy
+                              ? null
+                              : () => context
+                                  .read<RecipeDetailCubit>()
+                                  .toggleFavorite(),
+                        ),
+                        const SizedBox(width: 10),
+                        Builder(
+                          builder: (menuContext) => _RoundIconButton(
+                            icon: Icons.more_vert_rounded,
+                            onTap: busy ? null : () => _openMenu(menuContext),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -238,6 +256,16 @@ class _Loaded extends StatelessWidget {
           label: l10n.recipeMenuAddToShopping,
           style: ActionMenuStyle.primary,
           onSelected: () => _addToShopping(menuContext),
+        ),
+        ActionMenuItem(
+          icon: detail.isFavorite
+              ? Icons.favorite_rounded
+              : Icons.favorite_border_rounded,
+          label: detail.isFavorite
+              ? l10n.recipeMenuUnfavorite
+              : l10n.recipeMenuFavorite,
+          onSelected: () =>
+              menuContext.read<RecipeDetailCubit>().toggleFavorite(),
         ),
         ActionMenuItem(
           icon: Icons.edit_outlined,
@@ -1569,10 +1597,11 @@ class _PlayButton extends StatelessWidget {
 }
 
 class _RoundIconButton extends StatelessWidget {
-  const _RoundIconButton({required this.icon, this.onTap});
+  const _RoundIconButton({required this.icon, this.onTap, this.iconColor});
 
   final IconData icon;
   final VoidCallback? onTap;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -1585,7 +1614,7 @@ class _RoundIconButton extends StatelessWidget {
         child: SizedBox(
           width: 40,
           height: 40,
-          child: Icon(icon, color: AppColors.textPrimary, size: 22),
+          child: Icon(icon, color: iconColor ?? AppColors.textPrimary, size: 22),
         ),
       ),
     );

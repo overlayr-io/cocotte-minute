@@ -321,6 +321,7 @@ class RecipeDetail extends Equatable {
     this.usedIn = const [],
     this.categoryIds = const [],
     this.tagIds = const [],
+    this.isFavorite = false,
     this.galleryPhotos = const [],
   });
 
@@ -353,6 +354,9 @@ class RecipeDetail extends Equatable {
   final List<String> categoryIds;
   final List<String> tagIds;
 
+  /// true si la recette est dans les favoris « J'aime » de l'utilisateur (#15).
+  final bool isFavorite;
+
   /// Photos de galerie (réalisations), les plus anciennes d'abord.
   final List<RecipeGalleryPhoto> galleryPhotos;
 
@@ -378,6 +382,7 @@ class RecipeDetail extends Equatable {
       usedIn: usedIn,
       categoryIds: categoryIds,
       tagIds: tagIds,
+      isFavorite: isFavorite,
       galleryPhotos: galleryPhotos,
     );
   }
@@ -406,7 +411,29 @@ class RecipeDetail extends Equatable {
       usedIn: usedIn,
       categoryIds: categoryIds,
       tagIds: tagIds,
+      isFavorite: isFavorite,
       galleryPhotos: galleryPhotos ?? this.galleryPhotos,
+    );
+  }
+
+  /// Copie avec un état de favori mis à jour (toggle « J'aime », #15).
+  RecipeDetail copyWithFavorite(bool isFavorite) {
+    return RecipeDetail(
+      summary: summary,
+      authorId: authorId,
+      description: description,
+      isLocked: isLocked,
+      priceMode: priceMode,
+      fixedPrice: fixedPrice,
+      priceBracket: priceBracket,
+      ingredients: ingredients,
+      steps: steps,
+      components: components,
+      usedIn: usedIn,
+      categoryIds: categoryIds,
+      tagIds: tagIds,
+      isFavorite: isFavorite,
+      galleryPhotos: galleryPhotos,
     );
   }
 
@@ -432,6 +459,7 @@ class RecipeDetail extends Equatable {
       categoryIds:
           ((json['categoryIds'] as List<dynamic>?) ?? const []).cast<String>(),
       tagIds: ((json['tagIds'] as List<dynamic>?) ?? const []).cast<String>(),
+      isFavorite: json['isFavorite'] as bool? ?? false,
       galleryPhotos: list('galleryPhotos', RecipeGalleryPhoto.fromJson),
     );
   }
@@ -451,6 +479,7 @@ class RecipeDetail extends Equatable {
         usedIn,
         categoryIds,
         tagIds,
+        isFavorite,
         galleryPhotos,
       ];
 }

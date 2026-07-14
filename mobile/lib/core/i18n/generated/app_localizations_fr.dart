@@ -1106,6 +1106,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucune recette sans dossier. Tout est bien rangé !';
 
   @override
+  String get recipesFavoritesFolderTitle => 'J\'aime';
+
+  @override
+  String get recipesFavoritesFolderEmpty =>
+      'Aucune recette aimée pour l\'instant.';
+
+  @override
   String get recipeMenuAssignFolders => 'Associer des dossiers';
 
   @override
@@ -1341,6 +1348,12 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recipeMenuDuplicate => 'Dupliquer';
+
+  @override
+  String get recipeMenuFavorite => 'J\'aime';
+
+  @override
+  String get recipeMenuUnfavorite => 'Ne plus aimer';
 
   @override
   String get recipeTagsSection => 'Tags';
@@ -2984,6 +2997,14 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String premiumLimitBaseRecipesBody(int limit) {
     return 'Le plan gratuit permet $limit recettes de base. Passe en Pro pour en créer autant que tu veux.';
+  }
+
+  @override
+  String get premiumLimitFavoritesTitle => 'Limite de favoris atteinte';
+
+  @override
+  String premiumLimitFavoritesBody(int limit) {
+    return 'Le plan gratuit permet $limit favoris. Passe en Pro pour en enregistrer autant que tu veux.';
   }
 
   @override

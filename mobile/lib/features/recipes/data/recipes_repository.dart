@@ -178,6 +178,37 @@ class RecipesRepository {
     }
   }
 
+  /// Recettes aimées « J'aime » (#15), plus récemment ajoutées d'abord.
+  Future<List<RecipeSummary>> fetchFavorites() async {
+    try {
+      final res = await _dio.get<List<dynamic>>('/recipes/favorites');
+      return (res.data ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(RecipeSummary.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de charger tes favoris.');
+    }
+  }
+
+  /// Ajoute la recette aux favoris (idempotent). Peut porter un `premiumLimit`.
+  Future<void> addFavorite(String recipeId) async {
+    try {
+      await _dio.post<void>('/recipes/$recipeId/favorite');
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'ajouter aux favoris.');
+    }
+  }
+
+  /// Retire la recette des favoris (idempotent).
+  Future<void> removeFavorite(String recipeId) async {
+    try {
+      await _dio.delete<void>('/recipes/$recipeId/favorite');
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de retirer des favoris.');
+    }
+  }
+
   /// [priceBracket] utilise la sentinelle [_unset] par défaut : ne rien passer
   /// = tranche inchangée (la plupart des appels ne touchent pas au prix),
   /// passer `null` explicitement = effacée (prix devenu partiel/inconnu).

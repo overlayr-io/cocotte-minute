@@ -2078,6 +2078,18 @@ abstract class AppLocalizations {
   /// **'Aucune recette sans dossier. Tout est bien rangé !'**
   String get recipesOtherFolderEmpty;
 
+  /// No description provided for @recipesFavoritesFolderTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'J\'aime'**
+  String get recipesFavoritesFolderTitle;
+
+  /// No description provided for @recipesFavoritesFolderEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette aimée pour l\'instant.'**
+  String get recipesFavoritesFolderEmpty;
+
   /// No description provided for @recipeMenuAssignFolders.
   ///
   /// In fr, this message translates to:
@@ -2497,6 +2509,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Dupliquer'**
   String get recipeMenuDuplicate;
+
+  /// No description provided for @recipeMenuFavorite.
+  ///
+  /// In fr, this message translates to:
+  /// **'J\'aime'**
+  String get recipeMenuFavorite;
+
+  /// No description provided for @recipeMenuUnfavorite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ne plus aimer'**
+  String get recipeMenuUnfavorite;
 
   /// No description provided for @recipeTagsSection.
   ///
@@ -5017,6 +5041,18 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Le plan gratuit permet {limit} recettes de base. Passe en Pro pour en créer autant que tu veux.'**
   String premiumLimitBaseRecipesBody(int limit);
+
+  /// No description provided for @premiumLimitFavoritesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limite de favoris atteinte'**
+  String get premiumLimitFavoritesTitle;
+
+  /// No description provided for @premiumLimitFavoritesBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le plan gratuit permet {limit} favoris. Passe en Pro pour en enregistrer autant que tu veux.'**
+  String premiumLimitFavoritesBody(int limit);
 
   /// No description provided for @premiumLimitShoppingListsTitle.
   ///
