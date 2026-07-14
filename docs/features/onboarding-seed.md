@@ -1,0 +1,47 @@
+# Feature — Recettes d'exemple à la 1ère ouverture (onboarding)
+
+> Item #12 du backlog. À la création du compte, semer une recette et une recette
+> de base qui l'utilise, pour montrer le but de l'application dès le départ.
+
+## Décisions (validées)
+
+- **Quand** : à la **1ère ouverture** de l'app (compte anonyme inclus — Supabase
+  crée un utilisateur anonyme au démarrage). Une seule fois par compte.
+- **Contenu** : **1 recette de base** (« Sauce tomate maison ») + **1 plat**
+  (« Pâtes à la sauce tomate ») qui l'ajoute en **sous-recette**, pour illustrer
+  le concept clé base ⇄ plat.
+- **Source** : généré **côté serveur** (pas un JSON figé côté mobile) via les
+  méthodes métier existantes (`create`, `addIngredient`, `addStep`,
+  `addComponent`), pour rester cohérent avec toutes les règles (positions,
+  quotas, validation sous-recette).
+
+## Idempotence
+
+- Le service ne sème **rien** si le compte a déjà eu au moins une recette
+  (`count(recipes) where author_id = user > 0`, y compris supprimées) — évite
+  les doublons si l'endpoint est rappelé.
+- Côté mobile, un flag local (`SharedPreferences`) empêche même le 2e appel
+  réseau après le 1er succès. Le serveur reste la vraie garde.
+
+## API (module recipes)
+
+- `POST /recipes/seed-samples` → 204. Idempotent. Sème 6 ingrédients
+  utilisateur (tomate, oignon, ail, huile, pâtes, parmesan), la base + le plat
+  avec leurs ingrédients, étapes et le lien de sous-recette.
+
+## Mobile
+
+- Appel unique au démarrage (après que la session Supabase — anonyme ou non —
+  est prête), **hors** `auth_bloc` : l'auth passe toujours directement par
+  `supabase_flutter`, jamais par NestJS. Le déclencheur est un service
+  d'onboarding dédié, gardé par un flag `SharedPreferences`
+  (`onboarding_samples_seeded`).
+- En cas d'échec réseau : non bloquant, on réessaiera à la prochaine ouverture
+  (le flag n'est posé qu'après un 204).
+
+## Notes
+
+- Les unités d'ingrédient utilisées (`piece`, `cuillere_soupe`, `gramme`) font
+  partie de l'enum `INGREDIENT_UNITS`.
+- La base est créée avec `isBase: true` : elle compte dans le quota freemium des
+  recettes de base, mais un compte neuf part de 0.

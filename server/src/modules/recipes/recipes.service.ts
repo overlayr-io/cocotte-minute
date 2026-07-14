@@ -650,6 +650,80 @@ export class RecipesService {
   }
 
   /**
+   * Sème des recettes d'exemple pour un nouveau compte (feature #12), afin de
+   * montrer le but de l'app : une recette de base « Sauce tomate maison » + un
+   * plat « Pâtes à la sauce tomate » qui l'utilise comme sous-recette. Idempotent :
+   * ne fait rien si le compte a déjà eu la moindre recette (y compris supprimée).
+   */
+  async seedSamples(userId: string): Promise<void> {
+    const [existing] = await this.db
+      .select({ n: sql<number>`count(*)::int` })
+      .from(recipes)
+      .where(eq(recipes.authorId, userId));
+    if ((existing?.n ?? 0) > 0) return;
+
+    const ing = async (
+      name: string,
+      unit: 'gramme' | 'piece' | 'cuillere_soupe',
+      emoji: string,
+    ): Promise<string> =>
+      (await this.ingredientsService.create(userId, { name, unit, emoji })).id;
+
+    const tomate = await ing('Tomate', 'piece', '🍅');
+    const oignon = await ing('Oignon', 'piece', '🧅');
+    const ail = await ing('Ail', 'piece', '🧄');
+    const huile = await ing("Huile d'olive", 'cuillere_soupe', '🫒');
+    const pates = await ing('Pâtes', 'gramme', '🍝');
+    const parmesan = await ing('Parmesan', 'gramme', '🧀');
+
+    // Recette de base réutilisable.
+    const base = await this.create(userId, {
+      name: 'Sauce tomate maison',
+      isBase: true,
+      servings: 4,
+      prepTime: 10,
+      cookTime: 25,
+      description:
+        'Une sauce tomate simple et réutilisable : ajoute-la comme sous-recette dans tes plats.',
+    });
+    await this.addIngredient(userId, base.id, tomate, 6);
+    await this.addIngredient(userId, base.id, oignon, 1);
+    await this.addIngredient(userId, base.id, ail, 2);
+    await this.addIngredient(userId, base.id, huile, 2);
+    await this.addStep(userId, base.id, {
+      description:
+        "Fais revenir l'oignon et l'ail émincés dans l'huile d'olive jusqu'à ce qu'ils soient translucides.",
+    });
+    await this.addStep(userId, base.id, {
+      description:
+        'Ajoute les tomates concassées, sale, puis laisse mijoter 20 minutes à feu doux.',
+    });
+
+    // Plat qui utilise la recette de base comme sous-recette.
+    const dish = await this.create(userId, {
+      name: 'Pâtes à la sauce tomate',
+      isBase: false,
+      servings: 4,
+      prepTime: 5,
+      cookTime: 12,
+      description:
+        'Un classique express qui réutilise ta sauce tomate maison (ajoutée en sous-recette).',
+    });
+    await this.addIngredient(userId, dish.id, pates, 500);
+    await this.addIngredient(userId, dish.id, parmesan, 50);
+    await this.addComponent(userId, dish.id, base.id);
+    await this.addStep(userId, dish.id, {
+      description: "Fais cuire les pâtes dans un grand volume d'eau bouillante salée.",
+    });
+    await this.addStep(userId, dish.id, {
+      description:
+        'Égoutte, mélange avec la sauce tomate maison, puis parsème de parmesan.',
+    });
+
+    this.logger.log(`Recettes d'exemple semées pour l'utilisateur ${userId}`);
+  }
+
+  /**
    * Duplique une recette possédée (copie profonde) : nom + « (copie) »,
    * ingrédients (+ positions), étapes (+ positions, bannières, réfs de base et
    * sélections d'ingrédients d'étape), composants/sous-recettes, catégories,

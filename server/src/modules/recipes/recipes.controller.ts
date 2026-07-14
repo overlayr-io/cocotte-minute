@@ -76,6 +76,16 @@ export class RecipesController {
     return this.recipesService.listFavorites(user.id);
   }
 
+  /**
+   * Sème des recettes d'exemple à la 1ère ouverture (feature #12). Idempotent
+   * côté service : sans effet si le compte a déjà eu au moins une recette.
+   */
+  @Post('seed-samples')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  seedSamples(@CurrentUser() user: AuthenticatedUser): Promise<void> {
+    return this.recipesService.seedSamples(user.id);
+  }
+
   @Get(':id')
   detail(
     @CurrentUser() user: AuthenticatedUser,
