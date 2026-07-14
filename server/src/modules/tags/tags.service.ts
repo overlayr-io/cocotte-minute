@@ -9,7 +9,7 @@ import {
 import { and, eq, inArray, isNull, ne, sql } from 'drizzle-orm';
 
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
-import { tags, type TagRow } from '../../db/schema/tags.schema';
+import { SYSTEM_TAGS, tags, type TagRow } from '../../db/schema/tags.schema';
 import { RecipesService } from '../recipes/recipes.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
@@ -94,6 +94,7 @@ export class TagsService {
 
   /** Catalogue système, annoté du statut "déjà importé" pour l'utilisateur courant. */
   async listSystem(userId: string): Promise<SystemTagDto[]> {
+    await this.ensureSystemDefaults();
     const [rows, mine] = await Promise.all([
       this.db
         .select()
@@ -200,6 +201,27 @@ export class TagsService {
   }
 
   // --- privé -------------------------------------------------------------
+
+  /**
+   * Sème le catalogue de tags système (`owner_id = null`) au premier accès si
+   * aucun n'existe encore (seeding paresseux, global — pas par utilisateur).
+   * Idempotent : ne fait rien dès qu'au moins un tag système est présent, donc
+   * un catalogue vide (DB neuve/recréée) se remplit tout seul sans lancer le
+   * script `db:seed:tags`.
+   */
+  private async ensureSystemDefaults(): Promise<void> {
+    const [existing] = await this.db
+      .select({ id: tags.id })
+      .from(tags)
+      .where(isNull(tags.ownerId))
+      .limit(1);
+    if (existing) return;
+
+    await this.db
+      .insert(tags)
+      .values(SYSTEM_TAGS.map((t) => ({ ownerId: null, name: t.name, color: t.color })));
+    this.logger.log(`Catalogue de tags système semé (${SYSTEM_TAGS.length} tags).`);
+  }
 
   /**
    * Refuse un nom déjà porté (insensible à la casse) par un autre tag non

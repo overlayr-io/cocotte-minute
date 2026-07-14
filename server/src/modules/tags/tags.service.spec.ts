@@ -18,6 +18,7 @@ function makeDb(results: unknown[]): { db: DrizzleDB; calls: { op: string }[] } 
       'from',
       'where',
       'orderBy',
+      'limit',
       'values',
       'set',
       'returning',
@@ -86,6 +87,7 @@ describe('TagsService', () => {
     it('annote alreadyImported selon les copies possédées', async () => {
       const systemRow = row({ id: 'sys-1', ownerId: null, name: 'Rapide' });
       const { db } = makeDb([
+        [{ id: 'sys-1' }], // ensureSystemDefaults : catalogue déjà présent → pas de seed
         [systemRow], // catalogue système
         [{ importedFromId: 'sys-1' }], // mes tags importés
       ]);
