@@ -633,9 +633,9 @@ class _TimeMetaGrid extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final tiles = <MapEntry<String, ({String label, IconData icon})>>[];
 
+    // Fiche recette : les 3 temps sont toujours affichés, même à 0 (« 0 min »).
     void addTile(int minutes, String label, IconData icon) {
-      final value = formatMinutesShort(minutes);
-      if (value == null) return;
+      final value = formatMinutesShort(minutes) ?? '0 min';
       tiles.add(MapEntry(value, (label: label, icon: icon)));
     }
 
@@ -643,7 +643,6 @@ class _TimeMetaGrid extends StatelessWidget {
     addTile(
         summary.cookTime, l10n.pdfMetaCook, Icons.local_fire_department_outlined);
     addTile(summary.restTime, l10n.pdfMetaRest, Icons.hourglass_bottom_rounded);
-    if (tiles.isEmpty) return const SizedBox.shrink();
 
     final cells = <Widget>[];
     for (var i = 0; i < tiles.length; i++) {
