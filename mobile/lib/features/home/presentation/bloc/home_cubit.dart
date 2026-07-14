@@ -198,17 +198,18 @@ class HomeCubit extends Cubit<HomeState> {
       );
     }
     addRow(
-      DiscoverySectionKind.base,
-      all.where((r) => r.summary.isBase),
-      cap: _baseRowCap,
-    );
-    addRow(
       DiscoverySectionKind.large,
       editorial.where((r) => r.summary.servings >= 6),
     );
     addRow(
       DiscoverySectionKind.solo,
       editorial.where((r) => r.summary.servings <= 2),
+    );
+    // Recettes de base : toujours en dernier, tout en bas de l'accueil.
+    addRow(
+      DiscoverySectionKind.base,
+      all.where((r) => r.summary.isBase),
+      cap: _baseRowCap,
     );
 
     return HomeLoaded(
