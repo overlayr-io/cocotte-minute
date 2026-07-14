@@ -45,6 +45,7 @@ class CategoriesListBloc extends Bloc<CategoriesListEvent, CategoriesListState> 
   ) async {
     final current = state;
     if (current is! CategoriesListLoaded) return;
+    emit(current.copyWith(creating: true));
     try {
       await _repository.create(
         name: event.name,

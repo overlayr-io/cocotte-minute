@@ -38,6 +38,7 @@ class PeopleListBloc extends Bloc<PeopleListEvent, PeopleListState> {
   ) async {
     final current = state;
     if (current is! PeopleListLoaded) return;
+    emit(PeopleListLoaded(people: current.people, creating: true));
     try {
       await _repository.create(
         firstName: event.firstName,

@@ -16,12 +16,15 @@ class PeopleListLoading extends PeopleListState {
 }
 
 class PeopleListLoaded extends PeopleListState {
-  const PeopleListLoaded({required this.people});
+  const PeopleListLoaded({required this.people, this.creating = false});
 
   final List<Person> people;
 
+  /// Une création de personne est en cours (spinner sur le bouton d'ajout).
+  final bool creating;
+
   @override
-  List<Object?> get props => [people];
+  List<Object?> get props => [people, creating];
 }
 
 /// Échec transitoire d'une action (création) : les données restent affichées,

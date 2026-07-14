@@ -18,22 +18,37 @@ class TagsListLoading extends TagsListState {
 /// Listes chargées. `busyId` = tag en cours d'action (édition/suppression/import),
 /// pour afficher un état de chargement sur la ligne concernée.
 class TagsListLoaded extends TagsListState {
-  const TagsListLoaded({required this.mine, required this.system, this.busyId});
+  const TagsListLoaded({
+    required this.mine,
+    required this.system,
+    this.busyId,
+    this.creating = false,
+  });
 
   final List<Tag> mine;
   final List<Tag> system;
   final String? busyId;
 
-  TagsListLoaded copyWith({List<Tag>? mine, List<Tag>? system, String? busyId}) {
+  /// Une création de tag est en cours (pas d'id à cibler → drapeau global,
+  /// spinner sur le bouton d'ajout).
+  final bool creating;
+
+  TagsListLoaded copyWith({
+    List<Tag>? mine,
+    List<Tag>? system,
+    String? busyId,
+    bool? creating,
+  }) {
     return TagsListLoaded(
       mine: mine ?? this.mine,
       system: system ?? this.system,
       busyId: busyId,
+      creating: creating ?? false,
     );
   }
 
   @override
-  List<Object?> get props => [mine, system, busyId];
+  List<Object?> get props => [mine, system, busyId, creating];
 }
 
 /// Échec transitoire d'une action : les données restent affichées, un message

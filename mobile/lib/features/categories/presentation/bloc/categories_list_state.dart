@@ -18,10 +18,18 @@ class CategoriesListLoading extends CategoriesListState {
 /// Arborescence à plat chargée. `busyId` = dossier en cours d'action
 /// (édition/suppression). Les pages filtrent par parent via [childrenOf].
 class CategoriesListLoaded extends CategoriesListState {
-  const CategoriesListLoaded({required this.categories, this.busyId});
+  const CategoriesListLoaded({
+    required this.categories,
+    this.busyId,
+    this.creating = false,
+  });
 
   final List<Category> categories;
   final String? busyId;
+
+  /// Une création de dossier est en cours (aucun id à cibler → drapeau global,
+  /// spinner sur le bouton d'ajout).
+  final bool creating;
 
   /// Sous-dossiers directs d'un parent (null = dossiers racines), triés comme
   /// renvoyés par l'API (défauts d'abord, puis ordre de création).
@@ -37,15 +45,20 @@ class CategoriesListLoaded extends CategoriesListState {
     return null;
   }
 
-  CategoriesListLoaded copyWith({List<Category>? categories, String? busyId}) {
+  CategoriesListLoaded copyWith({
+    List<Category>? categories,
+    String? busyId,
+    bool? creating,
+  }) {
     return CategoriesListLoaded(
       categories: categories ?? this.categories,
       busyId: busyId,
+      creating: creating ?? false,
     );
   }
 
   @override
-  List<Object?> get props => [categories, busyId];
+  List<Object?> get props => [categories, busyId, creating];
 }
 
 /// Échec transitoire d'une action : l'arborescence reste affichée, un message

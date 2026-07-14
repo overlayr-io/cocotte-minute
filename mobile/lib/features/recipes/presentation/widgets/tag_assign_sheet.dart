@@ -38,6 +38,20 @@ class _TagAssignSheet extends StatefulWidget {
 class _TagAssignSheetState extends State<_TagAssignSheet> {
   late final Future<List<Tag>> _future = sl<TagsRepository>().fetchMine();
 
+  /// Tag en cours de (dé)association (une seule mutation à la fois).
+  String? _busyId;
+
+  Future<void> _toggle(RecipeDetailCubit cubit, Tag tag, bool selected) async {
+    if (_busyId != null) return;
+    setState(() => _busyId = tag.id);
+    if (selected) {
+      await cubit.unassignTag(tag.id);
+    } else {
+      await cubit.assignTag(tag.id);
+    }
+    if (mounted) setState(() => _busyId = null);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -109,14 +123,12 @@ class _TagAssignSheetState extends State<_TagAssignSheet> {
                             return _TagToggleTile(
                               tag: tag,
                               selected: selected,
-                              onTap: () {
-                                final c = context.read<RecipeDetailCubit>();
-                                if (selected) {
-                                  c.unassignTag(tag.id);
-                                } else {
-                                  c.assignTag(tag.id);
-                                }
-                              },
+                              busy: _busyId == tag.id,
+                              onTap: () => _toggle(
+                                context.read<RecipeDetailCubit>(),
+                                tag,
+                                selected,
+                              ),
                             );
                           },
                         );
@@ -137,11 +149,13 @@ class _TagToggleTile extends StatelessWidget {
   const _TagToggleTile({
     required this.tag,
     required this.selected,
+    required this.busy,
     required this.onTap,
   });
 
   final Tag tag;
   final bool selected;
+  final bool busy;
   final VoidCallback onTap;
 
   @override
@@ -151,7 +165,7 @@ class _TagToggleTile extends StatelessWidget {
       color: selected ? TagColors.tint(color) : AppColors.card,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        onTap: onTap,
+        onTap: busy ? null : onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
@@ -182,13 +196,19 @@ class _TagToggleTile extends StatelessWidget {
                   ),
                 ),
               ),
-              Icon(
-                selected
-                    ? Icons.check_circle_rounded
-                    : Icons.radio_button_unchecked_rounded,
-                size: 22,
-                color: selected ? color : const Color(0xFFC4C0B5),
-              ),
+              busy
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Icon(
+                      selected
+                          ? Icons.check_circle_rounded
+                          : Icons.radio_button_unchecked_rounded,
+                      size: 22,
+                      color: selected ? color : const Color(0xFFC4C0B5),
+                    ),
             ],
           ),
         ),

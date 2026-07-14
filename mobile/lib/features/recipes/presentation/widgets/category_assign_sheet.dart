@@ -37,6 +37,9 @@ class _CategoryAssignSheet extends StatefulWidget {
 class _CategoryAssignSheetState extends State<_CategoryAssignSheet> {
   late final Future<List<Category>> _future = _load();
 
+  /// Dossier en cours de (dé)association (une seule mutation à la fois).
+  String? _busyId;
+
   Future<List<Category>> _load() async {
     final all = await sl<CategoriesRepository>().fetchMine();
     // Tri stable : racines d'abord, puis par nom (les dossiers imbriqués suivent).
@@ -45,6 +48,18 @@ class _CategoryAssignSheetState extends State<_CategoryAssignSheet> {
       return a.name.toLowerCase().compareTo(b.name.toLowerCase());
     });
     return all;
+  }
+
+  Future<void> _toggle(
+      RecipeDetailCubit cubit, Category folder, bool selected) async {
+    if (_busyId != null) return;
+    setState(() => _busyId = folder.id);
+    if (selected) {
+      await cubit.unassignCategory(folder.id);
+    } else {
+      await cubit.assignCategory(folder.id);
+    }
+    if (mounted) setState(() => _busyId = null);
   }
 
   @override
@@ -118,14 +133,12 @@ class _CategoryAssignSheetState extends State<_CategoryAssignSheet> {
                             return _FolderToggleTile(
                               folder: folder,
                               selected: selected,
-                              onTap: () {
-                                final c = context.read<RecipeDetailCubit>();
-                                if (selected) {
-                                  c.unassignCategory(folder.id);
-                                } else {
-                                  c.assignCategory(folder.id);
-                                }
-                              },
+                              busy: _busyId == folder.id,
+                              onTap: () => _toggle(
+                                context.read<RecipeDetailCubit>(),
+                                folder,
+                                selected,
+                              ),
                             );
                           },
                         );
@@ -146,11 +159,13 @@ class _FolderToggleTile extends StatelessWidget {
   const _FolderToggleTile({
     required this.folder,
     required this.selected,
+    required this.busy,
     required this.onTap,
   });
 
   final Category folder;
   final bool selected;
+  final bool busy;
   final VoidCallback onTap;
 
   @override
@@ -159,7 +174,7 @@ class _FolderToggleTile extends StatelessWidget {
       color: selected ? AppColors.primaryTint : AppColors.card,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        onTap: onTap,
+        onTap: busy ? null : onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
@@ -198,13 +213,20 @@ class _FolderToggleTile extends StatelessWidget {
                   ),
                 ),
               ),
-              Icon(
-                selected
-                    ? Icons.check_circle_rounded
-                    : Icons.radio_button_unchecked_rounded,
-                size: 22,
-                color: selected ? AppColors.primary : const Color(0xFFC4C0B5),
-              ),
+              busy
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Icon(
+                      selected
+                          ? Icons.check_circle_rounded
+                          : Icons.radio_button_unchecked_rounded,
+                      size: 22,
+                      color:
+                          selected ? AppColors.primary : const Color(0xFFC4C0B5),
+                    ),
             ],
           ),
         ),

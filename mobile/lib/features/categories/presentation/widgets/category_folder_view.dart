@@ -141,17 +141,39 @@ class CategoryFolderView extends StatelessWidget {
                   ),
             actions: [
               if (isLoaded && current != null && !current.isDefault)
-                IconButton(
-                  onPressed: () => _editCurrent(context, current!, all),
-                  icon: const Icon(Icons.edit_outlined),
-                  tooltip: l10n.categoryEditTitle,
-                ),
+                state.busyId == current.id
+                    ? const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 14),
+                        child: Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      )
+                    : IconButton(
+                        onPressed: () => _editCurrent(context, current!, all),
+                        icon: const Icon(Icons.edit_outlined),
+                        tooltip: l10n.categoryEditTitle,
+                      ),
               if (isLoaded && canAdd)
-                IconButton(
-                  onPressed: () => _create(context, current?.id, all),
-                  icon: const Icon(Icons.add_rounded),
-                  tooltip: l10n.categoryCreateTitle,
-                ),
+                state.creating
+                    ? const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 14),
+                        child: Center(
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        ),
+                      )
+                    : IconButton(
+                        onPressed: () => _create(context, current?.id, all),
+                        icon: const Icon(Icons.add_rounded),
+                        tooltip: l10n.categoryCreateTitle,
+                      ),
               const SizedBox(width: 4),
             ],
           ),
