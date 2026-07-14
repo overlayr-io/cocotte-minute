@@ -775,6 +775,32 @@ class AppLocalizationsEn extends AppLocalizations {
   String get ingredientSectionAlternatives => 'Alternatives';
 
   @override
+  String get ingredientProductsSection => 'My products';
+
+  @override
+  String get ingredientProductsEmptyCta => 'Add a product photo';
+
+  @override
+  String get ingredientProductsHint => 'Photos of the product you buy';
+
+  @override
+  String get ingredientProductsDeleteTitle => 'Remove this photo?';
+
+  @override
+  String ingredientProductsFullPro(int limit) {
+    return 'Limit of $limit photos reached for this ingredient.';
+  }
+
+  @override
+  String get premiumLimitIngredientPhotosTitle =>
+      'Product photos limit reached';
+
+  @override
+  String premiumLimitIngredientPhotosBody(int limit) {
+    return 'The free plan allows $limit photo per ingredient. Go Pro to add up to 3.';
+  }
+
+  @override
   String get ingredientAlternativesHint => 'symmetric relationship';
 
   @override

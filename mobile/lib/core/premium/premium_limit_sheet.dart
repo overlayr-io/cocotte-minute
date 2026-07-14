@@ -178,6 +178,10 @@ class _PremiumLimitSheet extends StatelessWidget {
           l10n.premiumLimitFavoritesTitle,
           l10n.premiumLimitFavoritesBody(error.limit ?? 10),
         ),
+      PremiumLimitError.ingredientPhotos => (
+          l10n.premiumLimitIngredientPhotosTitle,
+          l10n.premiumLimitIngredientPhotosBody(error.limit ?? 1),
+        ),
       _ => (l10n.premiumLimitGenericTitle, l10n.premiumLimitGenericBody),
     };
   }

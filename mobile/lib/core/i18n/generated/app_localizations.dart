@@ -1514,6 +1514,48 @@ abstract class AppLocalizations {
   /// **'Alternatives'**
   String get ingredientSectionAlternatives;
 
+  /// No description provided for @ingredientProductsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes produits'**
+  String get ingredientProductsSection;
+
+  /// No description provided for @ingredientProductsEmptyCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une photo produit'**
+  String get ingredientProductsEmptyCta;
+
+  /// No description provided for @ingredientProductsHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photos du produit que tu achètes'**
+  String get ingredientProductsHint;
+
+  /// No description provided for @ingredientProductsDeleteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer cette photo ?'**
+  String get ingredientProductsDeleteTitle;
+
+  /// No description provided for @ingredientProductsFullPro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limite de {limit} photos atteinte pour cet ingrédient.'**
+  String ingredientProductsFullPro(int limit);
+
+  /// No description provided for @premiumLimitIngredientPhotosTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limite de photos produit atteinte'**
+  String get premiumLimitIngredientPhotosTitle;
+
+  /// No description provided for @premiumLimitIngredientPhotosBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le plan gratuit permet {limit} photo par ingrédient. Passe en Pro pour en ajouter jusqu\'à 3.'**
+  String premiumLimitIngredientPhotosBody(int limit);
+
   /// No description provided for @ingredientAlternativesHint.
   ///
   /// In fr, this message translates to:

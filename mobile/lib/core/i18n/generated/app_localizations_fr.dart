@@ -780,6 +780,32 @@ class AppLocalizationsFr extends AppLocalizations {
   String get ingredientSectionAlternatives => 'Alternatives';
 
   @override
+  String get ingredientProductsSection => 'Mes produits';
+
+  @override
+  String get ingredientProductsEmptyCta => 'Ajouter une photo produit';
+
+  @override
+  String get ingredientProductsHint => 'Photos du produit que tu achètes';
+
+  @override
+  String get ingredientProductsDeleteTitle => 'Retirer cette photo ?';
+
+  @override
+  String ingredientProductsFullPro(int limit) {
+    return 'Limite de $limit photos atteinte pour cet ingrédient.';
+  }
+
+  @override
+  String get premiumLimitIngredientPhotosTitle =>
+      'Limite de photos produit atteinte';
+
+  @override
+  String premiumLimitIngredientPhotosBody(int limit) {
+    return 'Le plan gratuit permet $limit photo par ingrédient. Passe en Pro pour en ajouter jusqu\'à 3.';
+  }
+
+  @override
   String get ingredientAlternativesHint => 'relation symétrique';
 
   @override

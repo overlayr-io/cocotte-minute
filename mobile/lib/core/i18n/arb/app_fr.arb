@@ -522,6 +522,28 @@
 
   "ingredientSectionAlternatives": "Alternatives",
   "@ingredientSectionAlternatives": {},
+  "ingredientProductsSection": "Mes produits",
+  "@ingredientProductsSection": {},
+  "ingredientProductsEmptyCta": "Ajouter une photo produit",
+  "@ingredientProductsEmptyCta": {},
+  "ingredientProductsHint": "Photos du produit que tu achètes",
+  "@ingredientProductsHint": {},
+  "ingredientProductsDeleteTitle": "Retirer cette photo ?",
+  "@ingredientProductsDeleteTitle": {},
+  "ingredientProductsFullPro": "Limite de {limit} photos atteinte pour cet ingrédient.",
+  "@ingredientProductsFullPro": {
+    "placeholders": {
+      "limit": { "type": "int" }
+    }
+  },
+  "premiumLimitIngredientPhotosTitle": "Limite de photos produit atteinte",
+  "@premiumLimitIngredientPhotosTitle": {},
+  "premiumLimitIngredientPhotosBody": "Le plan gratuit permet {limit} photo par ingrédient. Passe en Pro pour en ajouter jusqu'à 3.",
+  "@premiumLimitIngredientPhotosBody": {
+    "placeholders": {
+      "limit": { "type": "int" }
+    }
+  },
   "ingredientAlternativesHint": "relation symétrique",
   "@ingredientAlternativesHint": {},
   "ingredientNoAlternatives": "Aucune alternative pour l'instant.",
