@@ -373,6 +373,18 @@ class RecipesRepository {
     }
   }
 
+  Future<void> reorderIngredients(
+      String recipeId, List<String> ingredientIds) async {
+    try {
+      await _dio.put<void>(
+        '/recipes/$recipeId/ingredients/order',
+        data: {'ingredientIds': ingredientIds},
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de réordonner les ingrédients.');
+    }
+  }
+
   Future<void> setStepIngredients(
     String recipeId,
     String stepId,

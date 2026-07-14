@@ -564,12 +564,13 @@ class _SheetState extends State<_Sheet> {
       if (detail.ingredients.isEmpty)
         _EmptyHint(message: l10n.recipeIngredientsEmpty)
       else
-        for (final ing in detail.ingredients)
-          _IngredientRow(
-            ingredient: ing,
-            scale: scale,
-            onTap: () => _editLine(ing),
-          ),
+        _IngredientsList(
+          ingredients: detail.ingredients,
+          scale: scale,
+          onReorder: (ids) =>
+              context.read<RecipeDetailCubit>().reorderIngredients(ids),
+          onTapLine: _editLine,
+        ),
       const SizedBox(height: 14),
       _AddIngredientsButton(
         label: l10n.recipeIngredientsAddCta,
@@ -1095,10 +1096,90 @@ class _CreatorRow extends StatelessWidget {
   }
 }
 
+/// Liste réordonnable des ingrédients (drag & drop). Garde un ordre local pour
+/// un rendu optimiste, resynchronisé sur `detail.ingredients` après rechargement
+/// (renumérotation serveur), ajout ou suppression. Même logique que StepsContent.
+class _IngredientsList extends StatefulWidget {
+  const _IngredientsList({
+    required this.ingredients,
+    required this.scale,
+    required this.onReorder,
+    required this.onTapLine,
+  });
+
+  final List<RecipeIngredientLine> ingredients;
+  final double scale;
+  final void Function(List<String> ingredientIds) onReorder;
+  final void Function(RecipeIngredientLine line) onTapLine;
+
+  @override
+  State<_IngredientsList> createState() => _IngredientsListState();
+}
+
+class _IngredientsListState extends State<_IngredientsList> {
+  late List<RecipeIngredientLine> _items;
+
+  @override
+  void initState() {
+    super.initState();
+    _items = List.of(widget.ingredients);
+  }
+
+  @override
+  void didUpdateWidget(covariant _IngredientsList old) {
+    super.didUpdateWidget(old);
+    if (!_sameOrder(old.ingredients, widget.ingredients)) {
+      _items = List.of(widget.ingredients);
+    }
+  }
+
+  bool _sameOrder(
+      List<RecipeIngredientLine> a, List<RecipeIngredientLine> b) {
+    if (a.length != b.length) return false;
+    for (var i = 0; i < a.length; i++) {
+      if (a[i].id != b[i].id) return false;
+    }
+    return true;
+  }
+
+  // Signature `onReorderItem` : newIndex déjà ajusté du retrait de l'élément.
+  void _onReorder(int oldIndex, int newIndex) {
+    setState(() {
+      final moved = _items.removeAt(oldIndex);
+      _items.insert(newIndex, moved);
+    });
+    widget.onReorder(_items.map((e) => e.id).toList());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ReorderableListView.builder(
+      shrinkWrap: true,
+      primary: false,
+      physics: const NeverScrollableScrollPhysics(),
+      buildDefaultDragHandles: false,
+      itemCount: _items.length,
+      onReorderItem: _onReorder,
+      itemBuilder: (context, i) {
+        final ing = _items[i];
+        return _IngredientRow(
+          key: ValueKey(ing.id),
+          ingredient: ing,
+          scale: widget.scale,
+          index: i,
+          onTap: () => widget.onTapLine(ing),
+        );
+      },
+    );
+  }
+}
+
 class _IngredientRow extends StatelessWidget {
   const _IngredientRow({
+    super.key,
     required this.ingredient,
     required this.scale,
+    required this.index,
     required this.onTap,
   });
 
@@ -1106,6 +1187,9 @@ class _IngredientRow extends StatelessWidget {
 
   /// Facteur de mise à l'échelle (portions / servings) appliqué à l'affichage.
   final double scale;
+
+  /// Index dans la liste réordonnable (pour la poignée de drag).
+  final int index;
   final VoidCallback onTap;
 
   @override
@@ -1150,6 +1234,14 @@ class _IngredientRow extends StatelessWidget {
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF4B5563),
+              ),
+            ),
+            ReorderableDragStartListener(
+              index: index,
+              child: const Padding(
+                padding: EdgeInsets.only(left: 8),
+                child: Icon(Icons.drag_indicator_rounded,
+                    size: 20, color: Color(0xFFCBC7BB)),
               ),
             ),
           ],

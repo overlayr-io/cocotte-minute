@@ -197,6 +197,7 @@ describe('RecipesService', () => {
     it('upsert la ligne avec sa quantité', async () => {
       const { db, calls } = makeDb([
         [recipeRow()], // findOwnedOrFail
+        [], // select max(position) → liste vide, nextPosition = 0
         undefined, // insert onConflictDoUpdate
       ]);
       const ingredients = {
@@ -228,6 +229,31 @@ describe('RecipesService', () => {
       const service = new RecipesService(db, ingredientsStub, premiumStub(), storageStub);
       await service.updateIngredientQuantity(USER, 'rec-1', 'ing-1', 80);
       expect(calls.some((c) => c.op === 'update')).toBe(true);
+    });
+  });
+
+  describe('reorderIngredients', () => {
+    it('renumérote quand la liste est une permutation exacte', async () => {
+      const { db, calls } = makeDb([
+        [recipeRow()], // findOwnedOrFail
+        [{ ingredientId: 'ing-1' }, { ingredientId: 'ing-2' }], // ingrédients de la recette
+        undefined, // update position 0
+        undefined, // update position 1
+      ]);
+      const service = new RecipesService(db, ingredientsStub, premiumStub(), storageStub);
+      await service.reorderIngredients(USER, 'rec-1', ['ing-2', 'ing-1']);
+      expect(calls.filter((c) => c.op === 'update').length).toBe(2);
+    });
+
+    it('lève BadRequest si la liste n’est pas une permutation exacte', async () => {
+      const { db } = makeDb([
+        [recipeRow()], // findOwnedOrFail
+        [{ ingredientId: 'ing-1' }, { ingredientId: 'ing-2' }],
+      ]);
+      const service = new RecipesService(db, ingredientsStub, premiumStub(), storageStub);
+      await expect(
+        service.reorderIngredients(USER, 'rec-1', ['ing-1']),
+      ).rejects.toBeInstanceOf(BadRequestException);
     });
   });
 

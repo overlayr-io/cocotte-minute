@@ -25,7 +25,6 @@ import { SupabaseStorageService } from '../../common/supabase/supabase-storage.s
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import { recipeGalleryImages } from '../../db/schema/recipe-gallery.schema';
 import {
-  DEFAULT_INGREDIENT_QUANTITY,
   recipeCategories,
   recipeComponents,
   recipeIngredients,
@@ -589,6 +588,7 @@ export class RecipesService {
           .select({
             ingredientId: recipeIngredients.ingredientId,
             quantity: recipeIngredients.quantity,
+            position: recipeIngredients.position,
           })
           .from(recipeIngredients)
           .where(eq(recipeIngredients.recipeId, id)),
@@ -855,9 +855,18 @@ export class RecipesService {
     if (!owned) {
       throw new NotFoundException('Ingrédient introuvable');
     }
+    // Nouvel ingrédient ajouté en fin de liste (position = max + 1). Ré-ajouter
+    // un ingrédient déjà présent ne met à jour que la quantité (position figée).
+    const [last] = await this.db
+      .select({ position: recipeIngredients.position })
+      .from(recipeIngredients)
+      .where(eq(recipeIngredients.recipeId, recipeId))
+      .orderBy(desc(recipeIngredients.position))
+      .limit(1);
+    const nextPosition = (last?.position ?? -1) + 1;
     await this.db
       .insert(recipeIngredients)
-      .values({ recipeId, ingredientId, quantity })
+      .values({ recipeId, ingredientId, quantity, position: nextPosition })
       .onConflictDoUpdate({
         target: [recipeIngredients.recipeId, recipeIngredients.ingredientId],
         set: { quantity },
@@ -901,6 +910,45 @@ export class RecipesService {
           eq(recipeIngredients.ingredientId, ingredientId),
         ),
       );
+  }
+
+  /**
+   * Réordonne les ingrédients d'une recette (drag & drop). `ingredientIds` doit
+   * être une permutation exacte des ingrédients de la recette (le pivot n'a pas
+   * d'id propre, on adresse donc par `ingredientId`).
+   */
+  async reorderIngredients(
+    userId: string,
+    recipeId: string,
+    ingredientIds: string[],
+  ): Promise<void> {
+    await this.findOwnedOrFail(userId, recipeId);
+    const rows = await this.db
+      .select({ ingredientId: recipeIngredients.ingredientId })
+      .from(recipeIngredients)
+      .where(eq(recipeIngredients.recipeId, recipeId));
+    const owned = new Set(rows.map((r) => r.ingredientId));
+    const unique = new Set(ingredientIds);
+    if (
+      unique.size !== ingredientIds.length ||
+      ingredientIds.length !== owned.size ||
+      ingredientIds.some((id) => !owned.has(id))
+    ) {
+      throw new BadRequestException(
+        'Liste d’ingrédients invalide pour le réordonnancement',
+      );
+    }
+    for (let i = 0; i < ingredientIds.length; i++) {
+      await this.db
+        .update(recipeIngredients)
+        .set({ position: i })
+        .where(
+          and(
+            eq(recipeIngredients.recipeId, recipeId),
+            eq(recipeIngredients.ingredientId, ingredientIds[i]),
+          ),
+        );
+    }
   }
 
   // --- étapes ------------------------------------------------------------
@@ -1253,21 +1301,38 @@ export class RecipesService {
    */
   private async hydrateIngredients(
     userId: string,
-    lines: { ingredientId: string; quantity: number }[],
+    lines: { ingredientId: string; quantity: number; position?: number }[],
   ): Promise<RecipeIngredientLineDto[]> {
     if (lines.length === 0) return [];
-    const quantities = new Map(lines.map((l) => [l.ingredientId, l.quantity]));
     const owned = await this.ingredientsService.listByIds(
       userId,
       lines.map((l) => l.ingredientId),
     );
-    return owned.map((i) => ({
-      id: i.id,
-      name: i.name,
-      unit: i.unit,
-      imageUrl: i.imageUrl,
-      quantity: quantities.get(i.id) ?? DEFAULT_INGREDIENT_QUANTITY,
-    }));
+    const byId = new Map(owned.map((i) => [i.id, i]));
+    // Ordre = `position` du pivot (drag & drop). Ordre secondaire = nom, pour un
+    // rendu stable quand plusieurs lignes partagent la même position (héritage :
+    // toutes à 0 avant un premier réordonnancement).
+    const ordered = [...lines].sort((a, b) => {
+      const pa = a.position ?? 0;
+      const pb = b.position ?? 0;
+      if (pa !== pb) return pa - pb;
+      const na = byId.get(a.ingredientId)?.name ?? '';
+      const nb = byId.get(b.ingredientId)?.name ?? '';
+      return na.localeCompare(nb);
+    });
+    const result: RecipeIngredientLineDto[] = [];
+    for (const line of ordered) {
+      const i = byId.get(line.ingredientId);
+      if (!i) continue; // ingrédient supprimé/non possédé : ligne omise
+      result.push({
+        id: i.id,
+        name: i.name,
+        unit: i.unit,
+        imageUrl: i.imageUrl,
+        quantity: line.quantity,
+      });
+    }
+    return result;
   }
 
   // --- étapes : dépliage & validations ----------------------------------

@@ -24,6 +24,7 @@ import {
   AssignRecipeTagDto,
   CreateRecipeStepDto,
   ImportRecipeStepsDto,
+  ReorderRecipeIngredientsDto,
   ReorderRecipeStepsDto,
   SetStepIngredientsDto,
   UpdateRecipeIngredientQuantityDto,
@@ -124,6 +125,16 @@ export class RecipesController {
       ingredientId,
       dto.quantity,
     );
+  }
+
+  @Put(':id/ingredients/order')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  reorderIngredients(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ReorderRecipeIngredientsDto,
+  ): Promise<void> {
+    return this.recipesService.reorderIngredients(user.id, id, dto.ingredientIds);
   }
 
   @Delete(':id/ingredients/:ingredientId')

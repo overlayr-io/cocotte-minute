@@ -359,6 +359,20 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     }
   }
 
+  /// Réordonne les ingrédients (drag & drop) : même logique que les étapes —
+  /// le serveur renumérote (`position`), puis rechargement (revert visuel si KO).
+  Future<void> reorderIngredients(List<String> ingredientIds) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    try {
+      await _repository.reorderIngredients(recipeId, ingredientIds);
+      await _reload();
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(message: e.message));
+      await _reload();
+    }
+  }
+
   // --- composants (sous-recettes) ---------------------------------------
 
   Future<void> addComponent(String baseRecipeId) =>

@@ -108,6 +108,12 @@ export const recipeIngredients = pgTable(
     quantity: numeric('quantity', { precision: 10, scale: 2, mode: 'number' })
       .notNull()
       .default(DEFAULT_INGREDIENT_QUANTITY),
+    /**
+     * Ordre d'affichage dans la recette (0-based, réécrit au réordonnancement
+     * drag & drop). Défaut 0 : les lignes historiques restent triées par nom
+     * (ordre secondaire) tant qu'aucun réordonnancement n'a eu lieu.
+     */
+    position: integer('position').notNull().default(0),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [primaryKey({ columns: [t.recipeId, t.ingredientId] })],
