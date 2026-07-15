@@ -97,6 +97,18 @@ class _TagsViewState extends State<_TagsView> {
               if (state is! TagsListLoaded || _tab != 0) {
                 return const SizedBox.shrink();
               }
+              if (state.creating) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 14),
+                  child: Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                );
+              }
               return IconButton(
                 onPressed: () => _create(context),
                 icon: const Icon(Icons.add_rounded),

@@ -1,16 +1,25 @@
 import 'package:dio/dio.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/premium/premium_limit_error.dart';
 import '../domain/ingredient.dart';
+import '../domain/ingredient_photo.dart';
 
 /// Erreur portant un message exploitable pour l'UI (snackbar/page d'erreur).
 class IngredientsRepositoryException implements Exception {
-  const IngredientsRepositoryException(this.message, {this.alreadyImported = false});
+  const IngredientsRepositoryException(
+    this.message, {
+    this.alreadyImported = false,
+    this.premiumLimit,
+  });
 
   final String message;
 
   /// Vrai si l'échec vient d'un ingrédient système déjà importé (409).
   final bool alreadyImported;
+
+  /// Limite freemium atteinte (403 `PREMIUM_LIMIT_*`) : la vue ouvre l'upsell.
+  final PremiumLimitError? premiumLimit;
 
   @override
   String toString() => 'IngredientsRepositoryException($message)';
@@ -146,7 +155,56 @@ class IngredientsRepository {
     }
   }
 
+  /// Photos « Mes produits » (#14) de cet ingrédient, plus anciennes d'abord.
+  Future<List<IngredientPhoto>> fetchProductPhotos(String ingredientId) async {
+    try {
+      final res = await _dio.get<List<dynamic>>('/ingredients/$ingredientId/photos');
+      return (res.data ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(IngredientPhoto.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de charger tes produits.');
+    }
+  }
+
+  /// Ajoute une photo produit (URL déjà uploadée). Renvoie la liste à jour ;
+  /// peut porter un `premiumLimit` (quota 1 gratuit / 3 Pro).
+  Future<List<IngredientPhoto>> addProductPhoto(
+    String ingredientId,
+    String imageUrl,
+  ) async {
+    try {
+      final res = await _dio.post<List<dynamic>>(
+        '/ingredients/$ingredientId/photos',
+        data: {'imageUrl': imageUrl},
+      );
+      return (res.data ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(IngredientPhoto.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'ajouter la photo.');
+    }
+  }
+
+  /// Retire une photo produit (+ son fichier Storage côté serveur).
+  Future<void> removeProductPhoto(String ingredientId, String photoId) async {
+    try {
+      await _dio.delete<void>('/ingredients/$ingredientId/photos/$photoId');
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de retirer la photo.');
+    }
+  }
+
   IngredientsRepositoryException _mapError(DioException e, String fallback) {
+    final premiumLimit = PremiumLimitError.fromResponseData(e.response?.data);
+    if (premiumLimit != null) {
+      return IngredientsRepositoryException(
+        premiumLimit.message ?? fallback,
+        premiumLimit: premiumLimit,
+      );
+    }
     if (e.response?.statusCode == 409) {
       return const IngredientsRepositoryException(
         'Cet ingrédient est déjà importé.',

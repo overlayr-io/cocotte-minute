@@ -22,6 +22,21 @@ class PremiumLimitError extends Equatable {
   /// 6 critères de recherche cumulés max en gratuit (GET /search/recipes).
   static const String searchCriteria = 'PREMIUM_LIMIT_SEARCH_CRITERIA';
 
+  /// Photos de galerie par recette : 3 en gratuit, 6 en Pro (POST
+  /// /recipes/:id/gallery). Contrairement aux autres, ce plafond existe même en
+  /// Pro — l'UI n'affiche donc l'upsell qu'aux comptes gratuits.
+  static const String galleryPhotos = 'PREMIUM_LIMIT_GALLERY_PHOTOS';
+
+  /// 1 entrée max par créneau du planning en gratuit (POST /meal-plan/entries).
+  static const String mealSlotEntries = 'PREMIUM_LIMIT_MEAL_SLOT_ENTRIES';
+
+  /// Planning éditable sur T/T+1 uniquement en gratuit (au-delà : lecture seule).
+  static const String mealPlanWeek = 'PREMIUM_LIMIT_MEAL_PLAN_WEEK';
+
+  /// Photos « Mes produits » par ingrédient : 1 en gratuit, 3 en Pro (POST
+  /// /ingredients/:id/photos). Plafond réel même en Pro.
+  static const String ingredientPhotos = 'PREMIUM_LIMIT_INGREDIENT_PHOTOS';
+
   /// Parse le corps d'une réponse d'erreur serveur. Null si le corps ne porte
   /// pas un code `PREMIUM_LIMIT_*` (erreur classique).
   static PremiumLimitError? fromResponseData(Object? data) {

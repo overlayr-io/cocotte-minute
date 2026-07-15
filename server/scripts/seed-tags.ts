@@ -1,37 +1,21 @@
 /**
  * Seed du catalogue de tags système (owner_id = null).
  *
- * Source : scripts/data/system-tags.json. Idempotent : un tag système déjà
- * présent (même nom, owner null, non supprimé) est ignoré — on peut relancer
- * le script sans créer de doublons.
+ * Source : constante `SYSTEM_TAGS` (src/db/schema/tags.schema.ts), source unique
+ * partagée avec le seeding paresseux du service. Idempotent : un tag système
+ * déjà présent (même nom, owner null, non supprimé) est ignoré — on peut
+ * relancer le script sans créer de doublons.
  *
- * Lancement : `npm run db:seed:tags` (nécessite DATABASE_URL dans l'env).
+ * Note : depuis l'ajout du seeding paresseux (`TagsService.ensureSystemDefaults`),
+ * ce script est surtout un filet manuel — le catalogue se remplit tout seul au
+ * premier accès. Lancement : `npm run db:seed:tags` (nécessite DATABASE_URL).
  */
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
-
 import 'dotenv/config';
 import { and, eq, isNull } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
-import { TAG_COLORS, type TagColor, tags } from '../src/db/schema/tags.schema';
-
-interface SeedItem {
-  name: string;
-  color: TagColor;
-}
-
-function loadItems(): SeedItem[] {
-  const raw = readFileSync(join(__dirname, 'data', 'system-tags.json'), 'utf-8');
-  const parsed = JSON.parse(raw) as SeedItem[];
-  for (const item of parsed) {
-    if (!item.name || !TAG_COLORS.includes(item.color)) {
-      throw new Error(`Entrée invalide dans system-tags.json : ${JSON.stringify(item)}`);
-    }
-  }
-  return parsed;
-}
+import { SYSTEM_TAGS, tags } from '../src/db/schema/tags.schema';
 
 async function main(): Promise<void> {
   const connectionString = process.env.DATABASE_URL;
@@ -43,7 +27,7 @@ async function main(): Promise<void> {
   const db = drizzle(client, { schema: { tags } });
 
   try {
-    const items = loadItems();
+    const items = SYSTEM_TAGS;
     let created = 0;
     let skipped = 0;
 

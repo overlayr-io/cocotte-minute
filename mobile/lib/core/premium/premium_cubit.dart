@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+// `show User` : on ne veut que le type User, pas l'AuthState de Supabase qui
+// entrerait en collision avec notre propre AuthState (part de auth_bloc).
+import 'package:supabase_flutter/supabase_flutter.dart' show User;
 
 import '../auth/auth_bloc.dart';
 import 'premium_models.dart';
@@ -46,7 +49,7 @@ class PremiumCubit extends Cubit<PremiumState> {
         _syncedUserId = null;
         emit(const PremiumState(status: PremiumStatus.ready, isGuest: true));
       case AuthAuthenticated(:final user):
-        await _syncUser(user.id);
+        await _syncUser(user);
       case AuthUnauthenticated():
         _syncedUserId = null;
         if (_repository.isConfigured) {
@@ -64,7 +67,7 @@ class PremiumCubit extends Cubit<PremiumState> {
     }
   }
 
-  Future<void> _syncUser(String userId) async {
+  Future<void> _syncUser(User user) async {
     if (!_repository.isConfigured) {
       // RevenueCat indisponible : on reste non-premium (les limites serveur
       // font foi de toute façon).
@@ -72,14 +75,31 @@ class PremiumCubit extends Cubit<PremiumState> {
       return;
     }
     _ensureListener();
-    if (_syncedUserId == userId) return;
-    _syncedUserId = userId;
+    if (_syncedUserId == user.id) return;
+    _syncedUserId = user.id;
     try {
-      final entitlement = await _repository.logIn(userId);
+      final entitlement = await _repository.logIn(user.id);
+      // Best-effort : enrichit la fiche customer RevenueCat (non bloquant).
+      unawaited(_repository.setUserAttributes(
+        email: user.email,
+        displayName: _displayNameOf(user),
+        custom: {
+          'supabase_user_id': user.id,
+          if (user.appMetadata['provider'] case final String p) 'provider': p,
+        },
+      ));
       _apply(entitlement);
     } catch (_) {
       emit(const PremiumState(status: PremiumStatus.ready));
     }
+  }
+
+  /// Nom d'affichage best-effort depuis les métadonnées Supabase (OAuth
+  /// renseigne souvent `full_name`/`name` ; null pour un simple email/mdp).
+  static String? _displayNameOf(User user) {
+    final meta = user.userMetadata;
+    final name = meta?['full_name'] ?? meta?['name'];
+    return name is String && name.isNotEmpty ? name : null;
   }
 
   void _ensureListener() {

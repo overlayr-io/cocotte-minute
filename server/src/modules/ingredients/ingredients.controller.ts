@@ -15,7 +15,12 @@ import {
 import { AuthenticatedUser } from '../../common/auth/authenticated-user';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { SupabaseAuthGuard } from '../../common/guards/supabase-auth.guard';
+import {
+  IngredientPhotoDto,
+  IngredientPhotosService,
+} from './ingredient-photos.service';
 import { AddAlternativeDto } from './dto/add-alternative.dto';
+import { AddIngredientPhotoDto } from './dto/add-ingredient-photo.dto';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import {
@@ -28,7 +33,10 @@ import {
 @Controller('ingredients')
 @UseGuards(SupabaseAuthGuard)
 export class IngredientsController {
-  constructor(private readonly ingredientsService: IngredientsService) {}
+  constructor(
+    private readonly ingredientsService: IngredientsService,
+    private readonly ingredientPhotosService: IngredientPhotosService,
+  ) {}
 
   /** Mes ingrédients (copies importées + customs). */
   @Get()
@@ -103,5 +111,33 @@ export class IngredientsController {
     @Param('alternativeId', ParseUUIDPipe) alternativeId: string,
   ): Promise<void> {
     return this.ingredientsService.removeAlternative(user.id, id, alternativeId);
+  }
+
+  // --- photos « Mes produits » (#14) -------------------------------------
+
+  @Get(':id/photos')
+  listPhotos(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<IngredientPhotoDto[]> {
+    return this.ingredientPhotosService.list(user.id, id);
+  }
+
+  @Post(':id/photos')
+  addPhoto(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: AddIngredientPhotoDto,
+  ): Promise<IngredientPhotoDto[]> {
+    return this.ingredientPhotosService.add(user.id, id, dto.imageUrl);
+  }
+
+  @Delete(':id/photos/:photoId')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removePhoto(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('photoId', ParseUUIDPipe) photoId: string,
+  ): Promise<void> {
+    return this.ingredientPhotosService.remove(user.id, photoId);
   }
 }

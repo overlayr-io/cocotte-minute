@@ -609,6 +609,165 @@ class AppLocalizationsFr extends AppLocalizations {
   String get helpCenterContactSubtitle => 'Écris-nous, on te répond vite';
 
   @override
+  String get accountRowConceptGuides => 'Comprendre l\'app';
+
+  @override
+  String get conceptGuidesTitle => 'Comprendre l\'app';
+
+  @override
+  String get conceptGuidesIntro =>
+      'Des guides courts pour comprendre chaque idée clé de Cocotte Minute. Une vidéo accompagnera bientôt chaque guide.';
+
+  @override
+  String get conceptVideoComingSoon => 'Vidéo bientôt disponible';
+
+  @override
+  String get conceptBaseTitle => 'Recettes de base et sous-recettes';
+
+  @override
+  String get conceptBaseSummary =>
+      'Réutilise une préparation dans plusieurs plats';
+
+  @override
+  String get conceptBaseIntro =>
+      'Une recette de base est une préparation que tu réutilises souvent : une sauce, une pâte, un fond. Tu la crées une fois, puis tu l\'ajoutes dans autant de plats que tu veux.';
+
+  @override
+  String get conceptBaseS1Title => 'Qu\'est-ce qu\'une recette de base ?';
+
+  @override
+  String get conceptBaseS1Body =>
+      'C\'est une recette comme les autres, mais marquée « de base ». Par exemple une sauce tomate maison : tu la prépares une fois et elle devient une brique réutilisable.';
+
+  @override
+  String get conceptBaseS2Title => 'L\'utiliser dans un plat';
+
+  @override
+  String get conceptBaseS2Body =>
+      'Dans un plat, ajoute la recette de base comme sous-recette. Ses ingrédients sont alors comptés automatiquement dans le plat et dans ta liste de courses.';
+
+  @override
+  String get conceptFoldersTitle => 'Dossiers';
+
+  @override
+  String get conceptFoldersSummary => 'Range tes recettes dans des dossiers';
+
+  @override
+  String get conceptFoldersIntro =>
+      'Les dossiers t\'aident à organiser tes recettes par thème : entrées, plats, desserts, ou ce que tu veux. Tu peux même mettre un dossier dans un autre.';
+
+  @override
+  String get conceptFoldersS1Title => 'Créer et imbriquer';
+
+  @override
+  String get conceptFoldersS1Body =>
+      'Crée un dossier, puis glisse tes recettes dedans. Un dossier peut contenir d\'autres dossiers, pour un classement aussi précis que tu le souhaites.';
+
+  @override
+  String get conceptFoldersS2Title => 'Retrouver une recette';
+
+  @override
+  String get conceptFoldersS2Body =>
+      'Ouvre un dossier pour voir seulement les recettes qu\'il contient. Les recettes rangées nulle part restent visibles dans le dossier « Autres ».';
+
+  @override
+  String get conceptTagsTitle => 'Tags';
+
+  @override
+  String get conceptTagsSummary => 'Étiquette tes recettes pour les filtrer';
+
+  @override
+  String get conceptTagsIntro =>
+      'Les tags sont des étiquettes libres : « rapide », « végétarien », « préféré des enfants ». Une même recette peut en avoir plusieurs.';
+
+  @override
+  String get conceptTagsS1Title => 'À quoi servent les tags';
+
+  @override
+  String get conceptTagsS1Body =>
+      'Contrairement aux dossiers, une recette peut porter plusieurs tags à la fois. C\'est idéal pour croiser des critères qui ne rentrent pas dans un seul rangement.';
+
+  @override
+  String get conceptTagsS2Title => 'Filtrer avec la recherche';
+
+  @override
+  String get conceptTagsS2Body =>
+      'Depuis la recherche, combine un ou plusieurs tags pour ne voir que les recettes correspondantes. Pratique pour trouver un plat rapide et végétarien d\'un coup.';
+
+  @override
+  String get conceptPeopleTitle => 'Personnes et famille';
+
+  @override
+  String get conceptPeopleSummary =>
+      'Associe des recettes aux personnes du foyer';
+
+  @override
+  String get conceptPeopleIntro =>
+      'Ajoute les personnes de ton foyer pour adapter tes recettes à chacun : goûts, portions et allergies.';
+
+  @override
+  String get conceptPeopleS1Title => 'Ajouter des personnes';
+
+  @override
+  String get conceptPeopleS1Body =>
+      'Crée une fiche par personne, avec son prénom et, si tu veux, ses allergies. Tu peux ensuite associer des recettes à celles et ceux qu\'elles concernent.';
+
+  @override
+  String get conceptPeopleS2Title => 'Filtrer par personne';
+
+  @override
+  String get conceptPeopleS2Body =>
+      'Filtre tes recettes par personne pour voir ce qui lui convient. Les allergies renseignées t\'aident à repérer les plats à éviter.';
+
+  @override
+  String get conceptShoppingTitle => 'Liste de courses';
+
+  @override
+  String get conceptShoppingSummary => 'Génère ta liste depuis tes recettes';
+
+  @override
+  String get conceptShoppingIntro =>
+      'Plus besoin de tout noter à la main : choisis des recettes et Cocotte Minute rassemble leurs ingrédients dans une seule liste.';
+
+  @override
+  String get conceptShoppingS1Title => 'Générer depuis des recettes';
+
+  @override
+  String get conceptShoppingS1Body =>
+      'Sélectionne les recettes de ta semaine : les ingrédients sont additionnés et regroupés. Coche ce que tu mets dans le panier au fil des courses.';
+
+  @override
+  String get conceptShoppingS2Title => 'Fonctionne hors ligne';
+
+  @override
+  String get conceptShoppingS2Body =>
+      'Ta liste reste disponible même sans connexion en magasin. Tes changements se synchronisent tout seuls dès que le réseau revient.';
+
+  @override
+  String get conceptPlanningTitle => 'Planification des repas';
+
+  @override
+  String get conceptPlanningSummary => 'Organise tes repas de la semaine';
+
+  @override
+  String get conceptPlanningIntro =>
+      'Le planning te donne une vue de la semaine pour décider à l\'avance qui mange quoi et quand.';
+
+  @override
+  String get conceptPlanningS1Title => 'Planifier la semaine';
+
+  @override
+  String get conceptPlanningS1Body =>
+      'Place une recette sur un jour et un moment (midi, soir). Tu visualises ta semaine d\'un coup d\'oeil et tu évites la question du « qu\'est-ce qu\'on mange ce soir ? ».';
+
+  @override
+  String get conceptPlanningS2Title => 'Glisser-déposer tes recettes';
+
+  @override
+  String get conceptPlanningS2Body =>
+      'Déplace une recette d\'un créneau à l\'autre par simple glisser-déposer. Une fois ta semaine posée, génère la liste de courses correspondante.';
+
+  @override
   String get contactIntro =>
       'Une question, un bug, une idée ? Dis-nous tout, on lit chaque message.';
 
@@ -778,6 +937,32 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get ingredientSectionAlternatives => 'Alternatives';
+
+  @override
+  String get ingredientProductsSection => 'Mes produits';
+
+  @override
+  String get ingredientProductsEmptyCta => 'Ajouter une photo produit';
+
+  @override
+  String get ingredientProductsHint => 'Photos du produit que tu achètes';
+
+  @override
+  String get ingredientProductsDeleteTitle => 'Retirer cette photo ?';
+
+  @override
+  String ingredientProductsFullPro(int limit) {
+    return 'Limite de $limit photos atteinte pour cet ingrédient.';
+  }
+
+  @override
+  String get premiumLimitIngredientPhotosTitle =>
+      'Limite de photos produit atteinte';
+
+  @override
+  String premiumLimitIngredientPhotosBody(int limit) {
+    return 'Le plan gratuit permet $limit photo par ingrédient. Passe en Pro pour en ajouter jusqu\'à 3.';
+  }
 
   @override
   String get ingredientAlternativesHint => 'relation symétrique';
@@ -1106,6 +1291,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucune recette sans dossier. Tout est bien rangé !';
 
   @override
+  String get recipesFavoritesFolderTitle => 'J\'aime';
+
+  @override
+  String get recipesFavoritesFolderEmpty =>
+      'Aucune recette aimée pour l\'instant.';
+
+  @override
   String get recipeMenuAssignFolders => 'Associer des dossiers';
 
   @override
@@ -1254,10 +1446,40 @@ class AppLocalizationsFr extends AppLocalizations {
   String get recipeFieldServings => 'Personnes';
 
   @override
+  String get recipeFieldNutrition => 'Nutrition (par portion)';
+
+  @override
+  String get recipeFieldCalories => 'Calories';
+
+  @override
+  String get recipeFieldProteins => 'Protéines';
+
+  @override
+  String get recipeFieldCarbs => 'Glucides';
+
+  @override
+  String get recipeFieldFats => 'Lipides';
+
+  @override
   String get recipeIngredientsSection => 'Ingrédients';
 
   @override
   String get recipeIngredientsEmpty => 'Aucun ingrédient pour l\'instant.';
+
+  @override
+  String get recipeIngredientsFromComponents => 'Depuis les sous-recettes';
+
+  @override
+  String get recipeSortTooltip => 'Trier les recettes';
+
+  @override
+  String get recipeSortRecent => 'Récent';
+
+  @override
+  String get recipeSortTime => 'Temps';
+
+  @override
+  String get recipeSortName => 'A-Z';
 
   @override
   String get recipeComponentsSection => 'Recettes de base utilisées';
@@ -1270,6 +1492,68 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get recipeComponentRemove => 'Retirer la sous-recette';
+
+  @override
+  String get recipeGallerySection => 'Galerie';
+
+  @override
+  String get recipeGallerySubtitle => 'Réalisations';
+
+  @override
+  String get recipeGalleryHint =>
+      'Ajoute ta photo quand tu as cuisiné cette recette.';
+
+  @override
+  String get recipeGalleryEmptyCta => 'Uploade ta première création';
+
+  @override
+  String recipeGalleryEmptyMeta(int count, int limit) {
+    return '$count/$limit photos · 5 Mo max par photo';
+  }
+
+  @override
+  String get recipeGalleryAdd => 'Ajouter une photo';
+
+  @override
+  String recipeGalleryCounter(int count, int limit) {
+    return '$count/$limit';
+  }
+
+  @override
+  String recipeGalleryFullPro(int limit) {
+    return 'Limite de $limit photos atteinte pour cette recette.';
+  }
+
+  @override
+  String get recipeGalleryOffline =>
+      'Connexion requise pour ajouter une photo.';
+
+  @override
+  String recipeGalleryPosition(int index, int total) {
+    return '$index / $total';
+  }
+
+  @override
+  String get recipeGalleryDelete => 'Supprimer la photo';
+
+  @override
+  String get recipeGalleryDeleteConfirmTitle => 'Supprimer cette photo ?';
+
+  @override
+  String get recipeGalleryDeleteConfirmBody =>
+      'Cette réalisation sera définitivement retirée de la galerie.';
+
+  @override
+  String get recipeMenuChangePhoto => 'Changer la photo';
+
+  @override
+  String get recipeMenuDuplicate => 'Dupliquer';
+
+  @override
+  String get recipeMenuFavorite => 'J\'aime';
+
+  @override
+  String get recipeMenuUnfavorite => 'Ne plus aimer';
 
   @override
   String get recipeTagsSection => 'Tags';
@@ -2133,7 +2417,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String playerServingsHint(int base) {
-    return 'Recette prévue pour $base — les quantités sont recalculées automatiquement.';
+    return 'Recette prévue pour $base. Les quantités sont recalculées automatiquement.';
   }
 
   @override
@@ -2277,7 +2561,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String playerSwitchBody(String name, int step) {
-    return '$name, étape $step — la quitter et commencer celle-ci ?';
+    return '$name, étape $step : la quitter et commencer celle-ci ?';
   }
 
   @override
@@ -2617,7 +2901,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get premiumPurchasePending =>
-      'Achat en attente de validation — l\'accès Pro s\'activera automatiquement.';
+      'Achat en attente de validation. L\'accès Pro s\'activera automatiquement.';
 
   @override
   String get premiumPurchaseFailed => 'L\'achat n\'a pas abouti. Réessaie.';
@@ -2669,6 +2953,238 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get navPlanning => 'Planning';
+
+  @override
+  String get planningTitle => 'Mes repas';
+
+  @override
+  String get planningWeekCurrent => 'Cette semaine';
+
+  @override
+  String get planningWeekNext => 'Semaine prochaine';
+
+  @override
+  String get planningWeekOther => 'Autre semaine';
+
+  @override
+  String get planningReadonlyBanner =>
+      'Lecture seule. Le gratuit édite la semaine en cours et la suivante.';
+
+  @override
+  String get planningReadonlyCta => 'Premium';
+
+  @override
+  String get planningToday => 'Aujourd\'hui';
+
+  @override
+  String get planningAdd => 'Ajouter';
+
+  @override
+  String get planningEmptyTitle => 'Planifie ta première semaine';
+
+  @override
+  String get planningEmptyBody =>
+      'Glisse une recette du bandeau vers un créneau du matin, du midi ou du soir.';
+
+  @override
+  String get planningEatingOut => 'Manger dehors';
+
+  @override
+  String get planningEatingOutMeta => 'Repas hors du planning';
+
+  @override
+  String get planningNoteMeta => 'Note libre';
+
+  @override
+  String get planningSlotMorning => 'Matin';
+
+  @override
+  String get planningSlotNoon => 'Midi';
+
+  @override
+  String get planningSlotEvening => 'Soir';
+
+  @override
+  String get planningLayoutGrid => 'Vue grille';
+
+  @override
+  String get planningLayoutBlocks => 'Vue blocs';
+
+  @override
+  String get planningCartTooltip => 'Ajouter aux courses';
+
+  @override
+  String planningMoreOthers(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '＋$count autres',
+      one: '＋1 autre',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String planningSlotCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recettes',
+      one: '1 recette',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planningAddSheetTitle => 'Ajouter au créneau';
+
+  @override
+  String get planningNoteSheetTitle => 'Note libre';
+
+  @override
+  String get planningNoteBody =>
+      'Un repas à la volée, sans recette : note juste ce que tu prévois.';
+
+  @override
+  String get planningNoteHint => 'Ex : pâtes sauce tomate';
+
+  @override
+  String get planningNoteCta => 'Ajouter la note';
+
+  @override
+  String get planningNoteQuickPasta => 'Pâtes sauce tomate';
+
+  @override
+  String get planningNoteQuickLeftovers => 'Restes du frigo';
+
+  @override
+  String get planningNoteQuickPizza => 'Pizza surgelée';
+
+  @override
+  String get planningNoteQuickSandwich => 'Sandwichs';
+
+  @override
+  String get planningSearchHint => 'Rechercher une recette';
+
+  @override
+  String get planningNoRecipeFound => 'Aucune recette trouvée.';
+
+  @override
+  String planningTrayTitle(int count) {
+    return 'À planifier · $count';
+  }
+
+  @override
+  String get planningTrayHint => 'glissez vers un créneau ↑';
+
+  @override
+  String get planningTrayEmptyCta => 'Ajoute des recettes à planifier';
+
+  @override
+  String get planningTrayManage => 'Gérer';
+
+  @override
+  String get planningPickerKicker => 'Liste à planifier';
+
+  @override
+  String get planningPickerTitle => 'Recettes à planifier';
+
+  @override
+  String planningPickerDone(int count) {
+    return 'Terminé · $count';
+  }
+
+  @override
+  String get planningPickerBody =>
+      'Garde sous la main les recettes de ce planning : tu ne glisses que celles-ci sur les créneaux.';
+
+  @override
+  String get planningDropHere => 'Déposer ici';
+
+  @override
+  String get planningMenuSlot => 'Créneau';
+
+  @override
+  String get planningMenuView => 'Voir la recette';
+
+  @override
+  String get planningMenuAdd => 'Ajouter une recette';
+
+  @override
+  String get planningMenuRemove => 'Retirer de ce créneau';
+
+  @override
+  String get planningRemovedSnackRecipe => 'Recette retirée du créneau';
+
+  @override
+  String get planningRemovedSnackOther => 'Retiré du créneau';
+
+  @override
+  String get planningUndo => 'Annuler';
+
+  @override
+  String planningDetailTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count recettes sur ce créneau',
+      one: '1 recette sur ce créneau',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planningSelectTitle => 'Ajouter aux courses';
+
+  @override
+  String get planningSelectSubtitle => 'Coche les créneaux à inclure';
+
+  @override
+  String planningSelectCta(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Ajouter à la liste de courses · $count recettes',
+      one: 'Ajouter à la liste de courses · 1 recette',
+      zero: 'Ajouter à la liste de courses',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get planningReplaceTitle => 'Remplacer la liste en cours ?';
+
+  @override
+  String get planningReplaceBody =>
+      'Ta liste de courses actuelle n\'est pas vide. En gratuit, une seule liste active : les nouveaux ingrédients remplaceront son contenu.';
+
+  @override
+  String get planningReplaceConfirm => 'Remplacer';
+
+  @override
+  String planningListCreatedTitle(String week) {
+    return 'Liste « Courses du $week » créée';
+  }
+
+  @override
+  String get planningListCreatedSub =>
+      'Nouvelle liste dédiée · liste active conservée';
+
+  @override
+  String get planningListUpdatedTitle => 'Liste de courses mise à jour';
+
+  @override
+  String planningListUpdatedSub(String week) {
+    return '$week · ingrédients ajoutés';
+  }
+
+  @override
+  String planningShoppingName(String week) {
+    return 'Courses du $week';
+  }
+
+  @override
   String get premiumLimitCta => 'Découvrir Pro';
 
   @override
@@ -2700,6 +3216,28 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get premiumLimitGalleryTitle => 'Galerie pleine';
+
+  @override
+  String premiumLimitGalleryBody(int limit) {
+    return 'Le plan gratuit permet $limit photos par recette. Passe en Pro pour en ajouter davantage.';
+  }
+
+  @override
+  String get premiumLimitMealSlotTitle => 'Un créneau, une recette';
+
+  @override
+  String get premiumLimitMealSlotBody =>
+      'En gratuit, chaque créneau accueille une recette. Passe en Pro pour empiler plusieurs recettes sur le même moment.';
+
+  @override
+  String get premiumLimitMealWeekTitle => 'Semaine en lecture seule';
+
+  @override
+  String get premiumLimitMealWeekBody =>
+      'En gratuit, le planning s\'édite sur la semaine en cours et la suivante. Passe en Pro pour planifier toutes les semaines.';
+
+  @override
   String get premiumLimitGenericTitle => 'Fonctionnalité Pro';
 
   @override
@@ -2713,6 +3251,6 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String premiumSearchCounterFull(int used, int max) {
-    return '$used/$max — passe en Pro';
+    return '$used/$max · passe en Pro';
   }
 }

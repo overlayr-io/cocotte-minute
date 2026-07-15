@@ -92,4 +92,34 @@ export class UpdateRecipeDto {
   @ValidateIf((o: UpdateRecipeDto) => o.priceBracket !== null)
   @IsIn(RECIPE_PRICE_BRACKETS)
   priceBracket?: RecipePriceBracket | null;
+
+  // Nutrition saisie à la main (feature #8), PAR PORTION. Nullable = effacée.
+  // Calories en kcal, macros en grammes.
+  @IsOptional()
+  @ValidateIf((o: UpdateRecipeDto) => o.caloriesPerServing !== null)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  @Max(100000)
+  caloriesPerServing?: number | null;
+
+  @IsOptional()
+  @ValidateIf((o: UpdateRecipeDto) => o.proteinsPerServing !== null)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  @Max(100000)
+  proteinsPerServing?: number | null;
+
+  @IsOptional()
+  @ValidateIf((o: UpdateRecipeDto) => o.carbsPerServing !== null)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  @Max(100000)
+  carbsPerServing?: number | null;
+
+  @IsOptional()
+  @ValidateIf((o: UpdateRecipeDto) => o.fatsPerServing !== null)
+  @IsNumber({ maxDecimalPlaces: 2 })
+  @Min(0)
+  @Max(100000)
+  fatsPerServing?: number | null;
 }

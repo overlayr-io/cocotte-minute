@@ -24,6 +24,7 @@ import {
   AssignRecipeTagDto,
   CreateRecipeStepDto,
   ImportRecipeStepsDto,
+  ReorderRecipeIngredientsDto,
   ReorderRecipeStepsDto,
   SetStepIngredientsDto,
   UpdateRecipeIngredientQuantityDto,
@@ -67,12 +68,56 @@ export class RecipesController {
     return this.recipesService.listUncategorized(user.id);
   }
 
+  /** Recettes aimées « J'aime » (dossier virtuel dédié). */
+  @Get('favorites')
+  listFavorites(
+    @CurrentUser() user: AuthenticatedUser,
+  ): Promise<RecipeSummaryDto[]> {
+    return this.recipesService.listFavorites(user.id);
+  }
+
+  /**
+   * Sème des recettes d'exemple à la 1ère ouverture (feature #12). Idempotent
+   * côté service : sans effet si le compte a déjà eu au moins une recette.
+   */
+  @Post('seed-samples')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  seedSamples(@CurrentUser() user: AuthenticatedUser): Promise<void> {
+    return this.recipesService.seedSamples(user.id);
+  }
+
   @Get(':id')
   detail(
     @CurrentUser() user: AuthenticatedUser,
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<RecipeDetailDto> {
     return this.recipesService.getDetail(user.id, id);
+  }
+
+  @Post(':id/duplicate')
+  duplicate(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<RecipeSummaryDto> {
+    return this.recipesService.duplicateRecipe(user.id, id);
+  }
+
+  @Post(':id/favorite')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  addFavorite(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<void> {
+    return this.recipesService.addFavorite(user.id, id);
+  }
+
+  @Delete(':id/favorite')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeFavorite(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<void> {
+    return this.recipesService.removeFavorite(user.id, id);
   }
 
   @Patch(':id')
@@ -124,6 +169,16 @@ export class RecipesController {
       ingredientId,
       dto.quantity,
     );
+  }
+
+  @Put(':id/ingredients/order')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  reorderIngredients(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ReorderRecipeIngredientsDto,
+  ): Promise<void> {
+    return this.recipesService.reorderIngredients(user.id, id, dto.ingredientIds);
   }
 
   @Delete(':id/ingredients/:ingredientId')

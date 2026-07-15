@@ -120,6 +120,14 @@ export class ReorderRecipeStepsDto {
   stepIds!: string[];
 }
 
+/** Réordonnancement : ids des ingrédients de la recette dans le nouvel ordre. */
+export class ReorderRecipeIngredientsDto {
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsUUID('all', { each: true })
+  ingredientIds!: string[];
+}
+
 /** Sélection des ingrédients d'une étape (sous-ensemble de ceux de la recette). */
 export class SetStepIngredientsDto {
   @IsArray()

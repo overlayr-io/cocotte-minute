@@ -18,6 +18,7 @@ function makeDb(results: unknown[]): { db: DrizzleDB; calls: { op: string }[] } 
       'from',
       'where',
       'orderBy',
+      'limit',
       'values',
       'set',
       'returning',
@@ -33,13 +34,21 @@ function makeDb(results: unknown[]): { db: DrizzleDB; calls: { op: string }[] } 
     calls.push({ op: name });
     return builder(results[i++]);
   };
-  const db = {
+  const db: Record<string, unknown> = {
     select: op('select'),
     insert: op('insert'),
     update: op('update'),
     delete: op('delete'),
-  } as unknown as DrizzleDB;
-  return { db, calls };
+    // `execute` ne sert qu'aux verrous consultatifs : il ne consomme PAS la file
+    // de résultats, sinon toutes les attentes des tests seraient décalées.
+    execute: () => {
+      calls.push({ op: 'execute' });
+      return builder(undefined);
+    },
+  };
+  // Transaction transparente : le `tx` passé au callback est le mock lui-même.
+  db.transaction = async (fn: (tx: unknown) => Promise<unknown>) => fn(db);
+  return { db: db as unknown as DrizzleDB, calls };
 }
 
 const USER = 'user-1';
@@ -86,6 +95,7 @@ describe('TagsService', () => {
     it('annote alreadyImported selon les copies possédées', async () => {
       const systemRow = row({ id: 'sys-1', ownerId: null, name: 'Rapide' });
       const { db } = makeDb([
+        [{ id: 'sys-1' }], // ensureSystemDefaults : catalogue déjà présent → pas de seed
         [systemRow], // catalogue système
         [{ importedFromId: 'sys-1' }], // mes tags importés
       ]);

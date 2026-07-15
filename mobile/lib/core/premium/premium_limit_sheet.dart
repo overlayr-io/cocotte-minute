@@ -162,6 +162,22 @@ class _PremiumLimitSheet extends StatelessWidget {
           l10n.premiumLimitSearchTitle,
           l10n.premiumLimitSearchBody(error.limit ?? 6),
         ),
+      PremiumLimitError.galleryPhotos => (
+          l10n.premiumLimitGalleryTitle,
+          l10n.premiumLimitGalleryBody(error.limit ?? 3),
+        ),
+      PremiumLimitError.mealSlotEntries => (
+          l10n.premiumLimitMealSlotTitle,
+          l10n.premiumLimitMealSlotBody,
+        ),
+      PremiumLimitError.mealPlanWeek => (
+          l10n.premiumLimitMealWeekTitle,
+          l10n.premiumLimitMealWeekBody,
+        ),
+      PremiumLimitError.ingredientPhotos => (
+          l10n.premiumLimitIngredientPhotosTitle,
+          l10n.premiumLimitIngredientPhotosBody(error.limit ?? 1),
+        ),
       _ => (l10n.premiumLimitGenericTitle, l10n.premiumLimitGenericBody),
     };
   }

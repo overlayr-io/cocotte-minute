@@ -15,6 +15,7 @@ import { HealthModule } from './modules/health/health.module';
 import { HelpModule } from './modules/help/help.module';
 import { IngredientPricesModule } from './modules/ingredient-prices/ingredient-prices.module';
 import { IngredientsModule } from './modules/ingredients/ingredients.module';
+import { MealPlanModule } from './modules/meal-plan/meal-plan.module';
 import { PeopleModule } from './modules/people/people.module';
 import { RecipesModule } from './modules/recipes/recipes.module';
 import { SearchModule } from './modules/search/search.module';
@@ -83,6 +84,7 @@ const isProduction = process.env.NODE_ENV === 'production';
     SearchModule,
     DiscoveryModule,
     ShoppingListsModule,
+    MealPlanModule,
     SharesModule,
     AccountModule,
     HelpModule,

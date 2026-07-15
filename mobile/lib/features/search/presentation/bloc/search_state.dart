@@ -23,6 +23,7 @@ class SearchState extends Equatable {
     this.errorMessage,
     this.actionMessage,
     this.limitBlockTick = 0,
+    this.sort = RecipeSort.recent,
   });
 
   /// Plafond de critères cumulés du plan gratuit (aligné sur le serveur,
@@ -51,6 +52,12 @@ class SearchState extends Equatable {
   /// Exécution de la recherche.
   final SearchStatus resultsStatus;
   final List<RecipeSummary> results;
+
+  /// Tri appliqué aux résultats (client : la recherche n'est pas paginée).
+  final RecipeSort sort;
+
+  /// Résultats triés selon `sort` (`recent` conserve l'ordre serveur).
+  List<RecipeSummary> get sortedResults => sortRecipeSummaries(results, sort);
 
   /// Message d'erreur bloquant (échec de chargement initial) → page d'erreur.
   final String? errorMessage;
@@ -147,6 +154,7 @@ class SearchState extends Equatable {
     String? errorMessage,
     String? actionMessage,
     int? limitBlockTick,
+    RecipeSort? sort,
   }) {
     return SearchState(
       rawInput: rawInput ?? this.rawInput,
@@ -162,6 +170,7 @@ class SearchState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
       actionMessage: actionMessage,
       limitBlockTick: limitBlockTick ?? this.limitBlockTick,
+      sort: sort ?? this.sort,
     );
   }
 
@@ -180,5 +189,6 @@ class SearchState extends Equatable {
         errorMessage,
         actionMessage,
         limitBlockTick,
+        sort,
       ];
 }

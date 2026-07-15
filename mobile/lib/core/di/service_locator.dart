@@ -12,6 +12,9 @@ import '../../features/home/data/discovery_repository.dart';
 import '../../features/recipes/data/recipes_repository.dart';
 import '../../features/search/data/search_repository.dart';
 import '../../features/shopping_list/data/local/shopping_database.dart';
+import '../../features/meal_plan/data/meal_plan_repository.dart';
+import '../../features/onboarding/data/onboarding_service.dart';
+import '../../features/meal_plan/data/meal_plan_tray_store.dart';
 import '../../features/shopping_list/data/shopping_list_api.dart';
 import '../../features/shopping_list/data/shopping_list_repository.dart';
 import '../../features/shopping_list/data/shopping_sync_service.dart';
@@ -92,5 +95,15 @@ void setupServiceLocator() {
   );
   sl.registerLazySingleton<ShoppingSyncService>(
     () => ShoppingSyncService(repository: sl<ShoppingListRepository>()),
+  );
+
+  sl.registerLazySingleton<MealPlanRepository>(
+    () => MealPlanRepository(apiClient: sl<ApiClient>()),
+  );
+  sl.registerLazySingleton<MealPlanTrayStore>(MealPlanTrayStore.new);
+
+  // Onboarding (#12) : semis unique de recettes d'exemple au 1er lancement.
+  sl.registerLazySingleton<OnboardingService>(
+    () => OnboardingService(recipesRepository: sl<RecipesRepository>()),
   );
 }

@@ -20,12 +20,15 @@ import {
   sql,
 } from 'drizzle-orm';
 
+import { ADVISORY_LOCK_NS } from '../../common/db/advisory-locks';
 import { PremiumLimitException } from '../../common/errors/premium-limit.exception';
+import { SupabaseStorageService } from '../../common/supabase/supabase-storage.service';
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
+import { recipeGalleryImages } from '../../db/schema/recipe-gallery.schema';
 import {
-  DEFAULT_INGREDIENT_QUANTITY,
   recipeCategories,
   recipeComponents,
+  recipeFavorites,
   recipeIngredients,
   recipeSteps,
   recipeTags,
@@ -40,6 +43,7 @@ import { PremiumService } from '../billing/premium.service';
 import { IngredientsService } from '../ingredients/ingredients.service';
 import { isSeasonal } from './data/seasonality';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
+import { type RecipeSort } from './dto/list-recipes-query.dto';
 import {
   CreateRecipeStepDto,
   UpdateRecipeStepDto,
@@ -109,6 +113,12 @@ export interface RecipeIngredientLineDto {
   unit: string;
   imageUrl: string | null;
   quantity: number;
+  /**
+   * true = ligne héritée uniquement d'une sous-recette de base (pas un
+   * ingrédient direct de la recette). Lecture seule côté fiche : ni édition de
+   * quantité, ni réordonnancement.
+   */
+  inherited: boolean;
 }
 
 /** Bannière d'une étape (couleur/icône dérivées du type côté client). */
@@ -169,6 +179,11 @@ export interface RecipeDetailDto extends RecipeSummaryDto {
   fixedPrice: number | null;
   /** Tranche de prix affichée en badge, calculée côté client. Null si prix inconnu/partiel. */
   priceBracket: RecipePriceBracket | null;
+  /** Nutrition saisie à la main (feature #8), PAR PORTION. Null = non renseigné. */
+  caloriesPerServing: number | null;
+  proteinsPerServing: number | null;
+  carbsPerServing: number | null;
+  fatsPerServing: number | null;
   ingredients: RecipeIngredientLineDto[];
   /** Étapes (arbre déjà déplié + numéroté ; réfs de base résolues récursivement). */
   steps: RecipeStepDto[];
@@ -178,6 +193,17 @@ export interface RecipeDetailDto extends RecipeSummaryDto {
   usedIn: RecipeSummaryDto[];
   categoryIds: string[];
   tagIds: string[];
+  /** true si la recette est dans les favoris « J'aime » du lecteur (false en lecture publique). */
+  isFavorite: boolean;
+  /** Photos de galerie (réalisations), les plus anciennes d'abord. Hors couverture. */
+  galleryPhotos: RecipeGalleryPhotoDto[];
+}
+
+/** Une photo de galerie (feature galerie-recette) — réalisation postée par l'utilisateur. */
+export interface RecipeGalleryPhotoDto {
+  id: string;
+  imageUrl: string;
+  createdAt: string;
 }
 
 /** Échappe les métacaractères LIKE (`%`, `_`, `\`) d'une saisie utilisateur. */
@@ -209,6 +235,9 @@ export class RecipesService {
     // service Ingredients, jamais en accédant à son schéma.
     private readonly ingredientsService: IngredientsService,
     private readonly premiumService: PremiumService,
+    // Nettoyage effectif des fichiers Storage (feature galerie-recette) :
+    // couverture remplacée, recette supprimée, compte purgé.
+    private readonly storage: SupabaseStorageService,
   ) {}
 
   /** Limite du plan gratuit : nombre max de recettes de base (cf. premium-version.md). */
@@ -241,6 +270,50 @@ export class RecipesService {
     );
   }
 
+  // --- favoris « J'aime » (#15) -----------------------------------------
+
+  /** Recettes aimées de l'utilisateur, plus récemment ajoutées d'abord. */
+  async listFavorites(userId: string): Promise<RecipeSummaryDto[]> {
+    const rows = await this.db
+      .select({ recipe: recipes })
+      .from(recipeFavorites)
+      .innerJoin(recipes, eq(recipes.id, recipeFavorites.recipeId))
+      .where(and(eq(recipeFavorites.userId, userId), isNull(recipes.deletedAt)))
+      .orderBy(desc(recipeFavorites.createdAt));
+    return rows.map((r) => toSummary(r.recipe));
+  }
+
+  /**
+   * Ajoute une recette aux favoris (idempotent). Vérifie la propriété. Les
+   * favoris sont illimités pour tout le monde (gratuit inclus).
+   */
+  async addFavorite(userId: string, recipeId: string): Promise<void> {
+    await this.findOwnedOrFail(userId, recipeId);
+    const [existing] = await this.db
+      .select({ recipeId: recipeFavorites.recipeId })
+      .from(recipeFavorites)
+      .where(
+        and(
+          eq(recipeFavorites.userId, userId),
+          eq(recipeFavorites.recipeId, recipeId),
+        ),
+      );
+    if (existing) return; // déjà favori : rien à faire
+    await this.db.insert(recipeFavorites).values({ userId, recipeId });
+  }
+
+  /** Retire une recette des favoris (idempotent). */
+  async removeFavorite(userId: string, recipeId: string): Promise<void> {
+    await this.db
+      .delete(recipeFavorites)
+      .where(
+        and(
+          eq(recipeFavorites.userId, userId),
+          eq(recipeFavorites.recipeId, recipeId),
+        ),
+      );
+  }
+
   /**
    * Mes recettes (les plus récentes d'abord), hors supprimées. Options pour la
    * vue Liste paginée : `q` (filtre texte simple sur le nom), `limit`/`offset`.
@@ -248,7 +321,7 @@ export class RecipesService {
    */
   async listMine(
     userId: string,
-    options?: { q?: string; limit?: number; offset?: number },
+    options?: { q?: string; limit?: number; offset?: number; sort?: RecipeSort },
   ): Promise<RecipeSummaryDto[]> {
     const conditions = [eq(recipes.authorId, userId), isNull(recipes.deletedAt)];
     const q = options?.q?.trim();
@@ -259,12 +332,34 @@ export class RecipesService {
       .select()
       .from(recipes)
       .where(and(...conditions))
-      .orderBy(desc(recipes.createdAt))
+      .orderBy(...this.recipeOrderBy(options?.sort))
       .$dynamic();
     if (options?.limit !== undefined) query = query.limit(options.limit);
     if (options?.offset !== undefined) query = query.offset(options.offset);
     const rows = await query;
     return rows.map(toSummary);
+  }
+
+  /**
+   * Clause de tri de la vue Liste. `createdAt` desc en critère secondaire pour un
+   * ordre déterministe (stabilité de la pagination limit/offset). Pas de tri par
+   * prix : calcul de prix côté client uniquement (contrainte transverse).
+   */
+  private recipeOrderBy(sort?: RecipeSort) {
+    switch (sort) {
+      case 'name':
+        return [asc(recipes.name), desc(recipes.createdAt)];
+      case 'time':
+        return [
+          asc(
+            sql`${recipes.prepTime} + ${recipes.cookTime} + ${recipes.restTime}`,
+          ),
+          desc(recipes.createdAt),
+        ];
+      case 'recent':
+      default:
+        return [desc(recipes.createdAt)];
+    }
   }
 
   /**
@@ -534,10 +629,228 @@ export class RecipesService {
     return toSummary(row);
   }
 
+  /**
+   * Sème des recettes d'exemple pour un nouveau compte (feature #12), afin de
+   * montrer le but de l'app : une recette de base « Sauce tomate maison » + un
+   * plat « Pâtes à la sauce tomate » qui l'utilise comme sous-recette. Idempotent :
+   * ne fait rien si le compte a déjà eu la moindre recette (y compris supprimée).
+   */
+  async seedSamples(userId: string): Promise<void> {
+    // Verrou consultatif tenu pendant TOUT le semis : le garde « ce compte
+    // a-t-il déjà des recettes ? » est suivi de ~10 allers-retours avant que la
+    // 1re recette n'existe. Deux appels concurrents (2 lancements qui se
+    // chevauchent pendant un cold start Render) semaient chacun leur jeu.
+    // `pg_advisory_xact_lock` reste tenu jusqu'au commit de la transaction :
+    // comme on `await` tout le semis à l'intérieur, le 2e appelant attend, puis
+    // voit les recettes commitées et sort. Les écritures passent par `this.db`
+    // (autre connexion) pour réutiliser les méthodes métier telles quelles.
+    await this.db.transaction(async (tx) => {
+      await tx.execute(
+        sql`select pg_advisory_xact_lock(${ADVISORY_LOCK_NS.sampleRecipes}, hashtext(${userId}))`,
+      );
+      const [existing] = await tx
+        .select({ n: sql<number>`count(*)::int` })
+        .from(recipes)
+        .where(eq(recipes.authorId, userId));
+      if ((existing?.n ?? 0) > 0) return;
+      await this.insertSamples(userId);
+    });
+  }
+
+  /** Contenu du semis d'onboarding. Toujours appelé sous verrou (cf. [seedSamples]). */
+  private async insertSamples(userId: string): Promise<void> {
+    const ing = async (
+      name: string,
+      unit: 'gramme' | 'piece' | 'cuillere_soupe',
+      emoji: string,
+    ): Promise<string> =>
+      (await this.ingredientsService.create(userId, { name, unit, emoji })).id;
+
+    const tomate = await ing('Tomate', 'piece', '🍅');
+    const oignon = await ing('Oignon', 'piece', '🧅');
+    const ail = await ing('Ail', 'piece', '🧄');
+    const huile = await ing("Huile d'olive", 'cuillere_soupe', '🫒');
+    const pates = await ing('Pâtes', 'gramme', '🍝');
+    const parmesan = await ing('Parmesan', 'gramme', '🧀');
+
+    // Recette de base réutilisable.
+    const base = await this.create(userId, {
+      name: 'Sauce tomate maison',
+      isBase: true,
+      servings: 4,
+      prepTime: 10,
+      cookTime: 25,
+      description:
+        'Une sauce tomate simple et réutilisable : ajoute-la comme sous-recette dans tes plats.',
+    });
+    await this.addIngredient(userId, base.id, tomate, 6);
+    await this.addIngredient(userId, base.id, oignon, 1);
+    await this.addIngredient(userId, base.id, ail, 2);
+    await this.addIngredient(userId, base.id, huile, 2);
+    await this.addStep(userId, base.id, {
+      description:
+        "Fais revenir l'oignon et l'ail émincés dans l'huile d'olive jusqu'à ce qu'ils soient translucides.",
+    });
+    await this.addStep(userId, base.id, {
+      description:
+        'Ajoute les tomates concassées, sale, puis laisse mijoter 20 minutes à feu doux.',
+    });
+
+    // Plat qui utilise la recette de base comme sous-recette.
+    const dish = await this.create(userId, {
+      name: 'Pâtes à la sauce tomate',
+      isBase: false,
+      servings: 4,
+      prepTime: 5,
+      cookTime: 12,
+      description:
+        'Un classique express qui réutilise ta sauce tomate maison (ajoutée en sous-recette).',
+    });
+    await this.addIngredient(userId, dish.id, pates, 500);
+    await this.addIngredient(userId, dish.id, parmesan, 50);
+    await this.addComponent(userId, dish.id, base.id);
+    await this.addStep(userId, dish.id, {
+      description: "Fais cuire les pâtes dans un grand volume d'eau bouillante salée.",
+    });
+    await this.addStep(userId, dish.id, {
+      description:
+        'Égoutte, mélange avec la sauce tomate maison, puis parsème de parmesan.',
+    });
+
+    this.logger.log(`Recettes d'exemple semées pour l'utilisateur ${userId}`);
+  }
+
+  /**
+   * Duplique une recette possédée (copie profonde) : nom + « (copie) »,
+   * ingrédients (+ positions), étapes (+ positions, bannières, réfs de base et
+   * sélections d'ingrédients d'étape), composants/sous-recettes, catégories,
+   * tags. Ne sont PAS copiés : la photo de couverture et la galerie — ce sont
+   * des objets Storage ; partager leur URL casserait la copie si l'original est
+   * supprimé. Respecte le quota freemium si la source est une recette de base.
+   */
+  async duplicateRecipe(userId: string, recipeId: string): Promise<RecipeSummaryDto> {
+    const source = await this.findOwnedOrFail(userId, recipeId);
+    if (source.isBase) await this.assertBaseRecipeQuota(userId);
+
+    // 1) Recette (couverture non copiée)
+    const [copy] = await this.db
+      .insert(recipes)
+      .values({
+        authorId: userId,
+        name: `${source.name} (copie)`.slice(0, 160),
+        photoUrl: null,
+        description: source.description,
+        isBase: source.isBase,
+        prepTime: source.prepTime,
+        cookTime: source.cookTime,
+        restTime: source.restTime,
+        servings: source.servings,
+        priceMode: source.priceMode,
+        fixedPrice: source.fixedPrice,
+        priceBracket: source.priceBracket,
+      })
+      .returning();
+    const newId = copy.id;
+
+    // 2) Ingrédients (avec position)
+    const ings = await this.db
+      .select({
+        ingredientId: recipeIngredients.ingredientId,
+        quantity: recipeIngredients.quantity,
+        position: recipeIngredients.position,
+      })
+      .from(recipeIngredients)
+      .where(eq(recipeIngredients.recipeId, recipeId));
+    if (ings.length > 0) {
+      await this.db
+        .insert(recipeIngredients)
+        .values(ings.map((r) => ({ recipeId: newId, ...r })));
+    }
+
+    // 3) Étapes (mapping ancien id → nouvel id pour les sélections d'ingrédients)
+    const steps = await this.db
+      .select()
+      .from(recipeSteps)
+      .where(eq(recipeSteps.recipeId, recipeId))
+      .orderBy(asc(recipeSteps.position));
+    const stepIdMap = new Map<string, string>();
+    for (const s of steps) {
+      const [ns] = await this.db
+        .insert(recipeSteps)
+        .values({
+          recipeId: newId,
+          position: s.position,
+          description: s.description,
+          bannerType: s.bannerType,
+          bannerText: s.bannerText,
+          baseRecipeRefId: s.baseRecipeRefId,
+        })
+        .returning({ id: recipeSteps.id });
+      stepIdMap.set(s.id, ns.id);
+    }
+    if (steps.length > 0) {
+      const stepIngRows = await this.db
+        .select({
+          stepId: stepIngredients.stepId,
+          ingredientId: stepIngredients.ingredientId,
+        })
+        .from(stepIngredients)
+        .where(
+          inArray(
+            stepIngredients.stepId,
+            steps.map((s) => s.id),
+          ),
+        );
+      if (stepIngRows.length > 0) {
+        await this.db.insert(stepIngredients).values(
+          stepIngRows.map((r) => ({
+            stepId: stepIdMap.get(r.stepId)!,
+            ingredientId: r.ingredientId,
+          })),
+        );
+      }
+    }
+
+    // 4) Composants (sous-recettes)
+    const comps = await this.db
+      .select({ baseRecipeId: recipeComponents.baseRecipeId })
+      .from(recipeComponents)
+      .where(eq(recipeComponents.parentRecipeId, recipeId));
+    if (comps.length > 0) {
+      await this.db
+        .insert(recipeComponents)
+        .values(comps.map((c) => ({ parentRecipeId: newId, baseRecipeId: c.baseRecipeId })));
+    }
+
+    // 5) Catégories
+    const cats = await this.db
+      .select({ categoryId: recipeCategories.categoryId })
+      .from(recipeCategories)
+      .where(eq(recipeCategories.recipeId, recipeId));
+    if (cats.length > 0) {
+      await this.db
+        .insert(recipeCategories)
+        .values(cats.map((c) => ({ recipeId: newId, categoryId: c.categoryId })));
+    }
+
+    // 6) Tags
+    const tgs = await this.db
+      .select({ tagId: recipeTags.tagId })
+      .from(recipeTags)
+      .where(eq(recipeTags.recipeId, recipeId));
+    if (tgs.length > 0) {
+      await this.db
+        .insert(recipeTags)
+        .values(tgs.map((t) => ({ recipeId: newId, tagId: t.tagId })));
+    }
+
+    return toSummary(copy);
+  }
+
   /** Fiche détail : ingrédients, composants, « utilisée dans », catégories, tags. */
   async getDetail(userId: string, id: string): Promise<RecipeDetailDto> {
     const row = await this.findOwnedOrFail(userId, id);
-    return this.buildDetail(row);
+    return this.buildDetail(row, userId);
   }
 
   /**
@@ -564,17 +877,40 @@ export class RecipesService {
     await this.findOwnedOrFail(userId, id);
   }
 
-  /** Corps commun de `getDetail`/`getPublicDetail` : hydratation depuis l'auteur de la recette. */
-  private async buildDetail(row: RecipeRow): Promise<RecipeDetailDto> {
+  /**
+   * Corps commun de `getDetail`/`getPublicDetail` : hydratation depuis l'auteur
+   * de la recette. `viewerId` (le lecteur courant) sert au flag `isFavorite` —
+   * absent en lecture publique/partage (isFavorite = false).
+   */
+  private async buildDetail(
+    row: RecipeRow,
+    viewerId?: string,
+  ): Promise<RecipeDetailDto> {
     const id = row.id;
     const authorId = row.authorId;
 
-    const [ingredientRows, componentRows, stepBaseRefRows, categoryRows, tagRows] =
+    const isFavorite = viewerId
+      ? (
+          await this.db
+            .select({ recipeId: recipeFavorites.recipeId })
+            .from(recipeFavorites)
+            .where(
+              and(
+                eq(recipeFavorites.userId, viewerId),
+                eq(recipeFavorites.recipeId, id),
+              ),
+            )
+            .limit(1)
+        ).length > 0
+      : false;
+
+    const [ingredientRows, componentRows, stepBaseRefRows, categoryRows, tagRows, galleryRows] =
       await Promise.all([
         this.db
           .select({
             ingredientId: recipeIngredients.ingredientId,
             quantity: recipeIngredients.quantity,
+            position: recipeIngredients.position,
           })
           .from(recipeIngredients)
           .where(eq(recipeIngredients.recipeId, id)),
@@ -599,9 +935,41 @@ export class RecipesService {
           .select({ tagId: recipeTags.tagId })
           .from(recipeTags)
           .where(eq(recipeTags.recipeId, id)),
+        // Photos de galerie (feature galerie-recette), les plus anciennes d'abord.
+        this.db
+          .select({
+            id: recipeGalleryImages.id,
+            imageUrl: recipeGalleryImages.imageUrl,
+            createdAt: recipeGalleryImages.createdAt,
+          })
+          .from(recipeGalleryImages)
+          .where(eq(recipeGalleryImages.recipeId, id))
+          .orderBy(asc(recipeGalleryImages.createdAt)),
       ]);
 
-    const ingredientLines = await this.hydrateIngredients(authorId, ingredientRows);
+    // Agrégation récursive : ingrédients directs + ceux des sous-recettes de
+    // base (1×), cumulés par ingrédient. Les directs gardent leur position
+    // (drag & drop) et restent éditables ; les ingrédients hérités uniquement
+    // des sous-recettes sont marqués `inherited` (lecture seule) et ajoutés en
+    // fin de liste.
+    const aggregated = await this.collectIngredientQuantities(id);
+    const directIngredientIds = new Set(ingredientRows.map((r) => r.ingredientId));
+    const ingredientLines = await this.hydrateIngredients(authorId, [
+      ...ingredientRows.map((r) => ({
+        ingredientId: r.ingredientId,
+        quantity: aggregated.get(r.ingredientId) ?? r.quantity,
+        position: r.position,
+        inherited: false,
+      })),
+      ...[...aggregated.entries()]
+        .filter(([ingId]) => !directIngredientIds.has(ingId))
+        .map(([ingredientId, quantity]) => ({
+          ingredientId,
+          quantity,
+          position: Number.MAX_SAFE_INTEGER,
+          inherited: true,
+        })),
+    ]);
     const ingredientMap = new Map(ingredientLines.map((l) => [l.id, l]));
     const steps = await this.buildRecipeSteps(id, ingredientMap);
     const componentIds = new Set([
@@ -631,20 +999,29 @@ export class RecipesService {
       priceMode: row.priceMode,
       fixedPrice: row.fixedPrice,
       priceBracket: row.priceBracket,
+      caloriesPerServing: row.caloriesPerServing,
+      proteinsPerServing: row.proteinsPerServing,
+      carbsPerServing: row.carbsPerServing,
+      fatsPerServing: row.fatsPerServing,
       ingredients: ingredientLines,
       steps,
       components,
       usedIn,
       categoryIds: categoryRows.map((r) => r.categoryId),
       tagIds: tagRows.map((r) => r.tagId),
+      isFavorite,
+      galleryPhotos: galleryRows.map((r) => ({
+        id: r.id,
+        imageUrl: r.imageUrl,
+        createdAt: r.createdAt.toISOString(),
+      })),
     };
   }
 
   /**
-   * Recettes possédées (non supprimées) + leurs ingrédients directs, pour générer
-   * une liste de courses (feature liste-courses-auto). N'inclut PAS les ingrédients
-   * des sous-recettes (`recipe_components`) — cohérent avec `getDetail` aujourd'hui ;
-   * le dépliage récursif des composants relèvera d'une itération dédiée. Lève si un
+   * Recettes possédées (non supprimées) + leurs ingrédients agrégés (directs +
+   * ceux des sous-recettes de base en 1×, cf. `collectIngredientQuantities`),
+   * pour générer une liste de courses (feature liste-courses-auto). Lève si un
    * id demandé n'appartient pas à l'utilisateur (ou est supprimé). Exposé à
    * ShoppingListsService (isolation des domaines : jamais d'accès direct au schéma).
    */
@@ -668,33 +1045,36 @@ export class RecipesService {
       throw new NotFoundException('Recette introuvable');
     }
 
-    const ingRows = await this.db
-      .select({
-        recipeId: recipeIngredients.recipeId,
-        ingredientId: recipeIngredients.ingredientId,
-        quantity: recipeIngredients.quantity,
-      })
-      .from(recipeIngredients)
-      .where(inArray(recipeIngredients.recipeId, uniqueIds));
+    // Quantités agrégées par recette : ingrédients directs + ceux des
+    // sous-recettes de base (1×), cumulés récursivement.
+    const aggregatedByRecipe = new Map<string, Map<string, number>>();
+    for (const id of uniqueIds) {
+      aggregatedByRecipe.set(id, await this.collectIngredientQuantities(id));
+    }
 
     // Hydratation en une passe (nom/unité/image via le service Ingredients).
-    const allIngredientIds = [...new Set(ingRows.map((r) => r.ingredientId))];
+    const allIngredientIds = [
+      ...new Set([...aggregatedByRecipe.values()].flatMap((m) => [...m.keys()])),
+    ];
     const owned = await this.ingredientsService.listByIds(userId, allIngredientIds);
     const ingredientMap = new Map(owned.map((i) => [i.id, i]));
 
     const linesByRecipe = new Map<string, RecipeIngredientLineDto[]>();
-    for (const r of ingRows) {
-      const info = ingredientMap.get(r.ingredientId);
-      if (!info) continue; // ingrédient supprimé entre-temps → ignoré
-      const arr = linesByRecipe.get(r.recipeId) ?? [];
-      arr.push({
-        id: info.id,
-        name: info.name,
-        unit: info.unit,
-        imageUrl: info.imageUrl,
-        quantity: r.quantity,
-      });
-      linesByRecipe.set(r.recipeId, arr);
+    for (const [recipeId, totals] of aggregatedByRecipe) {
+      const arr: RecipeIngredientLineDto[] = [];
+      for (const [ingredientId, quantity] of totals) {
+        const info = ingredientMap.get(ingredientId);
+        if (!info) continue; // ingrédient supprimé entre-temps → ignoré
+        arr.push({
+          id: info.id,
+          name: info.name,
+          unit: info.unit,
+          imageUrl: info.imageUrl,
+          quantity,
+          inherited: false,
+        });
+      }
+      linesByRecipe.set(recipeId, arr);
     }
 
     return rows.map((row) => ({
@@ -739,22 +1119,83 @@ export class RecipesService {
     if (dto.priceMode !== undefined) patch.priceMode = dto.priceMode;
     if (dto.fixedPrice !== undefined) patch.fixedPrice = dto.fixedPrice;
     if (dto.priceBracket !== undefined) patch.priceBracket = dto.priceBracket;
+    // Nutrition manuelle (feature #8), par portion.
+    if (dto.caloriesPerServing !== undefined)
+      patch.caloriesPerServing = dto.caloriesPerServing;
+    if (dto.proteinsPerServing !== undefined)
+      patch.proteinsPerServing = dto.proteinsPerServing;
+    if (dto.carbsPerServing !== undefined)
+      patch.carbsPerServing = dto.carbsPerServing;
+    if (dto.fatsPerServing !== undefined)
+      patch.fatsPerServing = dto.fatsPerServing;
 
     const [row] = await this.db
       .update(recipes)
       .set({ ...patch, updatedAt: new Date() })
       .where(eq(recipes.id, id))
       .returning();
+
+    // Remplacement de couverture (feature galerie-recette) : l'ancien fichier
+    // Storage est supprimé si la photo a effectivement changé. Best-effort.
+    if (
+      dto.photoUrl !== undefined &&
+      current.photoUrl &&
+      current.photoUrl !== row.photoUrl
+    ) {
+      await this.storage.removeByPublicUrls([current.photoUrl]);
+    }
+
     return toSummary(row);
   }
 
-  /** Soft delete. Les pivots partent en cascade côté DB si le compte est purgé. */
+  /**
+   * Soft delete. Nettoie effectivement les fichiers Storage associés (photos de
+   * galerie + couverture) — comportement plus strict que l'existant, spécifique
+   * à la feature galerie-recette : le soft delete ne déclenche aucune cascade FK,
+   * donc la suppression des fichiers est explicite ici.
+   */
   async softDelete(userId: string, id: string): Promise<void> {
-    await this.findOwnedOrFail(userId, id);
+    const row = await this.findOwnedOrFail(userId, id);
     await this.db
       .update(recipes)
       .set({ deletedAt: new Date(), updatedAt: new Date() })
       .where(eq(recipes.id, id));
+    await this.storage.removeByPublicUrls([
+      row.photoUrl,
+      ...(await this.collectGalleryUrls([id])),
+    ]);
+  }
+
+  /**
+   * URLs des photos de galerie des recettes données (feature galerie-recette),
+   * pour le nettoyage Storage à la suppression. Lecture directe du pivot galerie :
+   * il fait partie du domaine recettes (au même titre que les étapes/composants).
+   */
+  private async collectGalleryUrls(recipeIds: string[]): Promise<string[]> {
+    if (recipeIds.length === 0) return [];
+    const rows = await this.db
+      .select({ imageUrl: recipeGalleryImages.imageUrl })
+      .from(recipeGalleryImages)
+      .where(inArray(recipeGalleryImages.recipeId, recipeIds));
+    return rows.map((r) => r.imageUrl);
+  }
+
+  /**
+   * Pose [url] comme couverture uniquement si la recette n'en a aucune (photo_url
+   * NULL) — mécanisme « le 1er upload galerie devient la couverture » (feature
+   * galerie-recette). Atomique (WHERE photo_url IS NULL) pour rester correct en
+   * cas d'uploads concurrents. Retourne `true` si la photo est devenue la
+   * couverture (et sort donc du quota galerie), `false` si une couverture
+   * existait déjà. Exposé au service galerie (isolation : jamais d'écriture
+   * directe sur `recipes` depuis un autre service).
+   */
+  async setPhotoIfEmpty(recipeId: string, url: string): Promise<boolean> {
+    const updated = await this.db
+      .update(recipes)
+      .set({ photoUrl: url, updatedAt: new Date() })
+      .where(and(eq(recipes.id, recipeId), isNull(recipes.photoUrl)))
+      .returning({ id: recipes.id });
+    return updated.length > 0;
   }
 
   // --- ingrédients -------------------------------------------------------
@@ -774,9 +1215,18 @@ export class RecipesService {
     if (!owned) {
       throw new NotFoundException('Ingrédient introuvable');
     }
+    // Nouvel ingrédient ajouté en fin de liste (position = max + 1). Ré-ajouter
+    // un ingrédient déjà présent ne met à jour que la quantité (position figée).
+    const [last] = await this.db
+      .select({ position: recipeIngredients.position })
+      .from(recipeIngredients)
+      .where(eq(recipeIngredients.recipeId, recipeId))
+      .orderBy(desc(recipeIngredients.position))
+      .limit(1);
+    const nextPosition = (last?.position ?? -1) + 1;
     await this.db
       .insert(recipeIngredients)
-      .values({ recipeId, ingredientId, quantity })
+      .values({ recipeId, ingredientId, quantity, position: nextPosition })
       .onConflictDoUpdate({
         target: [recipeIngredients.recipeId, recipeIngredients.ingredientId],
         set: { quantity },
@@ -820,6 +1270,45 @@ export class RecipesService {
           eq(recipeIngredients.ingredientId, ingredientId),
         ),
       );
+  }
+
+  /**
+   * Réordonne les ingrédients d'une recette (drag & drop). `ingredientIds` doit
+   * être une permutation exacte des ingrédients de la recette (le pivot n'a pas
+   * d'id propre, on adresse donc par `ingredientId`).
+   */
+  async reorderIngredients(
+    userId: string,
+    recipeId: string,
+    ingredientIds: string[],
+  ): Promise<void> {
+    await this.findOwnedOrFail(userId, recipeId);
+    const rows = await this.db
+      .select({ ingredientId: recipeIngredients.ingredientId })
+      .from(recipeIngredients)
+      .where(eq(recipeIngredients.recipeId, recipeId));
+    const owned = new Set(rows.map((r) => r.ingredientId));
+    const unique = new Set(ingredientIds);
+    if (
+      unique.size !== ingredientIds.length ||
+      ingredientIds.length !== owned.size ||
+      ingredientIds.some((id) => !owned.has(id))
+    ) {
+      throw new BadRequestException(
+        'Liste d’ingrédients invalide pour le réordonnancement',
+      );
+    }
+    for (let i = 0; i < ingredientIds.length; i++) {
+      await this.db
+        .update(recipeIngredients)
+        .set({ position: i })
+        .where(
+          and(
+            eq(recipeIngredients.recipeId, recipeId),
+            eq(recipeIngredients.ingredientId, ingredientIds[i]),
+          ),
+        );
+    }
   }
 
   // --- étapes ------------------------------------------------------------
@@ -1147,11 +1636,81 @@ export class RecipesService {
    * Exposé pour AccountService uniquement.
    */
   async deleteAllForUser(userId: string): Promise<void> {
+    // Fichiers Storage (galerie + couvertures) collectés avant le DELETE cascade,
+    // pour ne pas laisser d'orphelins après purge de compte (feature galerie-recette).
+    const owned = await this.db
+      .select({ id: recipes.id, photoUrl: recipes.photoUrl })
+      .from(recipes)
+      .where(eq(recipes.authorId, userId));
+    const filesToRemove = [
+      ...owned.map((r) => r.photoUrl),
+      ...(await this.collectGalleryUrls(owned.map((r) => r.id))),
+    ];
+
     await this.db.delete(recipes).where(eq(recipes.authorId, userId));
+    await this.storage.removeByPublicUrls(filesToRemove);
     this.logger.log(`Recettes supprimées pour l'utilisateur ${userId}`);
   }
 
   // --- privé -------------------------------------------------------------
+
+  /**
+   * Quantités d'ingrédients agrégées d'une recette : ses ingrédients directs +
+   * ceux de ses sous-recettes de base — composants (`recipe_components`) ET
+   * références d'étape (`base_recipe_ref_id`), dédupliquées — cumulées par
+   * ingrédient. Quantités BRUTES (1×, aux portions propres de chaque
+   * sous-recette : `recipe_components` ne porte pas de quantité, pas de mise à
+   * l'échelle). Récursif, anti-cycle via `visited`.
+   */
+  private async collectIngredientQuantities(
+    recipeId: string,
+    visited: Set<string> = new Set(),
+  ): Promise<Map<string, number>> {
+    const totals = new Map<string, number>();
+    if (visited.has(recipeId)) return totals;
+    visited.add(recipeId);
+
+    const [direct, components, stepRefs] = await Promise.all([
+      this.db
+        .select({
+          ingredientId: recipeIngredients.ingredientId,
+          quantity: recipeIngredients.quantity,
+        })
+        .from(recipeIngredients)
+        .where(eq(recipeIngredients.recipeId, recipeId)),
+      this.db
+        .select({ baseRecipeId: recipeComponents.baseRecipeId })
+        .from(recipeComponents)
+        .where(eq(recipeComponents.parentRecipeId, recipeId)),
+      this.db
+        .select({ baseRecipeId: recipeSteps.baseRecipeRefId })
+        .from(recipeSteps)
+        .where(
+          and(
+            eq(recipeSteps.recipeId, recipeId),
+            isNotNull(recipeSteps.baseRecipeRefId),
+          ),
+        ),
+    ]);
+
+    for (const r of direct) {
+      totals.set(r.ingredientId, (totals.get(r.ingredientId) ?? 0) + r.quantity);
+    }
+
+    const baseIds = new Set<string>();
+    for (const c of components) baseIds.add(c.baseRecipeId);
+    for (const s of stepRefs) {
+      if (s.baseRecipeId) baseIds.add(s.baseRecipeId);
+    }
+
+    for (const baseId of baseIds) {
+      const sub = await this.collectIngredientQuantities(baseId, visited);
+      for (const [ingId, qty] of sub) {
+        totals.set(ingId, (totals.get(ingId) ?? 0) + qty);
+      }
+    }
+    return totals;
+  }
 
   /**
    * Résout les lignes du pivot (id + quantité) en lignes affichables, en lisant
@@ -1160,21 +1719,44 @@ export class RecipesService {
    */
   private async hydrateIngredients(
     userId: string,
-    lines: { ingredientId: string; quantity: number }[],
+    lines: {
+      ingredientId: string;
+      quantity: number;
+      position?: number;
+      inherited?: boolean;
+    }[],
   ): Promise<RecipeIngredientLineDto[]> {
     if (lines.length === 0) return [];
-    const quantities = new Map(lines.map((l) => [l.ingredientId, l.quantity]));
     const owned = await this.ingredientsService.listByIds(
       userId,
       lines.map((l) => l.ingredientId),
     );
-    return owned.map((i) => ({
-      id: i.id,
-      name: i.name,
-      unit: i.unit,
-      imageUrl: i.imageUrl,
-      quantity: quantities.get(i.id) ?? DEFAULT_INGREDIENT_QUANTITY,
-    }));
+    const byId = new Map(owned.map((i) => [i.id, i]));
+    // Ordre = `position` du pivot (drag & drop). Ordre secondaire = nom, pour un
+    // rendu stable quand plusieurs lignes partagent la même position (héritage :
+    // toutes à 0 avant un premier réordonnancement).
+    const ordered = [...lines].sort((a, b) => {
+      const pa = a.position ?? 0;
+      const pb = b.position ?? 0;
+      if (pa !== pb) return pa - pb;
+      const na = byId.get(a.ingredientId)?.name ?? '';
+      const nb = byId.get(b.ingredientId)?.name ?? '';
+      return na.localeCompare(nb);
+    });
+    const result: RecipeIngredientLineDto[] = [];
+    for (const line of ordered) {
+      const i = byId.get(line.ingredientId);
+      if (!i) continue; // ingrédient supprimé/non possédé : ligne omise
+      result.push({
+        id: i.id,
+        name: i.name,
+        unit: i.unit,
+        imageUrl: i.imageUrl,
+        quantity: line.quantity,
+        inherited: line.inherited ?? false,
+      });
+    }
+    return result;
   }
 
   // --- étapes : dépliage & validations ----------------------------------

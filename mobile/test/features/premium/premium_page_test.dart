@@ -45,6 +45,11 @@ void main() {
     when(() => repository.isConfigured).thenReturn(true);
     when(() => repository.addEntitlementListener(any())).thenAnswer((_) {});
     when(() => repository.removeEntitlementListener(any())).thenAnswer((_) {});
+    when(() => repository.setUserAttributes(
+          email: any(named: 'email'),
+          displayName: any(named: 'displayName'),
+          custom: any(named: 'custom'),
+        )).thenAnswer((_) async {});
     // La page résout le repository via get_it (comme en prod).
     sl.registerSingleton<PremiumRepository>(repository);
   });
@@ -170,6 +175,11 @@ void main() {
       find.text('Impossible de charger les offres. Vérifie ta connexion et réessaie.'),
       findsOneWidget,
     );
+
+    // Les liens légaux (CGU/EULA + confidentialité) restent visibles même sur
+    // l'écran d'erreur — exigence App Store 3.1.2 (scénario vu par le reviewer).
+    expect(find.text('Conditions d\'utilisation'), findsOneWidget);
+    expect(find.text('Politique de confidentialité'), findsOneWidget);
 
     await tester.tap(find.text('Réessayer'));
     await tester.pumpAndSettle();

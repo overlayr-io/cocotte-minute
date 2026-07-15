@@ -106,6 +106,9 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     }
   }
 
+  /// Édition des champs de la fiche (sheet « Modifier »). Les 4 valeurs
+  /// nutritionnelles (feature #8) sont toujours fournies par la sheet — passer
+  /// null = champ effacé.
   Future<void> updateFields({
     String? name,
     String? description,
@@ -116,6 +119,10 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     int? servings,
     RecipePriceMode? priceMode,
     double? fixedPrice,
+    double? caloriesPerServing,
+    double? proteinsPerServing,
+    double? carbsPerServing,
+    double? fatsPerServing,
   }) async {
     final current = state;
     if (current is! RecipeDetailLoaded) return;
@@ -132,6 +139,10 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
         servings: servings,
         priceMode: priceMode,
         fixedPrice: fixedPrice,
+        caloriesPerServing: caloriesPerServing,
+        proteinsPerServing: proteinsPerServing,
+        carbsPerServing: carbsPerServing,
+        fatsPerServing: fatsPerServing,
       );
       // Recharge la fiche pour refléter les relations dérivées (verrou, etc.).
       final detail = await _repository.fetchDetail(recipeId);
@@ -194,6 +205,109 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     try {
       await _repository.delete(recipeId);
       emit(current.copyWith(busy: false, deleted: true));
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(busy: false, message: e.message));
+    }
+  }
+
+  // --- galerie (feature galerie-recette) ---------------------------------
+
+  /// Ajoute une photo (déjà uploadée sur Storage) à la galerie. Si la recette
+  /// n'avait pas de couverture, la photo la devient (hors galerie) — l'état
+  /// reflète alors la nouvelle couverture. En cas de quota atteint côté serveur,
+  /// le `premiumLimit` est signalé (la vue en gratuit ouvre l'upsell).
+  Future<void> addGalleryPhoto(String imageUrl) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    emit(current.copyWith(busy: true));
+    try {
+      final result = await _repository.addGalleryPhoto(recipeId, imageUrl);
+      emit(RecipeDetailLoaded(
+        detail: current.detail.copyWithGallery(
+          galleryPhotos: result.photos,
+          coverPhotoUrl: result.becameCover ? result.coverUrl : null,
+        ),
+      ));
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(
+        busy: false,
+        message: e.premiumLimit == null ? e.message : null,
+        premiumLimit: e.premiumLimit,
+      ));
+    }
+  }
+
+  /// Duplique la recette (copie profonde côté serveur). En cas de succès,
+  /// renvoie le résumé de la copie (la vue navigue vers la nouvelle recette).
+  /// Erreur ou quota freemium (recette de base) → surfacé via l'état (message
+  /// ou `premiumLimit`), et renvoie null.
+  Future<RecipeSummary?> duplicate() async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return null;
+    emit(current.copyWith(busy: true));
+    try {
+      final copy = await _repository.duplicateRecipe(recipeId);
+      emit(current.copyWith(busy: false));
+      return copy;
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(
+        busy: false,
+        message: e.premiumLimit == null ? e.message : null,
+        premiumLimit: e.premiumLimit,
+      ));
+      return null;
+    }
+  }
+
+  /// Ajoute/retire la recette des favoris « J'aime » (#15). Optimiste : bascule
+  /// le cœur tout de suite ; en cas d'erreur / quota gratuit, revert visuel +
+  /// surface (message, ou `premiumLimit` → feuille d'upsell).
+  Future<void> toggleFavorite() async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    final target = !current.detail.isFavorite;
+    emit(current.copyWith(detail: current.detail.copyWithFavorite(target)));
+    try {
+      if (target) {
+        await _repository.addFavorite(recipeId);
+      } else {
+        await _repository.removeFavorite(recipeId);
+      }
+    } on RecipesRepositoryException catch (e) {
+      // Revert (retour à `current`, cœur d'origine) + surface l'erreur/quota.
+      emit(current.copyWith(
+        message: e.premiumLimit == null ? e.message : null,
+        premiumLimit: e.premiumLimit,
+      ));
+    }
+  }
+
+  /// Supprime une photo de galerie (depuis la vue plein écran).
+  Future<void> removeGalleryPhoto(String imageId) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    emit(current.copyWith(busy: true));
+    try {
+      final photos = await _repository.deleteGalleryPhoto(recipeId, imageId);
+      emit(RecipeDetailLoaded(
+        detail: current.detail.copyWithGallery(galleryPhotos: photos),
+      ));
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(busy: false, message: e.message));
+    }
+  }
+
+  /// « Changer la photo » : remplace la couverture (PATCH photoUrl). L'ancien
+  /// fichier Storage est supprimé côté serveur.
+  Future<void> changeCoverPhoto(String imageUrl) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    emit(current.copyWith(busy: true));
+    try {
+      await _repository.update(recipeId, photoUrl: imageUrl);
+      emit(RecipeDetailLoaded(
+        detail: current.detail.copyWithGallery(coverPhotoUrl: imageUrl),
+      ));
     } on RecipesRepositoryException catch (e) {
       emit(current.copyWith(busy: false, message: e.message));
     }
@@ -294,6 +408,20 @@ class RecipeDetailCubit extends Cubit<RecipeDetailState> {
     if (current is! RecipeDetailLoaded) return;
     try {
       await _repository.reorderSteps(recipeId, stepIds);
+      await _reload();
+    } on RecipesRepositoryException catch (e) {
+      emit(current.copyWith(message: e.message));
+      await _reload();
+    }
+  }
+
+  /// Réordonne les ingrédients (drag & drop) : même logique que les étapes —
+  /// le serveur renumérote (`position`), puis rechargement (revert visuel si KO).
+  Future<void> reorderIngredients(List<String> ingredientIds) async {
+    final current = state;
+    if (current is! RecipeDetailLoaded) return;
+    try {
+      await _repository.reorderIngredients(recipeId, ingredientIds);
       await _reload();
     } on RecipesRepositoryException catch (e) {
       emit(current.copyWith(message: e.message));

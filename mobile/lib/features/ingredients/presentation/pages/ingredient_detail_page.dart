@@ -14,6 +14,7 @@ import '../../data/ingredients_repository.dart';
 import '../../domain/ingredient.dart';
 import '../bloc/ingredient_detail_bloc.dart';
 import '../widgets/ingredient_price_section.dart';
+import '../widgets/ingredient_product_photos_section.dart';
 import '../widgets/ingredient_visual_field.dart';
 import '../widgets/unit_selector.dart';
 
@@ -258,6 +259,8 @@ class _DetailViewState extends State<_DetailView> {
               _averagePrice = average;
             }),
           ),
+          const SizedBox(height: 24),
+          IngredientProductPhotosSection(ingredientId: detail.ingredient.id),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

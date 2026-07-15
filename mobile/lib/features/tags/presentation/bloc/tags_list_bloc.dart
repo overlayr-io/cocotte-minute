@@ -37,6 +37,7 @@ class TagsListBloc extends Bloc<TagsListEvent, TagsListState> {
   Future<void> _onCreated(TagCreated event, Emitter<TagsListState> emit) async {
     final current = state;
     if (current is! TagsListLoaded) return;
+    emit(current.copyWith(creating: true));
     try {
       await _repository.create(name: event.name, color: event.color);
       emit(await _load());

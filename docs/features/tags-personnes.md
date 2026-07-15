@@ -48,14 +48,20 @@ adaptées à qui on cuisine.
 - DB : `tags`, `people`, `person_tags`, `recipe_tags`.
 
 ## Règles métier spécifiques
-- Un tag appartient à un seul compte utilisateur (pas de tag partagé/système
-  pour l'instant, contrairement aux ingrédients).
+- Un tag utilisateur appartient à un seul compte.
 - Une Personne appartient à un seul compte utilisateur.
+- **Catalogue de tags système** (`owner_id = null`), ajouté depuis : liste servie
+  par `GET /tags/system`, source unique = constante `SYSTEM_TAGS` du schéma. Semé
+  paresseusement au premier accès (`TagsService.ensureSystemDefaults`), pour
+  qu'une DB neuve ne montre pas « Aucun tag dans le catalogue » sans lancer le
+  script `db:seed:tags`.
+  - **Verrou consultatif obligatoire** (`pg_advisory_xact_lock`, cf.
+    `common/db/advisory-locks.ts`) : ce semis est **global**, pas scopé à un
+    compte — deux utilisateurs quelconques arrivant en même temps sur un
+    catalogue vide le dupliquaient **pour tout le monde**. Corrigé le 2026-07-15.
 
 ## Hors scope pour cette feature
 - Recherche avancée par tag : mentionnée comme usage futur, pas implémentée ici.
-- Tags système/prédéfinis fournis par l'application (à l'inverse des ingrédients,
-  rien n'indique que les tags aient un catalogue système de départ — non traité ici).
 
 ## Questions ouvertes / à trancher
 

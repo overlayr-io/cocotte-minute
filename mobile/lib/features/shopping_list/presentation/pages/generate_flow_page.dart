@@ -7,6 +7,7 @@ import '../../../../core/premium/premium_limit_sheet.dart';
 import '../../../../core/pricing/price_calculator.dart';
 import '../../../../core/pricing/price_formatter.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/duration_format.dart';
 import '../../../../core/widgets/app_network_image.dart';
 import '../../../ingredient_prices/data/ingredient_prices_repository.dart';
 import '../../../recipes/data/recipes_repository.dart';
@@ -220,6 +221,11 @@ class _StepRecipes extends StatelessWidget {
                         color: AppColors.textMuted,
                       ),
                     ),
+                    const SizedBox(height: 14),
+                    _RecipeSearchField(
+                      hintText: l10n.shoppingSearchRecipe,
+                      onChanged: cubit.searchRecipes,
+                    ),
                     const SizedBox(height: 16),
                   ],
                 );
@@ -266,6 +272,9 @@ class _RecipeSelectTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final totalTime = formatMinutesShort(
+      recipe.prepTime + recipe.cookTime + recipe.restTime,
+    );
     return InkWell(
       borderRadius: BorderRadius.circular(18),
       onTap: onTap,
@@ -284,11 +293,34 @@ class _RecipeSelectTile extends StatelessWidget {
             _RecipeThumb(photoUrl: recipe.photoUrl, size: 56),
             const SizedBox(width: 13),
             Expanded(
-              child: Text(
-                recipe.name,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    recipe.name,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  if (totalTime != null) ...[
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
+                        const Icon(Icons.schedule_rounded,
+                            size: 13, color: AppColors.textMuted),
+                        const SizedBox(width: 4),
+                        Text(
+                          totalTime,
+                          style: const TextStyle(
+                            fontSize: 12.5,
+                            color: AppColors.textMuted,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
               ),
             ),
             const SizedBox(width: 8),
@@ -308,6 +340,70 @@ class _RecipeSelectTile extends StatelessWidget {
                   : null,
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _RecipeSearchField extends StatefulWidget {
+  const _RecipeSearchField({required this.hintText, required this.onChanged});
+
+  final String hintText;
+  final ValueChanged<String> onChanged;
+
+  @override
+  State<_RecipeSearchField> createState() => _RecipeSearchFieldState();
+}
+
+class _RecipeSearchFieldState extends State<_RecipeSearchField> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _onChanged(String value) {
+    widget.onChanged(value);
+    setState(() {}); // met à jour la visibilité du bouton d'effacement
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(14),
+      borderSide: const BorderSide(color: AppColors.border),
+    );
+    return TextField(
+      controller: _controller,
+      onChanged: _onChanged,
+      textInputAction: TextInputAction.search,
+      decoration: InputDecoration(
+        hintText: widget.hintText,
+        isDense: true,
+        filled: true,
+        fillColor: AppColors.card,
+        prefixIcon: const Icon(Icons.search_rounded,
+            size: 20, color: AppColors.textMuted),
+        suffixIcon: _controller.text.isEmpty
+            ? null
+            : IconButton(
+                icon: const Icon(Icons.close_rounded, size: 18),
+                color: AppColors.textMuted,
+                onPressed: () {
+                  _controller.clear();
+                  _onChanged('');
+                },
+              ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        border: border,
+        enabledBorder: border,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
       ),
     );

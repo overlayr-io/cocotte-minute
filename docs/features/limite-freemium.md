@@ -64,6 +64,16 @@ le v1 fonctionnel, décision actée précédemment).
 - Quota atteint : ouvre directement le paywall (même pattern que sous-recettes
   / liste de courses / recherche).
 
+### Planification des repas (Ajout — cadrage `planification-repas.md`, livrée 2026-07-12)
+- **1 entrée max par créneau** (matin/midi/soir, tous types confondus :
+  recette, manger dehors, note) en gratuit — illimité en premium. Code
+  `PREMIUM_LIMIT_MEAL_SLOT_ENTRIES`.
+- **Édition bornée aux semaines T/T+1** en gratuit (au-delà : lecture seule,
+  bandeau + upsell, pas de blocage de navigation). Premium : toute la fenêtre
+  de rétention T-1 → T+2. Code `PREMIUM_LIMIT_MEAL_PLAN_WEEK`.
+- Envoi vers les courses : gratuit = remplace la liste active (confirmation si
+  non vide) ; premium = nouvelle liste dédiée à chaque fois.
+
 ### Marketplace (chef)
 - Prévue comme feature premium plus tard (V2), pas dans ce v1.
 

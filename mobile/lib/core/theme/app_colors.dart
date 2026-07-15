@@ -10,6 +10,7 @@ class AppColors {
 
   // Marque
   static const Color primary = Color(0xFF6B8E5A); // vert principal
+  static const Color primaryDark = Color(0xFF5C7A4C); // vert appuyé (libellés actifs)
   static const Color accent = Color(0xFFFF6F61); // corail "doux"
 
   // Fonds

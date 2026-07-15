@@ -56,39 +56,53 @@ class _PaywallView extends StatelessWidget {
           ),
         ),
         child: SafeArea(
-          child: BlocConsumer<PremiumPaywallCubit, PremiumPaywallState>(
-            listenWhen: (p, c) =>
-                p.message != c.message || p.phase != c.phase,
-            listener: (context, state) {
-              if (state.phase == PaywallPhase.success) {
-                // Bref état de succès puis retour à l'écran précédent (le
-                // statut global est déjà rafraîchi par le PremiumCubit).
-                Future<void>.delayed(const Duration(milliseconds: 1600), () {
-                  if (context.mounted) Navigator.of(context).maybePop();
-                });
-                return;
-              }
-              final message = state.message;
-              if (message != null) {
-                ScaffoldMessenger.of(context)
-                  ..hideCurrentSnackBar()
-                  ..showSnackBar(SnackBar(content: Text(_messageText(l10n, message))));
-              }
-            },
-            builder: (context, state) {
-              if (state.phase == PaywallPhase.success) {
-                return const _SuccessView();
-              }
-              return switch (state.status) {
-                PaywallStatus.loading =>
-                  const Center(child: CircularProgressIndicator()),
-                PaywallStatus.failure => ErrorView(
-                    message: l10n.premiumOfferingsError,
-                    onRetry: () => context.read<PremiumPaywallCubit>().load(),
-                  ),
-                PaywallStatus.ready => _Content(state: state, l10n: l10n),
-              };
-            },
+          child: Column(
+            children: [
+              Expanded(
+                child: BlocConsumer<PremiumPaywallCubit, PremiumPaywallState>(
+                  listenWhen: (p, c) =>
+                      p.message != c.message || p.phase != c.phase,
+                  listener: (context, state) {
+                    if (state.phase == PaywallPhase.success) {
+                      // Bref état de succès puis retour à l'écran précédent (le
+                      // statut global est déjà rafraîchi par le PremiumCubit).
+                      Future<void>.delayed(
+                        const Duration(milliseconds: 1600),
+                        () {
+                          if (context.mounted) Navigator.of(context).maybePop();
+                        },
+                      );
+                      return;
+                    }
+                    final message = state.message;
+                    if (message != null) {
+                      ScaffoldMessenger.of(context)
+                        ..hideCurrentSnackBar()
+                        ..showSnackBar(
+                          SnackBar(content: Text(_messageText(l10n, message))),
+                        );
+                    }
+                  },
+                  builder: (context, state) {
+                    if (state.phase == PaywallPhase.success) {
+                      return const _SuccessView();
+                    }
+                    return switch (state.status) {
+                      PaywallStatus.loading => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      PaywallStatus.failure => ErrorView(
+                        message: l10n.premiumOfferingsError,
+                        onRetry: () =>
+                            context.read<PremiumPaywallCubit>().load(),
+                      ),
+                      PaywallStatus.ready => _Content(state: state, l10n: l10n),
+                    };
+                  },
+                ),
+              ),
+              const _LegalFooter(),
+            ],
           ),
         ),
       ),
@@ -112,8 +126,9 @@ class _Content extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPremium =
-        context.select<PremiumCubit, bool>((c) => c.state.isPremium);
+    final isPremium = context.select<PremiumCubit, bool>(
+      (c) => c.state.isPremium,
+    );
     final isGuest = context.read<PremiumPaywallCubit>().isGuest;
 
     return ListView(
@@ -160,8 +175,11 @@ class _Header extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.workspace_premium_rounded,
-                  size: 14, color: Colors.white),
+              const Icon(
+                Icons.workspace_premium_rounded,
+                size: 14,
+                color: Colors.white,
+              ),
               const SizedBox(width: 5),
               Text(
                 l10n.premiumBadge,
@@ -326,11 +344,7 @@ class _CompareCard extends StatelessWidget {
           ),
           const Divider(height: 1, thickness: 1, color: Color(0xFFF1EEE7)),
           for (var i = 0; i < rows.length; i++) ...[
-            _CompareRow(
-              label: rows[i].$1,
-              free: rows[i].$2,
-              pro: rows[i].$3,
-            ),
+            _CompareRow(label: rows[i].$1, free: rows[i].$2, pro: rows[i].$3),
             if (i != rows.length - 1)
               const Divider(height: 1, thickness: 1, color: Color(0xFFF1EEE7)),
           ],
@@ -458,7 +472,9 @@ class _PurchaseArea extends StatelessWidget {
                   selected: state.annualSelected || monthly == null,
                   badge: offering.annualSavingsPercent == null
                       ? null
-                      : l10n.premiumSavingsBadge(offering.annualSavingsPercent!),
+                      : l10n.premiumSavingsBadge(
+                          offering.annualSavingsPercent!,
+                        ),
                   onTap: busy ? null : () => cubit.selectAnnual(true),
                 ),
               ),
@@ -535,24 +551,6 @@ class _PurchaseArea extends StatelessWidget {
                   ),
                 ),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _LegalLink(
-              label: l10n.accountRowTerms,
-              onTap: () => Navigator.of(context).push(TermsPage.route()),
-            ),
-            const Text(
-              ' · ',
-              style: TextStyle(color: AppColors.textMuted, fontSize: 12),
-            ),
-            _LegalLink(
-              label: l10n.accountRowPrivacyPolicy,
-              onTap: () =>
-                  Navigator.of(context).push(PrivacyPolicyPage.route()),
-            ),
-          ],
-        ),
       ],
     );
   }
@@ -627,8 +625,10 @@ class _PlanCard extends StatelessWidget {
                 ),
                 if (badge != null)
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.accent,
                       borderRadius: BorderRadius.circular(999),
@@ -657,13 +657,44 @@ class _PlanCard extends StatelessWidget {
             ),
             Text(
               priceSuffix,
-              style: const TextStyle(
-                fontSize: 12,
-                color: AppColors.textMuted,
-              ),
+              style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Liens légaux persistants (CGU/EULA + confidentialité), affichés en bas du
+/// paywall dans TOUS les états (chargement, erreur, offres, succès). Exigence
+/// App Store 3.1.2 : les liens doivent rester accessibles même si les offres
+/// ne se chargent pas — auparavant ils vivaient dans la zone d'achat et
+/// disparaissaient sur l'écran d'erreur/chargement.
+class _LegalFooter extends StatelessWidget {
+  const _LegalFooter();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(22, 6, 22, 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _LegalLink(
+            label: l10n.accountRowTerms,
+            onTap: () => Navigator.of(context).push(TermsPage.route()),
+          ),
+          const Text(
+            ' · ',
+            style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+          ),
+          _LegalLink(
+            label: l10n.accountRowPrivacyPolicy,
+            onTap: () => Navigator.of(context).push(PrivacyPolicyPage.route()),
+          ),
+        ],
       ),
     );
   }
@@ -785,8 +816,11 @@ class _AlreadyProCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.verified_rounded,
-                  color: AppColors.premiumGoldDark, size: 20),
+              const Icon(
+                Icons.verified_rounded,
+                color: AppColors.premiumGoldDark,
+                size: 20,
+              ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
@@ -863,8 +897,11 @@ class _SuccessView extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: AppShadows.glow(AppColors.premiumGold),
               ),
-              child:
-                  const Icon(Icons.check_rounded, color: Colors.white, size: 38),
+              child: const Icon(
+                Icons.check_rounded,
+                color: Colors.white,
+                size: 38,
+              ),
             ),
             const SizedBox(height: 20),
             Text(

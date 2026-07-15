@@ -18,6 +18,35 @@ export const TAG_COLORS = [
 export type TagColor = (typeof TAG_COLORS)[number];
 
 /**
+ * Catalogue de tags système (`owner_id = null`), semé au premier accès au
+ * catalogue (seeding paresseux, cf. `TagsService.ensureSystemDefaults`) et par
+ * le script `db:seed:tags`. Source unique de vérité de la liste — chaque
+ * couleur doit appartenir à `TAG_COLORS` (garanti au compile-time).
+ */
+export const SYSTEM_TAGS: readonly { name: string; color: TagColor }[] = [
+  { name: 'Rapide', color: '#B8862F' },
+  { name: 'Économique', color: '#B8862F' },
+  { name: 'Végétarien', color: '#3F7D3A' },
+  { name: 'Végan', color: '#3F7D3A' },
+  { name: 'Sans gluten', color: '#3F7D3A' },
+  { name: 'Sans lactose', color: '#3F7D3A' },
+  { name: 'Healthy', color: '#3F7D3A' },
+  { name: 'Enfants', color: '#8A5BB0' },
+  { name: 'Apéro', color: '#C86A3C' },
+  { name: 'Entrée', color: '#3D6DA8' },
+  { name: 'Plat principal', color: '#3D6DA8' },
+  { name: 'Dessert', color: '#B14A3F' },
+  { name: 'Petit-déjeuner', color: '#C86A3C' },
+  { name: 'Weekend', color: '#8A5BB0' },
+  { name: 'Four', color: '#B8862F' },
+  { name: 'Sans cuisson', color: '#3F7D3A' },
+  { name: 'Barbecue', color: '#B14A3F' },
+  { name: 'Fait maison', color: '#3F7D3A' },
+  { name: 'Reste du frigo', color: '#B8862F' },
+  { name: 'Fête', color: '#8A5BB0' },
+];
+
+/**
  * Tags — système (`owner_id = null`, catalogue) vs copie utilisateur
  * (`owner_id = uid`). Même mécanique que les ingrédients (ingredients.md) :
  * "importer" un tag système crée une copie indépendante qui garde un lien

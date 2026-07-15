@@ -82,6 +82,15 @@ export const recipes = pgTable('recipes', {
   fixedPrice: numeric('fixed_price', { precision: 10, scale: 2, mode: 'number' }),
   /** Tranche de prix affichée en badge, calculée côté client. Null si prix inconnu/partiel. */
   priceBracket: recipePriceBracketEnum('price_bracket'),
+  /**
+   * Valeurs nutritionnelles saisies à la main (feature #8), exprimées PAR
+   * PORTION. Toutes optionnelles (null = non renseigné). Calories en kcal,
+   * macros (protéines/glucides/lipides) en grammes.
+   */
+  caloriesPerServing: numeric('calories_per_serving', { precision: 8, scale: 2, mode: 'number' }),
+  proteinsPerServing: numeric('proteins_per_serving', { precision: 8, scale: 2, mode: 'number' }),
+  carbsPerServing: numeric('carbs_per_serving', { precision: 8, scale: 2, mode: 'number' }),
+  fatsPerServing: numeric('fats_per_serving', { precision: 8, scale: 2, mode: 'number' }),
   /** Soft delete : non-null = supprimé. Toujours filtrer `IS NULL` en lecture. */
   deletedAt: timestamp('deleted_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -108,6 +117,12 @@ export const recipeIngredients = pgTable(
     quantity: numeric('quantity', { precision: 10, scale: 2, mode: 'number' })
       .notNull()
       .default(DEFAULT_INGREDIENT_QUANTITY),
+    /**
+     * Ordre d'affichage dans la recette (0-based, réécrit au réordonnancement
+     * drag & drop). Défaut 0 : les lignes historiques restent triées par nom
+     * (ordre secondaire) tant qu'aucun réordonnancement n'a eu lieu.
+     */
+    position: integer('position').notNull().default(0),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [primaryKey({ columns: [t.recipeId, t.ingredientId] })],
@@ -227,6 +242,24 @@ export const recipeTags = pgTable(
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (t) => [primaryKey({ columns: [t.recipeId, t.tagId] })],
+);
+
+/**
+ * Favoris « J'aime » (feature #15) : liste personnelle de recettes marquées par
+ * l'utilisateur. `user_id` = propriétaire (les recettes sont déjà scopées par
+ * `author_id`, on favorise donc ses propres recettes). Pivot (user_id, recipe_id) ;
+ * la suppression d'une recette retire ses favoris (cascade).
+ */
+export const recipeFavorites = pgTable(
+  'recipe_favorites',
+  {
+    userId: uuid('user_id').notNull(),
+    recipeId: uuid('recipe_id')
+      .notNull()
+      .references(() => recipes.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.recipeId] })],
 );
 
 export const recipesRelations = relations(recipes, ({ many }) => ({

@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/premium/premium_limit_error.dart';
 import '../domain/recipe.dart';
+import '../domain/recipe_sort.dart';
 
 /// Erreur portant un message exploitable pour l'UI (snackbar/page d'erreur).
 class RecipesRepositoryException implements Exception {
@@ -22,6 +23,33 @@ class RecipesRepositoryException implements Exception {
 /// « mettre à null » dans un PATCH partiel (prix étiquette / tranche de prix).
 const Object _unset = Object();
 
+/// Résultat d'un ajout de photo de galerie (feature galerie-recette). Si
+/// [becameCover] est vrai, la photo est devenue la couverture de la recette (la
+/// recette n'en avait pas) et n'entre PAS dans la galerie ; [coverUrl] porte
+/// alors la nouvelle couverture. Sinon, [photos] reflète la galerie mise à jour.
+class GalleryAddResult {
+  const GalleryAddResult({
+    required this.becameCover,
+    required this.coverUrl,
+    required this.photos,
+  });
+
+  final bool becameCover;
+  final String? coverUrl;
+  final List<RecipeGalleryPhoto> photos;
+
+  factory GalleryAddResult.fromJson(Map<String, dynamic> json) {
+    return GalleryAddResult(
+      becameCover: json['becameCover'] as bool? ?? false,
+      coverUrl: json['coverUrl'] as String?,
+      photos: ((json['photos'] as List<dynamic>?) ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(RecipeGalleryPhoto.fromJson)
+          .toList(),
+    );
+  }
+}
+
 /// Accès aux recettes via l'API NestJS.
 class RecipesRepository {
   RecipesRepository({required ApiClient apiClient}) : _apiClient = apiClient;
@@ -36,6 +64,7 @@ class RecipesRepository {
     String? q,
     int? limit,
     int? offset,
+    RecipeSort? sort,
   }) async {
     try {
       final res = await _dio.get<List<dynamic>>(
@@ -44,6 +73,7 @@ class RecipesRepository {
           if (q != null && q.trim().isNotEmpty) 'q': q.trim(),
           'limit': ?limit,
           'offset': ?offset,
+          if (sort != null && sort != RecipeSort.recent) 'sort': sort.wire,
         },
       );
       return (res.data ?? const [])
@@ -135,12 +165,67 @@ class RecipesRepository {
     }
   }
 
+  /// Duplique une recette (copie profonde côté serveur). Renvoie le résumé de
+  /// la nouvelle recette.
+  Future<RecipeSummary> duplicateRecipe(String recipeId) async {
+    try {
+      final res = await _dio.post<Map<String, dynamic>>(
+        '/recipes/$recipeId/duplicate',
+      );
+      return RecipeSummary.fromJson(res.data!);
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de dupliquer la recette.');
+    }
+  }
+
+  /// Recettes aimées « J'aime » (#15), plus récemment ajoutées d'abord.
+  Future<List<RecipeSummary>> fetchFavorites() async {
+    try {
+      final res = await _dio.get<List<dynamic>>('/recipes/favorites');
+      return (res.data ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(RecipeSummary.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de charger tes favoris.');
+    }
+  }
+
+  /// Sème les recettes d'exemple à la 1ère ouverture (#12). Idempotent côté
+  /// serveur : sans effet si le compte a déjà eu au moins une recette.
+  Future<void> seedSamples() async {
+    try {
+      await _dio.post<void>('/recipes/seed-samples');
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de préparer les exemples.');
+    }
+  }
+
+  /// Ajoute la recette aux favoris (idempotent). Peut porter un `premiumLimit`.
+  Future<void> addFavorite(String recipeId) async {
+    try {
+      await _dio.post<void>('/recipes/$recipeId/favorite');
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'ajouter aux favoris.');
+    }
+  }
+
+  /// Retire la recette des favoris (idempotent).
+  Future<void> removeFavorite(String recipeId) async {
+    try {
+      await _dio.delete<void>('/recipes/$recipeId/favorite');
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de retirer des favoris.');
+    }
+  }
+
   /// [priceBracket] utilise la sentinelle [_unset] par défaut : ne rien passer
   /// = tranche inchangée (la plupart des appels ne touchent pas au prix),
   /// passer `null` explicitement = effacée (prix devenu partiel/inconnu).
   Future<RecipeSummary> update(
     String id, {
     String? name,
+    String? photoUrl,
     String? description,
     bool? isBase,
     int? prepTime,
@@ -150,10 +235,15 @@ class RecipesRepository {
     RecipePriceMode? priceMode,
     double? fixedPrice,
     Object? priceBracket = _unset,
+    Object? caloriesPerServing = _unset,
+    Object? proteinsPerServing = _unset,
+    Object? carbsPerServing = _unset,
+    Object? fatsPerServing = _unset,
   }) async {
     try {
       final data = <String, dynamic>{
         'name': ?name,
+        'photoUrl': ?photoUrl,
         'description': ?description,
         'isBase': ?isBase,
         'prepTime': ?prepTime,
@@ -165,6 +255,20 @@ class RecipesRepository {
       };
       if (!identical(priceBracket, _unset)) {
         data['priceBracket'] = (priceBracket as RecipePriceBracket?)?.wire;
+      }
+      // Nutrition (feature #8) : sentinelle `_unset` = champ non touché ; null
+      // explicite = valeur effacée. Chaque champ est envoyé indépendamment.
+      if (!identical(caloriesPerServing, _unset)) {
+        data['caloriesPerServing'] = caloriesPerServing as double?;
+      }
+      if (!identical(proteinsPerServing, _unset)) {
+        data['proteinsPerServing'] = proteinsPerServing as double?;
+      }
+      if (!identical(carbsPerServing, _unset)) {
+        data['carbsPerServing'] = carbsPerServing as double?;
+      }
+      if (!identical(fatsPerServing, _unset)) {
+        data['fatsPerServing'] = fatsPerServing as double?;
       }
       final res = await _dio.patch<Map<String, dynamic>>(
         '/recipes/$id',
@@ -181,6 +285,41 @@ class RecipesRepository {
       await _dio.delete<void>('/recipes/$id');
     } on DioException catch (e) {
       throw _mapError(e, 'Impossible de supprimer la recette.');
+    }
+  }
+
+  // --- galerie (feature galerie-recette) ---------------------------------
+
+  /// Ajoute une photo (déjà uploadée sur Storage) à la galerie d'une recette.
+  /// L'URL vient de `ImageUploadService`. En cas de quota atteint, l'exception
+  /// porte le `PremiumLimitError` (l'UI décide upsell vs message selon le tier).
+  Future<GalleryAddResult> addGalleryPhoto(String recipeId, String imageUrl) async {
+    try {
+      final res = await _dio.post<Map<String, dynamic>>(
+        '/recipes/$recipeId/gallery',
+        data: {'imageUrl': imageUrl},
+      );
+      return GalleryAddResult.fromJson(res.data!);
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible d\'ajouter la photo.');
+    }
+  }
+
+  /// Supprime une photo de galerie et renvoie la galerie mise à jour.
+  Future<List<RecipeGalleryPhoto>> deleteGalleryPhoto(
+    String recipeId,
+    String imageId,
+  ) async {
+    try {
+      final res = await _dio.delete<Map<String, dynamic>>(
+        '/recipes/$recipeId/gallery/$imageId',
+      );
+      return ((res.data?['photos'] as List<dynamic>?) ?? const [])
+          .cast<Map<String, dynamic>>()
+          .map(RecipeGalleryPhoto.fromJson)
+          .toList();
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de supprimer la photo.');
     }
   }
 
@@ -306,6 +445,18 @@ class RecipesRepository {
       );
     } on DioException catch (e) {
       throw _mapError(e, 'Impossible de réordonner les étapes.');
+    }
+  }
+
+  Future<void> reorderIngredients(
+      String recipeId, List<String> ingredientIds) async {
+    try {
+      await _dio.put<void>(
+        '/recipes/$recipeId/ingredients/order',
+        data: {'ingredientIds': ingredientIds},
+      );
+    } on DioException catch (e) {
+      throw _mapError(e, 'Impossible de réordonner les ingrédients.');
     }
   }
 

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { and, eq, isNull, ne, sql } from 'drizzle-orm';
 
+import { ADVISORY_LOCK_NS } from '../../common/db/advisory-locks';
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import {
   CATEGORY_MAX_DEPTH,
@@ -239,25 +240,37 @@ export class CategoriesService {
    * Sème les 4 dossiers par défaut si le compte n'a encore aucune catégorie
    * (seeding paresseux au premier accès). Idempotent : ne fait rien si au moins
    * une catégorie existe déjà (même supprimée, un défaut n'étant jamais supprimé).
+   *
+   * Verrou consultatif obligatoire : cette méthode tourne à CHAQUE
+   * `GET /categories`. Sans elle, deux requêtes concurrentes sur un compte
+   * vierge lisaient toutes les deux « aucune catégorie » et semaient chacune les
+   * 4 défauts, donnant 8 dossiers en double. Aucune contrainte unique ne peut
+   * servir de repli : deux dossiers de même nom sous des parents différents sont
+   * légitimes. SQL brut assumé (pas d'équivalent Drizzle pour les verrous).
    */
   private async ensureDefaults(userId: string): Promise<void> {
-    const [existing] = await this.db
-      .select({ id: categories.id })
-      .from(categories)
-      .where(eq(categories.ownerId, userId))
-      .limit(1);
-    if (existing) return;
+    await this.db.transaction(async (tx) => {
+      await tx.execute(
+        sql`select pg_advisory_xact_lock(${ADVISORY_LOCK_NS.categoryDefaults}, hashtext(${userId}))`,
+      );
+      const [existing] = await tx
+        .select({ id: categories.id })
+        .from(categories)
+        .where(eq(categories.ownerId, userId))
+        .limit(1);
+      if (existing) return;
 
-    await this.db.insert(categories).values(
-      DEFAULT_CATEGORIES.map((c) => ({
-        ownerId: userId,
-        name: c.name,
-        icon: c.icon,
-        depth: 1,
-        isDefault: true,
-      })),
-    );
-    this.logger.log(`Dossiers par défaut semés pour l'utilisateur ${userId}`);
+      await tx.insert(categories).values(
+        DEFAULT_CATEGORIES.map((c) => ({
+          ownerId: userId,
+          name: c.name,
+          icon: c.icon,
+          depth: 1,
+          isDefault: true,
+        })),
+      );
+      this.logger.log(`Dossiers par défaut semés pour l'utilisateur ${userId}`);
+    });
   }
 
   /**

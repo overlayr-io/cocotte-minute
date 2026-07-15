@@ -9,6 +9,7 @@ import '../../../categories/domain/category.dart';
 import '../../../people/data/people_repository.dart';
 import '../../../people/domain/person.dart';
 import '../../../recipes/domain/recipe.dart';
+import '../../../recipes/domain/recipe_sort.dart';
 import '../../../tags/data/tags_repository.dart';
 import '../../../tags/domain/tag.dart';
 import '../../data/search_repository.dart';
@@ -200,6 +201,13 @@ class SearchCubit extends Cubit<SearchState> {
       return;
     }
     _runSearch();
+  }
+
+  /// Change le tri des résultats (client : pas de nouvelle requête, la
+  /// recherche renvoie l'ensemble des résultats).
+  void setSort(RecipeSort sort) {
+    if (sort == state.sort) return;
+    emit(state.copyWith(sort: sort));
   }
 
   Future<void> _runSearch() async {

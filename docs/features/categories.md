@@ -41,6 +41,13 @@ plutôt qu'au rangement.
   au premier accès d'un compte (`is_default = true`). **Verrouillés** : nom +
   emoji figés, non renommables, non supprimables. On peut seulement créer des
   sous-dossiers à l'intérieur.
+  - **Verrou consultatif obligatoire** (`pg_advisory_xact_lock`, cf.
+    `common/db/advisory-locks.ts`) : `ensureDefaults` tourne à **chaque**
+    `GET /categories`, et le motif « lire puis insérer si absent » sans verrou
+    faisait semer les 4 défauts **deux fois** quand deux requêtes concurrentes
+    tombaient sur un compte vierge (8 dossiers affichés en double). Bug corrigé
+    le 2026-07-15. Aucune contrainte unique ne peut servir de repli : deux
+    dossiers de même nom sous des parents différents sont légitimes.
 - **Emoji** : chaque dossier peut porter un emoji système optionnel (colonne
   `icon`). Null = icône dossier par défaut à l'affichage.
 - **Profondeur** : bornée à **5 niveaux, racine = niveau 1** (`CATEGORY_MAX_DEPTH`).

@@ -1190,6 +1190,282 @@ abstract class AppLocalizations {
   /// **'Écris-nous, on te répond vite'**
   String get helpCenterContactSubtitle;
 
+  /// No description provided for @accountRowConceptGuides.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comprendre l\'app'**
+  String get accountRowConceptGuides;
+
+  /// No description provided for @conceptGuidesTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comprendre l\'app'**
+  String get conceptGuidesTitle;
+
+  /// No description provided for @conceptGuidesIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Des guides courts pour comprendre chaque idée clé de Cocotte Minute. Une vidéo accompagnera bientôt chaque guide.'**
+  String get conceptGuidesIntro;
+
+  /// No description provided for @conceptVideoComingSoon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vidéo bientôt disponible'**
+  String get conceptVideoComingSoon;
+
+  /// No description provided for @conceptBaseTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recettes de base et sous-recettes'**
+  String get conceptBaseTitle;
+
+  /// No description provided for @conceptBaseSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réutilise une préparation dans plusieurs plats'**
+  String get conceptBaseSummary;
+
+  /// No description provided for @conceptBaseIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une recette de base est une préparation que tu réutilises souvent : une sauce, une pâte, un fond. Tu la crées une fois, puis tu l\'ajoutes dans autant de plats que tu veux.'**
+  String get conceptBaseIntro;
+
+  /// No description provided for @conceptBaseS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Qu\'est-ce qu\'une recette de base ?'**
+  String get conceptBaseS1Title;
+
+  /// No description provided for @conceptBaseS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'C\'est une recette comme les autres, mais marquée « de base ». Par exemple une sauce tomate maison : tu la prépares une fois et elle devient une brique réutilisable.'**
+  String get conceptBaseS1Body;
+
+  /// No description provided for @conceptBaseS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'L\'utiliser dans un plat'**
+  String get conceptBaseS2Title;
+
+  /// No description provided for @conceptBaseS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dans un plat, ajoute la recette de base comme sous-recette. Ses ingrédients sont alors comptés automatiquement dans le plat et dans ta liste de courses.'**
+  String get conceptBaseS2Body;
+
+  /// No description provided for @conceptFoldersTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers'**
+  String get conceptFoldersTitle;
+
+  /// No description provided for @conceptFoldersSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Range tes recettes dans des dossiers'**
+  String get conceptFoldersSummary;
+
+  /// No description provided for @conceptFoldersIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les dossiers t\'aident à organiser tes recettes par thème : entrées, plats, desserts, ou ce que tu veux. Tu peux même mettre un dossier dans un autre.'**
+  String get conceptFoldersIntro;
+
+  /// No description provided for @conceptFoldersS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créer et imbriquer'**
+  String get conceptFoldersS1Title;
+
+  /// No description provided for @conceptFoldersS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Crée un dossier, puis glisse tes recettes dedans. Un dossier peut contenir d\'autres dossiers, pour un classement aussi précis que tu le souhaites.'**
+  String get conceptFoldersS1Body;
+
+  /// No description provided for @conceptFoldersS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retrouver une recette'**
+  String get conceptFoldersS2Title;
+
+  /// No description provided for @conceptFoldersS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ouvre un dossier pour voir seulement les recettes qu\'il contient. Les recettes rangées nulle part restent visibles dans le dossier « Autres ».'**
+  String get conceptFoldersS2Body;
+
+  /// No description provided for @conceptTagsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tags'**
+  String get conceptTagsTitle;
+
+  /// No description provided for @conceptTagsSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Étiquette tes recettes pour les filtrer'**
+  String get conceptTagsSummary;
+
+  /// No description provided for @conceptTagsIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Les tags sont des étiquettes libres : « rapide », « végétarien », « préféré des enfants ». Une même recette peut en avoir plusieurs.'**
+  String get conceptTagsIntro;
+
+  /// No description provided for @conceptTagsS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'À quoi servent les tags'**
+  String get conceptTagsS1Title;
+
+  /// No description provided for @conceptTagsS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Contrairement aux dossiers, une recette peut porter plusieurs tags à la fois. C\'est idéal pour croiser des critères qui ne rentrent pas dans un seul rangement.'**
+  String get conceptTagsS1Body;
+
+  /// No description provided for @conceptTagsS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer avec la recherche'**
+  String get conceptTagsS2Title;
+
+  /// No description provided for @conceptTagsS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Depuis la recherche, combine un ou plusieurs tags pour ne voir que les recettes correspondantes. Pratique pour trouver un plat rapide et végétarien d\'un coup.'**
+  String get conceptTagsS2Body;
+
+  /// No description provided for @conceptPeopleTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Personnes et famille'**
+  String get conceptPeopleTitle;
+
+  /// No description provided for @conceptPeopleSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Associe des recettes aux personnes du foyer'**
+  String get conceptPeopleSummary;
+
+  /// No description provided for @conceptPeopleIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoute les personnes de ton foyer pour adapter tes recettes à chacun : goûts, portions et allergies.'**
+  String get conceptPeopleIntro;
+
+  /// No description provided for @conceptPeopleS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter des personnes'**
+  String get conceptPeopleS1Title;
+
+  /// No description provided for @conceptPeopleS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Crée une fiche par personne, avec son prénom et, si tu veux, ses allergies. Tu peux ensuite associer des recettes à celles et ceux qu\'elles concernent.'**
+  String get conceptPeopleS1Body;
+
+  /// No description provided for @conceptPeopleS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtrer par personne'**
+  String get conceptPeopleS2Title;
+
+  /// No description provided for @conceptPeopleS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Filtre tes recettes par personne pour voir ce qui lui convient. Les allergies renseignées t\'aident à repérer les plats à éviter.'**
+  String get conceptPeopleS2Body;
+
+  /// No description provided for @conceptShoppingTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste de courses'**
+  String get conceptShoppingTitle;
+
+  /// No description provided for @conceptShoppingSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Génère ta liste depuis tes recettes'**
+  String get conceptShoppingSummary;
+
+  /// No description provided for @conceptShoppingIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Plus besoin de tout noter à la main : choisis des recettes et Cocotte Minute rassemble leurs ingrédients dans une seule liste.'**
+  String get conceptShoppingIntro;
+
+  /// No description provided for @conceptShoppingS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Générer depuis des recettes'**
+  String get conceptShoppingS1Title;
+
+  /// No description provided for @conceptShoppingS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sélectionne les recettes de ta semaine : les ingrédients sont additionnés et regroupés. Coche ce que tu mets dans le panier au fil des courses.'**
+  String get conceptShoppingS1Body;
+
+  /// No description provided for @conceptShoppingS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Fonctionne hors ligne'**
+  String get conceptShoppingS2Title;
+
+  /// No description provided for @conceptShoppingS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ta liste reste disponible même sans connexion en magasin. Tes changements se synchronisent tout seuls dès que le réseau revient.'**
+  String get conceptShoppingS2Body;
+
+  /// No description provided for @conceptPlanningTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planification des repas'**
+  String get conceptPlanningTitle;
+
+  /// No description provided for @conceptPlanningSummary.
+  ///
+  /// In fr, this message translates to:
+  /// **'Organise tes repas de la semaine'**
+  String get conceptPlanningSummary;
+
+  /// No description provided for @conceptPlanningIntro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le planning te donne une vue de la semaine pour décider à l\'avance qui mange quoi et quand.'**
+  String get conceptPlanningIntro;
+
+  /// No description provided for @conceptPlanningS1Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planifier la semaine'**
+  String get conceptPlanningS1Title;
+
+  /// No description provided for @conceptPlanningS1Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Place une recette sur un jour et un moment (midi, soir). Tu visualises ta semaine d\'un coup d\'oeil et tu évites la question du « qu\'est-ce qu\'on mange ce soir ? ».'**
+  String get conceptPlanningS1Body;
+
+  /// No description provided for @conceptPlanningS2Title.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glisser-déposer tes recettes'**
+  String get conceptPlanningS2Title;
+
+  /// No description provided for @conceptPlanningS2Body.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déplace une recette d\'un créneau à l\'autre par simple glisser-déposer. Une fois ta semaine posée, génère la liste de courses correspondante.'**
+  String get conceptPlanningS2Body;
+
   /// No description provided for @contactIntro.
   ///
   /// In fr, this message translates to:
@@ -1513,6 +1789,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Alternatives'**
   String get ingredientSectionAlternatives;
+
+  /// No description provided for @ingredientProductsSection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes produits'**
+  String get ingredientProductsSection;
+
+  /// No description provided for @ingredientProductsEmptyCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une photo produit'**
+  String get ingredientProductsEmptyCta;
+
+  /// No description provided for @ingredientProductsHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photos du produit que tu achètes'**
+  String get ingredientProductsHint;
+
+  /// No description provided for @ingredientProductsDeleteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer cette photo ?'**
+  String get ingredientProductsDeleteTitle;
+
+  /// No description provided for @ingredientProductsFullPro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limite de {limit} photos atteinte pour cet ingrédient.'**
+  String ingredientProductsFullPro(int limit);
+
+  /// No description provided for @premiumLimitIngredientPhotosTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limite de photos produit atteinte'**
+  String get premiumLimitIngredientPhotosTitle;
+
+  /// No description provided for @premiumLimitIngredientPhotosBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le plan gratuit permet {limit} photo par ingrédient. Passe en Pro pour en ajouter jusqu\'à 3.'**
+  String premiumLimitIngredientPhotosBody(int limit);
 
   /// No description provided for @ingredientAlternativesHint.
   ///
@@ -2078,6 +2396,18 @@ abstract class AppLocalizations {
   /// **'Aucune recette sans dossier. Tout est bien rangé !'**
   String get recipesOtherFolderEmpty;
 
+  /// No description provided for @recipesFavoritesFolderTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'J\'aime'**
+  String get recipesFavoritesFolderTitle;
+
+  /// No description provided for @recipesFavoritesFolderEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette aimée pour l\'instant.'**
+  String get recipesFavoritesFolderEmpty;
+
   /// No description provided for @recipeMenuAssignFolders.
   ///
   /// In fr, this message translates to:
@@ -2342,6 +2672,36 @@ abstract class AppLocalizations {
   /// **'Personnes'**
   String get recipeFieldServings;
 
+  /// No description provided for @recipeFieldNutrition.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nutrition (par portion)'**
+  String get recipeFieldNutrition;
+
+  /// No description provided for @recipeFieldCalories.
+  ///
+  /// In fr, this message translates to:
+  /// **'Calories'**
+  String get recipeFieldCalories;
+
+  /// No description provided for @recipeFieldProteins.
+  ///
+  /// In fr, this message translates to:
+  /// **'Protéines'**
+  String get recipeFieldProteins;
+
+  /// No description provided for @recipeFieldCarbs.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glucides'**
+  String get recipeFieldCarbs;
+
+  /// No description provided for @recipeFieldFats.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lipides'**
+  String get recipeFieldFats;
+
   /// No description provided for @recipeIngredientsSection.
   ///
   /// In fr, this message translates to:
@@ -2353,6 +2713,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Aucun ingrédient pour l\'instant.'**
   String get recipeIngredientsEmpty;
+
+  /// No description provided for @recipeIngredientsFromComponents.
+  ///
+  /// In fr, this message translates to:
+  /// **'Depuis les sous-recettes'**
+  String get recipeIngredientsFromComponents;
+
+  /// No description provided for @recipeSortTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trier les recettes'**
+  String get recipeSortTooltip;
+
+  /// No description provided for @recipeSortRecent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Récent'**
+  String get recipeSortRecent;
+
+  /// No description provided for @recipeSortTime.
+  ///
+  /// In fr, this message translates to:
+  /// **'Temps'**
+  String get recipeSortTime;
+
+  /// No description provided for @recipeSortName.
+  ///
+  /// In fr, this message translates to:
+  /// **'A-Z'**
+  String get recipeSortName;
 
   /// No description provided for @recipeComponentsSection.
   ///
@@ -2377,6 +2767,108 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Retirer la sous-recette'**
   String get recipeComponentRemove;
+
+  /// No description provided for @recipeGallerySection.
+  ///
+  /// In fr, this message translates to:
+  /// **'Galerie'**
+  String get recipeGallerySection;
+
+  /// No description provided for @recipeGallerySubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réalisations'**
+  String get recipeGallerySubtitle;
+
+  /// No description provided for @recipeGalleryHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoute ta photo quand tu as cuisiné cette recette.'**
+  String get recipeGalleryHint;
+
+  /// No description provided for @recipeGalleryEmptyCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Uploade ta première création'**
+  String get recipeGalleryEmptyCta;
+
+  /// No description provided for @recipeGalleryEmptyMeta.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count}/{limit} photos · 5 Mo max par photo'**
+  String recipeGalleryEmptyMeta(int count, int limit);
+
+  /// No description provided for @recipeGalleryAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une photo'**
+  String get recipeGalleryAdd;
+
+  /// No description provided for @recipeGalleryCounter.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count}/{limit}'**
+  String recipeGalleryCounter(int count, int limit);
+
+  /// No description provided for @recipeGalleryFullPro.
+  ///
+  /// In fr, this message translates to:
+  /// **'Limite de {limit} photos atteinte pour cette recette.'**
+  String recipeGalleryFullPro(int limit);
+
+  /// No description provided for @recipeGalleryOffline.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion requise pour ajouter une photo.'**
+  String get recipeGalleryOffline;
+
+  /// No description provided for @recipeGalleryPosition.
+  ///
+  /// In fr, this message translates to:
+  /// **'{index} / {total}'**
+  String recipeGalleryPosition(int index, int total);
+
+  /// No description provided for @recipeGalleryDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer la photo'**
+  String get recipeGalleryDelete;
+
+  /// No description provided for @recipeGalleryDeleteConfirmTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer cette photo ?'**
+  String get recipeGalleryDeleteConfirmTitle;
+
+  /// No description provided for @recipeGalleryDeleteConfirmBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette réalisation sera définitivement retirée de la galerie.'**
+  String get recipeGalleryDeleteConfirmBody;
+
+  /// No description provided for @recipeMenuChangePhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Changer la photo'**
+  String get recipeMenuChangePhoto;
+
+  /// No description provided for @recipeMenuDuplicate.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dupliquer'**
+  String get recipeMenuDuplicate;
+
+  /// No description provided for @recipeMenuFavorite.
+  ///
+  /// In fr, this message translates to:
+  /// **'J\'aime'**
+  String get recipeMenuFavorite;
+
+  /// No description provided for @recipeMenuUnfavorite.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ne plus aimer'**
+  String get recipeMenuUnfavorite;
 
   /// No description provided for @recipeTagsSection.
   ///
@@ -3695,7 +4187,7 @@ abstract class AppLocalizations {
   /// No description provided for @playerServingsHint.
   ///
   /// In fr, this message translates to:
-  /// **'Recette prévue pour {base} — les quantités sont recalculées automatiquement.'**
+  /// **'Recette prévue pour {base}. Les quantités sont recalculées automatiquement.'**
   String playerServingsHint(int base);
 
   /// No description provided for @playerServingsUnit.
@@ -3911,7 +4403,7 @@ abstract class AppLocalizations {
   /// No description provided for @playerSwitchBody.
   ///
   /// In fr, this message translates to:
-  /// **'{name}, étape {step} — la quitter et commencer celle-ci ?'**
+  /// **'{name}, étape {step} : la quitter et commencer celle-ci ?'**
   String playerSwitchBody(String name, int step);
 
   /// No description provided for @playerSwitchCancel.
@@ -4421,7 +4913,7 @@ abstract class AppLocalizations {
   /// No description provided for @premiumPurchasePending.
   ///
   /// In fr, this message translates to:
-  /// **'Achat en attente de validation — l\'accès Pro s\'activera automatiquement.'**
+  /// **'Achat en attente de validation. L\'accès Pro s\'activera automatiquement.'**
   String get premiumPurchasePending;
 
   /// No description provided for @premiumPurchaseFailed.
@@ -4508,6 +5000,372 @@ abstract class AppLocalizations {
   /// **'Pro · jusqu\'au {date}'**
   String premiumStatusProUntil(String date);
 
+  /// No description provided for @navPlanning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planning'**
+  String get navPlanning;
+
+  /// No description provided for @planningTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes repas'**
+  String get planningTitle;
+
+  /// No description provided for @planningWeekCurrent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Cette semaine'**
+  String get planningWeekCurrent;
+
+  /// No description provided for @planningWeekNext.
+  ///
+  /// In fr, this message translates to:
+  /// **'Semaine prochaine'**
+  String get planningWeekNext;
+
+  /// No description provided for @planningWeekOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Autre semaine'**
+  String get planningWeekOther;
+
+  /// No description provided for @planningReadonlyBanner.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lecture seule. Le gratuit édite la semaine en cours et la suivante.'**
+  String get planningReadonlyBanner;
+
+  /// No description provided for @planningReadonlyCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Premium'**
+  String get planningReadonlyCta;
+
+  /// No description provided for @planningToday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aujourd\'hui'**
+  String get planningToday;
+
+  /// No description provided for @planningAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter'**
+  String get planningAdd;
+
+  /// No description provided for @planningEmptyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Planifie ta première semaine'**
+  String get planningEmptyTitle;
+
+  /// No description provided for @planningEmptyBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glisse une recette du bandeau vers un créneau du matin, du midi ou du soir.'**
+  String get planningEmptyBody;
+
+  /// No description provided for @planningEatingOut.
+  ///
+  /// In fr, this message translates to:
+  /// **'Manger dehors'**
+  String get planningEatingOut;
+
+  /// No description provided for @planningEatingOutMeta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repas hors du planning'**
+  String get planningEatingOutMeta;
+
+  /// No description provided for @planningNoteMeta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note libre'**
+  String get planningNoteMeta;
+
+  /// No description provided for @planningSlotMorning.
+  ///
+  /// In fr, this message translates to:
+  /// **'Matin'**
+  String get planningSlotMorning;
+
+  /// No description provided for @planningSlotNoon.
+  ///
+  /// In fr, this message translates to:
+  /// **'Midi'**
+  String get planningSlotNoon;
+
+  /// No description provided for @planningSlotEvening.
+  ///
+  /// In fr, this message translates to:
+  /// **'Soir'**
+  String get planningSlotEvening;
+
+  /// No description provided for @planningLayoutGrid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vue grille'**
+  String get planningLayoutGrid;
+
+  /// No description provided for @planningLayoutBlocks.
+  ///
+  /// In fr, this message translates to:
+  /// **'Vue blocs'**
+  String get planningLayoutBlocks;
+
+  /// No description provided for @planningCartTooltip.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter aux courses'**
+  String get planningCartTooltip;
+
+  /// No description provided for @planningMoreOthers.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{＋1 autre} other{＋{count} autres}}'**
+  String planningMoreOthers(int count);
+
+  /// No description provided for @planningSlotCount.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 recette} other{{count} recettes}}'**
+  String planningSlotCount(int count);
+
+  /// No description provided for @planningAddSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter au créneau'**
+  String get planningAddSheetTitle;
+
+  /// No description provided for @planningNoteSheetTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note libre'**
+  String get planningNoteSheetTitle;
+
+  /// No description provided for @planningNoteBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un repas à la volée, sans recette : note juste ce que tu prévois.'**
+  String get planningNoteBody;
+
+  /// No description provided for @planningNoteHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ex : pâtes sauce tomate'**
+  String get planningNoteHint;
+
+  /// No description provided for @planningNoteCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter la note'**
+  String get planningNoteCta;
+
+  /// No description provided for @planningNoteQuickPasta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pâtes sauce tomate'**
+  String get planningNoteQuickPasta;
+
+  /// No description provided for @planningNoteQuickLeftovers.
+  ///
+  /// In fr, this message translates to:
+  /// **'Restes du frigo'**
+  String get planningNoteQuickLeftovers;
+
+  /// No description provided for @planningNoteQuickPizza.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pizza surgelée'**
+  String get planningNoteQuickPizza;
+
+  /// No description provided for @planningNoteQuickSandwich.
+  ///
+  /// In fr, this message translates to:
+  /// **'Sandwichs'**
+  String get planningNoteQuickSandwich;
+
+  /// No description provided for @planningSearchHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rechercher une recette'**
+  String get planningSearchHint;
+
+  /// No description provided for @planningNoRecipeFound.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune recette trouvée.'**
+  String get planningNoRecipeFound;
+
+  /// No description provided for @planningTrayTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'À planifier · {count}'**
+  String planningTrayTitle(int count);
+
+  /// No description provided for @planningTrayHint.
+  ///
+  /// In fr, this message translates to:
+  /// **'glissez vers un créneau ↑'**
+  String get planningTrayHint;
+
+  /// No description provided for @planningTrayEmptyCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajoute des recettes à planifier'**
+  String get planningTrayEmptyCta;
+
+  /// No description provided for @planningTrayManage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Gérer'**
+  String get planningTrayManage;
+
+  /// No description provided for @planningPickerKicker.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste à planifier'**
+  String get planningPickerKicker;
+
+  /// No description provided for @planningPickerTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recettes à planifier'**
+  String get planningPickerTitle;
+
+  /// No description provided for @planningPickerDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminé · {count}'**
+  String planningPickerDone(int count);
+
+  /// No description provided for @planningPickerBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Garde sous la main les recettes de ce planning : tu ne glisses que celles-ci sur les créneaux.'**
+  String get planningPickerBody;
+
+  /// No description provided for @planningDropHere.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déposer ici'**
+  String get planningDropHere;
+
+  /// No description provided for @planningMenuSlot.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créneau'**
+  String get planningMenuSlot;
+
+  /// No description provided for @planningMenuView.
+  ///
+  /// In fr, this message translates to:
+  /// **'Voir la recette'**
+  String get planningMenuView;
+
+  /// No description provided for @planningMenuAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une recette'**
+  String get planningMenuAdd;
+
+  /// No description provided for @planningMenuRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer de ce créneau'**
+  String get planningMenuRemove;
+
+  /// No description provided for @planningRemovedSnackRecipe.
+  ///
+  /// In fr, this message translates to:
+  /// **'Recette retirée du créneau'**
+  String get planningRemovedSnackRecipe;
+
+  /// No description provided for @planningRemovedSnackOther.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retiré du créneau'**
+  String get planningRemovedSnackOther;
+
+  /// No description provided for @planningUndo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Annuler'**
+  String get planningUndo;
+
+  /// No description provided for @planningDetailTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =1{1 recette sur ce créneau} other{{count} recettes sur ce créneau}}'**
+  String planningDetailTitle(int count);
+
+  /// No description provided for @planningSelectTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter aux courses'**
+  String get planningSelectTitle;
+
+  /// No description provided for @planningSelectSubtitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Coche les créneaux à inclure'**
+  String get planningSelectSubtitle;
+
+  /// No description provided for @planningSelectCta.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Ajouter à la liste de courses} =1{Ajouter à la liste de courses · 1 recette} other{Ajouter à la liste de courses · {count} recettes}}'**
+  String planningSelectCta(int count);
+
+  /// No description provided for @planningReplaceTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplacer la liste en cours ?'**
+  String get planningReplaceTitle;
+
+  /// No description provided for @planningReplaceBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ta liste de courses actuelle n\'est pas vide. En gratuit, une seule liste active : les nouveaux ingrédients remplaceront son contenu.'**
+  String get planningReplaceBody;
+
+  /// No description provided for @planningReplaceConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Remplacer'**
+  String get planningReplaceConfirm;
+
+  /// No description provided for @planningListCreatedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste « Courses du {week} » créée'**
+  String planningListCreatedTitle(String week);
+
+  /// No description provided for @planningListCreatedSub.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle liste dédiée · liste active conservée'**
+  String get planningListCreatedSub;
+
+  /// No description provided for @planningListUpdatedTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Liste de courses mise à jour'**
+  String get planningListUpdatedTitle;
+
+  /// No description provided for @planningListUpdatedSub.
+  ///
+  /// In fr, this message translates to:
+  /// **'{week} · ingrédients ajoutés'**
+  String planningListUpdatedSub(String week);
+
+  /// No description provided for @planningShoppingName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Courses du {week}'**
+  String planningShoppingName(String week);
+
   /// No description provided for @premiumLimitCta.
   ///
   /// In fr, this message translates to:
@@ -4556,6 +5414,42 @@ abstract class AppLocalizations {
   /// **'La recherche gratuite combine jusqu\'à {limit} critères. Passe en Pro pour chercher sans plafond.'**
   String premiumLimitSearchBody(int limit);
 
+  /// No description provided for @premiumLimitGalleryTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Galerie pleine'**
+  String get premiumLimitGalleryTitle;
+
+  /// No description provided for @premiumLimitGalleryBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le plan gratuit permet {limit} photos par recette. Passe en Pro pour en ajouter davantage.'**
+  String premiumLimitGalleryBody(int limit);
+
+  /// No description provided for @premiumLimitMealSlotTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Un créneau, une recette'**
+  String get premiumLimitMealSlotTitle;
+
+  /// No description provided for @premiumLimitMealSlotBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'En gratuit, chaque créneau accueille une recette. Passe en Pro pour empiler plusieurs recettes sur le même moment.'**
+  String get premiumLimitMealSlotBody;
+
+  /// No description provided for @premiumLimitMealWeekTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Semaine en lecture seule'**
+  String get premiumLimitMealWeekTitle;
+
+  /// No description provided for @premiumLimitMealWeekBody.
+  ///
+  /// In fr, this message translates to:
+  /// **'En gratuit, le planning s\'édite sur la semaine en cours et la suivante. Passe en Pro pour planifier toutes les semaines.'**
+  String get premiumLimitMealWeekBody;
+
   /// No description provided for @premiumLimitGenericTitle.
   ///
   /// In fr, this message translates to:
@@ -4577,7 +5471,7 @@ abstract class AppLocalizations {
   /// No description provided for @premiumSearchCounterFull.
   ///
   /// In fr, this message translates to:
-  /// **'{used}/{max} — passe en Pro'**
+  /// **'{used}/{max} · passe en Pro'**
   String premiumSearchCounterFull(int used, int max);
 }
 

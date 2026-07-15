@@ -42,6 +42,21 @@ class RecipeSummary extends Equatable {
     );
   }
 
+  /// Copie avec une nouvelle couverture (feature galerie-recette). [photoUrl]
+  /// est toujours fourni non-null par les appelants (couverture posée/remplacée).
+  RecipeSummary copyWith({String? photoUrl}) {
+    return RecipeSummary(
+      id: id,
+      name: name,
+      photoUrl: photoUrl ?? this.photoUrl,
+      isBase: isBase,
+      prepTime: prepTime,
+      cookTime: cookTime,
+      restTime: restTime,
+      servings: servings,
+    );
+  }
+
   @override
   List<Object?> get props =>
       [id, name, photoUrl, isBase, prepTime, cookTime, restTime, servings];
@@ -57,6 +72,7 @@ class RecipeIngredientLine extends Equatable {
     required this.unit,
     required this.quantity,
     this.imageUrl,
+    this.inherited = false,
   });
 
   final String id;
@@ -67,6 +83,10 @@ class RecipeIngredientLine extends Equatable {
   final double quantity;
   final String? imageUrl;
 
+  /// true = ligne héritée d'une sous-recette de base (lecture seule : ni
+  /// édition de quantité, ni réordonnancement dans la fiche).
+  final bool inherited;
+
   factory RecipeIngredientLine.fromJson(Map<String, dynamic> json) {
     return RecipeIngredientLine(
       id: json['id'] as String,
@@ -74,11 +94,39 @@ class RecipeIngredientLine extends Equatable {
       unit: json['unit'] as String,
       quantity: (json['quantity'] as num?)?.toDouble() ?? 1,
       imageUrl: json['imageUrl'] as String?,
+      inherited: json['inherited'] as bool? ?? false,
     );
   }
 
   @override
-  List<Object?> get props => [id, name, unit, quantity, imageUrl];
+  List<Object?> get props => [id, name, unit, quantity, imageUrl, inherited];
+}
+
+/// Une photo de galerie (feature galerie-recette) — une réalisation postée par
+/// l'utilisateur après avoir cuisiné la recette. Distincte de la photo de
+/// couverture (`summary.photoUrl`), jamais comptée dans le quota galerie.
+class RecipeGalleryPhoto extends Equatable {
+  const RecipeGalleryPhoto({
+    required this.id,
+    required this.imageUrl,
+    required this.createdAt,
+  });
+
+  final String id;
+  final String imageUrl;
+  final DateTime createdAt;
+
+  factory RecipeGalleryPhoto.fromJson(Map<String, dynamic> json) {
+    return RecipeGalleryPhoto(
+      id: json['id'] as String,
+      imageUrl: json['imageUrl'] as String,
+      createdAt:
+          DateTime.tryParse(json['createdAt'] as String? ?? '') ?? DateTime(1970),
+    );
+  }
+
+  @override
+  List<Object?> get props => [id, imageUrl, createdAt];
 }
 
 /// Type de bannière d'une étape. `wire` = valeur stable échangée avec l'API ;
@@ -267,12 +315,18 @@ class RecipeDetail extends Equatable {
     this.priceMode = RecipePriceMode.calculated,
     this.fixedPrice,
     this.priceBracket,
+    this.caloriesPerServing,
+    this.proteinsPerServing,
+    this.carbsPerServing,
+    this.fatsPerServing,
     this.ingredients = const [],
     this.steps = const [],
     this.components = const [],
     this.usedIn = const [],
     this.categoryIds = const [],
     this.tagIds = const [],
+    this.isFavorite = false,
+    this.galleryPhotos = const [],
   });
 
   final RecipeSummary summary;
@@ -290,6 +344,20 @@ class RecipeDetail extends Equatable {
   final double? fixedPrice;
   final RecipePriceBracket? priceBracket;
 
+  /// Nutrition saisie à la main (feature #8), PAR PORTION. Null = non renseigné.
+  /// Calories en kcal, macros (protéines/glucides/lipides) en grammes.
+  final double? caloriesPerServing;
+  final double? proteinsPerServing;
+  final double? carbsPerServing;
+  final double? fatsPerServing;
+
+  /// true si au moins une valeur nutritionnelle est renseignée.
+  bool get hasNutrition =>
+      caloriesPerServing != null ||
+      proteinsPerServing != null ||
+      carbsPerServing != null ||
+      fatsPerServing != null;
+
   final List<RecipeIngredientLine> ingredients;
 
   /// Étapes (arbre déjà déplié : les blocs référence portent leurs sous-étapes).
@@ -303,6 +371,12 @@ class RecipeDetail extends Equatable {
 
   final List<String> categoryIds;
   final List<String> tagIds;
+
+  /// true si la recette est dans les favoris « J'aime » de l'utilisateur (#15).
+  final bool isFavorite;
+
+  /// Photos de galerie (réalisations), les plus anciennes d'abord.
+  final List<RecipeGalleryPhoto> galleryPhotos;
 
   String get id => summary.id;
   String get name => summary.name;
@@ -320,12 +394,76 @@ class RecipeDetail extends Equatable {
       priceMode: priceMode,
       fixedPrice: fixedPrice,
       priceBracket: priceBracket,
+      caloriesPerServing: caloriesPerServing,
+      proteinsPerServing: proteinsPerServing,
+      carbsPerServing: carbsPerServing,
+      fatsPerServing: fatsPerServing,
       ingredients: ingredients,
       steps: steps,
       components: components,
       usedIn: usedIn,
       categoryIds: categoryIds,
       tagIds: tagIds,
+      isFavorite: isFavorite,
+      galleryPhotos: galleryPhotos,
+    );
+  }
+
+  /// Copie avec une galerie mise à jour (feature galerie-recette), et
+  /// éventuellement une nouvelle couverture ([coverPhotoUrl]) — utile quand le
+  /// 1er upload devient la couverture, ou lors d'un « Changer la photo ». Les
+  /// autres champs sont inchangés.
+  RecipeDetail copyWithGallery({
+    List<RecipeGalleryPhoto>? galleryPhotos,
+    String? coverPhotoUrl,
+  }) {
+    return RecipeDetail(
+      summary: coverPhotoUrl == null
+          ? summary
+          : summary.copyWith(photoUrl: coverPhotoUrl),
+      authorId: authorId,
+      description: description,
+      isLocked: isLocked,
+      priceMode: priceMode,
+      fixedPrice: fixedPrice,
+      priceBracket: priceBracket,
+      caloriesPerServing: caloriesPerServing,
+      proteinsPerServing: proteinsPerServing,
+      carbsPerServing: carbsPerServing,
+      fatsPerServing: fatsPerServing,
+      ingredients: ingredients,
+      steps: steps,
+      components: components,
+      usedIn: usedIn,
+      categoryIds: categoryIds,
+      tagIds: tagIds,
+      isFavorite: isFavorite,
+      galleryPhotos: galleryPhotos ?? this.galleryPhotos,
+    );
+  }
+
+  /// Copie avec un état de favori mis à jour (toggle « J'aime », #15).
+  RecipeDetail copyWithFavorite(bool isFavorite) {
+    return RecipeDetail(
+      summary: summary,
+      authorId: authorId,
+      description: description,
+      isLocked: isLocked,
+      priceMode: priceMode,
+      fixedPrice: fixedPrice,
+      priceBracket: priceBracket,
+      caloriesPerServing: caloriesPerServing,
+      proteinsPerServing: proteinsPerServing,
+      carbsPerServing: carbsPerServing,
+      fatsPerServing: fatsPerServing,
+      ingredients: ingredients,
+      steps: steps,
+      components: components,
+      usedIn: usedIn,
+      categoryIds: categoryIds,
+      tagIds: tagIds,
+      isFavorite: isFavorite,
+      galleryPhotos: galleryPhotos,
     );
   }
 
@@ -344,6 +482,10 @@ class RecipeDetail extends Equatable {
       priceMode: RecipePriceMode.fromWire(json['priceMode'] as String? ?? 'calculated'),
       fixedPrice: (json['fixedPrice'] as num?)?.toDouble(),
       priceBracket: RecipePriceBracket.fromWire(json['priceBracket'] as String?),
+      caloriesPerServing: (json['caloriesPerServing'] as num?)?.toDouble(),
+      proteinsPerServing: (json['proteinsPerServing'] as num?)?.toDouble(),
+      carbsPerServing: (json['carbsPerServing'] as num?)?.toDouble(),
+      fatsPerServing: (json['fatsPerServing'] as num?)?.toDouble(),
       ingredients: list('ingredients', RecipeIngredientLine.fromJson),
       steps: list('steps', RecipeStep.fromJson),
       components: list('components', RecipeSummary.fromJson),
@@ -351,6 +493,8 @@ class RecipeDetail extends Equatable {
       categoryIds:
           ((json['categoryIds'] as List<dynamic>?) ?? const []).cast<String>(),
       tagIds: ((json['tagIds'] as List<dynamic>?) ?? const []).cast<String>(),
+      isFavorite: json['isFavorite'] as bool? ?? false,
+      galleryPhotos: list('galleryPhotos', RecipeGalleryPhoto.fromJson),
     );
   }
 
@@ -363,11 +507,17 @@ class RecipeDetail extends Equatable {
         priceMode,
         fixedPrice,
         priceBracket,
+        caloriesPerServing,
+        proteinsPerServing,
+        carbsPerServing,
+        fatsPerServing,
         ingredients,
         steps,
         components,
         usedIn,
         categoryIds,
         tagIds,
+        isFavorite,
+        galleryPhotos,
       ];
 }

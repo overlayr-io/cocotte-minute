@@ -16,6 +16,10 @@ class RecipeEdited {
     required this.cookTime,
     required this.restTime,
     required this.servings,
+    required this.caloriesPerServing,
+    required this.proteinsPerServing,
+    required this.carbsPerServing,
+    required this.fatsPerServing,
   });
 
   final String name;
@@ -25,6 +29,12 @@ class RecipeEdited {
   final int cookTime;
   final int restTime;
   final int servings;
+
+  /// Nutrition par portion (feature #8) — null = champ laissé vide (effacé).
+  final double? caloriesPerServing;
+  final double? proteinsPerServing;
+  final double? carbsPerServing;
+  final double? fatsPerServing;
 }
 
 /// Édite les champs de base d'une recette (maquette : menu ⋮ → Modifier). Le
@@ -57,6 +67,10 @@ class _RecipeEditSheetState extends State<_RecipeEditSheet> {
   late final TextEditingController _prep;
   late final TextEditingController _cook;
   late final TextEditingController _rest;
+  late final TextEditingController _calories;
+  late final TextEditingController _proteins;
+  late final TextEditingController _carbs;
+  late final TextEditingController _fats;
   late int _servings;
   late bool _isBase;
   bool _showNameError = false;
@@ -65,11 +79,16 @@ class _RecipeEditSheetState extends State<_RecipeEditSheet> {
   void initState() {
     super.initState();
     final s = widget.detail.summary;
+    final d = widget.detail;
     _name = TextEditingController(text: s.name);
-    _description = TextEditingController(text: widget.detail.description ?? '');
+    _description = TextEditingController(text: d.description ?? '');
     _prep = TextEditingController(text: s.prepTime.toString());
     _cook = TextEditingController(text: s.cookTime.toString());
     _rest = TextEditingController(text: s.restTime.toString());
+    _calories = TextEditingController(text: _fmt(d.caloriesPerServing));
+    _proteins = TextEditingController(text: _fmt(d.proteinsPerServing));
+    _carbs = TextEditingController(text: _fmt(d.carbsPerServing));
+    _fats = TextEditingController(text: _fmt(d.fatsPerServing));
     _servings = s.servings;
     _isBase = s.isBase;
   }
@@ -81,10 +100,27 @@ class _RecipeEditSheetState extends State<_RecipeEditSheet> {
     _prep.dispose();
     _cook.dispose();
     _rest.dispose();
+    _calories.dispose();
+    _proteins.dispose();
+    _carbs.dispose();
+    _fats.dispose();
     super.dispose();
   }
 
   int _parse(TextEditingController c) => int.tryParse(c.text.trim()) ?? 0;
+
+  /// Valeur nutritionnelle saisie (décimale, virgule acceptée) — null si vide.
+  double? _parseNutrition(TextEditingController c) {
+    final t = c.text.trim().replaceAll(',', '.');
+    if (t.isEmpty) return null;
+    return double.tryParse(t);
+  }
+
+  /// Formate une valeur nutritionnelle pour l'affichage (entier si rond).
+  static String _fmt(double? v) {
+    if (v == null) return '';
+    return v == v.roundToDouble() ? v.toInt().toString() : v.toString();
+  }
 
   void _submit() {
     final name = _name.text.trim();
@@ -101,6 +137,10 @@ class _RecipeEditSheetState extends State<_RecipeEditSheet> {
         cookTime: _parse(_cook),
         restTime: _parse(_rest),
         servings: _servings < 1 ? 1 : _servings,
+        caloriesPerServing: _parseNutrition(_calories),
+        proteinsPerServing: _parseNutrition(_proteins),
+        carbsPerServing: _parseNutrition(_carbs),
+        fatsPerServing: _parseNutrition(_fats),
       ),
     );
   }
@@ -194,6 +234,48 @@ class _RecipeEditSheetState extends State<_RecipeEditSheet> {
                 onChanged: (v) => setState(() => _isBase = v),
                 l10n: l10n,
               ),
+              const SizedBox(height: 16),
+              _Label(l10n.recipeFieldNutrition),
+              const SizedBox(height: 7),
+              Row(
+                children: [
+                  Expanded(
+                    child: _NutritionField(
+                      label: l10n.recipeFieldCalories,
+                      controller: _calories,
+                      suffix: 'kcal',
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _NutritionField(
+                      label: l10n.recipeFieldProteins,
+                      controller: _proteins,
+                      suffix: 'g',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: _NutritionField(
+                      label: l10n.recipeFieldCarbs,
+                      controller: _carbs,
+                      suffix: 'g',
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _NutritionField(
+                      label: l10n.recipeFieldFats,
+                      controller: _fats,
+                      suffix: 'g',
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 22),
               SizedBox(
                 width: double.infinity,
@@ -260,6 +342,53 @@ class _TimeField extends StatelessWidget {
             isDense: true,
             filled: true,
             fillColor: AppColors.card,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: AppColors.border),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: AppColors.primary),
+            ),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Champ numérique nutritionnel (décimales autorisées) avec un suffixe d'unité.
+class _NutritionField extends StatelessWidget {
+  const _NutritionField({
+    required this.label,
+    required this.controller,
+    required this.suffix,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final String suffix;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _Label(label),
+        const SizedBox(height: 7),
+        TextField(
+          controller: controller,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]')),
+          ],
+          decoration: InputDecoration(
+            isDense: true,
+            filled: true,
+            fillColor: AppColors.card,
+            suffixText: suffix,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: const BorderSide(color: AppColors.border),
