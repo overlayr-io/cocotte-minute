@@ -124,6 +124,12 @@ class RecipeGallerySection extends StatelessWidget {
             crossAxisSpacing: 4,
             mainAxisSpacing: 4,
             shrinkWrap: true,
+            // `padding: zero` obligatoire : sans padding explicite, BoxScrollView
+            // injecte le MediaQuery.padding vertical ambiant (cf. buildSlivers).
+            // La fiche recette est un Scaffold SANS appBar, donc l'inset de
+            // barre de statut (~59 px) n'est jamais consommé et se retrouvait
+            // en marge haute de la grille, sous le titre « Galerie ».
+            padding: EdgeInsets.zero,
             physics: const NeverScrollableScrollPhysics(),
             children: [
               for (var i = 0; i < photos.length; i++)

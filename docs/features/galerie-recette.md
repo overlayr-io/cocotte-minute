@@ -112,6 +112,15 @@ de couverture unique déjà existante.
 - Nouvelle section `RecipeGallerySection` dans `recipe_detail_view.dart` (onglet
   Ingrédients, après les sous-recettes) : grille 3 colonnes, état vide incitatif,
   bouton `+` avec badge `x/limite`.
+  - **Piège Flutter** : la `GridView` DOIT porter `padding: EdgeInsets.zero`.
+    Sans padding explicite, `BoxScrollView.buildSlivers` injecte le
+    `MediaQuery.padding` vertical ambiant. Or la fiche recette est un `Scaffold`
+    **sans `appBar`** (hero en `Stack` + `CustomScrollView`, le `SafeArea` n'y
+    habille que les boutons flottants) : l'inset de barre de statut (~59 px)
+    n'est jamais consommé et atterrissait en marge haute de la grille, créant un
+    trou béant sous le titre « Galerie » (corrigé le 2026-07-15). Les
+    `ReorderableListView` de la même page ne sont pas concernées (elles font
+    `padding ?? EdgeInsets.zero`).
 - Nouveau `gallery_viewer_page.dart` : vue plein écran (`PageView` +
   `InteractiveViewer` pour le zoom, sans dépendance ajoutée), navigable entre
   les photos, suppression confirmée (seule action). Réservée au propriétaire
