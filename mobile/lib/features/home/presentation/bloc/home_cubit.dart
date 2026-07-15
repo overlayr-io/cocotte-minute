@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../categories/data/categories_repository.dart';
 import '../../../categories/domain/category.dart';
+import '../../../onboarding/data/onboarding_service.dart';
 import '../../../recipes/domain/recipe.dart';
 import '../../data/discovery_repository.dart';
 import '../../domain/discovery.dart';
@@ -86,12 +87,18 @@ class HomeCubit extends Cubit<HomeState> {
   HomeCubit({
     required DiscoveryRepository discoveryRepository,
     required CategoriesRepository categoriesRepository,
+    OnboardingService? onboarding,
   }) : _discovery = discoveryRepository,
        _categories = categoriesRepository,
+       _onboarding = onboarding,
        super(const HomeLoading());
 
   final DiscoveryRepository _discovery;
   final CategoriesRepository _categories;
+
+  /// Semis de 1er lancement (#12). Optionnel : absent dans les tests, qui ne
+  /// passent pas par l'onboarding.
+  final OnboardingService? _onboarding;
 
   /// Nombre minimum de recettes pour afficher une rangée (évite les rangées
   /// faméliques à une seule carte).
@@ -109,6 +116,10 @@ class HomeCubit extends Cubit<HomeState> {
     if (state is! HomeLoaded) {
       emit(const HomeLoading());
     }
+    // Au 1er lancement d'un compte, attend la fin du semis des recettes
+    // d'exemple : sinon l'accueil interroge le serveur avant que les recettes
+    // existent et affiche un état vide (#12). Déjà terminé les fois suivantes.
+    await _onboarding?.pending;
     try {
       final results = await Future.wait([
         _discovery.fetchHome(),

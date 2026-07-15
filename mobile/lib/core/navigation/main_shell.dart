@@ -40,14 +40,23 @@ class _MainShellState extends State<MainShell> {
     // l'onglet Courses (désormais chargé à la première visite) n'est jamais
     // ouvert. Idempotent — l'appel de shopping_page reste sans effet.
     sl<ShoppingSyncService>().start();
-    // Onboarding (#12) : au 1er lancement, semer des recettes d'exemple pour
-    // montrer le but de l'app. Idempotent (serveur) + gardé par un flag local ;
-    // non bloquant. La session Supabase est prête ici (MainShell n'est monté
-    // qu'après `AuthAuthenticated`).
-    sl<OnboardingService>().maybeSeedSampleRecipes();
+    // Onboarding (#12) : au 1er lancement de CE compte, semer des recettes
+    // d'exemple pour montrer le but de l'app. Idempotent (serveur) + gardé par
+    // un flag local par compte ; non bloquant. La session Supabase est prête
+    // ici (MainShell n'est monté qu'après `AuthAuthenticated`), et ce
+    // `initState` précède le build de l'accueil, qui attend `pending`.
+    _startOnboarding();
     // Rappel J+14 (informatif, jamais bloquant) : à chaque lancement, si le
     // compte anonyme a plus de 2 semaines, on invite à créer un compte.
     WidgetsBinding.instance.addPostFrameCallback((_) => _maybeShowGuestReminder());
+  }
+
+  /// Le semis est scopé au compte courant : l'id vient de l'`AuthBloc` (état
+  /// déjà authentifié, cf. `_AuthGate`), pas d'un flag global à l'appareil.
+  void _startOnboarding() {
+    final authState = context.read<AuthBloc>().state;
+    if (authState is! AuthAuthenticated) return;
+    sl<OnboardingService>().start(authState.user.id);
   }
 
   void _maybeShowGuestReminder() {

@@ -9,6 +9,7 @@ import '../../../../core/widgets/app_network_image.dart';
 import '../../../../core/widgets/error_view.dart';
 import '../../../categories/data/categories_repository.dart';
 import '../../../categories/domain/category.dart';
+import '../../../onboarding/data/onboarding_service.dart';
 import '../../../recipes/domain/recipe.dart';
 import '../../../recipes/presentation/pages/recipe_create_page.dart';
 import '../../../recipes/presentation/pages/recipe_detail_page.dart';
@@ -32,6 +33,7 @@ class HomePage extends StatelessWidget {
       create: (_) => HomeCubit(
         discoveryRepository: sl<DiscoveryRepository>(),
         categoriesRepository: sl<CategoriesRepository>(),
+        onboarding: sl<OnboardingService>(),
       )..load(),
       child: const _HomeView(),
     );

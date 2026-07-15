@@ -22,6 +22,11 @@
   les doublons si l'endpoint est rappelé.
 - Côté mobile, un flag local (`SharedPreferences`) empêche même le 2e appel
   réseau après le 1er succès. Le serveur reste la vraie garde.
+- **Le flag est scopé par compte** : clé `onboarding.sample_recipes_seeded.<userId>`.
+  Un flag global à l'appareil serait posé au 1er lancement d'un compte qui avait
+  déjà des recettes (le serveur répondant 204 sans rien semer), ce qui
+  verrouillerait définitivement **tous les comptes suivants** du téléphone —
+  c'était le bug corrigé le 2026-07-15.
 
 ## API (module recipes)
 
@@ -33,9 +38,14 @@
 
 - Appel unique au démarrage (après que la session Supabase — anonyme ou non —
   est prête), **hors** `auth_bloc` : l'auth passe toujours directement par
-  `supabase_flutter`, jamais par NestJS. Le déclencheur est un service
-  d'onboarding dédié, gardé par un flag `SharedPreferences`
-  (`onboarding_samples_seeded`).
+  `supabase_flutter`, jamais par NestJS. Le déclencheur est
+  `OnboardingService.start(userId)`, appelé depuis `MainShell.initState` (la
+  coquille n'est montée qu'après `AuthAuthenticated`, et elle est keyée par
+  `user.id` : un compte invité recréé repart comme une première installation).
+- **L'accueil attend le semis** : `OnboardingService.pending` expose le futur du
+  semis en cours, et `HomeCubit.load()` l'attend avant d'interroger le serveur.
+  Sans ça, l'accueil se charge en parallèle du semis et affiche un état vide
+  (d'autant plus visible avec les cold starts Render).
 - En cas d'échec réseau : non bloquant, on réessaiera à la prochaine ouverture
   (le flag n'est posé qu'après un 204).
 
