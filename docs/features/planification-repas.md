@@ -186,6 +186,12 @@ La limite gratuit « 1 par créneau » compte **toutes les entrées confondues**
   bandeau — pattern mobile (le prototype desktop draguait au pointeur).
 - **Sheet détail 1g** : reste ouverte pendant les retraits, se ferme
   automatiquement quand le créneau est vide.
-- **Snackbar/toast** : snackbar sombre « Annuler » (~5 s) pour le retrait ;
+- **Snackbar/toast** : snackbar sombre « Annuler » (4 s) pour le retrait ;
   toast vert sombre + coche dorée pour le succès courses (gratuit et premium,
   textes distincts), comme le prototype.
+  - **Piège Flutter** : ce snackbar porte une `action` (« Annuler »), et
+    `SnackBar` calcule `persist = persist ?? action != null`. Sans `persist:
+    false` explicite, le snackbar devient **persistant** et sa `duration` est
+    ignorée (le timer sort sans masquer, cf. `scaffold.dart`) — le toast
+    « Recette retirée du créneau » restait affiché indéfiniment (corrigé le
+    2026-07-15). C'est le seul snackbar de l'app avec une `action`.

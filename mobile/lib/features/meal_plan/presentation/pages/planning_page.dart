@@ -497,6 +497,10 @@ class _PlanningView extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           backgroundColor: AppColors.textPrimary,
           duration: const Duration(milliseconds: 4000),
+          // Sans `persist: false`, Flutter rend le snackbar persistant dès
+          // qu'il porte une `action` (persist = persist ?? action != null) et
+          // ignore la `duration` : le toast restait affiché indéfiniment.
+          persist: false,
           content: Text(
             entry.type == MealEntryType.recipe
                 ? l10n.planningRemovedSnackRecipe
