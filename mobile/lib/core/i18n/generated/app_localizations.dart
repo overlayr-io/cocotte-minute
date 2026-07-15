@@ -5390,18 +5390,6 @@ abstract class AppLocalizations {
   /// **'Le plan gratuit permet {limit} recettes de base. Passe en Pro pour en créer autant que tu veux.'**
   String premiumLimitBaseRecipesBody(int limit);
 
-  /// No description provided for @premiumLimitFavoritesTitle.
-  ///
-  /// In fr, this message translates to:
-  /// **'Limite de favoris atteinte'**
-  String get premiumLimitFavoritesTitle;
-
-  /// No description provided for @premiumLimitFavoritesBody.
-  ///
-  /// In fr, this message translates to:
-  /// **'Le plan gratuit permet {limit} favoris. Passe en Pro pour en enregistrer autant que tu veux.'**
-  String premiumLimitFavoritesBody(int limit);
-
   /// No description provided for @premiumLimitShoppingListsTitle.
   ///
   /// In fr, this message translates to:

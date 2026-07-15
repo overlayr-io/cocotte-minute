@@ -174,10 +174,6 @@ class _PremiumLimitSheet extends StatelessWidget {
           l10n.premiumLimitMealWeekTitle,
           l10n.premiumLimitMealWeekBody,
         ),
-      PremiumLimitError.favorites => (
-          l10n.premiumLimitFavoritesTitle,
-          l10n.premiumLimitFavoritesBody(error.limit ?? 10),
-        ),
       PremiumLimitError.ingredientPhotos => (
           l10n.premiumLimitIngredientPhotosTitle,
           l10n.premiumLimitIngredientPhotosBody(error.limit ?? 1),

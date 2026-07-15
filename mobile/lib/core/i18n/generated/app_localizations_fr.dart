@@ -3200,14 +3200,6 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get premiumLimitFavoritesTitle => 'Limite de favoris atteinte';
-
-  @override
-  String premiumLimitFavoritesBody(int limit) {
-    return 'Le plan gratuit permet $limit favoris. Passe en Pro pour en enregistrer autant que tu veux.';
-  }
-
-  @override
   String get premiumLimitShoppingListsTitle =>
       'Une seule liste active en gratuit';
 

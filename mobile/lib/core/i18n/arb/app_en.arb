@@ -1168,8 +1168,6 @@
   "premiumLimitDismiss": "Later",
   "premiumLimitBaseRecipesTitle": "Base recipe limit reached",
   "premiumLimitBaseRecipesBody": "The free plan allows {limit} base recipes. Go Pro to create as many as you want.",
-  "premiumLimitFavoritesTitle": "Favorites limit reached",
-  "premiumLimitFavoritesBody": "The free plan allows {limit} favorites. Go Pro to save as many as you want.",
   "premiumLimitShoppingListsTitle": "Only one active list on the free plan",
   "premiumLimitShoppingListsBody": "Finish or clear your current list, or go Pro to manage several lists in parallel and keep the history.",
   "premiumLimitSearchTitle": "Criteria limit reached",

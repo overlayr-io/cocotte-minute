@@ -242,9 +242,6 @@ export class RecipesService {
   /** Limite du plan gratuit : nombre max de recettes de base (cf. premium-version.md). */
   private static readonly FREE_BASE_RECIPES_LIMIT = 5;
 
-  /** Limite du plan gratuit : nombre max de favoris « J'aime » (feature #15). */
-  private static readonly FREE_FAVORITES_LIMIT = 10;
-
   /**
    * Garde freemium : bloque la création/bascule d'une recette de base au-delà
    * de la limite gratuite. Vérifiée serveur (jamais uniquement UI), ignorée
@@ -286,8 +283,8 @@ export class RecipesService {
   }
 
   /**
-   * Ajoute une recette aux favoris (idempotent). Vérifie la propriété + le quota
-   * freemium (uniquement à l'ajout d'un nouveau favori, pas sur un doublon).
+   * Ajoute une recette aux favoris (idempotent). Vérifie la propriété. Les
+   * favoris sont illimités pour tout le monde (gratuit inclus).
    */
   async addFavorite(userId: string, recipeId: string): Promise<void> {
     await this.findOwnedOrFail(userId, recipeId);
@@ -301,7 +298,6 @@ export class RecipesService {
         ),
       );
     if (existing) return; // déjà favori : rien à faire
-    await this.assertFavoritesQuota(userId);
     await this.db.insert(recipeFavorites).values({ userId, recipeId });
   }
 
@@ -315,23 +311,6 @@ export class RecipesService {
           eq(recipeFavorites.recipeId, recipeId),
         ),
       );
-  }
-
-  /** Garde freemium : bloque l'ajout d'un favori au-delà de la limite gratuite. */
-  private async assertFavoritesQuota(userId: string): Promise<void> {
-    const [row] = await this.db
-      .select({ n: sql<number>`count(*)::int` })
-      .from(recipeFavorites)
-      .where(eq(recipeFavorites.userId, userId));
-    const current = row?.n ?? 0;
-    if (current < RecipesService.FREE_FAVORITES_LIMIT) return;
-    if (await this.premiumService.isPremium(userId)) return;
-    throw new PremiumLimitException(
-      'PREMIUM_LIMIT_FAVORITES',
-      RecipesService.FREE_FAVORITES_LIMIT,
-      current,
-      `Limite gratuite atteinte : ${RecipesService.FREE_FAVORITES_LIMIT} favoris maximum. Passe en Pro pour en enregistrer sans limite.`,
-    );
   }
 
   /**

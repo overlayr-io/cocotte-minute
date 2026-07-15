@@ -271,16 +271,14 @@ describe('RecipesService', () => {
   });
 
   describe('favoris (#15)', () => {
-    it('refuse un nouveau favori au-delà du quota gratuit (403)', async () => {
-      const { db } = makeDb([
+    it('illimité même en gratuit : aucun quota ne bloque un nouveau favori', async () => {
+      const { db, calls } = makeDb([
         [recipeRow()], // findOwnedOrFail
         [], // favori existant : aucun
-        [{ n: 10 }], // count favoris = 10 → limite gratuite atteinte
       ]);
       const service = new RecipesService(db, ingredientsStub, premiumStub(false), storageStub);
-      await expect(service.addFavorite(USER, 'rec-1')).rejects.toBeInstanceOf(
-        PremiumLimitException,
-      );
+      await expect(service.addFavorite(USER, 'rec-1')).resolves.toBeUndefined();
+      expect(calls.filter((c) => c.op === 'insert')).toHaveLength(1);
     });
 
     it('idempotent : un doublon ne compte pas et n’insère pas', async () => {

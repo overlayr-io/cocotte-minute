@@ -2057,14 +2057,6 @@
       "limit": { "type": "int" }
     }
   },
-  "premiumLimitFavoritesTitle": "Limite de favoris atteinte",
-  "@premiumLimitFavoritesTitle": {},
-  "premiumLimitFavoritesBody": "Le plan gratuit permet {limit} favoris. Passe en Pro pour en enregistrer autant que tu veux.",
-  "@premiumLimitFavoritesBody": {
-    "placeholders": {
-      "limit": { "type": "int" }
-    }
-  },
   "premiumLimitShoppingListsTitle": "Une seule liste active en gratuit",
   "@premiumLimitShoppingListsTitle": {},
   "premiumLimitShoppingListsBody": "Termine ou vide ta liste en cours, ou passe en Pro pour gérer plusieurs listes en parallèle et garder l'historique.",

@@ -13,8 +13,10 @@
   les recettes aimées.
 - **Périmètre** : liste de favoris **personnelle** (pas de dimension sociale).
   « Suivre » = ajouter à J'aime.
-- **Freemium** : **limité en gratuit**, illimité en Pro. Plafond gratuit
-  **= 10 favoris** (`PREMIUM_LIMIT_FAVORITES`) — valeur à confirmer/ajuster.
+- **Freemium** : **illimité pour tout le monde**, gratuit inclus. Décision
+  révisée le 2026-07-15 : le plafond gratuit initial de 10 favoris a été
+  **retiré** (code `PREMIUM_LIMIT_FAVORITES` supprimé de bout en bout). Aimer
+  une recette est un geste de confort, pas un levier d'upsell.
 
 ## Modèle de données
 
@@ -28,23 +30,23 @@
 
 - `GET /recipes/favorites` → `RecipeSummaryDto[]` (recettes aimées, plus
   récemment aimées d'abord). Route déclarée **avant** `GET /recipes/:id`.
-- `POST /recipes/:id/favorite` → 204. Ajoute (idempotent). Vérifie la propriété
-  de la recette + le quota freemium (403 `PREMIUM_LIMIT_FAVORITES` au-delà).
+- `POST /recipes/:id/favorite` → 204. Ajoute (idempotent). Vérifie uniquement la
+  propriété de la recette : aucun quota.
 - `DELETE /recipes/:id/favorite` → 204. Retire (idempotent).
 - `RecipeDetailDto` gagne `isFavorite: boolean` (renseigné pour le
   propriétaire ; `false` en lecture publique/partage).
 
 ## Freemium
 
-- Nouveau code `PREMIUM_LIMIT_FAVORITES` (+ mapping mobile vers l'upsell).
-- Le service refuse l'ajout d'un favori au-delà de 10 en gratuit (compte les
-  favoris existants), illimité si `premiumService.isPremium(userId)`.
+- **Aucune limite** : les favoris sont illimités en gratuit comme en Pro.
+- Le code `PREMIUM_LIMIT_FAVORITES`, la garde `assertFavoritesQuota` et la
+  feuille d'upsell associée ont été retirés (serveur, mobile, i18n).
 
 ## Mobile
 
 - `RecipesRepository` : `addFavorite`, `removeFavorite`, `fetchFavorites`.
 - `RecipeDetail` : champ `isFavorite`. `RecipeDetailCubit.toggleFavorite`
-  (optimiste, surface le `premiumLimit` comme les autres actions).
+  (optimiste).
 - Fiche : bouton cœur sur le hero + entrée menu « … ».
 - Page Recettes : dossier virtuel « J'aime » en tête → page liste des favoris
   (cubit dédié, calqué sur le dossier « Autres »).

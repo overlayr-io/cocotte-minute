@@ -33,9 +33,6 @@ class PremiumLimitError extends Equatable {
   /// Planning éditable sur T/T+1 uniquement en gratuit (au-delà : lecture seule).
   static const String mealPlanWeek = 'PREMIUM_LIMIT_MEAL_PLAN_WEEK';
 
-  /// 10 favoris « J'aime » max en gratuit, illimité en Pro (POST /recipes/:id/favorite).
-  static const String favorites = 'PREMIUM_LIMIT_FAVORITES';
-
   /// Photos « Mes produits » par ingrédient : 1 en gratuit, 3 en Pro (POST
   /// /ingredients/:id/photos). Plafond réel même en Pro.
   static const String ingredientPhotos = 'PREMIUM_LIMIT_INGREDIENT_PHOTOS';
