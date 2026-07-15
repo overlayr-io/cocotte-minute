@@ -40,13 +40,21 @@ function makeDb(results: unknown[]): { db: DrizzleDB; calls: { op: string }[] } 
     calls.push({ op: name });
     return builder(results[i++]);
   };
-  const db = {
+  const db: Record<string, unknown> = {
     select: op('select'),
     insert: op('insert'),
     update: op('update'),
     delete: op('delete'),
-  } as unknown as DrizzleDB;
-  return { db, calls };
+    // `execute` ne sert qu'aux verrous consultatifs : il ne consomme PAS la file
+    // de résultats, sinon toutes les attentes des tests seraient décalées.
+    execute: () => {
+      calls.push({ op: 'execute' });
+      return builder(undefined);
+    },
+  };
+  // Transaction transparente : le `tx` passé au callback est le mock lui-même.
+  db.transaction = async (fn: (tx: unknown) => Promise<unknown>) => fn(db);
+  return { db: db as unknown as DrizzleDB, calls };
 }
 
 const USER = 'user-1';
@@ -268,6 +276,21 @@ describe('RecipesService', () => {
         PremiumLimitException,
       );
     });
+  });
+
+  describe('seedSamples (#12)', () => {
+    it('prend le verrou avant de vérifier, et ne sème rien si le compte a déjà une recette',
+      async () => {
+        // Le `execute` (verrou consultatif) doit précéder le count : sans lui,
+        // deux appels concurrents voient count=0 et sèment chacun leur jeu.
+        const { db, calls } = makeDb([[{ n: 1 }]]);
+        const service = new RecipesService(db, ingredientsStub, premiumStub(false), storageStub);
+
+        await service.seedSamples(USER);
+
+        expect(calls.map((c) => c.op)).toEqual(['execute', 'select']);
+        expect(calls.some((c) => c.op === 'insert')).toBe(false);
+      });
   });
 
   describe('favoris (#15)', () => {

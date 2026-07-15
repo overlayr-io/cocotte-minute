@@ -20,6 +20,13 @@
 - Le service ne sème **rien** si le compte a déjà eu au moins une recette
   (`count(recipes) where author_id = user > 0`, y compris supprimées) — évite
   les doublons si l'endpoint est rappelé.
+- **Verrou consultatif** (`pg_advisory_xact_lock`, cf.
+  `common/db/advisory-locks.ts`) tenu pendant **tout** le semis : entre le
+  `count` et la 1re recette il y a ~10 allers-retours, donc deux appels
+  concurrents (2 lancements qui se chevauchent pendant un cold start Render)
+  semaient chacun leur jeu. Le verrou tient jusqu'au commit de la transaction ;
+  comme le semis est `await`é à l'intérieur, le 2e appelant attend puis voit les
+  recettes commitées et sort.
 - Côté mobile, un flag local (`SharedPreferences`) empêche même le 2e appel
   réseau après le 1er succès. Le serveur reste la vraie garde.
 - **Le flag est scopé par compte** : clé `onboarding.sample_recipes_seeded.<userId>`.

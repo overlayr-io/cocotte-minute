@@ -34,13 +34,21 @@ function makeDb(results: unknown[]): { db: DrizzleDB; calls: { op: string }[] } 
     calls.push({ op: name });
     return builder(results[i++]);
   };
-  const db = {
+  const db: Record<string, unknown> = {
     select: op('select'),
     insert: op('insert'),
     update: op('update'),
     delete: op('delete'),
-  } as unknown as DrizzleDB;
-  return { db, calls };
+    // `execute` ne sert qu'aux verrous consultatifs : il ne consomme PAS la file
+    // de résultats, sinon toutes les attentes des tests seraient décalées.
+    execute: () => {
+      calls.push({ op: 'execute' });
+      return builder(undefined);
+    },
+  };
+  // Transaction transparente : le `tx` passé au callback est le mock lui-même.
+  db.transaction = async (fn: (tx: unknown) => Promise<unknown>) => fn(db);
+  return { db: db as unknown as DrizzleDB, calls };
 }
 
 const USER = 'user-1';
@@ -66,13 +74,20 @@ const recipesStub = {
 describe('CategoriesService', () => {
   describe('listMine', () => {
     it('sème les dossiers par défaut au premier accès (compte vierge)', async () => {
-      // ensureDefaults: select existant (vide) → insert seed ; puis select liste
+      // ensureDefaults: verrou consultatif → select existant (vide) → insert
+      // seed ; puis select liste. Le `execute` en tête est le verrou : il DOIT
+      // précéder le select, sinon deux requêtes concurrentes sèment chacune.
       const { db, calls } = makeDb([[], undefined, [catRow({ isDefault: true })]]);
       const service = new CategoriesService(db, recipesStub);
 
       const result = await service.listMine(USER);
 
-      expect(calls.map((c) => c.op)).toEqual(['select', 'insert', 'select']);
+      expect(calls.map((c) => c.op)).toEqual([
+        'execute',
+        'select',
+        'insert',
+        'select',
+      ]);
       expect(result).toHaveLength(1);
     });
 
@@ -82,7 +97,7 @@ describe('CategoriesService', () => {
 
       await service.listMine(USER);
 
-      expect(calls.map((c) => c.op)).toEqual(['select', 'select']);
+      expect(calls.map((c) => c.op)).toEqual(['execute', 'select', 'select']);
     });
   });
 

@@ -20,6 +20,7 @@ import {
   sql,
 } from 'drizzle-orm';
 
+import { ADVISORY_LOCK_NS } from '../../common/db/advisory-locks';
 import { PremiumLimitException } from '../../common/errors/premium-limit.exception';
 import { SupabaseStorageService } from '../../common/supabase/supabase-storage.service';
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
@@ -635,12 +636,29 @@ export class RecipesService {
    * ne fait rien si le compte a déjà eu la moindre recette (y compris supprimée).
    */
   async seedSamples(userId: string): Promise<void> {
-    const [existing] = await this.db
-      .select({ n: sql<number>`count(*)::int` })
-      .from(recipes)
-      .where(eq(recipes.authorId, userId));
-    if ((existing?.n ?? 0) > 0) return;
+    // Verrou consultatif tenu pendant TOUT le semis : le garde « ce compte
+    // a-t-il déjà des recettes ? » est suivi de ~10 allers-retours avant que la
+    // 1re recette n'existe. Deux appels concurrents (2 lancements qui se
+    // chevauchent pendant un cold start Render) semaient chacun leur jeu.
+    // `pg_advisory_xact_lock` reste tenu jusqu'au commit de la transaction :
+    // comme on `await` tout le semis à l'intérieur, le 2e appelant attend, puis
+    // voit les recettes commitées et sort. Les écritures passent par `this.db`
+    // (autre connexion) pour réutiliser les méthodes métier telles quelles.
+    await this.db.transaction(async (tx) => {
+      await tx.execute(
+        sql`select pg_advisory_xact_lock(${ADVISORY_LOCK_NS.sampleRecipes}, hashtext(${userId}))`,
+      );
+      const [existing] = await tx
+        .select({ n: sql<number>`count(*)::int` })
+        .from(recipes)
+        .where(eq(recipes.authorId, userId));
+      if ((existing?.n ?? 0) > 0) return;
+      await this.insertSamples(userId);
+    });
+  }
 
+  /** Contenu du semis d'onboarding. Toujours appelé sous verrou (cf. [seedSamples]). */
+  private async insertSamples(userId: string): Promise<void> {
     const ing = async (
       name: string,
       unit: 'gramme' | 'piece' | 'cuillere_soupe',

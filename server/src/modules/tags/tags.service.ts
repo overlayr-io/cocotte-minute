@@ -8,6 +8,10 @@ import {
 } from '@nestjs/common';
 import { and, eq, inArray, isNull, ne, sql } from 'drizzle-orm';
 
+import {
+  ADVISORY_LOCK_GLOBAL_KEY,
+  ADVISORY_LOCK_NS,
+} from '../../common/db/advisory-locks';
 import { DRIZZLE, DrizzleDB } from '../../db/drizzle.provider';
 import { SYSTEM_TAGS, tags, type TagRow } from '../../db/schema/tags.schema';
 import { RecipesService } from '../recipes/recipes.service';
@@ -210,17 +214,26 @@ export class TagsService {
    * script `db:seed:tags`.
    */
   private async ensureSystemDefaults(): Promise<void> {
-    const [existing] = await this.db
-      .select({ id: tags.id })
-      .from(tags)
-      .where(isNull(tags.ownerId))
-      .limit(1);
-    if (existing) return;
+    // Verrou consultatif global : ce semis tourne à chaque `GET /tags/system`,
+    // et la course n'est pas scopée à un compte — deux utilisateurs quelconques
+    // arrivant en même temps sur une DB au catalogue vide le dupliquaient POUR
+    // TOUT LE MONDE. SQL brut assumé (pas d'équivalent Drizzle pour les verrous).
+    await this.db.transaction(async (tx) => {
+      await tx.execute(
+        sql`select pg_advisory_xact_lock(${ADVISORY_LOCK_NS.systemTags}, ${ADVISORY_LOCK_GLOBAL_KEY})`,
+      );
+      const [existing] = await tx
+        .select({ id: tags.id })
+        .from(tags)
+        .where(isNull(tags.ownerId))
+        .limit(1);
+      if (existing) return;
 
-    await this.db
-      .insert(tags)
-      .values(SYSTEM_TAGS.map((t) => ({ ownerId: null, name: t.name, color: t.color })));
-    this.logger.log(`Catalogue de tags système semé (${SYSTEM_TAGS.length} tags).`);
+      await tx
+        .insert(tags)
+        .values(SYSTEM_TAGS.map((t) => ({ ownerId: null, name: t.name, color: t.color })));
+      this.logger.log(`Catalogue de tags système semé (${SYSTEM_TAGS.length} tags).`);
+    });
   }
 
   /**
