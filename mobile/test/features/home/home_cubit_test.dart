@@ -108,6 +108,35 @@ void main() {
     await cubit.close();
   });
 
+  test('une seule recette de base suffit à afficher la rangée « base »',
+      () async {
+    // Contrairement aux rangées éditoriales, la rangée « Recettes de base »
+    // s'affiche dès 1 recette : une brique réutilisable isolée est normale.
+    when(() => discovery.fetchHome()).thenAnswer(
+      (_) async => DiscoveryData(
+        month: 3,
+        recipes: [
+          _r('plat1'),
+          _r('plat2'),
+          _r('sauce', isBase: true), // une seule base
+        ],
+        people: const [],
+      ),
+    );
+
+    final cubit = build();
+    await cubit.load();
+
+    final state = cubit.state as HomeLoaded;
+    final base = state.sections
+        .where((s) => s.kind == DiscoverySectionKind.base)
+        .toList();
+    expect(base, hasLength(1));
+    expect(base.single.recipes.map((r) => r.id), ['sauce']);
+
+    await cubit.close();
+  });
+
   test('rangée « Pour {personne} » via intersection des tags', () async {
     when(() => discovery.fetchHome()).thenAnswer(
       (_) async => DiscoveryData(

@@ -168,12 +168,13 @@ class HomeCubit extends Cubit<HomeState> {
       String? personName,
       String? avatarUrl,
       int cap = _rowCap,
+      int min = _minRow,
     }) {
       final recipes = matches
           .map((r) => r.summary)
           .take(cap)
           .toList(growable: false);
-      if (recipes.length >= _minRow) {
+      if (recipes.length >= min) {
         sections.add(DiscoverySection(
           kind: kind,
           recipes: recipes,
@@ -216,11 +217,15 @@ class HomeCubit extends Cubit<HomeState> {
       DiscoverySectionKind.solo,
       editorial.where((r) => r.summary.servings <= 2),
     );
-    // Recettes de base : toujours en dernier, tout en bas de l'accueil.
+    // Recettes de base : toujours en dernier, tout en bas de l'accueil. `min: 1`
+    // car une seule brique réutilisable est un cas normal (contrairement aux
+    // rangées éditoriales, où une carte isolée fait pauvre) : avec le seuil
+    // commun de 2, la section restait invisible tant qu'il n'y avait qu'une base.
     addRow(
       DiscoverySectionKind.base,
       all.where((r) => r.summary.isBase),
       cap: _baseRowCap,
+      min: 1,
     );
 
     return HomeLoaded(
