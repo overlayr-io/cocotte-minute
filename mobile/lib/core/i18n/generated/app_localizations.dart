@@ -2306,6 +2306,18 @@ abstract class AppLocalizations {
   /// **'{count, plural, =1{1 sous-dossier} other{{count} sous-dossiers}}'**
   String categoriesSubfolderCount(int count);
 
+  /// No description provided for @categoryDrilldownRootLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers'**
+  String get categoryDrilldownRootLabel;
+
+  /// No description provided for @categoryDrilldownSelectionLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'{count, plural, =0{Sélection} =1{Sélection (1)} other{Sélection ({count})}}'**
+  String categoryDrilldownSelectionLabel(int count);
+
   /// No description provided for @categoryDefaultBadge.
   ///
   /// In fr, this message translates to:
@@ -2599,6 +2611,36 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Une béchamel ou une pâte brisée réutilisée dans plusieurs recettes.'**
   String get recipeBaseToggleHint;
+
+  /// No description provided for @recipeFieldFolders.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dossiers'**
+  String get recipeFieldFolders;
+
+  /// No description provided for @recipeFoldersFieldEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir un ou plusieurs dossiers'**
+  String get recipeFoldersFieldEmpty;
+
+  /// No description provided for @recipeFoldersInlineLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Rangée dans'**
+  String get recipeFoldersInlineLabel;
+
+  /// No description provided for @recipeImageSuggestionsLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Suggestions pour « {name} »'**
+  String recipeImageSuggestionsLabel(String name);
+
+  /// No description provided for @recipeImageSuggestionsAttribution.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photos via Unsplash · seule l\'URL est enregistrée'**
+  String get recipeImageSuggestionsAttribution;
 
   /// No description provided for @recipeBaseBadge.
   ///
@@ -3541,6 +3583,12 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Annuler'**
   String get commonCancel;
+
+  /// No description provided for @commonDone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Terminé'**
+  String get commonDone;
 
   /// No description provided for @ingredientVisualEmoji.
   ///

@@ -83,6 +83,9 @@ export interface RecipeSummaryDto {
   id: string;
   name: string;
   photoUrl: string | null;
+  /** Attribution photographe (feature #4) — non-null seulement si `photoUrl` provient d'Unsplash. */
+  photoAuthorName: string | null;
+  photoAuthorUrl: string | null;
   isBase: boolean;
   prepTime: number;
   cookTime: number;
@@ -216,6 +219,8 @@ function toSummary(row: RecipeRow): RecipeSummaryDto {
     id: row.id,
     name: row.name,
     photoUrl: row.photoUrl,
+    photoAuthorName: row.photoAuthorName,
+    photoAuthorUrl: row.photoAuthorUrl,
     isBase: row.isBase,
     prepTime: row.prepTime,
     cookTime: row.cookTime,
@@ -612,20 +617,32 @@ export class RecipesService {
 
   async create(userId: string, dto: CreateRecipeDto): Promise<RecipeSummaryDto> {
     if (dto.isBase === true) await this.assertBaseRecipeQuota(userId);
-    const [row] = await this.db
-      .insert(recipes)
-      .values({
-        authorId: userId,
-        name: dto.name,
-        photoUrl: dto.photoUrl ?? null,
-        description: dto.description ?? null,
-        isBase: dto.isBase ?? false,
-        prepTime: dto.prepTime ?? 0,
-        cookTime: dto.cookTime ?? 0,
-        restTime: dto.restTime ?? 0,
-        servings: dto.servings ?? undefined,
-      })
-      .returning();
+    const categoryIds = [...new Set(dto.categoryIds ?? [])];
+    const row = await this.db.transaction(async (tx) => {
+      const [inserted] = await tx
+        .insert(recipes)
+        .values({
+          authorId: userId,
+          name: dto.name,
+          photoUrl: dto.photoUrl ?? null,
+          photoAuthorName: dto.photoUrl ? (dto.photoAuthorName ?? null) : null,
+          photoAuthorUrl: dto.photoUrl ? (dto.photoAuthorUrl ?? null) : null,
+          description: dto.description ?? null,
+          isBase: dto.isBase ?? false,
+          prepTime: dto.prepTime ?? 0,
+          cookTime: dto.cookTime ?? 0,
+          restTime: dto.restTime ?? 0,
+          servings: dto.servings ?? undefined,
+        })
+        .returning();
+      if (categoryIds.length > 0) {
+        await tx
+          .insert(recipeCategories)
+          .values(categoryIds.map((categoryId) => ({ recipeId: inserted.id, categoryId })))
+          .onConflictDoNothing();
+      }
+      return inserted;
+    });
     return toSummary(row);
   }
 
@@ -1108,7 +1125,14 @@ export class RecipesService {
 
     const patch: Partial<RecipeRow> = {};
     if (dto.name !== undefined) patch.name = dto.name;
-    if (dto.photoUrl !== undefined) patch.photoUrl = dto.photoUrl;
+    if (dto.photoUrl !== undefined) {
+      patch.photoUrl = dto.photoUrl;
+      // L'attribution ne survit jamais à un changement de photo qui ne la
+      // fournit pas explicitement (photo personnelle remplaçant une suggestion
+      // Unsplash, ou inversement) — jamais d'attribution obsolète affichée.
+      patch.photoAuthorName = dto.photoAuthorName ?? null;
+      patch.photoAuthorUrl = dto.photoAuthorUrl ?? null;
+    }
     if (dto.description !== undefined) patch.description = dto.description;
     if (dto.isBase !== undefined) patch.isBase = dto.isBase;
     if (dto.prepTime !== undefined) patch.prepTime = dto.prepTime;

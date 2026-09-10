@@ -829,6 +829,14 @@
       "count": { "type": "int" }
     }
   },
+  "categoryDrilldownRootLabel": "Dossiers",
+  "@categoryDrilldownRootLabel": {},
+  "categoryDrilldownSelectionLabel": "{count, plural, =0{Sélection} =1{Sélection (1)} other{Sélection ({count})}}",
+  "@categoryDrilldownSelectionLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
   "categoryDefaultBadge": "Défaut",
   "@categoryDefaultBadge": {},
   "categoryCreateTitle": "Nouveau dossier",
@@ -934,6 +942,22 @@
   "@recipeBaseToggleSubtitle": {},
   "recipeBaseToggleHint": "Une béchamel ou une pâte brisée réutilisée dans plusieurs recettes.",
   "@recipeBaseToggleHint": {},
+
+  "recipeFieldFolders": "Dossiers",
+  "@recipeFieldFolders": {},
+  "recipeFoldersFieldEmpty": "Choisir un ou plusieurs dossiers",
+  "@recipeFoldersFieldEmpty": {},
+  "recipeFoldersInlineLabel": "Rangée dans",
+  "@recipeFoldersInlineLabel": {},
+
+  "recipeImageSuggestionsLabel": "Suggestions pour « {name} »",
+  "@recipeImageSuggestionsLabel": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "recipeImageSuggestionsAttribution": "Photos via Unsplash · seule l'URL est enregistrée",
+  "@recipeImageSuggestionsAttribution": {},
   "recipeBaseBadge": "Recette de base",
   "@recipeBaseBadge": {},
   "recipeBaseLockedHint": "Verrouillée : utilisée comme composant.",
@@ -1329,6 +1353,8 @@
 
   "commonCancel": "Annuler",
   "@commonCancel": {},
+  "commonDone": "Terminé",
+  "@commonDone": {},
   "ingredientVisualEmoji": "Emoji",
   "@ingredientVisualEmoji": {},
   "ingredientVisualImage": "Image",

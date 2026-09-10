@@ -43,6 +43,21 @@ export class UpdateRecipeDto {
   @MaxLength(2048)
   photoUrl?: string;
 
+  /**
+   * Attribution photographe (feature #4) — à fournir seulement quand
+   * `photoUrl` change ET provient d'Unsplash. Le service efface toujours ces
+   * deux champs quand `photoUrl` change sans eux (photo personnelle).
+   */
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  photoAuthorName?: string;
+
+  @IsOptional()
+  @IsUrl({ require_tld: false })
+  @MaxLength(2048)
+  photoAuthorUrl?: string;
+
   @IsOptional()
   @IsString()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))

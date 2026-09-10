@@ -146,8 +146,11 @@ class RecipesRepository {
   Future<RecipeSummary> create({
     required String name,
     String? photoUrl,
+    String? photoAuthorName,
+    String? photoAuthorUrl,
     bool isBase = false,
     required int servings,
+    List<String> categoryIds = const [],
   }) async {
     try {
       final res = await _dio.post<Map<String, dynamic>>(
@@ -155,8 +158,11 @@ class RecipesRepository {
         data: {
           'name': name,
           'photoUrl': ?photoUrl,
+          'photoAuthorName': ?photoAuthorName,
+          'photoAuthorUrl': ?photoAuthorUrl,
           'isBase': isBase,
           'servings': servings,
+          if (categoryIds.isNotEmpty) 'categoryIds': categoryIds,
         },
       );
       return RecipeSummary.fromJson(res.data!);

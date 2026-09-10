@@ -49,6 +49,15 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsString()
   REVENUECAT_API_KEY?: string;
+
+  /**
+   * Access Key Unsplash (unsplash.com/developers) pour la suggestion d'image
+   * à la création de recette (feature #4). Optionnelle : si absente, la
+   * recherche renvoie une liste vide plutôt que d'échouer.
+   */
+  @IsOptional()
+  @IsString()
+  UNSPLASH_ACCESS_KEY?: string;
 }
 
 export function validateEnv(config: Record<string, unknown>): EnvironmentVariables {

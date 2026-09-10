@@ -6,12 +6,14 @@ import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../categories/data/categories_repository.dart';
 import '../../../categories/domain/category.dart';
+import '../../../categories/presentation/widgets/category_drilldown_picker.dart';
+import '../../../categories/presentation/widgets/category_path.dart';
 import '../bloc/recipe_detail_cubit.dart';
 
-/// Feuille de rangement : liste des dossiers du compte, chaque ligne se coche /
-/// décoche pour (dé)ranger la recette. Les mutations passent par le
-/// [RecipeDetailCubit] (rechargement) ; la sélection courante est relue depuis
-/// l'état à chaque changement.
+/// Feuille de rangement : dossiers déjà assignés (avec leur chemin complet) et
+/// bouton ouvrant le sélecteur en drill-down pour naviguer dans les
+/// sous-dossiers et (dé)cocher plusieurs dossiers à la fois. Les mutations
+/// passent par le [RecipeDetailCubit] (rechargement à chaque diff).
 Future<void> showCategoryAssignSheet(
   BuildContext context, {
   required RecipeDetailCubit cubit,
@@ -35,31 +37,33 @@ class _CategoryAssignSheet extends StatefulWidget {
 }
 
 class _CategoryAssignSheetState extends State<_CategoryAssignSheet> {
-  late final Future<List<Category>> _future = _load();
+  late final Future<List<Category>> _future =
+      sl<CategoriesRepository>().fetchMine();
 
-  /// Dossier en cours de (dé)association (une seule mutation à la fois).
-  String? _busyId;
+  /// true pendant l'application du diff renvoyé par le sélecteur (plusieurs
+  /// mutations à la suite).
+  bool _busy = false;
 
-  Future<List<Category>> _load() async {
-    final all = await sl<CategoriesRepository>().fetchMine();
-    // Tri stable : racines d'abord, puis par nom (les dossiers imbriqués suivent).
-    all.sort((a, b) {
-      if (a.depth != b.depth) return a.depth.compareTo(b.depth);
-      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
-    });
-    return all;
-  }
-
-  Future<void> _toggle(
-      RecipeDetailCubit cubit, Category folder, bool selected) async {
-    if (_busyId != null) return;
-    setState(() => _busyId = folder.id);
-    if (selected) {
-      await cubit.unassignCategory(folder.id);
-    } else {
-      await cubit.assignCategory(folder.id);
+  Future<void> _openPicker(
+    RecipeDetailCubit cubit,
+    Set<String> currentlyAssigned,
+  ) async {
+    final result = await showCategoryDrilldownPicker(
+      context,
+      initiallySelected: currentlyAssigned,
+    );
+    if (result == null || !mounted) return;
+    final toAdd = result.difference(currentlyAssigned);
+    final toRemove = currentlyAssigned.difference(result);
+    if (toAdd.isEmpty && toRemove.isEmpty) return;
+    setState(() => _busy = true);
+    for (final id in toAdd) {
+      await cubit.assignCategory(id);
     }
-    if (mounted) setState(() => _busyId = null);
+    for (final id in toRemove) {
+      await cubit.unassignCategory(id);
+    }
+    if (mounted) setState(() => _busy = false);
   }
 
   @override
@@ -113,34 +117,70 @@ class _CategoryAssignSheetState extends State<_CategoryAssignSheet> {
                     if (!snapshot.hasData) {
                       return const Center(child: CircularProgressIndicator());
                     }
-                    final folders = snapshot.data!;
-                    if (folders.isEmpty) {
-                      return _Empty(message: l10n.recipeFoldersSheetEmpty);
-                    }
+                    final all = snapshot.data!;
                     return BlocBuilder<RecipeDetailCubit, RecipeDetailState>(
                       builder: (context, state) {
-                        final assigned = state is RecipeDetailLoaded
+                        final assignedIds = state is RecipeDetailLoaded
                             ? state.detail.categoryIds.toSet()
                             : const <String>{};
-                        return ListView.separated(
+                        final byId = {for (final c in all) c.id: c};
+                        final assigned = assignedIds
+                            .map((id) => byId[id])
+                            .whereType<Category>()
+                            .toList();
+                        final cubit = context.read<RecipeDetailCubit>();
+                        return SingleChildScrollView(
                           controller: scrollController,
                           padding: const EdgeInsets.only(bottom: 24),
-                          itemCount: folders.length,
-                          separatorBuilder: (_, _) => const SizedBox(height: 10),
-                          itemBuilder: (context, i) {
-                            final folder = folders[i];
-                            final selected = assigned.contains(folder.id);
-                            return _FolderToggleTile(
-                              folder: folder,
-                              selected: selected,
-                              busy: _busyId == folder.id,
-                              onTap: () => _toggle(
-                                context.read<RecipeDetailCubit>(),
-                                folder,
-                                selected,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (assigned.isEmpty)
+                                _Empty(message: l10n.recipeFoldersSheetEmpty)
+                              else
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    for (final folder in assigned)
+                                      Chip(
+                                        avatar: const Icon(
+                                          Icons.folder_outlined,
+                                          size: 16,
+                                          color: AppColors.primary,
+                                        ),
+                                        label: Text(categoryPath(folder, all)),
+                                        backgroundColor: AppColors.card,
+                                        side: const BorderSide(
+                                            color: AppColors.border),
+                                      ),
+                                  ],
+                                ),
+                              const SizedBox(height: 18),
+                              SizedBox(
+                                width: double.infinity,
+                                child: FilledButton.icon(
+                                  onPressed: _busy
+                                      ? null
+                                      : () => _openPicker(cubit, assignedIds),
+                                  icon: _busy
+                                      ? const SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                              color: Colors.white),
+                                        )
+                                      : const Icon(Icons.folder_open_rounded),
+                                  label: Text(l10n.recipeFoldersSheetTitle),
+                                  style: FilledButton.styleFrom(
+                                    backgroundColor: AppColors.primary,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                ),
                               ),
-                            );
-                          },
+                            ],
+                          ),
                         );
                       },
                     );
@@ -151,86 +191,6 @@ class _CategoryAssignSheetState extends State<_CategoryAssignSheet> {
           ),
         );
       },
-    );
-  }
-}
-
-class _FolderToggleTile extends StatelessWidget {
-  const _FolderToggleTile({
-    required this.folder,
-    required this.selected,
-    required this.busy,
-    required this.onTap,
-  });
-
-  final Category folder;
-  final bool selected;
-  final bool busy;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: selected ? AppColors.primaryTint : AppColors.card,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        onTap: busy ? null : onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: selected ? AppColors.primary : AppColors.border,
-              width: selected ? 1.5 : 1,
-            ),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.primaryTint,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: folder.icon != null
-                    ? Text(folder.icon!, style: const TextStyle(fontSize: 18))
-                    : const Icon(Icons.folder_outlined,
-                        size: 18, color: AppColors.primary),
-              ),
-              const SizedBox(width: 13),
-              Expanded(
-                child: Text(
-                  folder.name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-              busy
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Icon(
-                      selected
-                          ? Icons.check_circle_rounded
-                          : Icons.radio_button_unchecked_rounded,
-                      size: 22,
-                      color:
-                          selected ? AppColors.primary : const Color(0xFFC4C0B5),
-                    ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
