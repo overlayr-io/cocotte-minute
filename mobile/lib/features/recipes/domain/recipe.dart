@@ -11,6 +11,8 @@ class RecipeSummary extends Equatable {
     required this.id,
     required this.name,
     this.photoUrl,
+    this.photoAuthorName,
+    this.photoAuthorUrl,
     this.isBase = false,
     this.prepTime = 0,
     this.cookTime = 0,
@@ -21,6 +23,11 @@ class RecipeSummary extends Equatable {
   final String id;
   final String name;
   final String? photoUrl;
+
+  /// Attribution photographe (feature suggestion d'image #4) — non-null
+  /// seulement si [photoUrl] provient d'Unsplash (attribution obligatoire).
+  final String? photoAuthorName;
+  final String? photoAuthorUrl;
   final bool isBase;
 
   /// Temps en minutes.
@@ -34,6 +41,8 @@ class RecipeSummary extends Equatable {
       id: json['id'] as String,
       name: json['name'] as String,
       photoUrl: json['photoUrl'] as String?,
+      photoAuthorName: json['photoAuthorName'] as String?,
+      photoAuthorUrl: json['photoAuthorUrl'] as String?,
       isBase: json['isBase'] as bool? ?? false,
       prepTime: json['prepTime'] as int? ?? 0,
       cookTime: json['cookTime'] as int? ?? 0,
@@ -44,11 +53,21 @@ class RecipeSummary extends Equatable {
 
   /// Copie avec une nouvelle couverture (feature galerie-recette). [photoUrl]
   /// est toujours fourni non-null par les appelants (couverture posée/remplacée).
-  RecipeSummary copyWith({String? photoUrl}) {
+  /// Un changement de [photoUrl] efface toujours l'attribution précédente : elle
+  /// n'est reposée que si [photoAuthorName]/[photoAuthorUrl] sont fournis en
+  /// même temps (nouvelle suggestion Unsplash), jamais reconduite par défaut.
+  RecipeSummary copyWith({
+    String? photoUrl,
+    String? photoAuthorName,
+    String? photoAuthorUrl,
+  }) {
+    final photoChanged = photoUrl != null;
     return RecipeSummary(
       id: id,
       name: name,
       photoUrl: photoUrl ?? this.photoUrl,
+      photoAuthorName: photoChanged ? photoAuthorName : this.photoAuthorName,
+      photoAuthorUrl: photoChanged ? photoAuthorUrl : this.photoAuthorUrl,
       isBase: isBase,
       prepTime: prepTime,
       cookTime: cookTime,
@@ -58,8 +77,18 @@ class RecipeSummary extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [id, name, photoUrl, isBase, prepTime, cookTime, restTime, servings];
+  List<Object?> get props => [
+    id,
+    name,
+    photoUrl,
+    photoAuthorName,
+    photoAuthorUrl,
+    isBase,
+    prepTime,
+    cookTime,
+    restTime,
+    servings,
+  ];
 }
 
 /// Ligne d'ingrédient telle qu'affichée sur la fiche : nom + unité (lue depuis

@@ -1,5 +1,7 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/i18n/generated/app_localizations.dart';
 import '../../../../core/premium/premium_limit_sheet.dart';
@@ -22,8 +24,10 @@ import 'base_recipe_picker_sheet.dart';
 import 'category_assign_sheet.dart';
 import 'quantity_stepper.dart';
 import 'recipe_edit_sheet.dart';
+import 'recipe_folders_row.dart';
 import 'recipe_gallery_section.dart';
 import 'recipe_price_section.dart';
+import 'recipe_tags_row.dart';
 import 'person_assign_sheet.dart';
 import 'share_recipe_sheet.dart';
 import 'tag_assign_sheet.dart';
@@ -382,7 +386,78 @@ class _HeroImage extends StatelessWidget {
               ),
             ),
           ),
+          if (detail.summary.photoAuthorName != null)
+            Positioned(
+              right: 14,
+              // Sous la rangée de boutons ronds (retour/favori/menu), qui
+              // partage la même origine (haut d'écran) via son propre overlay.
+              top: MediaQuery.paddingOf(context).top + 62,
+              child: _PhotoAttribution(
+                authorName: detail.summary.photoAuthorName!,
+                authorUrl: detail.summary.photoAuthorUrl,
+              ),
+            ),
         ],
+      ),
+    );
+  }
+}
+
+/// Attribution obligatoire (conditions API Unsplash) : « Photo by {name} on
+/// Unsplash », photographe et Unsplash tous deux liés (avec paramètres `utm_*`
+/// déjà posés côté serveur pour le lien photographe).
+class _PhotoAttribution extends StatelessWidget {
+  const _PhotoAttribution({required this.authorName, this.authorUrl});
+
+  final String authorName;
+  final String? authorUrl;
+
+  static const String _unsplashHomeUrl =
+      'https://unsplash.com/?utm_source=cocotte_minute&utm_medium=referral';
+
+  Future<void> _open(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return;
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const linkStyle = TextStyle(
+      fontSize: 11,
+      fontWeight: FontWeight.w700,
+      color: Colors.white,
+      decoration: TextDecoration.underline,
+    );
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.35),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        child: RichText(
+          text: TextSpan(
+            style: const TextStyle(fontSize: 11, color: Colors.white70),
+            children: [
+              const TextSpan(text: 'Photo by '),
+              TextSpan(
+                text: authorName,
+                style: linkStyle,
+                recognizer: authorUrl == null
+                    ? null
+                    : (TapGestureRecognizer()..onTap = () => _open(authorUrl!)),
+              ),
+              const TextSpan(text: ' on '),
+              TextSpan(
+                text: 'Unsplash',
+                style: linkStyle,
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () => _open(_unsplashHomeUrl),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -411,13 +486,20 @@ class _HeroTitle extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (detail.isBase)
-                    _Badge(
-                      label: l10n.recipeBaseBadge,
-                      background: AppColors.primary,
-                      foreground: Colors.white,
-                      icon: Icons.link_rounded,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: _Badge(
+                        label: l10n.recipeBaseBadge,
+                        background: AppColors.primary,
+                        foreground: Colors.white,
+                        icon: Icons.link_rounded,
+                      ),
                     ),
-                  const SizedBox(height: 12),
+                  if (detail.tagIds.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: RecipeTagsRow(tagIds: detail.tagIds),
+                    ),
                   Text(
                     s.name,
                     style: const TextStyle(
@@ -576,6 +658,10 @@ class _SheetState extends State<_Sheet> {
               style: const TextStyle(
                   fontSize: 14, height: 1.55, color: AppColors.textSecondary),
             ),
+          ],
+          if (detail.categoryIds.isNotEmpty) ...[
+            const SizedBox(height: 15),
+            RecipeFoldersRow(categoryIds: detail.categoryIds),
           ],
           const SizedBox(height: 18),
           if (_tab == 0) ...[

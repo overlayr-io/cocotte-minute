@@ -1235,6 +1235,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get categoryDrilldownRootLabel => 'Folders';
+
+  @override
+  String categoryDrilldownSelectionLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Selection ($count)',
+      one: 'Selection (1)',
+      zero: 'Selection',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get categoryDefaultBadge => 'Default';
 
   @override
@@ -1397,6 +1412,24 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get recipeBaseToggleHint =>
       'A béchamel or a shortcrust pastry reused in several recipes.';
+
+  @override
+  String get recipeFieldFolders => 'Folders';
+
+  @override
+  String get recipeFoldersFieldEmpty => 'Choose one or more folders';
+
+  @override
+  String get recipeFoldersInlineLabel => 'Stored in';
+
+  @override
+  String recipeImageSuggestionsLabel(String name) {
+    return 'Suggestions for “$name”';
+  }
+
+  @override
+  String get recipeImageSuggestionsAttribution =>
+      'Photos via Unsplash · only the URL is saved';
 
   @override
   String get recipeBaseBadge => 'Base recipe';
@@ -1984,6 +2017,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get commonCancel => 'Cancel';
+
+  @override
+  String get commonDone => 'Done';
 
   @override
   String get ingredientVisualEmoji => 'Emoji';

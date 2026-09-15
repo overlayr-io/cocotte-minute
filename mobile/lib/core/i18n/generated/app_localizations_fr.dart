@@ -1242,6 +1242,21 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get categoryDrilldownRootLabel => 'Dossiers';
+
+  @override
+  String categoryDrilldownSelectionLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Sélection ($count)',
+      one: 'Sélection (1)',
+      zero: 'Sélection',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get categoryDefaultBadge => 'Défaut';
 
   @override
@@ -1406,6 +1421,24 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get recipeBaseToggleHint =>
       'Une béchamel ou une pâte brisée réutilisée dans plusieurs recettes.';
+
+  @override
+  String get recipeFieldFolders => 'Dossiers';
+
+  @override
+  String get recipeFoldersFieldEmpty => 'Choisir un ou plusieurs dossiers';
+
+  @override
+  String get recipeFoldersInlineLabel => 'Rangée dans';
+
+  @override
+  String recipeImageSuggestionsLabel(String name) {
+    return 'Suggestions pour « $name »';
+  }
+
+  @override
+  String get recipeImageSuggestionsAttribution =>
+      'Photos via Unsplash · seule l\'URL est enregistrée';
 
   @override
   String get recipeBaseBadge => 'Recette de base';
@@ -1994,6 +2027,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get commonCancel => 'Annuler';
+
+  @override
+  String get commonDone => 'Terminé';
 
   @override
   String get ingredientVisualEmoji => 'Emoji';

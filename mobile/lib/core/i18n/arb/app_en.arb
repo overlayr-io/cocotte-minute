@@ -403,6 +403,8 @@
       "count": { "type": "int" }
     }
   },
+  "categoryDrilldownRootLabel": "Folders",
+  "categoryDrilldownSelectionLabel": "{count, plural, =0{Selection} =1{Selection (1)} other{Selection ({count})}}",
   "categoryDefaultBadge": "Default",
   "categoryCreateTitle": "New folder",
   "categoryEditTitle": "Edit folder",
@@ -486,6 +488,13 @@
   "recipeBaseToggleTitle": "Base recipe",
   "recipeBaseToggleSubtitle": "Reusable as a component",
   "recipeBaseToggleHint": "A béchamel or a shortcrust pastry reused in several recipes.",
+
+  "recipeFieldFolders": "Folders",
+  "recipeFoldersFieldEmpty": "Choose one or more folders",
+  "recipeFoldersInlineLabel": "Stored in",
+
+  "recipeImageSuggestionsLabel": "Suggestions for “{name}”",
+  "recipeImageSuggestionsAttribution": "Photos via Unsplash · only the URL is saved",
   "recipeBaseBadge": "Base recipe",
   "recipeBaseLockedHint": "Locked: used as a component.",
 
@@ -697,6 +706,7 @@
   "homeEmptyBody": "Create your first recipe with the + button.",
 
   "commonCancel": "Cancel",
+  "commonDone": "Done",
   "ingredientVisualEmoji": "Emoji",
   "@ingredientVisualEmoji": {},
   "ingredientVisualImage": "Image",

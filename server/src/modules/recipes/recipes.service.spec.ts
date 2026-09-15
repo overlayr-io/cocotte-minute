@@ -107,6 +107,17 @@ describe('RecipesService', () => {
       expect(dto.isBase).toBe(false);
       expect(dto.servings).toBe(1);
     });
+
+    it('associe les dossiers choisis à la création', async () => {
+      const { db, calls } = makeDb([[recipeRow()], undefined]);
+      const service = new RecipesService(db, ingredientsStub, premiumStub(), storageStub);
+      const dto = await service.create(USER, {
+        name: 'Pâtes à la sauce tomate',
+        categoryIds: ['cat-1', 'cat-2'],
+      });
+      expect(dto.id).toBe('rec-1');
+      expect(calls.filter((c) => c.op === 'insert')).toHaveLength(2);
+    });
   });
 
   describe('listByCategory', () => {

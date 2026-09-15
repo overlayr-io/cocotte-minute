@@ -11,6 +11,8 @@ const summary = (id: string): RecipeSummaryDto => ({
   id,
   name: `Recette ${id}`,
   photoUrl: null,
+  photoAuthorName: null,
+  photoAuthorUrl: null,
   isBase: false,
   prepTime: 0,
   cookTime: 0,

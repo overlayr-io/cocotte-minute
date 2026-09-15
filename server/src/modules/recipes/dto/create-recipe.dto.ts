@@ -1,10 +1,13 @@
 import { Transform } from 'class-transformer';
 import {
+  ArrayMaxSize,
+  IsArray,
   IsBoolean,
   IsInt,
   IsOptional,
   IsString,
   IsUrl,
+  IsUUID,
   Max,
   MaxLength,
   Min,
@@ -23,11 +26,26 @@ export class CreateRecipeDto {
   @MaxLength(160)
   name!: string;
 
-  /** Photo optionnelle (URL Storage). */
+  /** Photo optionnelle (URL Storage, ou hotlink Unsplash). */
   @IsOptional()
   @IsUrl({ require_tld: false })
   @MaxLength(2048)
   photoUrl?: string;
+
+  /**
+   * Attribution photographe (feature suggestion d'image #4) — fournie
+   * uniquement quand `photoUrl` provient d'Unsplash (obligatoire par les
+   * conditions de l'API).
+   */
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  photoAuthorName?: string;
+
+  @IsOptional()
+  @IsUrl({ require_tld: false })
+  @MaxLength(2048)
+  photoAuthorUrl?: string;
 
   @IsOptional()
   @IsString()
@@ -63,4 +81,11 @@ export class CreateRecipeDto {
   @Min(1)
   @Max(1000)
   servings?: number;
+
+  /** Dossiers dans lesquels ranger la recette dès sa création. */
+  @IsOptional()
+  @IsArray()
+  @ArrayMaxSize(20)
+  @IsUUID('4', { each: true })
+  categoryIds?: string[];
 }

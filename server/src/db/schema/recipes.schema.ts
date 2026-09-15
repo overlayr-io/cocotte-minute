@@ -65,8 +65,16 @@ export const recipes = pgTable('recipes', {
   /** UUID Supabase de l'auteur/créateur (feature auth). Une recette a toujours un auteur. */
   authorId: uuid('author_id').notNull(),
   name: varchar('name', { length: 160 }).notNull(),
-  /** Photo optionnelle (URL Storage Supabase). Null = pas de photo. */
+  /** Photo optionnelle (URL Storage Supabase, ou hotlink Unsplash). Null = pas de photo. */
   photoUrl: text('photo_url'),
+  /**
+   * Attribution photographe (feature suggestion d'image #4) — remplie
+   * uniquement quand `photo_url` provient d'Unsplash (conditions API :
+   * attribution obligatoire). Toujours effacée quand la photo est remplacée
+   * par un envoi personnel.
+   */
+  photoAuthorName: text('photo_author_name'),
+  photoAuthorUrl: text('photo_author_url'),
   description: text('description'),
   /** Recette de base (réutilisable comme composant). Défini à la création, verrouillable. */
   isBase: boolean('is_base').notNull().default(false),
