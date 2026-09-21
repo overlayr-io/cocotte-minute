@@ -48,3 +48,8 @@ app.*.map.json
 # versionnées. Utilisé avec `flutter build/run --dart-define-from-file=env.*.json`.
 env.dev.json
 env.prod.json
+
+# Keystore de signing release Android — jamais versionné (cf. android/key.properties.example).
+android/key.properties
+*.jks
+*.keystore

@@ -7,7 +7,7 @@
     <!-- Abonnement premium : facturation Play Billing (RevenueCat). -->
     <uses-permission android:name="com.android.vending.BILLING" />
     <application
-        android:label="cocotte_minute"
+        android:label="@string/app_name"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <receiver android:exported="false" android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />

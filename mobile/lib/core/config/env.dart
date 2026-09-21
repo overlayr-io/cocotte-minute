@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/foundation.dart';
 
 /// Configuration d'environnement.
@@ -21,10 +23,29 @@ class Env {
     defaultValue: 'http://localhost:3000',
   );
 
-  /// Clé fournie au build via `--dart-define(-from-file)`. Vide si absente.
-  static const String _revenueCatApiKeyOverride = String.fromEnvironment(
+  /// Clés par plateforme fournies au build via `--dart-define(-from-file)` —
+  /// les deux peuvent cohabiter dans le même fichier, seule celle de la
+  /// plateforme du build courant est lue.
+  static const String _revenueCatApiKeyIos = String.fromEnvironment(
+    'REVENUECAT_API_KEY_IOS',
+  );
+  static const String _revenueCatApiKeyAndroid = String.fromEnvironment(
+    'REVENUECAT_API_KEY_ANDROID',
+  );
+
+  /// Ancienne clé générique (rétrocompatibilité) — utilisée seulement si
+  /// aucune clé spécifique à la plateforme courante n'est fournie.
+  static const String _revenueCatApiKeyLegacy = String.fromEnvironment(
     'REVENUECAT_API_KEY',
   );
+
+  static String get _revenueCatApiKeyOverride {
+    final platformKey = kIsWeb
+        ? ''
+        : (Platform.isIOS ? _revenueCatApiKeyIos : _revenueCatApiKeyAndroid);
+    if (platformKey.isNotEmpty) return platformKey;
+    return _revenueCatApiKeyLegacy;
+  }
 
   /// Clé du Test Store RevenueCat — repli de DÉVELOPPEMENT uniquement.
   static const String _revenueCatTestStoreKey =
