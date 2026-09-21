@@ -66,7 +66,7 @@ export class PublicSharesController {
         relation: ['delegate_permission/common.handle_all_urls'],
         target: {
           namespace: 'android_app',
-          package_name: 'com.cocotteminute.cocotte_minute',
+          package_name: 'com.cocotteminute.cocotteMinute',
           sha256_cert_fingerprints: [sha256],
         },
       },
